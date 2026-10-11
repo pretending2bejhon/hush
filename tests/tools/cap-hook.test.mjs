@@ -518,6 +518,18 @@ describe('command line', () => {
     expect(r.out).toMatch(/main=2/);
   });
 
+  // A file under Program Files inherits the ALL APPLICATION PACKAGES entry (S-1-15-2-1), whose account
+  // name .NET cannot translate back to a SID; the report must read the rules as SIDs, never by name.
+  it.runIf(process.platform === 'win32')('--report reads an ACL holding an application-package SID', () => {
+    const ctx = declared('spec');
+    const f = path.join(ctx.root, 'managed.json');
+    fs.writeFileSync(f, '{}\n');
+    execFileSync('icacls', [f, '/grant', '*S-1-15-2-1:(RX)'], { stdio: 'ignore' });
+    const r = cli(ctx, ['--report'], { HUSH_CAP_MANAGED_SETTINGS: f });
+    expect(r.out).not.toMatch(/ACL unreadable/);
+    expect(r.out).toMatch(/managed settings no \(write access for S-1-5-21-[0-9-]+(, S-1-[0-9-]+)*\)/);
+  });
+
   it('--declare reports the role the hook recorded', () => {
     const ctx = declared('spec');
     const r = cli(ctx, ['--declare', 'spec']);

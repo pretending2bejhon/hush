@@ -1135,7 +1135,8 @@ function adminOnly(p) {
   if (process.platform !== 'win32') return 'no (not Windows)';
   if (!fs.existsSync(p)) return 'no (absent)';
   const lit = p.replace(/'/g, "''");
-  const script = `$ErrorActionPreference='Stop'; (Get-Acl -LiteralPath '${lit}').Access | ForEach-Object { $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value + '|' + [long]$_.FileSystemRights + '|' + $_.AccessControlType }`;
+  // Rules are read as SIDs: an account name such as ALL APPLICATION PACKAGES does not translate back.
+  const script = `$ErrorActionPreference='Stop'; (Get-Acl -LiteralPath '${lit}').GetAccessRules($true, $true, [System.Security.Principal.SecurityIdentifier]) | ForEach-Object { $_.IdentityReference.Value + '|' + [long]$_.FileSystemRights + '|' + $_.AccessControlType }`;
   let text;
   try {
     text = execFileSync('powershell.exe', ['-NoProfile', '-NonInteractive', '-Command', script], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
