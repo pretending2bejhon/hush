@@ -12,9 +12,9 @@ PF-RULINGS: done | 2026-10-11T14:34:00-05:00 | N1 to N10 and N8b answered, none 
 PF-CONSENT: done | 2026-10-11T14:40:07-05:00 | repo folder, private GitHub repo and pinned npm install consented in one message | evidence: build/GATES.md, three CONSENT lines
 PF-ENV: done | 2026-10-11T14:40:25-05:00 | node v24.18.0, npm 11.16.0, git 2.54.0, gh logged in as pretending2bejhon, Chrome 154 and Edge 155 installed, 79.9 GB free | evidence: genesis log (private)
 PF-FACTS: done | 2026-10-11T14:50:00-05:00 | exact pins by the 14-day rule (install with --before=2026-09-27), no GitHub advisory on any pin (control: vite@6.0.0 returned 13) | evidence: genesis log (private); pins in package.json
-PF-REPO: open
-PF-HOOK: open
-PF-HOOK-LIVE: open
+PF-REPO: done | 2026-10-11T15:12:31-05:00 | git init -b main with the noreply identity and eol=lf; LICENSE is the AGPL-3.0 text (sha256 0d96a4ff...abcb0); every ledger created empty; npm install exit 0, 202 packages, every direct pin exact, no install script ran (ignore-scripts); check-public tree clean (exit 0, 23 files; planted control caught every class, missing or empty denylist exit 3); first commit 198c7ba; private remote created, visibility PRIVATE, history clean, main pushed | evidence: build/evidence/session/PF-REPO-tree.1.txt
+PF-HOOK: done | 2026-10-11T15:31:24-05:00 | tools/cap-hook.mjs and tests/tools/cap-hook.test.mjs written; red before the hook existed (150 of 150 failed, MODULE_NOT_FOUND), then green on the final hook file (150 of 150 passed, hook sha256 49f74193...c82e); each denial checked for its own reason; install and uninstall scripts written, their merge logic proven on a temp file under Windows PowerShell 5.1; install steps handed to the owner | evidence: build/evidence/session/PF-HOOK-red.1.txt, build/evidence/session/PF-HOOK-green.2.txt
+PF-HOOK-LIVE: open (session 2, after the owner's install: two --report runs, the crash test, the three-call subagent proof, then JHON-CAPS-RESIDUAL)
 PF-CONTROLS: open
 PF-CAP: open
 
@@ -52,6 +52,12 @@ N10 backup: pretending2bejhon/hush created PRIVATE at the start, pushed after ea
 N8b caps on this runtime: (a) the hook under managed settings with Administrators-only files, Claude Code 2.1.295 or later for onFailure block, and a JHON-CAPS-RESIDUAL line | "let's go with A, and no more codex review. I will launch the spec session" | 2026-10-11T14:29-05:00
 
 ## Learnings
+
+- check-public fails closed without the owner's denylist, so the denylist has to exist before the first commit, not at the hook install.
+- npm install --before=<date> applies the 14-day pin rule to the whole tree. One dev-only advisory remains: source-map-js 1.2.1 under vite and postcss (GHSA-68fv-2mgg-jv7q, fixed in 1.2.2, published after the cutoff); npm audit --omit=dev is clean.
+- typescript-eslint 8.x peers typescript below 6.1, so typescript is pinned at 6.0.3, not the native 7.x line.
+- Claude Code tool shells carry CLAUDE_CODE_SESSION_ID; the hook's command line uses it to find its own session.
+- Windows PowerShell 5.1 ConvertTo-Json keeps nested single-element arrays as arrays when they are built with @() and +=.
 
 ## Escalations
 
