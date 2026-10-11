@@ -1,0 +1,6 @@
+node_modules/
+dist/
+build/evidence/session/
+test-results/
+playwright-report/
+.env*
