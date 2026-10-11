@@ -16,7 +16,7 @@ PF-REPO: done | 2026-10-11T15:12:31-05:00 | git init -b main with the noreply id
 PF-HOOK: done | 2026-10-11T15:31:24-05:00 | tools/cap-hook.mjs and tests/tools/cap-hook.test.mjs written; red before the hook existed (150 of 150 failed, MODULE_NOT_FOUND), then green on the final hook file (150 of 150 passed, hook sha256 49f74193...c82e); each denial checked for its own reason; install and uninstall scripts written, their merge logic proven on a temp file under Windows PowerShell 5.1; install steps handed to the owner | evidence: build/evidence/session/PF-HOOK-red.1.txt, build/evidence/session/PF-HOOK-green.2.txt
 PF-HOOK-LIVE: done | 2026-10-11T15:59:08-05:00 | session 2: the first report read the managed settings ACL as unreadable (Get-Acl translated each rule to an account name and fails on ALL APPLICATION PACKAGES), fixed in 909b31ec to read rules by SID, hook test red then green (151 of 151); the armed crash test blocked one Bash call with a hook error and was consumed, that call uncounted; the three-call Sonnet subagent showed 4 events under one agent id (Read, Read, Glob, SubagentHandback), escalated and accepted by the owner as the three instructed calls plus one hand-back (proof.1 to proof.5); after the owner reinstalled 909b31ec's hook: two reports one call apart, both exit 0, calls 45 then 46, copies equal (87e5342a), admin-only yes (folder, hook, managed settings), onFailure block yes on all three events, version 2.1.295, no .claude folder | evidence: build/evidence/hook-live.proof.1.txt to build/evidence/hook-live.proof.7.txt
 PF-CONTROLS: open
-PF-CAP: open
+PF-CAP: open | the owner's words received 2026-10-11T16:00:10-05:00, whole message: "JHON-CAPS-RESIDUAL: all-sessions I accept the residual." | the GATES line is written by this session's last commit (hush-gate ends a spec session)
 
 ## Spec areas
 
@@ -28,7 +28,7 @@ art: open
 calibration: open
 ending: open
 interfaces: open
-verifiers: open
+verifiers: open | written and controlled so far: tools/protect.mjs (both manifests, unlisted verifiers, CRLF drift, commit subjects since the cut) and tools/gates.mjs (anchored grammar from the hook, JHON-GO bound to the cut digest), 25 of 25 controls green 2026-10-11T16:07:19-05:00 | evidence: build/evidence/session/PF-CONTROLS-protect-gates.1.txt
 items: open
 scoreboard: open
 hand-walk: open
