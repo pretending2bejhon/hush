@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: hook-live
+phase: proof
+command: node tools/cap-hook.mjs --crash-test arm
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T15:54:33-05:00
+time-end: 2026-10-11T15:54:33-05:00
+head: 064aedef7ee58a7765fdc5b64611ffe42ace1577
+exit: 0
+--- output ---
+crash-test: armed for session 0acea7c1-b1ef-47f7-ba8b-05cb94ad07c8; its next PreToolUse fails once, outside the hook's try
+--- end ---

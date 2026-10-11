@@ -1,0 +1,31 @@
+HUSH-EVIDENCE v1
+id: hook-live
+phase: proof
+command: node tools/cap-hook.mjs --report
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T15:49:00-05:00
+time-end: 2026-10-11T15:49:03-05:00
+head: 064aedef7ee58a7765fdc5b64611ffe42ace1577
+exit: 1
+--- output ---
+cap-hook report
+session: 0acea7c1-b1ef-47f7-ba8b-05cb94ad07c8
+role: spec (declared 2026-10-11T15:47:17-05:00)
+model: claude-opus-5-5
+calls: 16 (cap 1500)
+item commits credited: 0
+budget commits: hush-spec 0, hush-gate 0, hush-review 0
+active time: 0h01m (cap 6h00m)
+events by agent: main=16
+cap state: none hit
+installed copy sha256: 49f7419371b54b216b375b8701461858bc0cd343dd5bc30ce1e79fcbbe69c82e
+repo copy sha256:      49f7419371b54b216b375b8701461858bc0cd343dd5bc30ce1e79fcbbe69c82e
+copies equal: yes
+admin-only: no (folder yes; hook yes; managed settings no (ACL unreadable: Command failed: powershell.exe -NoProfile -NonInteractive -Command $ErrorActionPreference='Stop'; (Get-Acl -LiteralPath 'C:\Program Files\ClaudeCode\managed-settings.json').Access | ForEach-Object { $_.IdentityReference.Translate([System.Security.Principal.SecurityIdentifier]).Value + '|' + [long]$_.FileSystemRights + '|' + $_.AccessControlType }))
+onFailure block registered: yes (PreToolUse=yes, PostToolUse=yes, PostToolUseFailure=yes)
+claude code version: 2.1.295 (needs 2.1.295 or later: yes)
+.claude folder in the repo: no
+crash-test: never armed
+mode: repo copy (test overrides honoured)
+--- end ---

@@ -14,7 +14,7 @@ PF-ENV: done | 2026-10-11T14:40:25-05:00 | node v24.18.0, npm 11.16.0, git 2.54.
 PF-FACTS: done | 2026-10-11T14:50:00-05:00 | exact pins by the 14-day rule (install with --before=2026-09-27), no GitHub advisory on any pin (control: vite@6.0.0 returned 13) | evidence: genesis log (private); pins in package.json
 PF-REPO: done | 2026-10-11T15:12:31-05:00 | git init -b main with the noreply identity and eol=lf; LICENSE is the AGPL-3.0 text (sha256 0d96a4ff...abcb0); every ledger created empty; npm install exit 0, 202 packages, every direct pin exact, no install script ran (ignore-scripts); check-public tree clean (exit 0, 23 files; planted control caught every class, missing or empty denylist exit 3); first commit 198c7ba; private remote created, visibility PRIVATE, history clean, main pushed | evidence: build/evidence/session/PF-REPO-tree.1.txt
 PF-HOOK: done | 2026-10-11T15:31:24-05:00 | tools/cap-hook.mjs and tests/tools/cap-hook.test.mjs written; red before the hook existed (150 of 150 failed, MODULE_NOT_FOUND), then green on the final hook file (150 of 150 passed, hook sha256 49f74193...c82e); each denial checked for its own reason; install and uninstall scripts written, their merge logic proven on a temp file under Windows PowerShell 5.1; install steps handed to the owner | evidence: build/evidence/session/PF-HOOK-red.1.txt, build/evidence/session/PF-HOOK-green.2.txt
-PF-HOOK-LIVE: open (session 2, after the owner's install: two --report runs, the crash test, the three-call subagent proof, then JHON-CAPS-RESIDUAL)
+PF-HOOK-LIVE: open | 2026-10-11T15:56:37-05:00 | session 2: the first report read the managed settings ACL as unreadable (Get-Acl translated each rule to an account name and fails on ALL APPLICATION PACKAGES), fixed in 909b31ec to read rules by SID, hook test red then green (151 of 151); with the fix: admin-only yes (folder, hook, managed settings), onFailure block yes on all three events, version 2.1.295, no .claude folder; copies differ until the owner reinstalls (installed 49f74193, repo 87e5342a); the armed crash test blocked one Bash call with a hook error and was consumed, that call uncounted; the three-call Sonnet subagent shows 4 events under one agent id (Read, Read, Glob, SubagentHandback): escalated below | evidence: build/evidence/hook-live.proof.1.txt to build/evidence/hook-live.proof.5.txt
 PF-CONTROLS: open
 PF-CAP: open
 
@@ -58,7 +58,12 @@ N8b caps on this runtime: (a) the hook under managed settings with Administrator
 - typescript-eslint 8.x peers typescript below 6.1, so typescript is pinned at 6.0.3, not the native 7.x line.
 - Claude Code tool shells carry CLAUDE_CODE_SESSION_ID; the hook's command line uses it to find its own session.
 - Windows PowerShell 5.1 ConvertTo-Json keeps nested single-element arrays as arrays when they are built with @() and +=.
+- Get-Acl's .Access translates every rule to an account name and throws on ALL APPLICATION PACKAGES (S-1-15-2-1), which every file inheriting from Program Files carries; GetAccessRules($true, $true, [SecurityIdentifier]) reads the SIDs without translating.
+- Every subagent returns through a SubagentHandback tool call, which the hook sees and counts under the subagent's agent id: a subagent told to make n calls shows n + 1.
 
 ## Escalations
+
+HUSH-SPEC-ESCALATE: subagent-calls-uncounted | 2026-10-11T15:56:37-05:00 | 909b31ec
+What was tried: PF-HOOK-LIVE step 4 dispatched one read-only Sonnet subagent ordered to make exactly three tool calls (Read, Read, Glob) and return; it did, and reported "three calls made". The evidence: --report lists 4 events under one non-empty agent id beside the parent's own calls (build/evidence/hook-live.proof.5.txt), and the hook's event log for that id holds Read, Read, Glob and SubagentHandback, the harness tool through which every subagent hands its report back. No subagent call went uncounted; one call more than the criterion's "exactly three" was counted, and it is the hand-back every subagent makes. The decision needed from the owner: accept step 4 as "the instructed calls plus exactly one SubagentHandback, all under one non-empty agent id" (recommended: the hand-back is a real tool call and the caps should count it), or rule otherwise. Separately, the copies differ until the owner reinstalls the fixed hook.
 
 APPROVAL: open

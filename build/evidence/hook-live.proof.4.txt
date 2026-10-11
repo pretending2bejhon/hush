@@ -1,0 +1,31 @@
+HUSH-EVIDENCE v1
+id: hook-live
+phase: proof
+command: node tools/cap-hook.mjs --report
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T15:54:39-05:00
+time-end: 2026-10-11T15:54:41-05:00
+head: 064aedef7ee58a7765fdc5b64611ffe42ace1577
+exit: 1
+--- output ---
+cap-hook report
+session: 0acea7c1-b1ef-47f7-ba8b-05cb94ad07c8
+role: spec (declared 2026-10-11T15:47:17-05:00)
+model: claude-opus-5-5
+calls: 31 (cap 1500)
+item commits credited: 0
+budget commits: hush-spec 0, hush-gate 0, hush-review 0
+active time: 0h07m (cap 6h00m)
+events by agent: main=31
+cap state: none hit
+installed copy sha256: 49f7419371b54b216b375b8701461858bc0cd343dd5bc30ce1e79fcbbe69c82e
+repo copy sha256:      87e5342a9fff0df55d931e08bff15aac7bfd6f796a9f1c3f3456cab1bc9064a6
+copies equal: no
+admin-only: yes (folder yes; hook yes; managed settings yes)
+onFailure block registered: yes (PreToolUse=yes, PostToolUse=yes, PostToolUseFailure=yes)
+claude code version: 2.1.295 (needs 2.1.295 or later: yes)
+.claude folder in the repo: no
+crash-test: consumed at 2026-10-11T15:54:36-05:00 by Bash (session 0acea7c1-b1ef-47f7-ba8b-05cb94ad07c8)
+mode: repo copy (test overrides honoured)
+--- end ---
