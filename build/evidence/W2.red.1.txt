@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: W2
+phase: red
+command: node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:31:11-05:00
+time-end: 2026-10-11T23:31:11-05:00
+head: 7960ef0773b182c9fae222d680eab354c5044adc
+exit: 2
+--- output ---
+replay: replays/05-doors.json: not JSON (ENOENT: no such file or directory, open '<repo>\replays\05-doors.json')
+--- end ---
