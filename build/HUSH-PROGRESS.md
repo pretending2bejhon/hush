@@ -19,7 +19,7 @@ CAL1: passes: true (evidence: build/evidence/CAL1.green.1.txt)
 AU1: passes: true (evidence: build/evidence/AU1.green.1.txt)
 AU2: passes: true (evidence: build/evidence/AU2.green.1.txt)
 AU3: passes: true (evidence: build/evidence/AU3.green.1.txt)
-FX1: passes: false
+FX1: passes: true (evidence: build/evidence/FX1.green.1.txt)
 GAME1: passes: false
 CAL2: passes: false
 RN1: passes: false
