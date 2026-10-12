@@ -40,13 +40,9 @@ class EndingScene extends Phaser.Scene {
   }
 }
 
-// Until the calibration passes exist, the first key starts the run with both values 0, once the audio runs.
+// The calibration scene hands its two values over through skipCalibration once its passes are done.
 const game = createGame([
-  new CalibrationScene(() => {
-    void engine.start().then(() => {
-      if (!calibration) skipCalibration(0, 0);
-    });
-  }),
+  new CalibrationScene({ engine, onDone: skipCalibration }),
   new PlayScene(run),
   new EndingScene(),
 ]);

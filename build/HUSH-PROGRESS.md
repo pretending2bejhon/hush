@@ -21,7 +21,7 @@ AU2: passes: true (evidence: build/evidence/AU2.green.1.txt)
 AU3: passes: true (evidence: build/evidence/AU3.green.1.txt)
 FX1: passes: true (evidence: build/evidence/FX1.green.1.txt)
 GAME1: passes: true (evidence: build/evidence/GAME1.green.1.txt)
-CAL2: passes: false
+CAL2: passes: true (evidence: build/evidence/CAL2.green.1.txt)
 RN1: passes: false
 RN2: passes: false
 RN3: passes: false
@@ -38,6 +38,8 @@ END1: passes: false
 - CAL2's acceptance (`npm run probe:flash`) already exits 0 on GAME1's tree: the probe only waits for the calibration scene to be left, and GAME1's first-key shortcut leaves it at once, so the check cannot tell the two passes from no passes (CAL2; evidence build/evidence/CAL2.red.1.txt).
 - A check that measures only safety or speed (flash, perf) grows easier as work is missing, so it cannot be red before the work exists. Every acceptance needs a part that fails while the item's own module or behaviour is absent: CAL2 now counts the calibration's clicks, fills and rings; RN1 to RN4 and END1 now run an art test against tests/fixtures/reference/art.mjs before check:art (producer, 2026-10-12; build/HUSH-FIXLOG.md).
 - The art is a port, like the sim: tests/fixtures/reference/art.mjs is normative (HUSH-SPEC section 10.6). The tests compare shape lists within 1e-6, so a port may group its arithmetic differently but keeps every shape, its order, its keys and its colour (producer, 2026-10-12).
+- The cap hook denies any shell call whose text names a `.claude` folder, even a harmless `ls`; never name one in a command (CAL2).
+- The calibration scene is a straight port of the control page's `Calibration` scene; `engine.start()` is idempotent, so the scene's first-key call and main.ts's first-key listener both stand (CAL2).
 
 ## Rounds
 
