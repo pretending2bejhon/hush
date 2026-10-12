@@ -10,17 +10,44 @@
 //            notice (plus the run line once the run is finished, in ?playtest mode)
 //   network  every request goes to the page's own origin (data: and blob: URLs included)
 //   storage  no cookie, localStorage, sessionStorage, IndexedDB or Cache Storage entry at the end
+//   visibility (only when named) the page reported hidden suspends the AudioContext and freezes the sim; visible
+//            again, both run on (D4)
 // Exit 0 every check passes, 1 a check fails, 2 usage, a missing dist or a page that never boots.
 import fs from 'node:fs';
 import path from 'node:path';
 import { bootGame, emitJson, launch, loadWitnesses, openPage, originViolations, parseOptions, playthrough, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
 
 const ALL = ['console', 'play', 'text', 'network', 'storage'];
+const OPTIONAL = ['visibility'];
+
+// Reports the page hidden, then visible again, through the Page Visibility API the game listens to.
+async function visibilityProblems(page) {
+  const read = () => page.evaluate(() => ({ state: window.__hush.audio() ? window.__hush.audio().state : 'none', step: window.__hush.sim() ? window.__hush.sim().step : -1 }));
+  const report = (hidden) => page.evaluate((h) => {
+    Object.defineProperty(document, 'visibilityState', { configurable: true, get: () => (h ? 'hidden' : 'visible') });
+    Object.defineProperty(document, 'hidden', { configurable: true, get: () => h });
+    document.dispatchEvent(new Event('visibilitychange'));
+  }, hidden);
+  await report(true);
+  await page.waitForTimeout(600);
+  const a = await read();
+  await page.waitForTimeout(500);
+  const b = await read();
+  await report(false);
+  await page.waitForTimeout(1200);
+  const c = await read();
+  const problems = [];
+  if (a.state !== 'suspended') problems.push(`hidden: the audio is ${a.state}, not suspended`);
+  if (b.step !== a.step) problems.push(`hidden: the sim moved ${b.step - a.step} steps`);
+  if (c.state !== 'running') problems.push(`visible again: the audio is ${c.state}`);
+  if (!(c.step > b.step)) problems.push('visible again: the sim did not move on');
+  return problems;
+}
 
 async function main(argv) {
   const o = parseOptions(argv, { dist: 'dist', rooms: 'rooms', replays: 'replays', channel: 'chrome', headed: false, query: '', check: ALL.join(','), json: false });
   const want = o.check.split(',').filter(Boolean);
-  if (!want.length || want.some((c) => !ALL.includes(c))) throw new Error(`--check takes ${ALL.join(', ')}`);
+  if (!want.length || want.some((c) => !ALL.includes(c) && !OPTIONAL.includes(c))) throw new Error(`--check takes ${[...ALL, ...OPTIONAL].join(', ')}`);
   const dist = requireDist(o.dist);
   const roomFiles = fs.readdirSync(path.resolve(REPO, o.rooms)).filter((f) => /^\d\d-[a-z-]+\.txt$/.test(f)).sort();
   const witnesses = loadWitnesses(path.resolve(REPO, o.replays));
@@ -43,6 +70,10 @@ async function main(argv) {
       onRoom: (w, phase) => { if (phase === 'end') process.stdout.write(`play: ${label}: room ${w.stem} done\n`); },
     });
     await page.waitForTimeout(1500);
+    if (want.includes('visibility')) {
+      const vp = await visibilityProblems(page);
+      checks.visibility = { ok: vp.length === 0, detail: vp.join('; ') || 'hidden: audio suspended, sim frozen; visible: both run on' };
+    }
     const texts = await page.evaluate(() => window.__hush.pageTexts());
     const objects = await page.evaluate(() => window.__hush.textObjects());
     const storage = await storageReport(page, context);

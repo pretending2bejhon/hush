@@ -93,6 +93,20 @@ describe('AU2 transport', () => {
     expect(pad(2)).not.toEqual(pad(1));
   });
 
+  it('moves the gauntlet mapping mid-run: from the new start bar the pattern starts again at cycle 0', () => {
+    const notes = [];
+    const t = T.createTransport(layers, (n) => notes.push(n));
+    t.restart(2);
+    let now = 1.9;
+    for (; now < 2 + 2 * BAR; now += 0.025) t.tick(now);
+    t.gauntlet(4);
+    for (; now < 2 + 7 * BAR; now += 0.025) t.tick(now);
+    const pad = (bar) => notes.filter((n) => n.layer === 2 && Math.abs(n.time - (2 + bar * BAR)) < 1e-6).map((n) => n.value.note).sort();
+    expect(pad(4)).toEqual(pad(0));
+    expect(pad(5)).toEqual(pad(1));
+    expect(pad(3)).not.toEqual(pad(0));
+  });
+
   it('counts a layer that throws as voice errors and keeps the others', () => {
     const bad = { queryArc() { throw new Error('broken layer'); } };
     const notes = [];

@@ -50,6 +50,7 @@ export function createTransport(layers, play) {
   return {
     get origin() { return origin; },
     restart(o, gauntletStartBar = -1) { origin = o; next = 0; startBar = gauntletStartBar; running = true; },
+    gauntlet(bar) { startBar = bar; },
     tick(now) {
       if (!running) return;
       while (origin + next * SIXTEENTH < now - LATE) {

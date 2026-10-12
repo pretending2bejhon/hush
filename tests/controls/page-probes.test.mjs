@@ -77,6 +77,15 @@ describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
     }, T);
   }
 
+  it('passes the visibility check on the clean control page and fails it with ?novis', () => {
+    const ok = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--check', 'visibility']);
+    expect(ok.out).toMatch(/visibility: ok: hidden: audio suspended, sim frozen/);
+    expect(ok.code).toBe(0);
+    const bad = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--query', 'novis', '--check', 'visibility']);
+    expect(bad.out).toMatch(/visibility: FAIL: hidden: the audio is running, not suspended/);
+    expect(bad.code).toBe(1);
+  }, T);
+
   it('fails a witness that dies and a room without a witness', () => {
     const replays = tmp('hush-replays-');
     for (const f of fs.readdirSync(path.join(CP, 'replays'))) fs.copyFileSync(path.join(CP, 'replays', f), path.join(replays, f));

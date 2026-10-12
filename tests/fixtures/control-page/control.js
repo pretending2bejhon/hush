@@ -10,6 +10,7 @@
 //   ?scroll=<hex> a row of spikes in that colour scrolling at run speed (the art check of X6)
 //   ?fetch=<url>  one request to that URL (X10)                ?store=local|session|cookie|idb (X10)
 //   ?text         a Phaser Text object (D8)                    ?domtext a DOM text over the canvas (D16)
+//   ?novis        no suspension when the page is hidden (D4)
 //   ?av=master-off|synth-throw|layer-off  the av probe's planted faults (X7)
 import * as Phaser from 'phaser';
 import { installProbe } from '../../../src/probe/api.ts';
@@ -58,9 +59,10 @@ function skipCalibration(avOffset, inputBias) {
 // The tick driver: the sim follows the heard audio clock, at most 24 steps a frame.
 function drive() {
   const ctx = engine.context();
-  if (!ctx || !sim) return;
+  if (!ctx || !sim || ctx.state !== 'running') return;
   const c = engine.clock();
-  const heard = c && c.valid ? performance.now() / 1000 + c.offset : ctx.currentTime;
+  if (!c || !c.valid) return;
+  const heard = performance.now() / 1000 + c.offset;
   const target = Math.floor((heard - engine.origin()) * 240);
   for (let n = 0; n < 24 && sim.step < target; n++) {
     sim.tick(source ? source.next(sim.step) : 0);
@@ -164,6 +166,16 @@ function planted() {
     div.style.cssText = `position:fixed;left:${r.left + r.width / 2}px;top:${r.top + r.height / 2}px;color:#fff`;
     document.body.appendChild(div);
   }
+}
+
+// A hidden page suspends the audio, and with it the sim (the driver ticks only while the context runs).
+if (!params.has('novis')) {
+  document.addEventListener('visibilitychange', () => {
+    const ctx = engine.context();
+    if (!ctx) return;
+    if (document.visibilityState === 'hidden') ctx.suspend();
+    else ctx.resume();
+  });
 }
 
 function firstKey(e) {
