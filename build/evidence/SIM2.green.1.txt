@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: SIM2
+phase: green
+command: npx vitest run tests/sim/oracle-base.test.mjs tests/sim/oracle-dash.test.mjs tests/sim/oracle-beat.test.mjs tests/sim/oracle-wave.test.mjs tests/sim/oracle-gauntlet.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:27:03-05:00
+time-end: 2026-10-11T23:27:05-05:00
+head: 8c68fbd879bba348b2be27b43415c3f05e728a68
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  5 passed (5)
+      Tests  19 passed (19)
+   Start at  23:27:03
+   Duration  1.42s (tests 77%, transform 16%, import 6%, worker 1%)
+
+--- end ---

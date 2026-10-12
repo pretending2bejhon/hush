@@ -1,0 +1,81 @@
+HUSH-EVIDENCE v1
+id: SIM2
+phase: standing
+command: npm run standing
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:27:12-05:00
+time-end: 2026-10-11T23:27:19-05:00
+head: 8c68fbd879bba348b2be27b43415c3f05e728a68
+exit: 0
+--- output ---
+
+> hush@0.0.0 standing
+> node tools/standing.mjs
+
+standing: public-tree: node <repo>\tools\check-public.mjs
+check-public tree (188 files): clean (owner denylist, 4 names + 1 machine names)
+standing: public-tree: ok
+standing: public-history: node <repo>\tools\check-public.mjs --history HEAD
+check-public history (1 refs, 21 commits, 112 trees, 237 blobs): clean (owner denylist, 4 names + 1 machine names)
+standing: public-history: ok
+standing: protect: node <repo>\tools\protect.mjs --check
+protect: clean
+standing: protect: ok
+standing: gates: node <repo>\tools\gates.mjs --lint
+gates: ok, 5 line(s)
+standing: gates: ok
+standing: spec-content: node <repo>\tools\spec-content.mjs --check
+spec-content: spec clean, 13 entries
+standing: spec-content: ok
+standing: mapped-tests: node <repo>\node_modules\vitest\vitest.mjs run tests/sim/beat.test.mjs tests/rooms/compile.test.mjs tests/rooms/gauntlet-pattern.test.mjs
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  3 passed (3)
+      Tests  10 passed (10)
+   Start at  23:27:13
+   Duration  792ms (tests 70%, transform 21%, import 8%, worker 1%)
+
+standing: mapped-tests: ok
+standing: npm run smoke: node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js run smoke
+
+> hush@0.0.0 smoke
+> vite build && node tools/probe-smoke.mjs
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 9 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-8-qyiLBF.js  1,379.67 kB │ gzip: 359.99 kB
+
+[32m✓ built in 550ms[39m
+smoke: page: ok: GET /hush/ 200
+smoke: build-meta: ok: hush-build 8c68fbd879bb
+smoke: boot: ok: scenes ["calibration"]
+smoke: canvas: ok: not blank (1220 by 686)
+smoke: text: ok: title, link and notice only; no text object
+smoke: requests: ok: every request answered below 400
+smoke: console: ok: zero console and page errors
+smoke: PASS (/hush/)
+standing: npm run smoke: ok
+standing: node tools/spec-content.mjs --tree: node <repo>\tools\spec-content.mjs --tree
+rooms/01-wake.txt: ok
+rooms/02-heartbeat.txt: ok
+rooms/03-dash.txt: ok
+rooms/04-thorns.txt: ok
+rooms/05-doors.txt: ok
+rooms/06-wave.txt: ok
+rooms/07-current.txt: ok
+rooms/08-steps.txt: ok
+rooms/09-gates.txt: ok
+rooms/10-crown.txt: ok
+rooms/11-gauntlet.txt: ok
+music/area1.strudel: ok
+spec-content: tree clean, 12 file(s)
+standing: node tools/spec-content.mjs --tree: ok
+standing: GREEN (4 item(s) passed, 3 mapped test file(s), 2 command(s))
+--- end ---

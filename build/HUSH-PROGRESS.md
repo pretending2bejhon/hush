@@ -8,7 +8,7 @@ S1: passes: true (evidence: build/evidence/S1.green.2.txt)
 SIM1: passes: true (evidence: build/evidence/SIM1.green.1.txt)
 RM1: passes: true (evidence: build/evidence/RM1.green.1.txt)
 CT1: passes: true (evidence: build/evidence/CT1.green.1.txt)
-SIM2: passes: false
+SIM2: passes: true (evidence: build/evidence/SIM2.green.1.txt)
 W1: passes: false
 W2: passes: false
 W3: passes: false
