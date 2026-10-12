@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R1-AU2-controls
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/controls/product-tests.test.mjs -t scheduler
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T15:19:38-05:00
+time-end: 2026-10-12T15:19:45-05:00
+head: d1b97eb3f92991b3169383318af60c953acbce6f
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed | 27 skipped (30)
+   Start at  15:19:38
+   Duration  6.42s (tests 99%)
+
+--- end ---

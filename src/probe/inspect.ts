@@ -47,6 +47,8 @@ export interface ProbeAudioStatus {
   lateShifted: number;
   lateDropped: number;
   layerGains: number[];
+  // The bar from which the transport plays the gauntlet's track from cycle 0, -1 for none (review R1, MAJOR 1).
+  gauntletBar?: number;
 }
 
 export interface ProbeClock {

@@ -1,7 +1,8 @@
 // AU2: the transport (src/audio/scheduler.ts; Vault City's scheduler at 25 ms, HUSH-SPEC section 8): every onset
 // of every layer handed over once, at origin + (bar + onset) x BAR, no more than 0.12 s ahead; a note up to
 // 0.05 s late shifted to now + 5 ms, an older one dropped and counted; a restart from cycle 0 at a new origin; the
-// gauntlet's cycle mapping (bar - startBar from the start bar on); a pattern that throws counted as a voice error.
+// gauntlet's cycle mapping (bar - startBar from the start bar on) and its start bar read back (review R1); a
+// pattern that throws counted as a voice error.
 import { describe, expect, it } from 'vitest';
 import { load } from '../helpers/load.mjs';
 import { barOnsets, loadStrudel } from '../../tools/strudel-node.mjs';
@@ -107,6 +108,20 @@ describe('AU2 transport', () => {
     expect(pad(4)).toEqual(pad(0));
     expect(pad(5)).toEqual(pad(1));
     expect(pad(3)).not.toEqual(pad(0));
+  });
+
+  it('reports the bar its gauntlet mapping starts from, -1 for none (review R1, MAJOR 1)', () => {
+    const t = T.createTransport(layers, () => {});
+    expect(t.startBar).toBe(-1);
+    t.restart(2);
+    expect(t.startBar).toBe(-1);
+    t.restart(2, 1);
+    expect(t.startBar).toBe(1);
+    t.gauntlet(7);
+    expect(t.startBar).toBe(7);
+    expect(t.origin).toBe(2);
+    t.restart(3);
+    expect(t.startBar).toBe(-1);
   });
 
   it('counts a layer that throws as voice errors and keeps the others', () => {

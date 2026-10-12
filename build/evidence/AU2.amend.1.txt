@@ -1,0 +1,52 @@
+HUSH-EVIDENCE v1
+id: AU2
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/audio/scheduler.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T15:19:36-05:00
+time-end: 2026-10-12T15:19:37-05:00
+head: d1b97eb3f92991b3169383318af60c953acbce6f
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+stdout | tests/audio/scheduler.test.mjs
+🌀 @strudel/core loaded 🌀
+
+stderr | tests/audio/scheduler.test.mjs
+cannot use window: not in browser?
+
+ ❯ tests/audio/scheduler.test.mjs (8 tests | 1 failed) 252ms
+   ❯ AU2 transport (8)
+     × reports the bar its gauntlet mapping starts from, -1 for none (review R1, MAJOR 1) 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/audio/scheduler.test.mjs > AU2 transport > reports the bar its gauntlet mapping starts from, -1 for none (review R1, MAJOR 1)
+AssertionError: expected undefined to be -1 // Object.is equality
+
+- Expected:
+-1
+
++ Received:
+undefined
+
+ ❯ tests/audio/scheduler.test.mjs:115:24
+    113|   it('reports the bar its gauntlet mapping starts from, -1 for none (r…
+    114|     const t = T.createTransport(layers, () => {});
+    115|     expect(t.startBar).toBe(-1);
+       |                        ^
+    116|     t.restart(2);
+    117|     expect(t.startBar).toBe(-1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  15:19:36
+   Duration  658ms (tests 47%, transform 35%, import 16%, worker 1%)
+
+--- end ---

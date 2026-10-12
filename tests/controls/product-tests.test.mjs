@@ -84,6 +84,8 @@ const cases = [
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('engine.unlockAt(pending, unlockBar(step));', 'engine.unlockAt(pending, unlockBar(step) + 1);') }), 'late'],
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('if (pending !== 0 && pending !== lastPending) engine.unlockAt(pending, unlockBar(step));', '') }), 'none'],
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('engine.gauntlet(gBeat / 4);', '{}') }), 'gauntlet'],
+  // Review R1 (MAJOR 1): a transport that does not report its gauntlet mapping.
+  ['tests/audio/scheduler.test.mjs', { HUSH_AUDIO_MODULE: `${REF}/audio.mjs` }, () => ({ HUSH_AUDIO_MODULE: refMutant('audio.mjs', 'get startBar() { return startBar; },', 'get startBar() { return -1; },') }), 'startBar'],
   // Review R1 (MINOR 4): the run's origin lead back at 0.1 s.
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('export const ORIGIN_LEAD = 0.25;', 'export const ORIGIN_LEAD = 0.1;') }), 'lead'],
   // Review R1 (MAJOR 3): the play scene's frame drawing the beat entities 24 steps (0.1 s) ahead of the sim.

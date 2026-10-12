@@ -19,14 +19,17 @@
 //   unlock   X7's clear-time half in the live run (review R1, MAJOR 1): room k (each room up to the page's layer
 //            count) returns layer k. Once its witness clears it, nothing restarts the run until that layer's
 //            bar line has passed; layer k's gate must read 0 until GATE_SKEW_S before origin + bar x BAR and 1
-//            from GATE_SKEW_S after it, bar being unlockBar(the clearing step) (section 4.5)
+//            from GATE_SKEW_S after it, bar being unlockBar(the clearing step) (section 4.5). The clear that
+//            enters the gauntlet is then watched on: at its entry and its first respawn the engine's
+//            gauntletBar must be the sim's gBeat / 4 (tools/probe-lib.mjs gauntletMapProblems)
 //   visibility (only when named) the page reported hidden suspends the AudioContext and freezes the sim; visible
 //            again, both run on (D4)
 // Exit 0 every check passes, 1 a check fails, 2 usage, a missing dist or a page that never boots.
 // (Default checks: console, play, text, network, storage and unlock.)
 import fs from 'node:fs';
 import path from 'node:path';
-import { bootGame, emitJson, extraTexts, launch, loadWitnesses, openPage, originViolations, parseOptions, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
+import { FIELDS } from '../tests/fixtures/oracle/sim.mjs';
+import { bootGame, emitJson, extraTexts, gauntletMapProblems, launch, loadWitnesses, openPage, originViolations, parseOptions, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
 
 const ALL = ['console', 'play', 'text', 'network', 'storage', 'unlock'];
 const OPTIONAL = ['visibility'];
@@ -73,6 +76,34 @@ async function unlockProblems(page, { room, layer, step }) {
     if (Date.now() - begun > GATE_WAIT_MS + (at - s.t) * 1000) return [`${label}: the context time stalled at ${s.t.toFixed(3)} s before bar line ${bar}`];
     await sleep(10);
   }
+}
+
+// The unlock check's gauntlet half (review R1, MAJOR 1): the clear of the room before the gauntlet (section 5.2,
+// room 11) enters it, and the run goes on untouched, so the creature waits for its run's bar, runs, dies at the
+// first obstacle and starts again. Reads the sim's gBeat (by the oracle's FIELDS names) beside the engine's
+// gauntletBar until two run starts are seen or GAUNTLET_WAIT_MS has passed; tools/probe-lib.mjs judges them.
+const GAUNTLET_ROOM = 11;
+const GAUNTLET_WAIT_MS = 10000;
+const GBEAT = FIELDS.indexOf('gBeat');
+const ROOM_FIELD = FIELDS.indexOf('room');
+
+async function gauntletReads(page) {
+  const reads = [];
+  const starts = new Set();
+  const begun = Date.now();
+  while (Date.now() - begun < GAUNTLET_WAIT_MS && starts.size < 2) {
+    const o = await page.evaluate(([gi, ri]) => {
+      const s = window.__hush.sim();
+      const a = window.__hush.audio();
+      return s && a ? { room: s.state[ri], gBeat: s.state[gi], bar: a.gauntletBar } : null;
+    }, [GBEAT, ROOM_FIELD]);
+    if (o && o.room === GAUNTLET_ROOM && o.gBeat > 0) {
+      reads.push({ gBeat: o.gBeat, bar: o.bar });
+      starts.add(o.gBeat);
+    }
+    await sleep(25);
+  }
+  return reads;
 }
 
 // Reports the page hidden, then visible again, through the Page Visibility API the game listens to.
@@ -174,7 +205,7 @@ async function main(argv) {
     // then watched up to that layer's bar line before the next room starts.
     const objectCounts = [];
     const layerCount = await page.evaluate(() => window.__hush.layerCount());
-    const unlock = { watched: 0, problems: [] };
+    const unlock = { watched: 0, gauntletReads: 0, problems: [] };
     const rooms = await playthrough(page, witnesses, {
       onRoom: async (w, phase, info) => {
         if (phase !== 'end') return;
@@ -182,6 +213,11 @@ async function main(argv) {
         if (want.includes('unlock') && info.ok && info.clearStep !== null && w.room >= 1 && w.room <= layerCount) {
           unlock.watched += 1;
           unlock.problems.push(...await unlockProblems(page, { room: w.room, layer: w.room, step: info.clearStep - 1 }));
+          if (w.room + 1 === GAUNTLET_ROOM) {
+            const reads = await gauntletReads(page);
+            unlock.gauntletReads = reads.length;
+            unlock.problems.push(...gauntletMapProblems(reads));
+          }
         }
         process.stdout.write(`play: ${label}: room ${w.stem} done\n`);
       },
@@ -214,7 +250,7 @@ async function main(argv) {
     checks.network = { ok: violations.length === 0, detail: violations.length ? `other origins: ${violations.join(', ')}` : `${log.requests.length} requests, all to the page's origin` };
     checks.storage = { ok: storage.clean, detail: storage.clean ? 'nothing stored' : JSON.stringify(storage) };
     if (!unlock.watched && !unlock.problems.length) unlock.problems.push(`no room returned a layer (the page has ${layerCount} layer(s))`);
-    checks.unlock = { ok: unlock.problems.length === 0, detail: unlock.problems.slice(0, 4).join('; ') || `${unlock.watched} rooms cleared, each layer's gate closed until its bar line and open after it` };
+    checks.unlock = { ok: unlock.problems.length === 0, detail: unlock.problems.slice(0, 4).join('; ') || `${unlock.watched} rooms cleared, each layer's gate closed until its bar line and open after it${unlock.gauntletReads ? `; the gauntlet's track mapped from its run's bar at its entry and its respawn (${unlock.gauntletReads} reads)` : ''}` };
     report = {
       kind: 'play', browser: label, rooms, checks, requests: log.requests.length, storage,
       ending: { started: ending.started, early: ending.early, readMs: ending.ms, stepSeen: ending.atStart ? ending.atStart.step : null, runLine },

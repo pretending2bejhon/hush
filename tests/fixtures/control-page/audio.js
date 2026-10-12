@@ -39,7 +39,7 @@ export function compileTrack(code) {
 }
 
 export function createEngine(trackText, variant = '') {
-  const status = { state: 'none', time: 0, origin: 0, scheduledVoices: 0, voiceErrors: 0, lateShifted: 0, lateDropped: 0, layerGains: [] };
+  const status = { state: 'none', time: 0, origin: 0, scheduledVoices: 0, voiceErrors: 0, lateShifted: 0, lateDropped: 0, layerGains: [], gauntletBar: -1 };
   let ctx = null;
   let starting = null;
   let analyser = null;
@@ -156,6 +156,7 @@ export function createEngine(trackText, variant = '') {
       nextStep = 0;
       startBar = gauntletStartBar;
       status.origin = origin;
+      status.gauntletBar = startBar;
       gates.forEach((g, i) => {
         g.gain.cancelScheduledValues(now);
         g.gain.setValueAtTime(mask & (1 << (i + 1)) ? 1 : 0, now);

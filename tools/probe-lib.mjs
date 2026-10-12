@@ -171,6 +171,19 @@ export async function playthrough(page, witnesses, { onRoom = null, timeoutPad =
   return results;
 }
 
+// The unlock check's gauntlet half (review R1, MAJOR 1): reads, after the clear that enters the gauntlet, of the
+// sim's gBeat in room 11 beside the engine's gauntletBar ({ gBeat, bar }). Each run start (the entry, each
+// respawn) sets gBeat; the engine must map the track from bar gBeat / 4 on every read, and at least two run
+// starts must have been seen (the entry and a respawn).
+export function gauntletMapProblems(reads) {
+  const problems = [];
+  const wrong = reads.find((o) => o.bar !== o.gBeat / 4);
+  if (wrong) problems.push(`the gauntlet's track is mapped from bar ${wrong.bar} while its run starts on bar ${wrong.gBeat / 4} (gBeat ${wrong.gBeat})`);
+  const starts = new Set(reads.map((o) => o.gBeat)).size;
+  if (starts < 2) problems.push(`the gauntlet's mapping was read for ${starts} run start(s), want the entry and a respawn`);
+  return problems;
+}
+
 // Everything the page may have persisted (X10): cookies, both storages, IndexedDB databases, Cache Storage.
 export async function storageReport(page, context) {
   const cookies = (await context.cookies()).length;

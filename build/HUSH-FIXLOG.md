@@ -48,6 +48,10 @@ DISPOSITION: R1-MAJOR1 | X7's clear-time unlock (src/game/run.ts:129) and the ga
   - (a) The control page passes; ?unlock=late, early and none fail. The product passes in 10 rooms (build/evidence/R1-page-controls.amend.1.txt and .2.txt, 15 of 15 with the regression of the playthrough's other controls).
   - (b) 12 of 12 on the product and on the reference. A layer a bar late, none, and no gauntlet mapping each fail (build/evidence/fix/R1-product-controls.1.txt, 26 of 26).
   - Part (c) is still open.
+- Part (c) amended 2026-10-12T15:22-05:00 in the commit `hush-spec: amend AU2 GAME1 ...` after `d1b97eb`.
+  - tests/audio/scheduler.test.mjs pins the getter: 8 of 8 on the reference, red on the tree (startBar undefined; build/evidence/AU2.amend.1.txt). A getter stuck at -1 fails, and LOOKAHEAD and the shift still fail (build/evidence/R1-AU2-controls.amend.1.txt).
+  - The unlock check reads gauntletBar after room 10's clear: "mapped from bar undefined while its run starts on bar 7 (gBeat 28)" on the tree (build/evidence/GAME1.amend.2.txt). The control page passes, as it has no gauntlet, and the predicate passes 2 of 2 in tests/tools/probe-lib.test.mjs.
+  - The applier follows.
 DISPOSITION: R1-MAJOR2 | the calibration scene's tap capture, matching and hand-over never see a tap | 2026-10-12T14:18:00-05:00 | to fix by amendment
 - The flash probe's --calibration mode adds a tapped run on a fresh page. An in-page injector presses a key 40 ms after each click of pass A, timed from the attempt's t0 in heard time, and 25 ms after each ring of pass B, timed from its frameTimes in performance time. Both passes are then accepted at once, so the values in use must be avOffset 15 and inputBias 25 within 5 ms (X8's tolerance), and the scene must be left after two attempts.
 - Section 12 pins the attempt state the injector reads, which the product and the control page already share.
@@ -89,6 +93,10 @@ DISPOSITION: R1-MINOR4 | a run started at the gauntlet stalls about 150 ms on it
   - It is red on the tree before the change: the origin is 5.1, want 5.25 (build/evidence/GAME1.amend.1.txt).
   - A lead of 0.1 s fails, and the three wiring faults still fail (build/evidence/R1-GAME1-controls.amend.1.txt, 4 of 4).
   - The applier follows.
+- Fixed 2026-10-12T15:18-05:00 by the applier in `d1b97eb` (hush-fix: R1-MINOR4).
+  - accept:game passes (console,play,text,visibility,unlock), with tsc and eslint clean (build/evidence/fix/R1-MINOR4.1.txt).
+  - Standing is GREEN (build/evidence/fix/R1-MINOR4.2.txt).
+  - The late-note effect itself is measured by the av probe at VERIFY.
 DISPOSITION: R1-MINOR5 | X3's jitter test re-rolls its seed on every commit, and about 1 HEAD in 40 fails it | 2026-10-12T14:18:00-05:00 | to fix by amendment (verifier)
 - X3's seed comes from the verdict digest instead of HEAD's sha (tools/ship-gate.mjs X3, and the replay step of tools/test-all.mjs for X2). A bookkeeping commit never re-rolls it, and every verdict on one digest sees one seed, judged first at VERIFY.
 - 04-thorns' margin is the room's own, as proven at the cut (97 of 100 on the oracle). It is kept as a known property.

@@ -49,6 +49,8 @@ export function createTransport(layers, play) {
   }
   return {
     get origin() { return origin; },
+    // The bar from which the gauntlet's track starts again at cycle 0, -1 for none (review R1, MAJOR 1).
+    get startBar() { return startBar; },
     restart(o, gauntletStartBar = -1) { origin = o; next = 0; startBar = gauntletStartBar; running = true; },
     gauntlet(bar) { startBar = bar; },
     tick(now) {
