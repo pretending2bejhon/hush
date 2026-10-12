@@ -20,6 +20,8 @@ export interface AudioStatus {
   lateShifted: number;
   lateDropped: number;
   layerGains: number[];
+  // The bar from which the transport plays the gauntlet's track from cycle 0, -1 for none (review R1, MAJOR 1).
+  gauntletBar: number;
 }
 
 export interface AudioEngine {
@@ -144,6 +146,7 @@ export function createAudioEngine(trackText: string): AudioEngine {
         origin: transport ? transport.origin : 0,
         ...c,
         layerGains: gates.map((g) => g.gain.value),
+        gauntletBar: transport ? transport.startBar : -1,
       };
     },
     analyser: () => analyser,

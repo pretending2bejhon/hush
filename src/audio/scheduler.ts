@@ -26,6 +26,7 @@ export interface TransportCounters {
 
 export function createTransport(layers: Pattern[], play: (note: Note) => void): {
   readonly origin: number;
+  readonly startBar: number;
   tick(now: number): void;
   restart(origin: number, gauntletStartBar?: number): void;
   gauntlet(startBar: number): void;
@@ -64,6 +65,10 @@ export function createTransport(layers: Pattern[], play: (note: Note) => void): 
   return {
     get origin(): number {
       return origin;
+    },
+    // The bar from which the gauntlet's track starts again at cycle 0, -1 for none (review R1, MAJOR 1).
+    get startBar(): number {
+      return startBar;
     },
     restart(o: number, gauntletStartBar: number = -1): void {
       origin = o;

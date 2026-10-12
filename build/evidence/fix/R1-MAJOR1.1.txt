@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R1-MAJOR1
+phase: fix
+command: npx vitest run tests/audio/scheduler.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T15:25:47-05:00
+time-end: 2026-10-12T15:25:49-05:00
+head: ace1641a48c6165cf066b5d9be77cd2568454af8
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  8 passed (8)
+   Start at  15:25:48
+   Duration  920ms (tests 45%, transform 35%, import 19%, worker 1%)
+
+--- end ---
