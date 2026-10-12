@@ -1,0 +1,13 @@
+// The Hush - area 1 - ten layers in C minor, one back with every room
+setcpm(140/4)
+
+kick: s("sbd*4").decay(.3).gain(.85)
+pad: note("<[c3,eb3,g3] [ab2,c3,eb3] [f2,ab2,c3] [g2,b2,d3]>").s("triangle").attack(.5).release(1.2).lpf(1600).gain(.14)
+hat: s("white*8").decay(.03).hpf(8000).gain(.16)
+bass: note("<c2 ab1 f1 g1>").struct("~ x ~ x ~ x x ~ ~ x ~ x ~ x ~ x").s("sawtooth").lpf(480).decay(.16).sustain(0).gain(.32)
+clap: s("~ pink ~ pink").decay(.08).hpf(1500).gain(.28)
+arp: n("0 2 4 7 9 7 4 2 0 2 4 7 11 9 7 4").scale("C4:minor").s("triangle").decay(.1).sustain(0).gain(.18)
+perc: note("c5(5,8)").s("square").decay(.035).hpf(2000).gain(.1)
+lead: note("<g4 eb4 f4 d4>").struct("x ~ ~ x ~ ~ x ~").s("sawtooth").lpf(2400).decay(.22).sustain(0).gain(.1)
+ohat: s("~ white ~ white ~ white ~ white").decay(.12).hpf(6000).gain(.1)
+sub: note("<c1 ab0 f0 g0>").s("sine").attack(.04).release(.5).gain(.28)
