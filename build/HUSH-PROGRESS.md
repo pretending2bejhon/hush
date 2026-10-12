@@ -48,6 +48,8 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 
 ## Rounds
 
+CYCLE 1: start | 2026-10-12T11:27:30-05:00 | build-complete | head=715cf1273aae0b59c06144832da824b449899187
+
 ## Checkpoint
 
 CHECKPOINT: CAL2 attempt 1 | 2026-10-12T00:08:00-05:00 | blocked | targets: src/render/calibration-scene.ts, src/main.ts
