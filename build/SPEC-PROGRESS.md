@@ -20,15 +20,15 @@ PF-CAP: open | the owner's words received 2026-10-11T16:00:10-05:00, whole messa
 
 ## Spec areas
 
-physics: open
-rooms: open
-gauntlet: open
-track: open
+physics: done | 2026-10-11T19:14:54-05:00 | the oracle tests/fixtures/oracle/ (constants, room format, step function) is the normative physics; reach table measured on it by tools/reach.mjs: full jump 3.442 tiles, running jump 6.703, dash 4.375, jump and dash 11.143, up dash 5.113, jump and up dash 8.635, run 10.313 tiles/s, wave 9.375 tiles/s; pinned by tests/tools/oracle.test.mjs (5 of 5) | evidence: build/evidence/session/PF-CONTROLS-sim-tools.1.txt
+rooms: done | 2026-10-11T19:15:20-05:00 | ten rooms, each in two sections (introduce, develop), 72 to 96 tiles wide; every room solved on the oracle by tools/solve.mjs with a witness clearing 97 to 100 of 100 jittered runs on seeds 1 to 5, and 19 or 20 of 20 on unseen seeds 6 to 13; clean witness clears 5.9 to 10.0 s; sha256 in tests/data/content.sha256; the texts enter HUSH-SPEC section 5 next | evidence: build/evidence/session/PF-ROOMS-witnesses.1.txt (replay: PASS, 11 witnesses, seed 9)
+gauntlet: done | 2026-10-11T19:15:20-05:00 | 32 bars, 4 tiles a beat, clap and kick obstacles on real onsets of the track, two wave phrases following the arp; generated grid 544 by 18; witness 100 of 100 on seeds 1 to 5, clear at step 14278 (59.5 s) | evidence: as rooms
+track: open | drafted: ten labelled layers in unlock order (kick, pad, hat, bass, clap, arp, perc, lead, ohat, sub), synth-only, compiled in Node by tools/strudel-node.mjs, onsets kick 0 4 8 12, clap 4 12, arp all 16; sha256 in tests/data/content.sha256
 art: open
 calibration: open
 ending: open
 interfaces: open
-verifiers: open | written and controlled so far: tools/protect.mjs (both manifests, unlisted verifiers, CRLF drift, commit subjects since the cut) and tools/gates.mjs (anchored grammar from the hook, JHON-GO bound to the cut digest), 25 of 25 controls green 2026-10-11T16:07:19-05:00 | evidence: build/evidence/session/PF-CONTROLS-protect-gates.1.txt
+verifiers: open | written and controlled so far: tools/protect.mjs (both manifests, unlisted verifiers, CRLF drift, commit subjects since the cut), tools/gates.mjs (anchored grammar from the hook, JHON-GO bound to the cut digest), tools/replay.mjs (witness runner, seeded jitter test), tools/solve.mjs (staged bounded search, centring, 98-of-100 acceptance), tools/reach.mjs, tools/strudel-node.mjs, the oracle and the toy sim; controls: the toy's clearable room and 4-beat-door room solved, the unclearable room exit 3, a 17-of-20 witness reported short, a broken and a malformed witness refused; 38 of 38 green 2026-10-11T19:14:54-05:00 | evidence: build/evidence/session/PF-CONTROLS-sim-tools.1.txt
 items: open
 scoreboard: open
 hand-walk: open
