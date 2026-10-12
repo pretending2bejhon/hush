@@ -22,11 +22,11 @@ AU3: passes: true (evidence: build/evidence/AU3.green.1.txt)
 FX1: passes: true (evidence: build/evidence/FX1.green.1.txt)
 GAME1: passes: true (evidence: build/evidence/GAME1.green.1.txt)
 CAL2: blocked (green-before-edit)
-RN1: passes: false
-RN2: passes: false
-RN3: passes: false
-RN4: passes: false
-END1: passes: false
+RN1: blocked (dep:CAL2)
+RN2: blocked (dep:RN1)
+RN3: blocked (dep:RN2)
+RN4: blocked (dep:RN3)
+END1: blocked (dep:RN4)
 
 ## Learnings
 
@@ -42,3 +42,5 @@ END1: passes: false
 ## Checkpoint
 
 CHECKPOINT: CAL2 attempt 1 | 2026-10-12T00:08:00-05:00 | blocked | targets: src/render/calibration-scene.ts, src/main.ts
+
+HUSH-BUILD: INCOMPLETE (passed=17 blocked=CAL2,RN1,RN2,RN3,RN4,END1)
