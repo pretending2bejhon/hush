@@ -2,7 +2,7 @@
 
 The build specification for The Hush v1, cut by the spec session (Opus standing in for Fable) and read by the executor (phase 2) and the producer (phase 3). It makes every design decision; the executor makes none. Where this spec and a prompt disagree on a design value, this spec wins; where it is silent, the item is `blocked (needs-design)`.
 
-STATUS: draft, not cut. Sections 1 to 7 (scope, units, input, physics, rooms, gauntlet, track) are settled and verified where they say so; audio, clock, render and art, flash, calibration, ending, interfaces, verifiers, items, the writer table and the handoff are not written yet. No executor may start: there is no `HUSH-SPEC: READY` line and no JHON-GO. `node tools/spec-content.mjs --check` proves every byte-exact block against tests/data/content.sha256.
+STATUS: draft, not cut. Sections 1 to 7 (scope, units, input, physics, rooms, gauntlet, track) are settled and verified where they say so; sections 8 to 14 (audio, clock and input, render and art, flash, calibration, ending, interfaces) are designed and not yet backed by their verifiers; the verifier list, the items, the writer table and the handoff are not written yet. No executor may start: there is no `HUSH-SPEC: READY` line and no JHON-GO. `node tools/spec-content.mjs --check` proves every byte-exact block against tests/data/content.sha256.
 
 Labels: [VL] verified live in this repo (a command run, its evidence named), [P] primary source, unvoted, [I] inferred or designed here. The challenge pass is cited as CP Vn or CP §n.
 
@@ -652,3 +652,200 @@ ohat: s("~ white ~ white ~ white ~ white").decay(.12).hpf(6000).gain(.1)
 sub: note("<c1 ab0 f0 g0>").s("sine").attack(.04).release(.5).gain(.28)
 ```
 
+
+## 8. Audio (D5; src/audio/)
+
+### 8.1 Start
+
+- The first `keydown` that is not Escape (a window listener in the capture phase) creates `new AudioContext({ latencyHint: 0.1 })` and calls `resume()` inside that same handler (CP V6; superdough's own mousedown helper is never used). Then `setAudioContext(ctx)` and `registerSynthSounds()` from superdough. No `loadWorklets()` (no worklet synth is used), no `samples()`, no CDN: Strudel comes from the npm packages, bundled by Vite.
+- The track text is `music/area1.strudel`, imported raw by Vite (`?raw`). It compiles once, at start, with the port of Vault City's `compileRoom` (city-audio.js:330-349: every `label:` line becomes one layer, `$` labels numbered, `_` labels muted; `setcpm`, `setcps`, `hush` and `evaluate` are no-ops in the scope). Layer order is file order: layer k is the k-th label (section 7).
+
+### 8.2 Ported from Vault City (read-only source; these functions and only these, CP §3)
+
+| Vault City | The Hush | what it keeps |
+|---|---|---|
+| city-audio.js:93-167 `resetOutputClock`, `clockLine`, `sampleOutputClock` and the constants at 93 | src/clock/output-clock.ts | the device-clock line: 1 s of `getOutputTimestamp` pairs, the upper envelope, settling, stale pairs, trusted pairs, resync, the fallback after 3 s (D4) |
+| city-audio.js:169-193 `hitRing`, `recordHit` | src/audio/hits.ts | one stable slot per scheduled note, for the picture |
+| city-audio.js:203-210 `layerNames`, 330-349 `compileRoom` | src/audio/track.ts | the labelled-layer capture |
+| city-audio.js:271-283 the orbit patch | src/audio/engine.ts | each layer's orbit plays into its own gain node, never straight to the speakers |
+| city-audio.js:399-412 `ensureLayer` (without the duck), 495-500 `lowTo` | src/audio/gates.ts | per-layer mute gains ramped on a bar line |
+| city-audio.js:448-492 `play`, `scheduleBus` (without withhold phases, quiet signal bars and sustained re-entry), 586-651 `scheduler`, `startClock`, `stopClock` and the Worker ticker | src/audio/scheduler.ts | the 25 ms transport, notes handed over 0.12 s ahead, late notes shifted 5 ms within 0.05 s and dropped beyond it |
+| beat.js:38-46 `audibleTime` | src/clock/output-clock.ts | performance time to heard context time through the line |
+
+Not ported: the twelve rooms and their fx, timeline density, the bridge grammar, risers, cuts, withhold phases, the silent clock, the reverb and delay sends.
+
+### 8.3 Graph and transport
+
+- Per layer k: superdough orbit k, then the layer's gate `GainNode` (gain 0 until layer k is back), then one `DynamicsCompressorNode` (threshold -10 dB, knee 6, ratio 4, attack 0.005 s, release 0.12 s), then the master `GainNode` (0.8), then one `AnalyserNode` (fftSize 2048, smoothing 0), then `ctx.destination`. Nothing bypasses the analyser.
+- 140 BPM; a sixteenth is 60 / 140 / 4 s; one cycle is one bar. `origin` is the context time of sim step 0: `ctx.currentTime + 0.1` when the run starts after calibration. Sixteenth n plays at `origin + n * sixteenth`.
+- All ten layers are scheduled from the start, into their gates; a gate opens on its layer's unlock bar B with `gain.setValueAtTime(0, t - 0.005)` then `linearRampToValueAtTime(1, t)` at `t = origin + B * bar` (the bar the sim's `nextBarStep` names, section 4.5), so music and hazards return on the same bar line (X7).
+- The gauntlet: while it runs, the pattern is queried at cycle `bar - startBar`, where startBar is the run's start bar (section 6.2); on every restart the pattern starts again at cycle 0 on the new start bar. Outside the gauntlet the cycle is the bar.
+- Counters, read by the probe: `scheduledVoices` (every note handed to superdough), `voiceErrors` (rejections from `superdough()` or `queryArc`), `lateShifted`, `lateDropped`.
+- `visibilitychange` to hidden: `ctx.suspend()`; the sim stops with the context's clock (the driver reads the audio clock). Visible: `ctx.resume()`; the output clock restarts its line (its own rule) and the scheduler skips the sixteenths that passed.
+
+## 9. Clock and input (D4, D6)
+
+### 9.1 The tick driver (src/clock/driver.ts)
+
+- `audibleSec(nowMs) = nowMs / 1000 + clock.offset` (the ported line).
+- Every animation frame, while the line is valid: `target = floor((audibleSec(frameMs) - origin + displaySec) * 240)`, and the sim ticks until its step reaches `target`, at most 24 ticks in one frame (catch-up cap; the rest follows on later frames). `displaySec = clamp(-avOffsetMs / 1000, -0.15, 0.15)` from calibration (section 12).
+- Before each tick at step s, every queued input event whose step is at most s is applied, in arrival order.
+
+### 9.2 Keys (src/input/keys.ts)
+
+- Window `keydown` and `keyup` listeners (capture phase) map `event.code` to the bits of section 3, skip `event.repeat`, ignore unmapped codes and never call `preventDefault` on them; mapped codes call `preventDefault` (so Space does not scroll).
+- Each event is queued as `{ code, down, step }` with `step = floor((audibleSec(event.timeStamp) - origin - inputLagSec) * 240)`, applied at `max(step, sim.step)`. `inputLagSec = clamp((avOffsetMs + inputBiasMs) / 1000, 0, 0.15)`. The held bits are the OR of the keys held.
+- Phaser's input stays off (D1: `input: { keyboard: false, mouse: false, touch: false, gamepad: false, windowEvents: false }`).
+- An alternative source can be attached with `attachSource(source)` (section 14); the keys are then ignored. The product attaches none; only the probe does.
+
+## 10. Render and art (D8, D17; src/render/)
+
+### 10.1 Canvas and camera
+
+- Phaser 4.2.1, `type: Phaser.WEBGL`, canvas backing 1280 by 720, `scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH }`, `fps.limit` 0, `audio: { noAudio: true }`, no physics, `backgroundColor` #07080d.
+- The world view is 32 by 18 tiles (512 by 288 world px), drawn at zoom 2.5. A room 32 tiles wide is framed whole; a wider room scrolls horizontally: camera x = clamp(creature centre - 256, 0, room width - 512) world px, from the interpolated creature position. The gauntlet frames the creature at x = 160 world px from the left edge. Vertical: none (every room is 18 tiles tall).
+- Interpolation: the render draws `prev + (curr - prev) * alpha` with `alpha = clamp((audibleSec(frameMs) - origin + displaySec) * 240 - sim.step + 1, 0, 1)`.
+- No Phaser Text or BitmapText object ever exists (the probe counts them, D8).
+
+### 10.2 Palette
+
+| use | hex |
+|---|---|
+| background | #07080d |
+| far fog band | #1a2233 |
+| mid band | #121826 |
+| near band | #0b0e16 |
+| tile fill | #161b28 |
+| tile edge | #2a3348 |
+| static spikes | #c8d0e0 |
+| accent: the creature's shell, portals, beat entities that are on | #7fd6ff |
+| beat entity off (outline only) | #7fd6ff at alpha 0.25 |
+| the one-beat warning outline | #7fd6ff at alpha 0.5, pulsing on sixteenths |
+| creature body | #10131c |
+| the ending's glimpse | #2b3a55 with a single warm light #ffd27f |
+
+No saturated red anywhere (D10's red-flash rule then cannot trip).
+
+### 10.3 Shapes
+
+- Static geometry (solid tiles, static spikes, portal frames) is baked once per room into one `DynamicTexture` on entry (CP §1: 5.9 ms once, then 0.4 ms a frame).
+- Solid tiles: fill #161b28; every edge between a solid and an empty tile drawn 1 world px #2a3348.
+- Spikes: three triangles per tile filling the hazard box (section 5.1), #c8d0e0.
+- Beat blocks: on, filled #7fd6ff at alpha 0.85 with the glow stroke; off, outline at alpha 0.25; in the beat before turning on, the outline at alpha 0.5 pulses each sixteenth (the one-beat warning).
+- Beat spikes: up, drawn as static spikes in #7fd6ff; down, as a flat bar of the same width at alpha 0.25; the beat before rising, the bar pulses.
+- Portals: a column of the portal's height, outlined #7fd6ff, a chevron inside pointing right (wave portal) or a ring (base portal).
+- The creature, base form: a body circle of radius 5 world px #10131c, a pale shell (#e8ecf4) covering its top half as a crescent with two short horns, two eye dots #07080d; it squashes 10 % on landing for 6 steps. Wave form: an isosceles triangle 10 by 10 world px in #7fd6ff pointing along its motion (up-right or down-right), with a trail of its last 8 positions (every 2 steps) at alpha falling from 0.5 to 0.
+- Death: the creature bursts into 8 dots that fade over the 72 respawn steps; the respawn is a ring shrinking onto the spawn over 12 steps.
+
+### 10.4 Depth, fog and glow
+
+- Four parallax bands behind the room, factors 0.15, 0.35, 0.6 and 0.85, each a procedural silhouette (arches, pillars and hanging roots from a seeded xorshift PRNG; seed = room number), baked once per room, in the band colours of 10.2; the far bands blend toward the fog colour.
+- Fog: a vertical gradient over the bands (alpha 0.0 at the top, 0.35 at the bottom). A smoothstep vignette darkens the corners (baked once).
+- 60 dust motes drift (seeded), 1 world px dots at alpha 0.3.
+- Glow is one cheap pass: accent shapes drawn twice, a 3 world px stroke at alpha 0.25 under the 1 px shape. Never the Glow or Bloom filter (D8, CP §1).
+- A layer's return: one ring expands from the creature over one bar to 120 world px, alpha at most 0.2.
+
+### 10.5 Performance budget (D17)
+
+The 1280 by 720 backing canvas, one baked texture per room, additive strokes and no filters keep a frame well inside 16.7 ms (CP §1: an empty scene 4.2 ms and 300 dynamic shapes 6.5 ms on this laptop). X4 is measured headed on the real GPU by the perf probe; every art item re-runs it.
+
+## 11. The flash rule (D10; src/fx/flash-limiter.ts)
+
+- Full-field changes happen at most once a beat: the layer-return ring and the death and respawn effects are the only large-area changes and none repeats faster than a beat.
+- Anything faster stays small: the combined area of everything changing relative luminance by 10 % or more within one frame is kept under 25 % of a 10-degree field, taken as 2.78 % of the screen (WCAG's 341 by 256 at 1024 by 768): 25,600 canvas px at 1280 by 720.
+- The limiter: every beat-driven brightness change asks `request(areaPx, fromLum, toLum)`; it sums the area of this frame's changes of 10 % or more and returns the luminance to draw, lowered to a change under 10 % once the frame's sum would reach the limit.
+- No red at all (10.2), so the red-flash rule cannot trip. The flash probe measures general and red flashes separately over every room and the gauntlet (X6).
+
+## 12. Calibration (D9; src/input/calibrate.ts and the calibration scene)
+
+- Wordless, about 30 s, memory only (no storage of any kind).
+- Pass A, audio: the screen stays dark but for a rounded key shape (no letters) in the centre; 24 clicks at 140 BPM (a short `sbd`, decay 0.08); for the first 4 the key shape presses itself on the click, then it waits; the player's keydowns on clicks 5 to 24 are recorded as `audibleSec(event.timeStamp) - clickTime` in ms, each against its nearest click.
+- Pass B, visual: silence; a ring 40 world px across flashes for one sixteenth on each of 24 beats (a small area: section 11); the same count-in; keydowns on beats 5 to 24 are recorded as `event.timeStamp - flashFrameTime` in ms, the flash's first frame being the rAF time it was drawn.
+- Each pass: drop the lowest and the highest tap, take the median and the median absolute deviation. A pass with fewer than 10 taps or a deviation over 35 ms is rejected and repeats once; a second rejection takes 0 for that pass.
+- `avOffset = medianA - medianV`, `inputBias = medianV` (CP §4); they set `displaySec` and `inputLagSec` (section 9).
+- X8: synthetic taps at known offsets return both within 5 ms; a run with a deviation over 35 ms is rejected.
+
+## 13. The ending (N2)
+
+- The gauntlet's finish leaves the track playing in full. Over 4 bars the camera rises past the gauntlet's ceiling into a glimpse of the next area: a silhouette of spires and one warm light (#2b3a55, #ffd27f), baked once.
+- Then the card: three dots in the centre, 6 world px across, 24 apart; dot i brightens on beat i of each bar (beats 1 to 3), all rest on beat 4; it stays, on the music, until the tab closes. No text.
+- With `?playtest` (D16), when the card appears the page shows the run time (m:ss, sim steps from room 1's first step to the gauntlet's finish, divided by 240) and the death count in its own element outside the canvas, and nothing else.
+
+## 14. Interfaces (TypeScript; D2)
+
+Erasable syntax only (no enums, namespaces or parameter properties: Node strips the types for the tools), imports with explicit `.ts` extensions. tsconfig sets `allowImportingTsExtensions` and `erasableSyntaxOnly`.
+
+```ts
+// src/sim/types.ts
+export type Dir = 'up' | 'down' | 'left' | 'right';
+export interface Entity { letter: string; kind: 'spike' | 'block'; dir: Dir | null; layer: number; period: number;
+  phase: number; on: number; rest: boolean; cells: [number, number][]; index: number }
+export interface Room { kind: 'room' | 'gauntlet'; name: string; W: number; H: number; spawn: { col: number; row: number };
+  layer: number; par: number; tiles: Uint8Array; entities: Entity[] }
+export interface World { rooms: Room[]; gauntlet: Room | null }
+export interface StartState { room: number; step: number; layers: number; stopAtClear?: boolean }
+export interface SimStatus { room: number; cleared: number; dead: boolean; deaths: number; finished: boolean; x: number; y: number; form: number }
+export interface Sim {
+  readonly step: number;
+  tick(input: number): void;
+  status(): SimStatus;
+  checksum(): string;
+  save(): Int32Array;           // FIELDS order, tests/fixtures/oracle/sim.mjs
+  load(state: Int32Array): void;
+  key(period: number): string;  // the solver's key, as the oracle's
+}
+
+// src/rooms/compile.ts and src/rooms/gauntlet.ts
+export interface Gauntlet { name: string; bars: number; melody: number[];
+  program: { form: 'rest' | 'base' | 'wave'; masks: { kick?: number[]; clap?: number[]; hat?: number[] } }[] }
+export function compileRoom(fileName: string, text: string): Room;
+export function parseGauntlet(fileName: string, text: string): Gauntlet;
+export function generateGauntlet(g: Gauntlet): { W: number; H: number; text: string; spawn: { col: number; row: number } };
+export function compileWorld(files: { name: string; text: string }[]): World;
+
+// src/sim/headless.ts: the tools' entry (replay, solve, reach)
+export { compileWorld } from '../rooms/compile.ts';
+export function createSim(world: World, start: StartState): Sim;
+
+// src/clock/output-clock.ts
+export interface OutputClock { offset: number; valid: boolean; resyncs: number; sample(nowMs?: number): OutputClock }
+export function createOutputClock(ctx: AudioContext): OutputClock;
+export function audibleSec(clock: OutputClock, nowMs: number): number;
+
+// src/clock/driver.ts
+export function stepsDue(simStep: number, target: number): number;   // min(max(target - simStep, 0), 24)
+
+// src/audio/engine.ts
+export interface AudioStatus { state: AudioContextState | 'none'; origin: number; scheduledVoices: number; voiceErrors: number;
+  lateShifted: number; lateDropped: number; layerGains: number[] }
+export interface AudioEngine { start(): Promise<void>; status(): AudioStatus; analyser(): AnalyserNode | null;
+  layerGain(layer: number): GainNode | null; unlockAt(layer: number, bar: number): void; gauntletStart(bar: number): void }
+export function createAudioEngine(trackText: string): AudioEngine;
+
+// src/input/keys.ts
+export interface InputSource { next(step: number): number }          // the held bits for that step
+export function createKeys(clockSec: (eventMs: number) => number): InputSource & { attachSource(s: InputSource | null): void };
+
+// src/input/calibrate.ts
+export interface PassResult { median: number; mad: number; taps: number; accepted: boolean }
+export function judgePass(offsetsMs: number[]): PassResult;
+export function calibrate(a: PassResult, v: PassResult): { avOffset: number; inputBias: number };
+
+// src/fx/flash-limiter.ts
+export function createFlashLimiter(canvasW: number, canvasH: number): { beginFrame(): void; request(areaPx: number, fromLum: number, toLum: number): number };
+```
+
+The probe's view of the running game (src/probe/inspect.ts, spec-owned) is the one other boundary: `src/main.ts` builds an object of this shape and passes it to `installProbe` (src/probe/api.ts), which installs `window.__hush` only under `?probe`. Product code never reads `?probe`.
+
+```ts
+export interface Inspect {
+  sim(): { step: number; status: SimStatus; state: Int32Array } | null;
+  audio(): AudioStatus | null;
+  analyser(): AnalyserNode | null;
+  layerGain(layer: number): GainNode | null;
+  clock(): { offset: number; valid: boolean; resyncs: number } | null;
+  scene(): { key: string; textObjects: number } | null;
+  calibration(): { avOffset: number; inputBias: number } | null;
+  control: { startRoom(room: number): void; skipCalibration(avOffset: number, inputBias: number): void; attachInput(s: InputSource | null): void };
+}
+```
