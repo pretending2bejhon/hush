@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: W1
+phase: red
+command: node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:27:37-05:00
+time-end: 2026-10-11T23:27:38-05:00
+head: ec4a1847f055de15b118d530c0902fac4b560b3a
+exit: 2
+--- output ---
+replay: replays/01-wake.json: not JSON (ENOENT: no such file or directory, open '<repo>\replays\01-wake.json')
+--- end ---
