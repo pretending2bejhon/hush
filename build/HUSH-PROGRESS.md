@@ -21,7 +21,7 @@ AU2: passes: true (evidence: build/evidence/AU2.green.1.txt)
 AU3: passes: true (evidence: build/evidence/AU3.green.1.txt)
 FX1: passes: true (evidence: build/evidence/FX1.green.1.txt)
 GAME1: passes: true (evidence: build/evidence/GAME1.green.1.txt)
-CAL2: passes: false
+CAL2: blocked (green-before-edit)
 RN1: passes: false
 RN2: passes: false
 RN3: passes: false
@@ -35,7 +35,10 @@ END1: passes: false
 - Phaser 4.2.1 types declare `update` on `Phaser.Scene` (unlike `create`), so a scene's `update()` needs `override` under `noImplicitOverride` (TS4114) (GAME1).
 - `@strudel/web` ships no declaration file, so `import * as S from '@strudel/web'` fails tsc with TS7016 under `strict`; the import carries `// @ts-expect-error TS7016` and `S` is untyped (GAME1).
 - The probe's visibility check wants the sim's `step` to advance after the ending scene started, so the tick driver hangs on the game's `PRE_STEP` event (every frame, any scene), not on the play scene's `update` (GAME1).
+- CAL2's acceptance (`npm run probe:flash`) already exits 0 on GAME1's tree: the probe only waits for the calibration scene to be left, and GAME1's first-key shortcut leaves it at once, so the check cannot tell the two passes from no passes (CAL2; evidence build/evidence/CAL2.red.1.txt).
 
 ## Rounds
 
 ## Checkpoint
+
+CHECKPOINT: CAL2 attempt 1 | 2026-10-12T00:08:00-05:00 | blocked | targets: src/render/calibration-scene.ts, src/main.ts
