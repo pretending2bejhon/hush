@@ -1,0 +1,41 @@
+HUSH-EVIDENCE v1
+id: RN3
+phase: amend
+command: npm run accept:rn3
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T01:12:34-05:00
+time-end: 2026-10-12T01:12:36-05:00
+head: 28158f8dc158bad59f0f4abc289141bc0bb12e31
+exit: 1
+--- output ---
+
+> hush@0.0.0 accept:rn3
+> vitest run tests/render/beat-art.test.mjs && npm run check:art
+
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/render/beat-art.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/render/beat-art.test.mjs [ tests/render/beat-art.test.mjs ]
+Error: Cannot find module '<repo>/src/render/beat-art.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/render/beat-art.test.mjs:12:11
+     10| import { roomOf, sameShapes, world } from './same.mjs';
+     11|
+     12| const P = await load('HUSH_BEAT_ART_MODULE', new URL('../../src/render…
+       |           ^
+     13| const W = world();
+     14| const ROOMS = [2, 4, 5, 7, 8, 9, 10];
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  01:12:35
+   Duration  272ms (worker 96%, environment 4%)
+
+--- end ---

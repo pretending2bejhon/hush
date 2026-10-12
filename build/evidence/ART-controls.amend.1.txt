@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: ART-controls
+phase: amend
+command: npx vitest run tests/controls/product-tests.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T01:08:36-05:00
+time-end: 2026-10-12T01:09:15-05:00
+head: 28158f8dc158bad59f0f4abc289141bc0bb12e31
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  19 passed (19)
+   Start at  01:08:37
+   Duration  37.37s (tests 100%)
+
+--- end ---

@@ -1,0 +1,41 @@
+HUSH-EVIDENCE v1
+id: RN1
+phase: amend
+command: npm run accept:rn1
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T01:12:32-05:00
+time-end: 2026-10-12T01:12:33-05:00
+head: 28158f8dc158bad59f0f4abc289141bc0bb12e31
+exit: 1
+--- output ---
+
+> hush@0.0.0 accept:rn1
+> vitest run tests/render/room-art.test.mjs && npm run check:art
+
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/render/room-art.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/render/room-art.test.mjs [ tests/render/room-art.test.mjs ]
+Error: Cannot find module '<repo>/src/render/room-art.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/render/room-art.test.mjs:9:11
+      7| import { ALL_ROOMS, roomOf, sameShapes, world } from './same.mjs';
+      8|
+      9| const P = await load('HUSH_ROOM_ART_MODULE', new URL('../../src/render…
+       |           ^
+     10| const W = world();
+     11| const rooms = ALL_ROOMS.map((_, i) => roomOf(W, i + 1));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  01:12:33
+   Duration  300ms (worker 96%, environment 4%)
+
+--- end ---

@@ -49,6 +49,7 @@ N8b (a) holds: the cap hook is installed under managed settings with Administrat
 ### 1.6 Amendments (phase 3, by the producer, Opus standing in for Fable; each one's disposition is in build/HUSH-FIXLOG.md)
 
 - 2026-10-12, CAL2 (blocked green-before-edit): its acceptance passed on GAME1's tree before any edit (build/evidence/CAL2.red.1.txt), because the flash probe's `--calibration` run only waited for the scene `calibration` to be left and GAME1's first key leaves it at once. The probe now wants the calibration's course seen (section 12's check, tools/calibration-check.mjs), controlled on the control page, whose calibration scene became section 12's reference; section 12 now fixes the timeline, the shapes, the matching of taps and the hand-over, so that the port takes no decision.
+- 2026-10-12, RN1 to RN4 and END1 (blocked by dep, amended before they ran): the art items' acceptance, `npm run check:art` (flash and perf), only grows easier as art is missing, so it would have passed before any edit as CAL2's did, and sections 10 and 13 left the shapes' numbers, the bake's size, the creature's track, the limiter's use and the ending's motion open, which the executor may not decide. The art is now the producer's reference, tests/fixtures/reference/art.mjs (section 10.6), which the items port; each acceptance first runs its item's art test (tests/render, red while the module is missing), then the flash and perf probes as before. The warning pulse became 0.45 and 0.25 (a step under LUM_STEP), the second band got its own colour, the glow moved into each accent shape, the dust and the ending's light are seeded, and END1's run line reads the step kept at the finish.
 
 ## 2. Units and time (D3)
 
@@ -733,7 +734,8 @@ Not ported: the twelve rooms and their fx, timeline density, the bridge grammar,
 | static spikes | #4a556e |
 | accent: the creature's wave form, portals, beat entities that are on | #7fd6ff |
 | beat entity off (outline only) | #7fd6ff at alpha 0.25 |
-| the one-beat warning outline | #7fd6ff at alpha 0.5, pulsing on sixteenths |
+| the one-beat warning outline | #7fd6ff at alpha 0.45 and 0.25, alternating each sixteenth (a luminance step of 0.077, under LUM_STEP, so the pulse is never a flash; amended 2026-10-12) |
+| the second band from the back, between far and mid (amended 2026-10-12) | #161d2c |
 | creature body | #10131c |
 | creature shell | #e8ecf4 |
 | dust motes | #c8d0e0 at alpha 0.3 |
@@ -758,13 +760,24 @@ Not ported: the twelve rooms and their fx, timeline density, the bridge grammar,
 - Four parallax bands behind the room, factors 0.15, 0.35, 0.6 and 0.85, each a procedural silhouette (arches, pillars and hanging roots from a seeded xorshift32 PRNG, seed = room number), baked once per room, in the band colours of 10.2; the far bands blend toward the fog colour.
 - Fog: a vertical gradient over the bands (alpha 0.0 at the top, 0.35 at the bottom). A smoothstep vignette darkens the corners (baked once).
 - 60 dust motes drift (seeded), 1 world px dots in #c8d0e0 at alpha 0.3.
-- Glow is one cheap pass: accent shapes drawn twice, a 3 world px stroke at alpha 0.25 under the 1 px shape. Never the Glow or Bloom filter (D8, CP §1).
+- Glow is one cheap pass: accent shapes drawn twice, a 3 world px stroke at alpha 0.25 under the 1 px shape. Never the Glow or Bloom filter (D8, CP §1). Each accent shape carries its own glow in the reference (section 10.6): the portal frames (RN1), the wave (RN2), the beat blocks that are on (RN3).
 - A layer's return: one ring expands from the creature over one bar to 120 world px, alpha at most 0.2.
-- Every beat-driven change of brightness goes through the flash limiter (section 11).
+- Every beat-driven change of brightness goes through the flash limiter (section 11): each change of a beat entity's fill level asks it (section 10.6); the warning pulse (0.077) and the layer's ring (at most 0.045 above the background) stay under LUM_STEP by construction and never ask.
 
 ### 10.5 Performance budget (D17)
 
 The 1280 by 720 backing canvas, one baked texture per room, additive strokes and no filters keep a frame well inside 16.7 ms (CP §1: an empty scene 4.2 ms and 300 dynamic shapes 6.5 ms on this laptop). The control page holds 60 fps with every interval at 20 ms or less, headed on this laptop's GPU [VL: PF-CONTROLS-perf]. X4 is measured headed by the perf probe; every art item re-runs it (`npm run check:art`).
+
+### 10.6 The art reference and the scene's assembly (amended 2026-10-12, section 1.6)
+
+- Normative source: tests/fixtures/reference/art.mjs. Every shape of sections 10.1 to 10.4 and 13, with every number and every PRNG draw, is a pure function there that returns a list of shapes in canvas px. The product ports each function with the same name, arguments and result into src/render/room-art.ts (RN1), creature.ts (RN2), beat-art.ts (RN3), depth-art.ts (RN4) and ending-art.ts (END1), and tests/render/*.test.mjs compare product and reference list for list (rendered: the room, the creature, the doors, the wave, the gauntlet and the ending were drawn from the reference and looked at before this amendment). Where the prose of sections 10 and 13 and the reference differ, the reference wins.
+- `src/render/art.ts` (RN1) holds the shared values (`ZOOM`, `TILE_PX`, `VIEW_W`, `VIEW_H`, `COLOR`, `LINE_PX`, `GLOW_PX`, `GLOW_ALPHA`), the `Shape` type (the union of the reference's shape kinds) and `drawShapes(g: Phaser.GameObjects.Graphics, shapes: Shape[], dx = 0, dy = 0)`, which draws a list in order, each shape by one call, offset by (dx, dy): rect `fillStyle(c, a)` then `fillRect(x, y, w, h)`; tri `fillStyle` then `fillTriangle` over the six numbers of `p`; poly `fillStyle` then `fillPoints(points, true)`; ellipse `fillStyle` then `fillEllipse(x, y, 2 * rx, 2 * ry)`; ring `lineStyle(lw, c, a)` then `strokeCircle(x, y, r)`; frame `lineStyle` then `strokeRect(x, y, w, h)`; line `lineStyle` then `strokePoints(points, false)`; outline `lineStyle` then `strokePoints(points, true)`; `points` being plain `{ x, y }` objects made from the pairs of `p` (cast to the Graphics' point type). The art modules import Phaser for types only (`import type`), so Node tests them.
+- The play scene's layers, back to front, by Phaser depth: the four bands 0 to 3 (far to near), the fog 4, the room's chunks 5, the beat entities and the layer's ring 6, the creature 7, the dust 8, the vignette 9.
+- Baking: `this.textures.addDynamicTexture(key, w, h)`, one Graphics made off the display list (`this.make.graphics({}, false)`) drawn through `drawShapes`, then the texture's `draw(graphics)` and `render()`, the Graphics destroyed, and one Image with origin (0, 0) showing the texture. On entering a room (the run's room differs from the one baked, or a run starts) the scene destroys the previous room's images and textures and bakes the new ones: each chunk of `bakeChunks(room)` from `roomShapes(room, col0, col1)` at its own size, key `room-<NN>-<i>`, shown at `(col0 * 40 - camPx, 0)` (RN1); each band of `depthBands(room)` at its world size (`w` by 288), key `band-<NN>-<b>`, shown at `(-Math.round(factor * camPx), 0)` with scale ZOOM (RN4). The fog (`fogShapes()`, key `fog`) and the vignette (`vignetteShapes()`, key `vignette`) are baked once, 1280 by 720, when the scene is created and shown at (0, 0) (RN4). `<NN>` is the room number with two digits, `<i>` and `<b>` the chunk and band index.
+- Every frame: `camPx = cameraPx(room, centreX)`, `centreX` being the interpolated creature centre in world px (`ix / 256 + 5`, from the run's view); the chunk and band images take their x; three Graphics are cleared and redrawn: the beat entities with the ring (depth 6, RN3), the creature (depth 7, RN2), the dust (depth 8, `moteShapes(field, sim.step)` with the field of `moteField(room)` made on entering the room, RN4).
+- The creature's track (RN2): the run (src/game/run.ts) holds `createTrack()` from every `startRoom` on and, after every tick, sets it to `trackStep(track, state)`, the state being the sim's `save()` read by FIELDS name (`step`, `x`, `y`, `form`, `grounded`, `dead`, `layers`); `run.track()` returns it. The creature is drawn from `creatureShapes({ step: sim.step, x: ix / 256, y: iy / 256, form, vy, facing, dead, lock }, run.track(), camPx)`, the last five read from `save()` by FIELDS name.
+- The beat entities (RN3): one flash limiter for the scene (`createFlashLimiter(1280, 720)`, section 11) with `beginFrame()` at the top of every frame; `beatShapes(room, sim.step, layers, camPx, levels, limiter)` with the `levels` it returned the frame before (an empty list on entering a room), `layers` read from `save()`; then `ringShapes(run.track(), sim.step, cx, cy)`, (cx, cy) the creature's centre in canvas px (`centreX * 2.5 - camPx`, `(iy / 256 + 5) * 2.5`).
+- Until RN2 and RN3 land, GAME1's plain drawing stands in for the creature and the beat entities on one Graphics at depth 6, drawn with `camPx`.
 
 ## 11. The flash rule (D10; src/fx/flash-limiter.ts)
 
@@ -794,6 +807,7 @@ The 1280 by 720 backing canvas, one baked texture per room, additive strokes and
 - The gauntlet's finish leaves the track playing in full and starts the scene `ending`. Over 4 bars the camera rises past the gauntlet's ceiling into a glimpse of the next area: a silhouette of spires and one warm light (#2b3a55, #ffd27f), baked once.
 - Then the card: three dots in the centre, 6 world px across, 24 apart; dot i brightens on beat i of each bar (beats 1 to 3), all rest on beat 4; it stays, on the music, until the tab closes. No text.
 - With `?playtest` (D16), when the card appears the element `<output id="playtest">` outside the canvas gets the text `run m:ss · deaths n` (m:ss the sim steps from room 1's first step to the gauntlet's finish, divided by 240, minutes unpadded, seconds two digits; n the run's deaths) and loses its `hidden` attribute. Nothing else changes on the page. This read of `?playtest` is the one sanctioned exception to "product code never branches on a flag" (D16).
+- The scene (amended 2026-10-12, section 1.6). Its shapes are the reference's `glimpseShapes`, `riseAt`, `ceilingShapes` and `cardShapes` (tests/fixtures/reference/art.mjs, section 10.6), ported into src/render/ending-art.ts with `BEAT_S` and `RISE_S`. `class EndingScene extends Phaser.Scene` (key `ending`, src/render/ending-scene.ts) takes `constructor(opts: { engine: AudioEngine; run: Run; playtest: boolean })`. `create()` keeps `finishStep = run.sim.step` (the sim still counts steps after the finish), bakes the glimpse into a 1280 by 720 DynamicTexture (key `glimpse`, section 10.6's baking) shown by one Image with origin (0, 0) at depth 0, and makes one Graphics at depth 1. Every frame: `heard = audibleSec(engine.clock(), performance.now())`; the first frame keeps it as `t0`; `r = riseAt(heard - t0)`; the image moves to y `r.glimpseY`; the Graphics is cleared and draws `ceilingShapes(r.ceilingY)` while `r.u < 1`, else `cardShapes(beatOfBar)` with `beatOfBar = ((Math.floor((heard - run.origin) / BEAT_S) % 4) + 4) % 4`. On the first frame with `r.u >= 1`, when `playtest` holds, `document.getElementById('playtest')` gets `textContent` `run ${m}:${ss} · deaths ${n}` (`s = Math.floor(finishStep / 240)`, `m = Math.floor(s / 60)`, `ss = String(s % 60).padStart(2, '0')`, `n = run.sim.status().deaths`) and loses its `hidden` attribute. src/main.ts creates the scene with `playtest: new URLSearchParams(window.location.search).has('playtest')`, the one sanctioned read of a page flag.
 
 ## 14. Interfaces (TypeScript; D2)
 
@@ -881,6 +895,22 @@ export function createAudioEngine(trackText: string): AudioEngine;
 // src/fx/flash-limiter.ts
 export const FLASH_AREA_LIMIT: 25600; export const LUM_STEP: 0.1;
 export function createFlashLimiter(canvasW: number, canvasH: number): { beginFrame(): void; request(areaPx: number, fromLum: number, toLum: number): number };
+
+// The art (amended 2026-10-12, section 10.6): each module exports the reference's functions and values of its
+// item with the same names, arguments and results (tests/fixtures/reference/art.mjs), plus:
+// src/render/art.ts (RN1): ZOOM, TILE_PX, VIEW_W, VIEW_H, COLOR, LINE_PX, GLOW_PX, GLOW_ALPHA,
+export type Shape = { k: 'rect'; x: number; y: number; w: number; h: number; c: number; a: number }
+  | { k: 'tri' | 'poly'; p: number[]; c: number; a: number } | { k: 'ellipse'; x: number; y: number; rx: number; ry: number; c: number; a: number }
+  | { k: 'ring'; x: number; y: number; r: number; lw: number; c: number; a: number }
+  | { k: 'frame'; x: number; y: number; w: number; h: number; lw: number; c: number; a: number }
+  | { k: 'line' | 'outline'; p: number[]; lw: number; c: number; a: number };
+export function drawShapes(g: Phaser.GameObjects.Graphics, shapes: Shape[], dx?: number, dy?: number): void;
+// src/render/room-art.ts (RN1): BAKE_COLS, bakeChunks, codeAt, spikeTris, roomShapes, cameraPx
+// src/render/creature.ts (RN2): SQUASH_STEPS, TRAIL, createTrack, trackStep, creatureShapes; src/game/run.ts: Run gains track()
+// src/render/beat-art.ts (RN3): BLOCK_ALPHA, OFF_ALPHA, WARN_ALPHA, SPIKE_AREA, RING_STEPS, entityLook, levelLum, beatShapes, ringShapes
+// src/render/depth-art.ts (RN4): BAND_FACTORS, BAND_COLORS, FOG_STRIPS, FOG_ALPHA, VIGNETTE_CELL, VIGNETTE_ALPHA, MOTES,
+//   xorshift32, makeRng, roomNumber, bandWidth, depthBands, fogShapes, vignetteShapes, moteField, moteShapes
+// src/render/ending-art.ts (END1): BEAT_S, RISE_S, glimpseShapes, riseAt, ceilingShapes, cardShapes
 ```
 
 `Pattern` is the type of a Strudel pattern (`{ queryArc(begin: number, end: number): Hap[] }` is all the transport needs). `src/main.ts` builds the probe's view (src/probe/inspect.ts, spec-owned, the `Inspect` interface written there) and passes it to `installProbe` (src/probe/api.ts), which installs `window.__hush` only under `?probe`. Product code never reads `?probe`.
@@ -901,6 +931,7 @@ export function createFlashLimiter(canvasW: number, canvasH: number): { beginFra
 | tests/input/calibrate.test.ts | `npm run test:calibration` | X8 | a biased and a never-rejecting calibrator fail |
 | tests/audio, tests/sim/progression.test.mjs | `npm run test:av` | X7 in the sim and the transport | mutation controls (tests/controls/product-tests.test.mjs) |
 | tests/sim, tests/rooms, tests/clock, tests/input, tests/fx | the items' acceptances | the product equals the oracle and the references | each green on its reference, red on one planted fault |
+| tests/render (amended 2026-10-12) | the acceptances of RN1 to RN4 and END1 (`npm run accept:rn1` to `accept:rn4`, `accept:ending`) | the art equals tests/fixtures/reference/art.mjs list for list | each green on the reference, red on one planted fault (tests/controls/product-tests.test.mjs) [VL: build/evidence/ART-controls.amend.1.txt, 19 of 19] |
 | tools/check-public.mjs, tools/public-patterns.mjs | `npm run check:public` | X9, D14 | every class in tree, index and history; no denylist exits 3 |
 | tools/evidence.mjs | every acceptance | D12 | the redaction of every class; no denylist runs nothing |
 | tools/deploy.mjs | `npm run deploy` (the owner), `--dry-run` (the auditor) | D15 | tests/controls/deploy.test.mjs, 7 cases |
@@ -1099,54 +1130,54 @@ Strictly in this order; an item starts only when every item it names under Pendi
 - **Tests mapped:** `npm run smoke` (the flash probe runs again in every art item and at VERIFY)
 - **Out of scope:** storage of any kind; the probe's own `skipCalibration` path (unchanged).
 
-#### RN1 Room art and camera
+#### RN1 Room art, the bake and the camera
 
-- **Module:** render · **Interface change:** no
+- **Module:** render · **Interface change:** yes (new: src/render/art.ts, src/render/room-art.ts; amended 2026-10-12, section 1.6)
 - **Pending-dep:** CAL2
-- **Targets:** `src/render/play-scene.ts`, `src/render/room-art.ts` (new)
-- **Action:** sections 10.1 to 10.3 for the static geometry: one `DynamicTexture` per room baked on entry (tiles, edges, static spikes as three triangles, portal frames), the camera with interpolation (section 9.1), the gauntlet framing.
-- **Acceptance:** `npm run check:art` → exit 0, lines `flash: PASS` and `perf: PASS` (headed, on this laptop, on AC)
-- **Tests mapped:** `npm run smoke` (each later art item re-runs check:art; VERIFY runs every probe)
-- **Out of scope:** the creature and beat entities (RN2, RN3).
+- **Targets:** `src/render/art.ts` (new), `src/render/room-art.ts` (new), `src/render/play-scene.ts`
+- **Action:** port tests/fixtures/reference/art.mjs's shared values and RN1 functions (section 10.6): `src/render/art.ts` with `ZOOM`, `TILE_PX`, `VIEW_W`, `VIEW_H`, `COLOR`, `LINE_PX`, `GLOW_PX`, `GLOW_ALPHA`, the `Shape` type and `drawShapes`; `src/render/room-art.ts` with `BAKE_COLS`, `bakeChunks`, `codeAt`, `spikeTris`, `roomShapes` and `cameraPx`, same names, arguments and results (the room is src/sim/types.ts's `Room`; `CODE` from src/rooms/codes.ts, `SPIKE_BOX` from src/sim/constants.ts). In `src/render/play-scene.ts`: the room's chunks baked on entering a room and shown at depth 5, the camera `cameraPx` from the interpolated centre (section 10.6), GAME1's plain tiles, spikes and portals removed; GAME1's plain beat entities and creature stay on one Graphics at depth 6, drawn with `camPx`, until RN2 and RN3.
+- **Acceptance:** `npm run accept:rn1` → exit 0, `Tests  3 passed (3)` (tests/render/room-art.test.mjs), then `flash: PASS` and `perf: PASS` (headed, on this laptop, on AC). Red before the edit: the test cannot load src/render/room-art.ts (build/evidence/RN1.amend.1.txt).
+- **Tests mapped:** `tests/render/room-art.test.mjs`, `npm run smoke` (each later art item re-runs check:art; VERIFY runs every probe)
+- **Out of scope:** the creature, the beat entities and the depth layers (RN2 to RN4).
 
 #### RN2 The creature and its effects
 
-- **Module:** render · **Interface change:** no
+- **Module:** render, game · **Interface change:** yes (new: src/render/creature.ts; `Run.track()`)
 - **Pending-dep:** RN1
-- **Targets:** `src/render/play-scene.ts`, `src/render/creature.ts` (new)
-- **Action:** section 10.3's creature in both forms, the landing squash, the wave trail, the death burst and the respawn ring.
-- **Acceptance:** `npm run check:art` → exit 0, lines `flash: PASS` and `perf: PASS`
-- **Tests mapped:** `npm run smoke` (each later art item re-runs check:art; VERIFY runs every probe)
-- **Out of scope:** beat entities.
+- **Targets:** `src/render/creature.ts` (new), `src/game/run.ts`, `src/render/play-scene.ts`
+- **Action:** port `SQUASH_STEPS`, `TRAIL`, `createTrack`, `trackStep` and `creatureShapes` into `src/render/creature.ts`; in `src/game/run.ts` the track of section 10.6 (`createTrack()` on every `startRoom`, `trackStep` after every tick, `track()` on the `Run` interface); in the play scene the creature drawn every frame from `creatureShapes` on its own Graphics at depth 7, GAME1's plain square removed.
+- **Acceptance:** `npm run accept:rn2` → exit 0, `Tests  14 passed (14)` (tests/render/creature.test.mjs), then `flash: PASS` and `perf: PASS`. Red before the edit: the test cannot load src/render/creature.ts (build/evidence/RN2.amend.1.txt).
+- **Tests mapped:** `tests/render/creature.test.mjs`, `npm run smoke`
+- **Out of scope:** the beat entities.
 
 #### RN3 Beat entities, warnings and the layer's return
 
-- **Module:** render, fx · **Interface change:** no
+- **Module:** render, fx · **Interface change:** yes (new: src/render/beat-art.ts)
 - **Pending-dep:** RN2
-- **Targets:** `src/render/play-scene.ts`, `src/render/beat-art.ts` (new)
-- **Action:** section 10.3's beat blocks and beat spikes on, off and in their one-beat warning, and section 10.4's layer-return ring, every brightness change through the flash limiter (`beginFrame` once a frame).
-- **Acceptance:** `npm run check:art` → exit 0, lines `flash: PASS` and `perf: PASS`
-- **Tests mapped:** `npm run smoke` (each later art item re-runs check:art; VERIFY runs every probe)
-- **Out of scope:** the parallax.
+- **Targets:** `src/render/beat-art.ts` (new), `src/render/play-scene.ts`
+- **Action:** port `BLOCK_ALPHA`, `OFF_ALPHA`, `WARN_ALPHA`, `SPIKE_AREA`, `RING_STEPS`, `entityLook`, `levelLum`, `beatShapes` and `ringShapes` into `src/render/beat-art.ts` (`spikeTris` from src/render/room-art.ts); in the play scene the scene's flash limiter and the beat entities with the ring on the Graphics at depth 6 (section 10.6), GAME1's plain beat entities removed.
+- **Acceptance:** `npm run accept:rn3` → exit 0, `Tests  4 passed (4)` (tests/render/beat-art.test.mjs), then `flash: PASS` and `perf: PASS`. Red before the edit: the test cannot load src/render/beat-art.ts (build/evidence/RN3.amend.1.txt).
+- **Tests mapped:** `tests/render/beat-art.test.mjs`, `npm run smoke`
+- **Out of scope:** the depth layers.
 
-#### RN4 Depth: parallax, fog, vignette, dust and glow
+#### RN4 Depth: bands, fog, vignette and dust
 
-- **Module:** render · **Interface change:** no
+- **Module:** render · **Interface change:** yes (new: src/render/depth-art.ts)
 - **Pending-dep:** RN3
-- **Targets:** `src/render/play-scene.ts`, `src/render/depth-art.ts` (new)
-- **Action:** section 10.4: the four bands from xorshift32 (state seeded with the room number, `x ^= x << 13; x ^= x >>> 17; x ^= x << 5`, unsigned), fog, vignette, 60 dust motes, the glow pass.
-- **Acceptance:** `npm run check:art` → exit 0, lines `flash: PASS` and `perf: PASS`
-- **Tests mapped:** `npm run smoke` (each later art item re-runs check:art; VERIFY runs every probe)
+- **Targets:** `src/render/depth-art.ts` (new), `src/render/play-scene.ts`
+- **Action:** port `BAND_FACTORS`, `BAND_COLORS`, `FOG_STRIPS`, `FOG_ALPHA`, `VIGNETTE_CELL`, `VIGNETTE_ALPHA`, `MOTES`, `xorshift32`, `makeRng`, `roomNumber`, `bandWidth`, `depthBands`, `fogShapes`, `vignetteShapes`, `moteField` and `moteShapes` into `src/render/depth-art.ts`; in the play scene the bands baked on entering a room (depths 0 to 3), the fog (4) and the vignette (9) baked once, and the dust every frame (8) (section 10.6). The glow is already part of the accent shapes (section 10.4).
+- **Acceptance:** `npm run accept:rn4` → exit 0, `Tests  4 passed (4)` (tests/render/depth-art.test.mjs), then `flash: PASS` and `perf: PASS`. Red before the edit: the test cannot load src/render/depth-art.ts (build/evidence/RN4.amend.1.txt).
+- **Tests mapped:** `tests/render/depth-art.test.mjs`, `npm run smoke`
 - **Out of scope:** the ending.
 
 #### END1 The ending and the playtest line
 
-- **Module:** render, the entry · **Interface change:** no
+- **Module:** render, the entry · **Interface change:** yes (new: src/render/ending-art.ts, the `EndingScene` constructor)
 - **Pending-dep:** RN4
-- **Targets:** `src/render/ending-scene.ts` (new), `src/main.ts`
-- **Action:** section 13: the glimpse, the card on the beat, and under `?playtest` the run line in `<output id="playtest">`.
-- **Acceptance:** `npm run accept:ending` → exit 0, line `play: chrome headless: PASS (console,play,text)` (with `?playtest`, the text check wants exactly one run line after the gauntlet)
-- **Tests mapped:** `npm run smoke` (VERIFY runs the playthrough in both browsers)
+- **Targets:** `src/render/ending-art.ts` (new), `src/render/ending-scene.ts` (new), `src/main.ts`
+- **Action:** port `BEAT_S`, `RISE_S`, `glimpseShapes`, `riseAt`, `ceilingShapes` and `cardShapes` into `src/render/ending-art.ts`; the scene of section 13 in `src/render/ending-scene.ts`; `src/main.ts` creates it with `{ engine, run, playtest }` in place of GAME1's empty `ending` scene.
+- **Acceptance:** `npm run accept:ending` → exit 0, `Tests  3 passed (3)` (tests/render/ending-art.test.mjs), then the line `play: chrome headless: PASS (console,play,text)` (with `?playtest`, the text check wants exactly one run line after the gauntlet). Red before the edit: the test cannot load src/render/ending-art.ts (build/evidence/END1.amend.1.txt).
+- **Tests mapped:** `tests/render/ending-art.test.mjs`, `npm run smoke` (VERIFY runs the playthrough in both browsers)
 - **Out of scope:** any other text anywhere.
 
 ## 17. Writer table

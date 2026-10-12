@@ -1,6 +1,7 @@
 // PF-CONTROLS for the product tests the items map: each test file passes on its reference (the oracle, the
-// spec session's ports and reference modules) and fails on a copy of that reference with one planted fault,
-// the mutation the reviewer's axis A applies per spec area. The product itself does not exist yet.
+// spec session's ports and reference modules, the producer's art reference) and fails on a copy of that
+// reference with one planted fault, the mutation the reviewer's axis A applies per spec area. The product
+// is never the module under test here.
 import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -48,6 +49,12 @@ const cases = [
   ['tests/audio/scheduler.test.mjs', { HUSH_AUDIO_MODULE: `${REF}/audio.mjs` }, () => ({ HUSH_AUDIO_MODULE: refMutant('audio.mjs', 'export const LOOKAHEAD = 0.12;', 'export const LOOKAHEAD = 0.15;') })],
   ['tests/audio/gates.test.mjs', { HUSH_AUDIO_MODULE: `${REF}/audio.mjs` }, () => ({ HUSH_AUDIO_MODULE: refMutant('audio.mjs', 'param.setValueAtTime(0, t - 0.005);', 'param.setValueAtTime(0, t - 0.01);') })],
   ['tests/fx/flash-limiter.test.mjs', { HUSH_FX_MODULE: `${REF}/flash-limiter.mjs` }, () => ({ HUSH_FX_MODULE: refMutant('flash-limiter.mjs', 'if (full || sum', 'if (sum') })],
+  // The art (amended 2026-10-12): each art test against the art reference, and against one planted fault.
+  ['tests/render/room-art.test.mjs', { HUSH_ROOM_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_ROOM_ART_MODULE: refMutant('art.mjs', 'if (codeAt(room, c, r - 1) !== CODE.SOLID)', 'if (codeAt(room, c, r - 1) === CODE.EMPTY)') })],
+  ['tests/render/creature.test.mjs', { HUSH_CREATURE_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_CREATURE_MODULE: refMutant('art.mjs', 'export const SQUASH_STEPS = 6;', 'export const SQUASH_STEPS = 5;') })],
+  ['tests/render/beat-art.test.mjs', { HUSH_BEAT_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_BEAT_ART_MODULE: refMutant('art.mjs', 'export const WARN_ALPHA = [0.45, 0.25];', 'export const WARN_ALPHA = [0.5, 0.25];') })],
+  ['tests/render/depth-art.test.mjs', { HUSH_DEPTH_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_DEPTH_ART_MODULE: refMutant('art.mjs', 'Math.sqrt(dx * dx + dy * dy) - 0.85)', 'Math.sqrt(dx * dx + dy * dy) - 0.8)') })],
+  ['tests/render/ending-art.test.mjs', { HUSH_ENDING_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_ENDING_ART_MODULE: refMutant('art.mjs', 'export const RISE_S = 16 * BEAT_S;', 'export const RISE_S = 12 * BEAT_S;') })],
 ];
 
 describe('product tests: green on the reference, red on one planted fault', () => {
