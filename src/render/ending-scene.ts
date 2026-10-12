@@ -4,7 +4,7 @@ import { audibleSec } from '../clock/output-clock.ts';
 import type { Run } from '../game/run.ts';
 import { drawShapes } from './art.ts';
 import type { Shape } from './art.ts';
-import { BEAT_S, cardShapes, ceilingShapes, glimpseShapes, riseAt } from './ending-art.ts';
+import { endingFrame, glimpseShapes, riseAt } from './ending-art.ts';
 
 const KEY_GLIMPSE = 'glimpse';
 const DEPTH_GLIMPSE = 0;
@@ -73,21 +73,18 @@ export class EndingScene extends Phaser.Scene {
     el.removeAttribute('hidden');
   }
 
+  // Every frame is endingFrame's alone: the rise from the first frame's heard time, then the card on the music's
+  // beat, counted from the run's origin.
   override update(): void {
     const clock = this.engine.clock();
     if (!clock) return;
     const heard = audibleSec(clock, performance.now());
     if (this.t0 === null) this.t0 = heard;
-    const r = riseAt(heard - this.t0);
-    if (this.glimpse) this.glimpse.y = r.glimpseY;
+    const f = endingFrame(heard, this.t0, this.run);
+    if (this.glimpse) this.glimpse.y = f.glimpseY;
     this.graphics.clear();
-    if (r.u < 1) {
-      drawShapes(this.graphics, ceilingShapes(r.ceilingY));
-      return;
-    }
-    const beatOfBar = ((Math.floor((heard - this.run.origin) / BEAT_S) % 4) + 4) % 4;
-    drawShapes(this.graphics, cardShapes(beatOfBar));
-    if (this.playtest && !this.lineShown) {
+    drawShapes(this.graphics, f.shapes);
+    if (f.card && this.playtest && !this.lineShown) {
       this.lineShown = true;
       this.showRunLine();
     }
