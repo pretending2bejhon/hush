@@ -164,3 +164,14 @@ DISPOSITION: R2-MINOR4 | two item lines are stale | 2026-10-12T18:08:39-05:00 | 
 - CL1's decisive line becomes `Tests  11 passed (11)`.
 - END1's text guard is described as the probe runs it.
 
+The tests part landed 2026-10-12T18:15-05:00 in the commit `hush-spec: amend RN1 RN4 GAME1 CAL1 CL1 END1 ...` that follows `100e45f`. That fixes R2-MAJOR2, R2-MINOR1, R2-MINOR2, R2-MINOR4 and part (a) of R2-MAJOR4.
+- On the product: tests/render/draw-shapes.test.mjs passes 3 of 3, tests/input/calibrate.test.ts 6 of 6, tests/game/run.test.mjs 15 of 15 and tests/render/play-frame.test.mjs 3 of 3.
+- Controls: tests/controls/product-tests.test.mjs passes 36 of 36 (build/evidence/R2-product-controls.amend.1.txt). Each new case is green on its reference and red on its fault:
+  - drawShapes: an ellipse at half size, a flat triangle;
+  - the run: displaySec(0), inputLagSec(0, 0), no track step;
+  - the frame: the ring one world px up.
+  - Every earlier case keeps its verdict on the extended reference run.
+- The X8 calibrators, 4 of 4: the untrimmed one fails (build/evidence/R2-calibrator-controls.amend.1.txt).
+- Standing is GREEN: 22 mapped files and 114 tests, calibration 6, test:av 39 (build/evidence/R2-tests-standing.amend.1.txt).
+- The spec: section 1.6, the drawShapes and track paragraphs of 10.6, section 12's X8 line, three rows of section 15, and the acceptances of CL1, CAL1, RN1 (with draw-shapes mapped), RN4 and END1.
+

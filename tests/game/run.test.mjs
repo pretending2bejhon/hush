@@ -4,12 +4,17 @@
 // origin, 0.25 s past the context time (MINOR 4), with the layers of every earlier room (the gauntlet mapped from
 // its first run's bar); in the gauntlet every new gBeat (the entry from room 10, each respawn) maps the track
 // through engine.gauntlet(gBeat / 4).
+// Review R2: the calibration the run is given moves the sim's target by displaySec(avOffset) and an input event's
+// step by inputLagSec(avOffset, inputBias) (section 9; MAJOR 4), and the run steps the creature's track after every
+// tick, as RN2's trackStep over the sim's state (section 10.6; MINOR 2).
 // HUSH_RUN_MODULE points the test at another run module (the controls: the reference passes, a broken copy fails).
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { load } from '../helpers/load.mjs';
 import * as O from '../fixtures/oracle/index.mjs';
+import * as ART from '../fixtures/reference/art.mjs';
+import * as D from '../fixtures/reference/driver.mjs';
 import { ALL_ROOMS, roomFiles } from '../sim/compare.mjs';
 import { readWitness } from '../../tools/replay.mjs';
 
@@ -38,12 +43,12 @@ function source(sim, room, changes) {
   };
 }
 
-// A run on a fake engine whose context runs and whose device-clock line sits at offset 0, so the heard time is
-// the frame time; every engine call is recorded with the sim's step at the call.
-function harness() {
+// A run on a fake engine whose context runs and whose device-clock line sits at `offset` (0: the heard time is the
+// frame time); every engine call is recorded with the sim's step at the call.
+function harness({ offset = 0 } = {}) {
   const calls = [];
   const ctx = { state: 'running', currentTime: 5 };
-  const clock = { offset: 0, valid: true, resyncs: 0, sample: () => clock };
+  const clock = { offset, valid: true, resyncs: 0, sample: () => clock };
   let attached = null;
   let run = null;
   const engine = {
@@ -131,5 +136,64 @@ describe('GAME1 the run maps the gauntlet on every run start', () => {
     h.run.attachInput(source(() => h.run.sim, 10, w.changes));
     h.advance(end);
     expect(h.calls.filter((c) => c[0] === 'gauntlet')).toEqual(want);
+  });
+});
+
+// The calibrations the tests use: none, the probe's key check (MAJOR 5), the tapped run's, a negative offset, and two
+// that the clamps of section 9.1 hold at 0.15 s and 0.
+const CALIBRATIONS = [[0, 0], [100, -60], [15, 25], [-80, 30], [400, 0], [-50, 0]];
+
+describe('GAME1 the run follows its calibration (review R2, MAJOR 4)', () => {
+  it('ends every frame one step past the heard time less displaySec(avOffset)', () => {
+    for (const [av, bias] of CALIBRATIONS) {
+      const h = harness({ offset: 0.0375 });
+      h.run.setCalibration(av, bias);
+      h.run.startRoom(1);
+      for (const sec of [0.75, 2, 3.5]) {
+        const ms = (h.run.origin + sec) * 1000;
+        for (let i = 0; i < 40; i++) h.run.frame(ms);
+        expect(h.run.sim.step, `avOffset ${av} inputBias ${bias} at ${sec} s`).toBe(D.targetStep(ms / 1000 + 0.0375, h.run.origin, D.displaySec(av)));
+      }
+    }
+  });
+
+  it('stamps an input event with the step heard at its time less inputLagSec(avOffset, inputBias)', () => {
+    for (const [av, bias] of CALIBRATIONS) {
+      const h = harness({ offset: 0.0375 });
+      h.run.setCalibration(av, bias);
+      h.run.startRoom(1);
+      for (const sec of [0.5, 1.25, 3]) {
+        const ms = (h.run.origin + sec) * 1000 + 3.3;
+        expect(h.run.stepOf(ms), `avOffset ${av} inputBias ${bias} at ${sec} s`).toBe(Math.floor((ms / 1000 + 0.0375 - h.run.origin - D.inputLagSec(av, bias)) * 240));
+      }
+    }
+  });
+});
+
+// The sim's state after a tick, as the creature's track reads it (by FIELDS name).
+const named = (state) => Object.fromEntries(['step', 'x', 'y', 'form', 'grounded', 'dead', 'layers'].map((f) => [f, state[O.FIELDS.indexOf(f)]]));
+
+describe('GAME1 the run keeps the creature\'s track (review R2, MINOR 2)', () => {
+  it('steps the track after every tick, as trackStep over the sim\'s states, through landings, the wave and a layer\'s return', () => {
+    for (const k of [6, 1]) {
+      const w = witness(k);
+      const end = O.nextBarStep(clearStep(k)) + 240;
+      const o = O.createSim(world, { room: k, step: 0, layers: canonical(k) });
+      const src = source(() => o, k, w.changes);
+      const want = [ART.createTrack()];
+      for (let s = 0; s < end; s++) {
+        o.tick(src.next(s));
+        want.push(ART.trackStep(want[s], named(o.save())));
+      }
+      const h = harness();
+      h.run.startRoom(k);
+      expect(h.run.track(), `room ${k} at its start`).toEqual(want[0]);
+      h.run.attachInput(source(() => h.run.sim, k, w.changes));
+      for (let to = 120; to <= end; to += 120) {
+        h.advance(to);
+        expect(h.run.track(), `room ${k} at step ${to}`).toEqual(want[to]);
+      }
+      expect(want[end].ringAt, `room ${k}: the layer's return was stepped`).toBeGreaterThan(0);
+    }
   });
 });

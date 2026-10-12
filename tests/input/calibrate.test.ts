@@ -75,6 +75,16 @@ describe('calibration (X8)', () => {
     expect(p.taps).toBe(12);
   });
 
+  // Review R2, MINOR 1: dropping the two ends never moves a median, so only the spread shows the trim. Kept, the two
+  // stray taps double it.
+  it('drops the lowest and the highest tap before the spread', () => {
+    const p = mod.judgePass([-50, -10, -10, 0, 0, 0, 0, 10, 10, 50]);
+    expect(p.median).toBeCloseTo(0, 6);
+    expect(p.mad).toBeCloseTo(5, 6);
+    expect(p.taps).toBe(10);
+    expect(p.accepted).toBe(true);
+  });
+
   it('takes 0 for a rejected pass', () => {
     const good = mod.judgePass(taps(24, 30, 4, 3));
     const bad = mod.judgePass(taps(24, 30, 200, 4));

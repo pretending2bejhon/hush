@@ -27,7 +27,7 @@
     "probe:supply": "vite build && node tools/probe-supply.mjs",
     "probe:live": "node tools/probe-live.mjs",
     "accept:game": "vite build && node tools/probe-play.mjs --check console,play,text,visibility,unlock && tsc --noEmit && eslint src",
-    "accept:rn1": "vitest run tests/render/room-art.test.mjs && npm run check:art",
+    "accept:rn1": "vitest run tests/render/room-art.test.mjs tests/render/draw-shapes.test.mjs && npm run check:art",
     "accept:rn2": "vitest run tests/render/creature.test.mjs && npm run check:art",
     "accept:rn3": "vitest run tests/render/beat-art.test.mjs && npm run check:art",
     "accept:rn4": "vitest run tests/render/depth-art.test.mjs tests/render/play-frame.test.mjs && npm run check:art",

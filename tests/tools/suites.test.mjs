@@ -1,5 +1,6 @@
-// PF-CONTROLS for the suite runners: the X8 test passes the reference calibrator and fails a biased one and one
-// that never rejects (tests/fixtures/calibration); npm test's runner (tools/test-all.mjs) carries a planted
+// PF-CONTROLS for the suite runners: the X8 test passes the reference calibrator and fails a biased one, one that
+// never rejects and one that judges a pass's spread on every tap (review R2, MINOR 1; tests/fixtures/calibration);
+// npm test's runner (tools/test-all.mjs) carries a planted
 // failing suite's status to its own exit and to the ship gate's X2 row; the standing check reads the items'
 // mapped tests from the spec and the passed items from the scoreboard.
 import { execFileSync, spawnSync } from 'node:child_process';
@@ -16,7 +17,7 @@ const vitest = (args, env = {}) => {
 };
 
 describe('the X8 test against fixture calibrators', () => {
-  for (const [m, code] of [['reference', 0], ['biased', 1], ['never-reject', 1]]) {
+  for (const [m, code] of [['reference', 0], ['biased', 1], ['never-reject', 1], ['untrimmed', 1]]) {
     it(`${code ? 'fails' : 'passes'} the ${m} calibrator`, () => {
       const r = vitest(['tests/input/calibrate.test.ts'], { HUSH_CALIBRATE_MODULE: `tests/fixtures/calibration/${m}.mjs` });
       expect(r.code).toBe(code);

@@ -35,7 +35,8 @@ function refMutant(file, from, to) {
   return out;
 }
 const clockMutant = (from, to) => path.join(mutate(['tests/fixtures/control-page/clock.js'], 'tests/fixtures/control-page/clock.js', from, to), 'clock.js');
-// The reference run imports the oracle and the driver reference by relative path: its mutant sits beside them.
+// The reference run imports the oracle, the art reference and the driver reference by relative path: its mutant
+// takes them from the repo.
 function runMutant(from, to) {
   const file = path.join(REPO, REF, 'run.mjs');
   const text = fs.readFileSync(file, 'utf8');
@@ -43,7 +44,10 @@ function runMutant(from, to) {
   if (out === text) throw new Error(`mutation not applied in ${REF}/run.mjs`);
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hush-mutant-'));
   fs.mkdirSync(path.join(dir, 'reference'));
-  fs.writeFileSync(path.join(dir, 'reference', 'run.mjs'), out.replace("from '../oracle/index.mjs'", `from '${pathToFileURL(path.join(REPO, ORACLE, 'index.mjs')).href}'`).replace("from './driver.mjs'", `from '${pathToFileURL(path.join(REPO, REF, 'driver.mjs')).href}'`));
+  fs.writeFileSync(path.join(dir, 'reference', 'run.mjs'), out
+    .replace("from '../oracle/index.mjs'", `from '${pathToFileURL(path.join(REPO, ORACLE, 'index.mjs')).href}'`)
+    .replace("from './art.mjs'", `from '${pathToFileURL(path.join(REPO, REF, 'art.mjs')).href}'`)
+    .replace("from './driver.mjs'", `from '${pathToFileURL(path.join(REPO, REF, 'driver.mjs')).href}'`));
   return path.join(dir, 'reference', 'run.mjs');
 }
 
@@ -92,6 +96,15 @@ const cases = [
   ['tests/render/play-frame.test.mjs', { HUSH_PLAY_FRAME_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_PLAY_FRAME_MODULE: refMutant('art.mjs', 'beatShapes(room, step, at(\'layers\'), camPx, levels, limiter)', 'beatShapes(room, step + 24, at(\'layers\'), camPx, levels, limiter)') }), 'beat step'],
   // Review R1 (MAJOR 4): the card's beat counted from the ending's first frame instead of the run's origin.
   ['tests/render/ending-art.test.mjs', { HUSH_ENDING_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_ENDING_ART_MODULE: refMutant('art.mjs', 'cardShapes(beatOfBar(heard, run.origin))', 'cardShapes(beatOfBar(heard, t0 + 0.2))') }), 'card beat'],
+  // Review R2 (MAJOR 2): drawShapes against its reference, an ellipse at half size and a flat triangle.
+  ['tests/render/draw-shapes.test.mjs', { HUSH_DRAW_MODULE: `${REF}/draw.mjs` }, () => ({ HUSH_DRAW_MODULE: refMutant('draw.mjs', 'g.fillEllipse(s.x + dx, s.y + dy, 2 * s.rx, 2 * s.ry);', 'g.fillEllipse(s.x + dx, s.y + dy, s.rx, s.ry);') }), 'ellipse'],
+  ['tests/render/draw-shapes.test.mjs', { HUSH_DRAW_MODULE: `${REF}/draw.mjs` }, () => ({ HUSH_DRAW_MODULE: refMutant('draw.mjs', 's.p[4] + dx, s.p[5] + dy);', 's.p[4] + dx, s.p[3] + dy);') }), 'triangle'],
+  // Review R2 (MAJOR 4): the run's calibration dropped from the display offset, and from the input lag.
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('targetStep(heard, origin, displaySec(avOffset))', 'targetStep(heard, origin, displaySec(0))') }), 'display'],
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('inputLagSec(avOffset, inputBias)', 'inputLagSec(0, 0)') }), 'input lag'],
+  // Review R2 (MINOR 2): a run that never steps the creature's track, and the frame's ring one world px up.
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('track = trackStep(track, named(state));', '') }), 'track'],
+  ['tests/render/play-frame.test.mjs', { HUSH_PLAY_FRAME_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_PLAY_FRAME_MODULE: refMutant('art.mjs', '(iy / 256 + 5) * ZOOM)', '(iy / 256 + 4) * ZOOM)') }), 'ring'],
 ];
 
 describe('product tests: green on the reference, red on one planted fault', () => {
