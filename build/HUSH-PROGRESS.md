@@ -20,7 +20,7 @@ AU1: passes: true (evidence: build/evidence/AU1.green.1.txt)
 AU2: passes: true (evidence: build/evidence/AU2.green.1.txt)
 AU3: passes: true (evidence: build/evidence/AU3.green.1.txt)
 FX1: passes: true (evidence: build/evidence/FX1.green.1.txt)
-GAME1: passes: false
+GAME1: passes: true (evidence: build/evidence/GAME1.green.1.txt)
 CAL2: passes: false
 RN1: passes: false
 RN2: passes: false
@@ -32,6 +32,9 @@ END1: passes: false
 
 - Phaser 4.2.1 types do not declare `create` on `Phaser.Scene`, so `override create()` fails tsc with TS4113 under `noImplicitOverride`; write `create()` without `override` (S1).
 - `src/sim/types.ts` imports `Gauntlet` from `src/rooms/gauntlet.ts` as section 14 writes it, so `tsc --noEmit` reports TS2307 from SIM1 until RM1 creates that module; the acceptance (vitest) and eslint are unaffected and `accept:game` is the first item that runs tsc (SIM1).
+- Phaser 4.2.1 types declare `update` on `Phaser.Scene` (unlike `create`), so a scene's `update()` needs `override` under `noImplicitOverride` (TS4114) (GAME1).
+- `@strudel/web` ships no declaration file, so `import * as S from '@strudel/web'` fails tsc with TS7016 under `strict`; the import carries `// @ts-expect-error TS7016` and `S` is untyped (GAME1).
+- The probe's visibility check wants the sim's `step` to advance after the ending scene started, so the tick driver hangs on the game's `PRE_STEP` event (every frame, any scene), not on the play scene's `update` (GAME1).
 
 ## Rounds
 

@@ -1,0 +1,833 @@
+HUSH-EVIDENCE v1
+id: GAME1
+phase: diff
+command: git diff --cached
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T00:01:46-05:00
+time-end: 2026-10-12T00:01:46-05:00
+head: fcc37b77eee2583aac503dbf8f18a9c372882dfa
+exit: 0
+--- output ---
+diff --git a/build/HUSH-PROGRESS.md b/build/HUSH-PROGRESS.md
+index b1a4000..5e0aaac 100644
+--- a/build/HUSH-PROGRESS.md
++++ b/build/HUSH-PROGRESS.md
+@@ -20,7 +20,7 @@ AU1: passes: true (evidence: build/evidence/AU1.green.1.txt)
+ AU2: passes: true (evidence: build/evidence/AU2.green.1.txt)
+ AU3: passes: true (evidence: build/evidence/AU3.green.1.txt)
+ FX1: passes: true (evidence: build/evidence/FX1.green.1.txt)
+-GAME1: passes: false
++GAME1: passes: true (evidence: build/evidence/GAME1.green.1.txt)
+ CAL2: passes: false
+ RN1: passes: false
+ RN2: passes: false
+@@ -32,6 +32,9 @@ END1: passes: false
+ 
+ - Phaser 4.2.1 types do not declare `create` on `Phaser.Scene`, so `override create()` fails tsc with TS4113 under `noImplicitOverride`; write `create()` without `override` (S1).
+ - `src/sim/types.ts` imports `Gauntlet` from `src/rooms/gauntlet.ts` as section 14 writes it, so `tsc --noEmit` reports TS2307 from SIM1 until RM1 creates that module; the acceptance (vitest) and eslint are unaffected and `accept:game` is the first item that runs tsc (SIM1).
++- Phaser 4.2.1 types declare `update` on `Phaser.Scene` (unlike `create`), so a scene's `update()` needs `override` under `noImplicitOverride` (TS4114) (GAME1).
++- `@strudel/web` ships no declaration file, so `import * as S from '@strudel/web'` fails tsc with TS7016 under `strict`; the import carries `// @ts-expect-error TS7016` and `S` is untyped (GAME1).
++- The probe's visibility check wants the sim's `step` to advance after the ending scene started, so the tick driver hangs on the game's `PRE_STEP` event (every frame, any scene), not on the play scene's `update` (GAME1).
+ 
+ ## Rounds
+ 
+diff --git a/build/evidence/GAME1.green.1.txt b/build/evidence/GAME1.green.1.txt
+new file mode 100644
+index 0000000..ab5685e
+--- /dev/null
++++ b/build/evidence/GAME1.green.1.txt
+@@ -0,0 +1,41 @@
++HUSH-EVIDENCE v1
++id: GAME1
++phase: green
++command: npm run accept:game
++cwd: <repo>
++env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
++time-start: 2026-10-11T23:58:51-05:00
++time-end: 2026-10-12T00:01:19-05:00
++head: fcc37b77eee2583aac503dbf8f18a9c372882dfa
++exit: 0
++--- output ---
++
++> hush@0.0.0 accept:game
++> vite build && node tools/probe-play.mjs --check console,play,text,visibility && tsc --noEmit && eslint src
++
++[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
++transforming...
++✓ 37 modules transformed.
++rendering chunks...
++computing gzip size...
++dist/index.html                    1.00 kB │ gzip:   0.66 kB
++dist/assets/index-BuFj8Yyc.js  2,075.38 kB │ gzip: 586.85 kB
++
++[32m✓ built in 633ms[39m
++play: chrome headless: room 01-wake done
++play: chrome headless: room 02-heartbeat done
++play: chrome headless: room 03-dash done
++play: chrome headless: room 04-thorns done
++play: chrome headless: room 05-doors done
++play: chrome headless: room 06-wave done
++play: chrome headless: room 07-current done
++play: chrome headless: room 08-steps done
++play: chrome headless: room 09-gates done
++play: chrome headless: room 10-crown done
++play: chrome headless: room 11-gauntlet done
++play: chrome headless: console: ok: zero console and page errors
++play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
++play: chrome headless: text: ok: title, link and notice only; nothing over the canvas; no text object
++play: chrome headless: visibility: ok: hidden: audio suspended, sim frozen; visible: both run on
++play: chrome headless: PASS (console,play,text,visibility)
++--- end ---
+diff --git a/build/evidence/GAME1.red.1.txt b/build/evidence/GAME1.red.1.txt
+new file mode 100644
+index 0000000..d87736c
+--- /dev/null
++++ b/build/evidence/GAME1.red.1.txt
+@@ -0,0 +1,26 @@
++HUSH-EVIDENCE v1
++id: GAME1
++phase: red
++command: npm run accept:game
++cwd: <repo>
++env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
++time-start: 2026-10-11T23:57:02-05:00
++time-end: 2026-10-11T23:57:14-05:00
++head: fcc37b77eee2583aac503dbf8f18a9c372882dfa
++exit: 2
++--- output ---
++
++> hush@0.0.0 accept:game
++> vite build && node tools/probe-play.mjs --check console,play,text,visibility && tsc --noEmit && eslint src
++
++[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
++transforming...
++✓ 9 modules transformed.
++rendering chunks...
++computing gzip size...
++dist/index.html                    1.00 kB │ gzip:   0.66 kB
++dist/assets/index-8-qyiLBF.js  1,379.67 kB │ gzip: 359.99 kB
++
++[32m✓ built in 550ms[39m
++play: chrome headless: the page never booted: page.waitForFunction: Timeout 10000ms exceeded.
++--- end ---
+diff --git a/build/evidence/GAME1.standing.1.txt b/build/evidence/GAME1.standing.1.txt
+new file mode 100644
+index 0000000..349912e
+--- /dev/null
++++ b/build/evidence/GAME1.standing.1.txt
+@@ -0,0 +1,158 @@
++HUSH-EVIDENCE v1
++id: GAME1
++phase: standing
++command: npm run standing
++cwd: <repo>
++env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
++time-start: 2026-10-12T00:01:23-05:00
++time-end: 2026-10-12T00:01:35-05:00
++head: fcc37b77eee2583aac503dbf8f18a9c372882dfa
++exit: 0
++--- output ---
++
++> hush@0.0.0 standing
++> node tools/standing.mjs
++
++standing: public-tree: node <repo>\tools\check-public.mjs
++check-public tree (246 files): clean (owner denylist, 4 names + 1 machine names)
++standing: public-tree: ok
++standing: public-history: node <repo>\tools\check-public.mjs --history HEAD
++check-public history (1 refs, 33 commits, 169 trees, 306 blobs): clean (owner denylist, 4 names + 1 machine names)
++standing: public-history: ok
++standing: protect: node <repo>\tools\protect.mjs --check
++protect: clean
++standing: protect: ok
++standing: gates: node <repo>\tools\gates.mjs --lint
++gates: ok, 5 line(s)
++standing: gates: ok
++standing: spec-content: node <repo>\tools\spec-content.mjs --check
++spec-content: spec clean, 13 entries
++standing: spec-content: ok
++standing: mapped-tests: node <repo>\node_modules\vitest\vitest.mjs run tests/sim/beat.test.mjs tests/rooms/compile.test.mjs tests/rooms/gauntlet-pattern.test.mjs tests/sim/oracle-base.test.mjs tests/sim/oracle-dash.test.mjs tests/sim/oracle-beat.test.mjs tests/sim/oracle-wave.test.mjs tests/sim/oracle-gauntlet.test.mjs tests/clock/output-clock.test.mjs tests/clock/driver.test.mjs tests/input/keys.test.mjs tests/audio/track.test.mjs tests/audio/scheduler.test.mjs tests/fx/flash-limiter.test.mjs
++
++ RUN  v5.0.2 <repo>
++
++
++ Test Files  14 passed (14)
++      Tests  58 passed (58)
++   Start at  00:01:25
++   Duration  1.82s (tests 66%, transform 24%, import 9%, worker 1%)
++
++standing: mapped-tests: ok
++standing: npm run smoke: node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js run smoke
++
++> hush@0.0.0 smoke
++> vite build && node tools/probe-smoke.mjs
++
++[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
++transforming...
++✓ 37 modules transformed.
++rendering chunks...
++computing gzip size...
++dist/index.html                    1.00 kB │ gzip:   0.66 kB
++dist/assets/index-BuFj8Yyc.js  2,075.38 kB │ gzip: 586.85 kB
++
++[32m✓ built in 716ms[39m
++smoke: page: ok: GET /hush/ 200
++smoke: build-meta: ok: hush-build fcc37b77eee2
++smoke: boot: ok: scenes ["calibration"]
++smoke: canvas: ok: not blank (1220 by 686)
++smoke: text: ok: title, link and notice only; no text object
++smoke: requests: ok: every request answered below 400
++smoke: console: ok: zero console and page errors
++smoke: PASS (/hush/)
++standing: npm run smoke: ok
++standing: node tools/spec-content.mjs --tree: node <repo>\tools\spec-content.mjs --tree
++rooms/01-wake.txt: ok
++rooms/02-heartbeat.txt: ok
++rooms/03-dash.txt: ok
++rooms/04-thorns.txt: ok
++rooms/05-doors.txt: ok
++rooms/06-wave.txt: ok
++rooms/07-current.txt: ok
++rooms/08-steps.txt: ok
++rooms/09-gates.txt: ok
++rooms/10-crown.txt: ok
++rooms/11-gauntlet.txt: ok
++music/area1.strudel: ok
++spec-content: tree clean, 12 file(s)
++standing: node tools/spec-content.mjs --tree: ok
++standing: node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1: node <repo>\tools\replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1
++replays/01-wake.json: CLEAR clear at step 1618, checksum 6001f0f9 (witness 6001f0f9) OK
++replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/02-heartbeat.json: CLEAR clear at step 1684, checksum 04febedf (witness 04febedf) OK
++replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/03-dash.json: CLEAR clear at step 1588, checksum 593d0787 (witness 593d0787) OK
++replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/04-thorns.json: CLEAR clear at step 1408, checksum 123057cb (witness 123057cb) OK
++replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replay: PASS, 4 witness(es)
++standing: node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1: ok
++standing: node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1: node <repo>\tools\replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1
++replays/05-doors.json: CLEAR clear at step 2222, checksum d181a484 (witness d181a484) OK
++replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/06-wave.json: CLEAR clear at step 1920, checksum f3496b90 (witness f3496b90) OK
++replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/07-current.json: CLEAR clear at step 1943, checksum 1c7b52e9 (witness 1c7b52e9) OK
++replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/08-steps.json: CLEAR clear at step 1494, checksum e6a8f7ba (witness e6a8f7ba) OK
++replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replay: PASS, 4 witness(es)
++standing: node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1: ok
++standing: node tools/replay.mjs --all --jitter --seed 1: node <repo>\tools\replay.mjs --all --jitter --seed 1
++replays/01-wake.json: CLEAR clear at step 1618, checksum 6001f0f9 (witness 6001f0f9) OK
++replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/02-heartbeat.json: CLEAR clear at step 1684, checksum 04febedf (witness 04febedf) OK
++replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/03-dash.json: CLEAR clear at step 1588, checksum 593d0787 (witness 593d0787) OK
++replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/04-thorns.json: CLEAR clear at step 1408, checksum 123057cb (witness 123057cb) OK
++replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/05-doors.json: CLEAR clear at step 2222, checksum d181a484 (witness d181a484) OK
++replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/06-wave.json: CLEAR clear at step 1920, checksum f3496b90 (witness f3496b90) OK
++replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/07-current.json: CLEAR clear at step 1943, checksum 1c7b52e9 (witness 1c7b52e9) OK
++replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/08-steps.json: CLEAR clear at step 1494, checksum e6a8f7ba (witness e6a8f7ba) OK
++replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/09-gates.json: CLEAR clear at step 1905, checksum 9498a96d (witness 9498a96d) OK
++replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/10-crown.json: CLEAR clear at step 2388, checksum 5b909a19 (witness 5b909a19) OK
++replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replays/11-gauntlet.json: CLEAR clear at step 14278, checksum b3715ef7 (witness b3715ef7) OK
++replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
++replay: PASS, 11 witness(es)
++standing: node tools/replay.mjs --all --jitter --seed 1: ok
++standing: npm run test:calibration: node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js run test:calibration
++
++> hush@0.0.0 test:calibration
++> vitest run tests/input/calibrate.test.ts
++
++
++ RUN  v5.0.2 <repo>
++
++
++ Test Files  1 passed (1)
++      Tests  5 passed (5)
++   Start at  00:01:33
++   Duration  171ms (transform 58%, import 20%, tests 14%, worker 7%)
++
++standing: npm run test:calibration: ok
++standing: npm run test:av: node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js run test:av
++
++> hush@0.0.0 test:av
++> vitest run tests/audio tests/sim/progression.test.mjs
++
++
++ RUN  v5.0.2 <repo>
++
++
++ Test Files  4 passed (4)
++      Tests  22 passed (22)
++   Start at  00:01:34
++   Duration  722ms (transform 46%, tests 30%, import 22%, worker 2%)
++
++standing: npm run test:av: ok
++standing: GREEN (16 item(s) passed, 14 mapped test file(s), 7 command(s))
++--- end ---
+diff --git a/src/audio/engine.ts b/src/audio/engine.ts
+new file mode 100644
+index 0000000..8783057
+--- /dev/null
++++ b/src/audio/engine.ts
+@@ -0,0 +1,175 @@
++// The audio engine (spec sections 8.2 to 8.4): one Strudel bundle (@strudel/web) on one AudioContext. Each of the
++// ten layers plays on its own superdough orbit into its gate (gain 0 until the layer is back), then one
++// compressor, the master gain, the analyser and the speakers; nothing bypasses the analyser. The transport hands
++// notes over from a 25 ms interval and from a worker ticker, the device clock is sampled every 7 ms.
++// @strudel/web ships no types: the namespace is used untyped.
++// @ts-expect-error TS7016
++import * as S from '@strudel/web';
++import { createOutputClock } from '../clock/output-clock.ts';
++import type { OutputClock } from '../clock/output-clock.ts';
++import { openAt, setMask, unlockTime } from './gates.ts';
++import { CPS, createTransport, SIXTEENTH } from './scheduler.ts';
++import { compileTrack } from './track.ts';
++
++export interface AudioStatus {
++  state: AudioContextState | 'none';
++  time: number;
++  origin: number;
++  scheduledVoices: number;
++  voiceErrors: number;
++  lateShifted: number;
++  lateDropped: number;
++  layerGains: number[];
++}
++
++export interface AudioEngine {
++  start(): Promise<void>;
++  context(): AudioContext | null;
++  status(): AudioStatus;
++  analyser(): AnalyserNode | null;
++  layerGain(layer: number): GainNode | null;
++  clock(): OutputClock | null;
++  restart(origin: number, layers: number, gauntletStartBar: number): void;
++  unlockAt(layer: number, bar: number): void;
++  gauntlet(startBar: number): void;
++  click(time: number): void;
++}
++
++// The calibration clicks play on their own orbit, straight into the compressor.
++const CLICK_ORBIT = 11;
++// A Blob worker posts every 25 ms; the page runs the transport on its message only when the interval has gone
++// quiet for 60 ms (a background tab throttles page timers, not a worker's messages).
++const TICKER = 'let id=0;onmessage=e=>{clearInterval(id);id=e.data>0?setInterval(()=>postMessage(0),e.data):0;};';
++
++export function createAudioEngine(trackText: string): AudioEngine {
++  let ctx: AudioContext | null = null;
++  let analyser: AnalyserNode | null = null;
++  let clock: OutputClock | null = null;
++  let gates: GainNode[] = [];
++  let transport: ReturnType<typeof createTransport> | null = null;
++  let starting: Promise<void> | null = null;
++  let lastTick = 0;
++
++  function tick(): void {
++    if (!ctx || ctx.state !== 'running' || !transport || !clock) return;
++    lastTick = performance.now();
++    clock.sample();
++    transport.tick(ctx.currentTime);
++  }
++
++  function play(note: { layer: number; value: Record<string, unknown>; time: number; duration: number; cycle: number }): void {
++    try {
++      Promise.resolve(S.superdough({ ...note.value, orbit: note.layer }, note.time, note.duration, CPS, note.cycle)).catch(() => transport?.voiceError());
++    } catch {
++      transport?.voiceError();
++    }
++  }
++
++  function startTimers(): void {
++    window.setInterval(tick, 25);
++    window.setInterval(() => clock?.sample(), 7);
++    try {
++      const url = URL.createObjectURL(new Blob([TICKER], { type: 'text/javascript' }));
++      const ticker = new Worker(url);
++      let revoked = false;
++      ticker.onmessage = () => {
++        if (!revoked) {
++          revoked = true;
++          URL.revokeObjectURL(url);
++        }
++        if (performance.now() - lastTick > 60) tick();
++      };
++      ticker.onerror = () => ticker.terminate();
++      ticker.postMessage(25);
++    } catch {
++      // No worker: the interval alone runs the transport.
++    }
++  }
++
++  return {
++    // Inside the first keydown: the context is created and resumed in that same handler (CP V6).
++    start(): Promise<void> {
++      if (starting) return starting;
++      const context = new AudioContext({ latencyHint: 0.1 });
++      ctx = context;
++      const resumed = context.resume();
++      S.setAudioContext(context);
++      S.miniAllStrings();
++      // An orbit plays into its layer's gate, never straight to the speakers (Vault City city-audio.js:271-283).
++      const controller = S.getSuperdoughAudioController();
++      const createOrbit = controller.getOrbit.bind(controller);
++      let compressor: DynamicsCompressorNode | null = null;
++      controller.getOrbit = (number: number, channels: unknown) => {
++        if (controller.nodes[number] != null) return controller.nodes[number];
++        const connect = controller.output.connectToDestination;
++        controller.output.connectToDestination = () => {};
++        let orbit: { output: AudioNode };
++        try {
++          orbit = createOrbit(number, channels);
++        } finally {
++          controller.output.connectToDestination = connect;
++        }
++        const target = number === CLICK_ORBIT ? compressor : gates[number - 1];
++        if (target) orbit.output.connect(target);
++        return orbit;
++      };
++      const bus = new DynamicsCompressorNode(context, { threshold: -10, knee: 6, ratio: 4, attack: 0.005, release: 0.12 });
++      compressor = bus;
++      const master = new GainNode(context, { gain: 0.8 });
++      analyser = new AnalyserNode(context, { fftSize: 2048, smoothingTimeConstant: 0 });
++      bus.connect(master);
++      master.connect(analyser);
++      analyser.connect(context.destination);
++      const track = compileTrack(trackText, S);
++      gates = track.layers.map(() => {
++        const gate = new GainNode(context, { gain: 0 });
++        gate.connect(bus);
++        return gate;
++      });
++      transport = createTransport(track.layers, play);
++      clock = createOutputClock(context);
++      startTimers();
++      const registered = Promise.resolve()
++        .then(() => S.registerSynthSounds())
++        .catch(() => transport?.voiceError());
++      starting = Promise.all([resumed, registered]).then(() => undefined);
++      return starting;
++    },
++    context: () => ctx,
++    status(): AudioStatus {
++      const c = transport ? transport.counters() : { scheduledVoices: 0, voiceErrors: 0, lateShifted: 0, lateDropped: 0 };
++      return {
++        state: ctx ? ctx.state : 'none',
++        time: ctx ? ctx.currentTime : 0,
++        origin: transport ? transport.origin : 0,
++        ...c,
++        layerGains: gates.map((g) => g.gain.value),
++      };
++    },
++    analyser: () => analyser,
++    layerGain: (layer: number) => gates[layer - 1] ?? null,
++    clock: () => clock,
++    // The transport starts again at cycle 0 on `origin` and every gate takes the mask of the layers back.
++    restart(origin: number, layers: number, gauntletStartBar: number): void {
++      if (!ctx || !transport) return;
++      transport.restart(origin, gauntletStartBar);
++      setMask(gates.map((g) => g.gain), layers, ctx.currentTime);
++    },
++    unlockAt(layer: number, bar: number): void {
++      const gate = gates[layer - 1];
++      if (!ctx || !transport || !gate) return;
++      openAt(gate.gain, unlockTime(transport.origin, bar));
++    },
++    gauntlet(startBar: number): void {
++      transport?.gauntlet(startBar);
++    },
++    click(time: number): void {
++      if (!ctx) return;
++      try {
++        Promise.resolve(S.superdough({ s: 'sbd', decay: 0.08, gain: 0.8, orbit: CLICK_ORBIT }, time, SIXTEENTH, CPS, 0)).catch(() => transport?.voiceError());
++      } catch {
++        transport?.voiceError();
++      }
++    },
++  };
++}
+diff --git a/src/game/run.ts b/src/game/run.ts
+new file mode 100644
+index 0000000..69a1700
+--- /dev/null
++++ b/src/game/run.ts
+@@ -0,0 +1,125 @@
++// The run (spec sections 4.5, 8.4 and 9.1): the sim, the input source and the tick driver. The sim follows the heard
++// audio clock, one step past it, at most 24 steps a frame; when it clears a room the audio returns that layer on the
++// same bar line, and in the gauntlet the track starts again on every run start.
++import type { AudioEngine } from '../audio/engine.ts';
++import { alpha, displaySec, inputLagSec, stepsDue, targetStep } from '../clock/driver.ts';
++import { audibleSec } from '../clock/output-clock.ts';
++import type { createKeys, InputSource } from '../input/keys.ts';
++import { gauntletStartBeat, unlockBar } from '../sim/beat.ts';
++import { createSim, FIELDS } from '../sim/sim.ts';
++import type { Room, Sim, World } from '../sim/types.ts';
++
++type Keys = ReturnType<typeof createKeys>;
++
++const PENDING = FIELDS.indexOf('pendingLayer');
++const GBEAT = FIELDS.indexOf('gBeat');
++const ROOM = FIELDS.indexOf('room');
++// A creature that moves further than a tile between two steps was placed (a respawn, a new room): no tween.
++const TELEPORT = 4096;
++
++// The layers of rooms 1 to r - 1, as the bit mask the sim and the gates take.
++export const canonical = (r: number): number => (r <= 1 ? 0 : ((1 << Math.min(r, 11)) - 2) & 0x7fe);
++
++// The creature's position in sub, at the last two steps, and how far the heard time is between them.
++export interface RunView {
++  prevX: number;
++  prevY: number;
++  x: number;
++  y: number;
++  alpha: number;
++}
++
++export interface Run {
++  readonly sim: Sim | null;
++  readonly origin: number;
++  deaths(): number;
++  finished(): boolean;
++  currentRoom(): Room | null;
++  view(): RunView | null;
++  startRoom(room: number): void;
++  frame(frameMs: number): void;
++  stepOf(eventTimeStampMs: number): number;
++  setCalibration(avOffsetMs: number, inputBiasMs: number): void;
++  attachInput(source: InputSource | null): void;
++}
++
++export function createRun(opts: { world: World; engine: AudioEngine; keys: Keys }): Run {
++  const { world, engine, keys } = opts;
++  let sim: Sim | null = null;
++  let origin = 0;
++  let avOffset = 0;
++  let inputBias = 0;
++  let lastPending = 0;
++  let lastGBeat = 0;
++  let view: RunView | null = null;
++
++  const roomOf = (n: number): Room | null => (n === 11 ? world.gauntlet : (world.rooms[n - 1] ?? null));
++
++  return {
++    get sim(): Sim | null {
++      return sim;
++    },
++    get origin(): number {
++      return origin;
++    },
++    deaths: () => (sim ? sim.status().deaths : 0),
++    finished: () => (sim ? sim.status().finished : false),
++    currentRoom: () => (sim ? roomOf(sim.status().room) : null),
++    view: () => view,
++    // A new sim at the room's entrance, the layers of every earlier room back, the track from cycle 0 on a fresh origin.
++    startRoom(room: number): void {
++      const ctx = engine.context();
++      if (!ctx) return;
++      origin = ctx.currentTime + 0.1;
++      sim = createSim(world, { room, step: 0, layers: canonical(room) });
++      keys.attachSource(null);
++      engine.restart(origin, canonical(room), room === 11 ? gauntletStartBeat(0) / 4 : -1);
++      const state = sim.save();
++      lastPending = state[PENDING] ?? 0;
++      lastGBeat = state[GBEAT] ?? 0;
++      const st = sim.status();
++      view = { prevX: st.x, prevY: st.y, x: st.x, y: st.y, alpha: 1 };
++    },
++    // Every animation frame, only while the context runs and the device-clock line is valid.
++    frame(frameMs: number): void {
++      const ctx = engine.context();
++      const clock = engine.clock();
++      if (!sim || !ctx || !clock || ctx.state !== 'running') return;
++      clock.sample();
++      if (!clock.valid) return;
++      const heard = audibleSec(clock, frameMs);
++      const display = displaySec(avOffset);
++      for (let n = stepsDue(sim.step, targetStep(heard, origin, display)); n > 0; n--) {
++        const step = sim.step;
++        const before = sim.status();
++        sim.tick(keys.next(step));
++        const after = sim.status();
++        const state = sim.save();
++        const pending = state[PENDING] ?? 0;
++        // A room cleared on this step: its layer comes back on the bar line the sim names.
++        if (pending !== 0 && pending !== lastPending) engine.unlockAt(pending, unlockBar(step));
++        lastPending = pending;
++        // The gauntlet's run (re)starts on a bar line: the pattern starts again there.
++        const gBeat = state[GBEAT] ?? 0;
++        if (state[ROOM] === 11 && gBeat !== lastGBeat) engine.gauntlet(gBeat / 4);
++        lastGBeat = gBeat;
++        const moved = Math.abs(after.x - before.x) > TELEPORT || Math.abs(after.y - before.y) > TELEPORT;
++        view = moved ? { prevX: after.x, prevY: after.y, x: after.x, y: after.y, alpha: 1 } : { prevX: before.x, prevY: before.y, x: after.x, y: after.y, alpha: 1 };
++      }
++      if (view) view.alpha = alpha(heard, origin, display, sim.step);
++    },
++    // The sim step an input event was heard at: its time through the clock line, less the player's input lag.
++    stepOf(eventTimeStampMs: number): number {
++      const clock = engine.clock();
++      if (!sim || !clock) return -1;
++      return Math.floor((audibleSec(clock, eventTimeStampMs) - origin - inputLagSec(avOffset, inputBias)) * 240);
++    },
++    setCalibration(avOffsetMs: number, inputBiasMs: number): void {
++      avOffset = avOffsetMs;
++      inputBias = inputBiasMs;
++    },
++    attachInput(source: InputSource | null): void {
++      keys.attachSource(source);
++    },
++  };
++}
+diff --git a/src/main.ts b/src/main.ts
+index 0881cf9..8774e50 100644
+--- a/src/main.ts
++++ b/src/main.ts
+@@ -1,24 +1,89 @@
++import * as Phaser from 'phaser';
++import trackText from '../music/area1.strudel?raw';
++import { createAudioEngine } from './audio/engine.ts';
++import { createRun } from './game/run.ts';
++import type { Run } from './game/run.ts';
++import { createKeys } from './input/keys.ts';
+ import type { Inspect } from './probe/inspect.ts';
+ import { installProbe } from './probe/api.ts';
+ import { booted, CalibrationScene } from './render/calibration-scene.ts';
+ import { createGame } from './render/game.ts';
++import { PlayScene } from './render/play-scene.ts';
++import { compileWorld } from './rooms/compile.ts';
++import { createSim } from './sim/sim.ts';
+ 
+-const game = createGame([CalibrationScene]);
++// The eleven room files, as text: rooms/01-wake.txt to rooms/11-gauntlet.txt.
++const files = import.meta.glob('../rooms/*.txt', { query: '?raw', import: 'default', eager: true }) as Record<string, string>;
++const world = compileWorld(Object.entries(files).map(([path, text]) => ({ name: path.slice(path.lastIndexOf('/') + 1), text })));
++
++const engine = createAudioEngine(trackText);
++let run: Run;
++const keys = createKeys({ target: window, stepOf: (t) => run.stepOf(t) });
++run = createRun({ world, engine, keys });
++
++// The values in use once the calibration screen is left, or null while it is up.
++let calibration: { avOffset: number; inputBias: number } | null = null;
++
++// Leaves the calibration screen with these values and starts the run at room 1.
++function skipCalibration(avOffset: number, inputBias: number): void {
++  calibration = { avOffset, inputBias };
++  run.setCalibration(avOffset, inputBias);
++  if (game.scene.isActive('calibration')) game.scene.stop('calibration');
++  if (!game.scene.isActive('play')) game.scene.start('play');
++  run.startRoom(1);
++}
++
++// The scene `ending` is empty until the ending is built.
++class EndingScene extends Phaser.Scene {
++  constructor() {
++    super('ending');
++  }
++}
++
++// Until the calibration passes exist, the first key starts the run with both values 0, once the audio runs.
++const game = createGame([
++  new CalibrationScene(() => {
++    void engine.start().then(() => {
++      if (!calibration) skipCalibration(0, 0);
++    });
++  }),
++  new PlayScene(run),
++  new EndingScene(),
++]);
++
++// The first keydown that is not Escape starts the audio, inside that handler (a user gesture, CP V6).
++function onFirstKey(e: KeyboardEvent): void {
++  if (e.code === 'Escape') return;
++  window.removeEventListener('keydown', onFirstKey, true);
++  void engine.start();
++}
++window.addEventListener('keydown', onFirstKey, true);
++
++// A hidden page suspends the audio, and with it the sim (the driver ticks only while the context runs).
++document.addEventListener('visibilitychange', () => {
++  const ctx = engine.context();
++  if (!ctx) return;
++  if (document.visibilityState === 'hidden') void ctx.suspend();
++  else void ctx.resume();
++});
++
++// The driver runs on every frame of the game loop, whatever scene is up.
++game.events.on(Phaser.Core.Events.PRE_STEP, () => run.frame(performance.now()));
+ 
+ const inspect: Inspect = {
+   ready: () => booted,
+   game: () => game,
+-  sim: () => null,
+-  simFactory: () => null,
+-  audio: () => null,
+-  analyser: () => null,
+-  layerGain: () => null,
+-  clock: () => null,
+-  calibration: () => null,
++  sim: () => run.sim,
++  simFactory: () => (start) => createSim(world, start),
++  audio: () => (engine.context() ? engine.status() : null),
++  analyser: () => engine.analyser(),
++  layerGain: (layer) => engine.layerGain(layer),
++  clock: () => engine.clock(),
++  calibration: () => calibration,
+   control: {
+-    startRoom: () => {},
+-    skipCalibration: () => {},
+-    attachInput: () => {},
++    startRoom: (room) => run.startRoom(room),
++    skipCalibration,
++    attachInput: (source) => run.attachInput(source),
+   },
+ };
+ 
+diff --git a/src/render/calibration-scene.ts b/src/render/calibration-scene.ts
+index 3070cda..f4d15f9 100644
+--- a/src/render/calibration-scene.ts
++++ b/src/render/calibration-scene.ts
+@@ -3,16 +3,27 @@ import * as Phaser from 'phaser';
+ // True once the calibration scene has been created: the page then waits for its first key (the probe's ready()).
+ export let booted = false;
+ 
+-// The calibration screen (spec section 12): wordless, a rounded key shape in the centre of the canvas.
++// The calibration screen (spec section 12): wordless, a rounded key shape in the centre of the canvas. Until the
++// calibration passes exist, the first key (any but Escape) hands over to `onFirstKey`, which starts the run.
+ export class CalibrationScene extends Phaser.Scene {
+-  constructor() {
++  private onFirstKey: () => void;
++
++  constructor(onFirstKey: () => void) {
+     super('calibration');
++    this.onFirstKey = onFirstKey;
+   }
+ 
+   create(): void {
+     const g = this.add.graphics();
+     g.lineStyle(3, 0x7fd6ff, 0.8);
+     g.strokeRoundedRect(600, 320, 80, 80, 14);
++    const onKey = (e: KeyboardEvent): void => {
++      if (e.code === 'Escape') return;
++      window.removeEventListener('keydown', onKey, true);
++      this.onFirstKey();
++    };
++    window.addEventListener('keydown', onKey, true);
++    this.events.once('shutdown', () => window.removeEventListener('keydown', onKey, true));
+     booted = true;
+   }
+ }
+diff --git a/src/render/play-scene.ts b/src/render/play-scene.ts
+new file mode 100644
+index 0000000..dcc3c72
+--- /dev/null
++++ b/src/render/play-scene.ts
+@@ -0,0 +1,98 @@
++import * as Phaser from 'phaser';
++import type { Run } from '../game/run.ts';
++import { CODE } from '../rooms/codes.ts';
++import { entityOn } from '../sim/beat.ts';
++import { SPIKE_BOX } from '../sim/constants.ts';
++import { FIELDS } from '../sim/sim.ts';
++
++const LAYERS = FIELDS.indexOf('layers');
++const ZOOM = 2.5;
++const TILE = 16;
++const SUB = 256;
++const VIEW_W = 512;
++const GAUNTLET_LEAD = 160;
++const DIRS = [null, null, 'up', 'down', 'left', 'right'] as const;
++
++// The play scene (spec section 10.1), plain on purpose: every frame the visible tiles, spikes, beat entities, portals and the
++// creature are drawn straight from the run. The world view is 32 by 18 tiles at zoom 2.5; a wider room scrolls horizontally.
++// When the run finishes it hands over to the scene `ending`.
++export class PlayScene extends Phaser.Scene {
++  private run: Run;
++  private g!: Phaser.GameObjects.Graphics;
++  private ended = false;
++
++  constructor(run: Run) {
++    super('play');
++    this.run = run;
++  }
++
++  create(): void {
++    this.g = this.add.graphics();
++    this.ended = false;
++  }
++
++  override update(): void {
++    const g = this.g;
++    const run = this.run;
++    const sim = run.sim;
++    const room = run.currentRoom();
++    const view = run.view();
++    g.clear();
++    if (!sim || !room || !view) return;
++    const st = sim.status();
++    const layers = sim.save()[LAYERS] ?? 0;
++    const ix = view.prevX + (view.x - view.prevX) * view.alpha;
++    const iy = view.prevY + (view.y - view.prevY) * view.alpha;
++    const cx = ix / SUB + 5;
++    const lead = room.kind === 'gauntlet' ? GAUNTLET_LEAD : VIEW_W / 2;
++    const camX = Math.min(Math.max(cx - lead, 0), Math.max(room.W * TILE - VIEW_W, 0));
++    const tile = TILE * ZOOM;
++    const first = Math.max(Math.floor(camX / TILE) - 1, 0);
++    const last = Math.min(first + VIEW_W / TILE + 2, room.W - 1);
++
++    for (let c = first; c <= last; c++) {
++      for (let r = 0; r < room.H; r++) {
++        const code = room.tiles[r * room.W + c] ?? CODE.EMPTY;
++        const x = (c * TILE - camX) * ZOOM;
++        const y = r * tile;
++        if (code === CODE.SOLID) {
++          g.fillStyle(0x161b28, 1);
++          g.fillRect(x, y, tile, tile);
++        } else if (code >= CODE.UP && code <= CODE.RIGHT) {
++          const box = SPIKE_BOX[DIRS[code] as 'up' | 'down' | 'left' | 'right'];
++          g.fillStyle(0x4a556e, 1);
++          g.fillRect(x + (box[0] / SUB) * ZOOM, y + (box[1] / SUB) * ZOOM, ((box[2] - box[0]) / SUB) * ZOOM, ((box[3] - box[1]) / SUB) * ZOOM);
++        } else if (code === CODE.WAVE || code === CODE.BASE) {
++          g.lineStyle(2, 0x7fd6ff, 1);
++          g.strokeRect(x + 1, y + 1, tile - 2, tile - 2);
++        }
++      }
++    }
++
++    g.fillStyle(0x7fd6ff, 1);
++    for (const e of room.entities) {
++      if (!entityOn(e, sim.step, layers)) continue;
++      for (const [c, r] of e.cells) {
++        if (c < first || c > last) continue;
++        const x = (c * TILE - camX) * ZOOM;
++        const y = r * tile;
++        if (e.kind === 'spike' && e.dir) {
++          const box = SPIKE_BOX[e.dir];
++          g.fillRect(x + (box[0] / SUB) * ZOOM, y + (box[1] / SUB) * ZOOM, ((box[2] - box[0]) / SUB) * ZOOM, ((box[3] - box[1]) / SUB) * ZOOM);
++        } else {
++          g.fillRect(x, y, tile, tile);
++        }
++      }
++    }
++
++    if (!st.dead) {
++      g.fillStyle(0xe8ecf4, 1);
++      g.fillRect((ix / SUB - camX) * ZOOM, (iy / SUB) * ZOOM, 10 * ZOOM, 10 * ZOOM);
++    }
++
++    if (run.finished() && !this.ended) {
++      this.ended = true;
++      this.scene.start('ending');
++    }
++  }
++}
+--- end ---
