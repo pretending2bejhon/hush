@@ -22,7 +22,7 @@ AU3: passes: true (evidence: build/evidence/AU3.green.1.txt)
 FX1: passes: true (evidence: build/evidence/FX1.green.1.txt)
 GAME1: passes: true (evidence: build/evidence/GAME1.green.1.txt)
 CAL2: passes: true (evidence: build/evidence/CAL2.green.1.txt)
-RN1: passes: false
+RN1: passes: true (evidence: build/evidence/RN1.green.1.txt)
 RN2: passes: false
 RN3: passes: false
 RN4: passes: false
