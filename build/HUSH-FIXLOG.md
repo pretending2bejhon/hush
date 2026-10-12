@@ -111,3 +111,16 @@ DISPOSITION: R1-MINOR5 | X3's jitter test re-rolls its seed on every commit, and
 - Fixed 2026-10-12T14:55-05:00 in the same amendment commit: tools/ship-gate.mjs `x3Seed(digest)`, used by X3 and by npm test's replay step. tests/tools/ship-gate.test.mjs shows the seed kept across a record commit, and the verifier suite passes 229 of 229 (build/evidence/R1-verifiers.amend.1.txt).
 DISPOSITION: R1-NOTE1 | four surviving mutations with no effect reachable on the sha-pinned content | 2026-10-12T14:18:00-05:00 | no action
 
+## Review R2 (cycle 1): HUSH-REVIEW-R2: FAIL, head 2f2b8a2, digest eeca3e10
+
+Opened 2026-10-12T17:55-05:00 by the producer (Opus standing in for Fable). Findings: 9 (0 BLOCKER, 5 MAJOR, 4 MINOR), against R1's 9 (0 BLOCKER, 4 MAJOR, 5 MINOR). The count did not drop across two FAIL rounds, so the round escalates by the caps before any disposition (build/HUSH-PROGRESS.md, `R2-count-not-dropping`).
+- No R1 finding survives. The reviewer re-ran R1's mutations and each one is now caught. The product matches every Action.
+- Every R2 finding is a gap in the checks, one step past R1's fixes. Nothing here is dispositioned until the owner's word resolves the escalation.
+- The producer's proposed routing, if the round goes on:
+  - R2-MAJOR1 (the play scene's image placement) and R2-MAJOR3 (the ending's glimpse): a canvas check in the playthrough. It reads pixels where the sim puts a solid tile in a room, and where the glimpse's light sits once the card is up. A verifier amendment, with planted faults on the control page.
+  - R2-MAJOR2 (drawShapes): a tests/render test with a recording fake Graphics, each shape kind mapped to its call in section 10.6. A verifier amendment; its control mis-maps one kind.
+  - R2-MAJOR4 (the calibration's hand-over) and R2-MAJOR5 (the window's keys): after the tapped run, the probe wants the run's own values, room 1 running, and real game keys reaching the sim on the step stepOf gives. run.test gains cases for setCalibration and stepOf. A verifier amendment, then one applier, because `Inspect.calibration` must read the run's values (src/main.ts).
+  - R2-MINOR1 and R2-MINOR2: test fixtures (verifier amendments).
+  - R2-MINOR3: the tapper records the taps it lands, and the check judges the values in use against those taps. A verifier amendment.
+  - R2-MINOR4: the two stale item lines of the spec (an amendment).
+
