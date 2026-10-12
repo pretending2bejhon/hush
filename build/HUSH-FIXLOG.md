@@ -64,6 +64,9 @@ DISPOSITION: R1-MAJOR3 | the play scene's beat binding (src/render/play-scene.ts
   - The test passes 2 of 2 on the reference and is red on the tree before the port: play-frame.ts is missing (build/evidence/RN4.amend.2.txt).
   - The beat entities drawn 24 steps ahead fail. The other art controls still fail their own faults now that the reference imports the oracle's FIELDS (build/evidence/R1-RN4-controls.amend.1.txt, 7 of 7).
   - The applier follows.
+- Fixed 2026-10-12T15:10-05:00 by the applier in `ccaedaf` (hush-fix: R1-MAJOR3).
+  - accept:rn4 passes 6 of 6, with flash PASS and perf PASS headed on AC: 59.92 fps, 99.89% of intervals at 20 ms or less (build/evidence/fix/R1-MAJOR3.1.txt).
+  - Standing is GREEN with 21 mapped files (build/evidence/fix/R1-MAJOR3.2.txt).
 DISPOSITION: R1-MAJOR4 | the ending card's beat binding (src/render/ending-scene.ts:88) is untested | 2026-10-12T14:18:00-05:00 | to fix by amendment and one applier
 - `endingFrame` (the rise, then the card) and `beatOfBar`, read from the run's origin, move into ending-art.ts (END1 amended).
 - They are compared with the reference in tests/render/ending-art.test.mjs. The scene draws only what endingFrame returns.
@@ -81,6 +84,11 @@ DISPOSITION: R1-MINOR3 | AU2's late shift amount is unpinned | 2026-10-12T14:18:
 DISPOSITION: R1-MINOR4 | a run started at the gauntlet stalls about 150 ms on its bake and can drop the first sixteenth | 2026-10-12T14:18:00-05:00 | to fix by amendment and one applier
 - The run's origin lead goes from 0.1 s to 0.25 s (GAME1, section 8.4), so a room's bake ends before its first sixteenth falls due.
 - A player walking in from room 10 never restarts the origin; only the calibration hand-over and the probes do.
+- Amended 2026-10-12T15:15-05:00 in the commit `hush-spec: amend GAME1 ...` after `ccaedaf`.
+  - tests/game/run.test.mjs pins the lead and passes 13 of 13 on the reference.
+  - It is red on the tree before the change: the origin is 5.1, want 5.25 (build/evidence/GAME1.amend.1.txt).
+  - A lead of 0.1 s fails, and the three wiring faults still fail (build/evidence/R1-GAME1-controls.amend.1.txt, 4 of 4).
+  - The applier follows.
 DISPOSITION: R1-MINOR5 | X3's jitter test re-rolls its seed on every commit, and about 1 HEAD in 40 fails it | 2026-10-12T14:18:00-05:00 | to fix by amendment (verifier)
 - X3's seed comes from the verdict digest instead of HEAD's sha (tools/ship-gate.mjs X3, and the replay step of tools/test-all.mjs for X2). A bookkeeping commit never re-rolls it, and every verdict on one digest sees one seed, judged first at VERIFY.
 - 04-thorns' margin is the room's own, as proven at the cut (97 of 100 on the oracle). It is kept as a known property.

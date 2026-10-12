@@ -1,8 +1,9 @@
 // GAME1 (X7, the clear-time half in the run; review R1, MAJOR 1): the run's wiring (src/game/run.ts) under a fake
 // engine, keys and clock, driven by the witnesses. A room cleared by the tick of step s returns its layer through
 // engine.unlockAt(k, unlockBar(s)), once, right after that tick; startRoom restarts the engine at the run's
-// origin with the layers of every earlier room (the gauntlet mapped from its first run's bar); in the gauntlet
-// every new gBeat (the entry from room 10, each respawn) maps the track through engine.gauntlet(gBeat / 4).
+// origin, 0.25 s past the context time (MINOR 4), with the layers of every earlier room (the gauntlet mapped from
+// its first run's bar); in the gauntlet every new gBeat (the entry from room 10, each respawn) maps the track
+// through engine.gauntlet(gBeat / 4).
 // HUSH_RUN_MODULE points the test at another run module (the controls: the reference passes, a broken copy fails).
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -89,6 +90,18 @@ describe('GAME1 the run returns a layer on the bar line of its clear', () => {
       expect(h.calls.filter((c) => c[0] === 'unlockAt')).toEqual([['unlockAt', k, O.unlockBar(s), s + 1]]);
     });
   }
+});
+
+describe('GAME1 the run starts ahead of the heard time', () => {
+  // Review R1, MINOR 4: a room's bake (up to 150 ms for the gauntlet) ends before the run's first sixteenth.
+  it('puts step 0 at 0.25 s past the context time when a run starts', () => {
+    for (const room of [1, 11]) {
+      const h = harness();
+      h.run.startRoom(room);
+      expect(h.run.origin).toBeCloseTo(5 + 0.25, 12);
+      expect(h.calls[0][1]).toBe(h.run.origin);
+    }
+  });
 });
 
 describe('GAME1 the run maps the gauntlet on every run start', () => {

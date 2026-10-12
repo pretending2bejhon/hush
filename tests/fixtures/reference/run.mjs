@@ -7,7 +7,10 @@
 import { createSim, FIELDS, gauntletStartBeat, unlockBar } from '../oracle/index.mjs';
 import { displaySec, stepsDue, targetStep } from './driver.mjs';
 
-export const ORIGIN_LEAD = 0.1;
+// A run starts this far ahead of the context time (section 8.4; review R1, MINOR 4: the gauntlet's bake held the main
+// thread up to 150 ms, and the transport drops a sixteenth more than 50 ms late, so a lead of 0.1 s lost the run's
+// first notes).
+export const ORIGIN_LEAD = 0.25;
 const PENDING = FIELDS.indexOf('pendingLayer');
 const GBEAT = FIELDS.indexOf('gBeat');
 const ROOM = FIELDS.indexOf('room');

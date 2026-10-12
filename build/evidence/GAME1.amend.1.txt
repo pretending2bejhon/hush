@@ -1,0 +1,39 @@
+HUSH-EVIDENCE v1
+id: GAME1
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/game/run.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T15:11:45-05:00
+time-end: 2026-10-12T15:11:46-05:00
+head: ccaedafedb67fe0a6395a965d3c3ac34324d944a
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/game/run.test.mjs (13 tests | 1 failed) 266ms
+   ❯ GAME1 the run starts ahead of the heard time (1)
+     × puts step 0 at 0.25 s past the context time when a run starts 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/game/run.test.mjs > GAME1 the run starts ahead of the heard time > puts step 0 at 0.25 s past the context time when a run starts
+AssertionError: expected 5.1 to be close to 5.25, received difference is 0.15000000000000036, but expected 5e-13
+ ❯ tests/game/run.test.mjs:101:28
+     99|       const h = harness();
+    100|       h.run.startRoom(room);
+    101|       expect(h.run.origin).toBeCloseTo(5 + 0.25, 12);
+       |                            ^
+    102|       expect(h.calls[0][1]).toBe(h.run.origin);
+    103|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 12 passed (13)
+   Start at  15:11:45
+   Duration  690ms (tests 50%, transform 40%, import 10%, worker 1%)
+
+--- end ---

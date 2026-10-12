@@ -84,6 +84,8 @@ const cases = [
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('engine.unlockAt(pending, unlockBar(step));', 'engine.unlockAt(pending, unlockBar(step) + 1);') }), 'late'],
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('if (pending !== 0 && pending !== lastPending) engine.unlockAt(pending, unlockBar(step));', '') }), 'none'],
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('engine.gauntlet(gBeat / 4);', '{}') }), 'gauntlet'],
+  // Review R1 (MINOR 4): the run's origin lead back at 0.1 s.
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('export const ORIGIN_LEAD = 0.25;', 'export const ORIGIN_LEAD = 0.1;') }), 'lead'],
   // Review R1 (MAJOR 3): the play scene's frame drawing the beat entities 24 steps (0.1 s) ahead of the sim.
   ['tests/render/play-frame.test.mjs', { HUSH_PLAY_FRAME_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_PLAY_FRAME_MODULE: refMutant('art.mjs', 'beatShapes(room, step, at(\'layers\'), camPx, levels, limiter)', 'beatShapes(room, step + 24, at(\'layers\'), camPx, levels, limiter)') }), 'beat step'],
   // Review R1 (MAJOR 4): the card's beat counted from the ending's first frame instead of the run's origin.
