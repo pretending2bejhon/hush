@@ -42,12 +42,15 @@ END1: passes: false
 - The calibration scene is a straight port of the control page's `Calibration` scene; `engine.start()` is idempotent, so the scene's first-key call and main.ts's first-key listener both stand (CAL2).
 - RN3 ordering slip (executor): `RN3.red.1.txt` was run after `src/render/beat-art.ts` had been written, so it shows exit 0 and is not a red. The module was moved aside, `RN3.red.2.txt` is the real red (exit 1, module missing), then the module went back unchanged. Run the red before writing any target (RN3).
 - The cap hook denies a shell call that holds a write form (`mv`, `rm`, `>`) next to a `tools/` path, so a move and an `evidence.mjs` run go in separate calls (RN3).
+- END1 attempt 1 (build/evidence/END1.green.1.txt, exit 1): the art test passes 3 of 3 and the playthrough is clean, but the text check reads `?playtest wants one run line, found []`. tools/probe-play.mjs reads the page texts about 1.5 s after the gauntlet finishes (one `waitForTimeout(1500)` after the last room), while section 13 puts the run line at the card, which comes after the 4-bar rise: RISE_S = 16 beats = 6.857 s after the ending scene's first frame. The product follows section 13 line for line; the two cannot meet unless the line comes earlier than the card, which is a design change (END1).
 
 ## Rounds
 
 ## Checkpoint
 
 CHECKPOINT: CAL2 attempt 1 | 2026-10-12T00:08:00-05:00 | blocked | targets: src/render/calibration-scene.ts, src/main.ts
+
+CHECKPOINT: END1 attempt 1 | 2026-10-12T10:20:00-05:00 | rejected | targets: src/render/ending-art.ts, src/render/ending-scene.ts, src/main.ts
 
 HUSH-BUILD: INCOMPLETE (passed=17 blocked=CAL2,RN1,RN2,RN3,RN4,END1)
 

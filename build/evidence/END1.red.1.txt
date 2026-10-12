@@ -1,0 +1,41 @@
+HUSH-EVIDENCE v1
+id: END1
+phase: red
+command: npm run accept:ending
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T10:15:22-05:00
+time-end: 2026-10-12T10:15:23-05:00
+head: 2286e88ed0996ca401ce7eff5816b9ce78b42a1a
+exit: 1
+--- output ---
+
+> hush@0.0.0 accept:ending
+> vitest run tests/render/ending-art.test.mjs && vite build && node tools/probe-play.mjs --query playtest --check console,play,text
+
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/render/ending-art.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/render/ending-art.test.mjs [ tests/render/ending-art.test.mjs ]
+Error: Cannot find module '<repo>/src/render/ending-art.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/render/ending-art.test.mjs:9:11
+      7| import { sameShapes } from './same.mjs';
+      8|
+      9| const P = await load('HUSH_ENDING_ART_MODULE', new URL('../../src/rend…
+       |           ^
+     10|
+     11| describe('END1 ending art', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  10:15:23
+   Duration  284ms (worker 97%, environment 3%)
+
+--- end ---
