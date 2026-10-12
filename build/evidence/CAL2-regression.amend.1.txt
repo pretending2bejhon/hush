@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: CAL2-regression
+phase: amend
+command: npx vitest run tests/controls/page-probes.test.mjs tests/controls/flash-probe.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T00:47:45-05:00
+time-end: 2026-10-12T00:51:32-05:00
+head: 5b9832bbd0a73367cdc4b36084ee32ff72b2ee8a
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  2 passed (2)
+      Tests  25 passed (25)
+   Start at  00:47:46
+   Duration  225.48s (tests 100%)
+
+--- end ---

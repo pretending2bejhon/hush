@@ -5,16 +5,44 @@
 //   node tools/probe-flash.mjs [--dist dist] [--rooms rooms] [--replays replays] [--query <q>]
 //        [--calibration] [--min-seconds 0] [--tail-seconds 10] [--json]
 // --calibration lets the calibration screen run its course untouched (both passes, both repeats) before the
-// rooms, so its flashes are measured too. A run that streamed fewer than 30 frames a second (median), or
+// rooms, so its flashes are measured too, and wants that course seen (tools/calibration-check.mjs): the scene
+// up for four attempts, their clicks on the master analyser, their count-in fills and rings in the
+// screencast, then the values 0 and 0. A run that streamed fewer than 30 frames a second (median), or
 // whose playthrough did not clear every room, cannot pass: what was not seen was not measured.
 // Exit 0 PASS, 1 FAIL, 2 usage, a missing dist or a page that never boots.
 import fs from 'node:fs';
 import path from 'node:path';
+import { centreSum, judgeCalibration } from './calibration-check.mjs';
 import { createFlashAnalyzer } from './flash-analyzer.mjs';
 import { decodePng } from './png.mjs';
 import { bootGame, emitJson, headSha, launch, loadWitnesses, openGame, openPage, parseOptions, playthrough, REPO, requireDist, serveDir, verdictDigest } from './probe-lib.mjs';
 
 export const MAX_MEDIAN_FRAME_MS = 34;
+export const CALIBRATION_TIMEOUT_MS = 120000;
+
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// The untouched calibration: one key the game ignores starts the audio; the analyser is sampled until the
+// scene `calibration` is gone. Returns the wall-clock window it was up and what the page showed.
+async function runCalibration(page) {
+  const t0 = Date.now();
+  await page.keyboard.press('KeyQ');
+  await page.waitForFunction(() => { const a = window.__hush.audio(); return Boolean(a && a.state === 'running'); }, null, { timeout: 10000 });
+  await page.evaluate(() => window.__hush.meterStart(20));
+  let left = 0;
+  let stuck = false;
+  while (!left) {
+    const up = await page.evaluate(() => window.__hush.scenes().includes('calibration'));
+    if (!up) left = Date.now();
+    else if (Date.now() - t0 > CALIBRATION_TIMEOUT_MS) { left = Date.now(); stuck = true; }
+    else await sleep(50);
+  }
+  const samples = await page.evaluate(() => { const s = window.__hush.meterTake(); window.__hush.meterStop(); return s; });
+  const values = await page.evaluate(() => window.__hush.calibration());
+  // A scene that never hands over is left by the probe, so the rooms are still measured.
+  if (stuck) await page.evaluate(() => window.__hush.skipCalibration(0, 0));
+  return { t0, left, stuck, samples, values };
+}
 
 async function main(argv) {
   const o = parseOptions(argv, { dist: 'dist', rooms: 'rooms', replays: 'replays', query: '', calibration: false, minSeconds: 0, tailSeconds: 10, json: false });
@@ -26,14 +54,14 @@ async function main(argv) {
   const started = Date.now();
   let rooms = [];
   let result = null;
+  let calib = null;
   const frameErrors = [];
+  const centre = [];
   try {
     const { context, page } = await openPage(browser);
     try {
-      if (o.calibration) {
-        await openGame(page, srv.url, { query: o.query });
-        await page.keyboard.press('KeyQ');
-      } else await bootGame(page, srv.url, { query: o.query });
+      if (o.calibration) await openGame(page, srv.url, { query: o.query });
+      else await bootGame(page, srv.url, { query: o.query });
     } catch (e) {
       process.stdout.write(`flash: the page never booted: ${String(e.message).split('\n')[0]}\n`);
       return 2;
@@ -63,6 +91,7 @@ async function main(argv) {
             buf.set(img.data.subarray(from, from + crop.w * 4), y * crop.w * 4);
           }
           analyzer.push(buf, f.metadata.timestamp * 1000);
+          if (o.calibration && !calib) centre.push({ t: f.metadata.timestamp * 1000, s: centreSum(buf, crop.w, crop.h) });
         } catch (e) {
           if (frameErrors.length < 5) frameErrors.push(String(e.message || e));
         }
@@ -71,7 +100,12 @@ async function main(argv) {
     });
     await cdp.send('Page.startScreencast', { format: 'png', maxWidth: 640, maxHeight: 360, everyNthFrame: 1 });
     if (o.calibration) {
-      await page.waitForFunction(() => !window.__hush.scenes().includes('calibration'), null, { timeout: 120000 });
+      await sleep(500);
+      const c = await runCalibration(page);
+      await chain;
+      const trace = centre.filter((p) => p.t >= c.t0 && p.t <= c.left);
+      calib = judgeCalibration({ seconds: (c.left - c.t0) / 1000, samples: c.samples, trace, values: c.values });
+      if (c.stuck) calib.problems.unshift(`the calibration scene was still up after ${CALIBRATION_TIMEOUT_MS / 1000} s`);
     }
     rooms = await playthrough(page, witnesses);
     await page.waitForTimeout(o.tailSeconds * 1000);
@@ -96,13 +130,17 @@ async function main(argv) {
   if (missing.length) problems.push(`no witness for ${missing.join(', ')}`);
   const failedRooms = rooms.filter((r) => !r.ok);
   if (failedRooms.length) problems.push(`rooms not covered: ${failedRooms.map((r) => `${r.stem} (${r.why})`).join(', ')}`);
+  if (calib) problems.push(...calib.problems);
   const pass = problems.length === 0;
+  if (calib) {
+    process.stdout.write(`flash: calibration up ${calib.seconds} s: clicks ${calib.clicks}, count-in fills ${calib.fills}, rings ${calib.rings}, values ${calib.values ? `${calib.values.avOffset} ${calib.values.inputBias}` : 'none'} (${calib.frames} frames, ${calib.samples} analyser samples)\n`);
+  }
   if (result) {
     process.stdout.write(`flash: ${result.frames} frames over ${result.seconds.toFixed(1)} s, median ${result.medianFrameMs} ms; general max ${result.maxGeneralArea} px, red max ${result.maxRedArea} px (limit ${result.areaLimit})\n`);
   }
   for (const p of problems) process.stdout.write(`flash: ${p}\n`);
   process.stdout.write(`flash: ${pass ? 'PASS' : 'FAIL'}\n`);
-  if (o.json) emitJson({ kind: 'flash', head: headSha(), digest: await verdictDigest(), query: o.query, pass, problems, result, rooms });
+  if (o.json) emitJson({ kind: 'flash', head: headSha(), digest: await verdictDigest(), query: o.query, pass, problems, result, calibration: calib, rooms });
   return pass ? 0 : 1;
 }
 

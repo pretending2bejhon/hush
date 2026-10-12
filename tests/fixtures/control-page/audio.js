@@ -1,6 +1,7 @@
 // The control page's audio engine (PF-CONTROLS fixture): HUSH-SPEC section 8 at small scale, on the same
 // Strudel bundle the product uses (@strudel/web: one engine instance). Each layer's orbit plays into its own
-// gate gain (0 until the layer is back), then one compressor, the master gain, the analyser and the speakers.
+// gate gain (0 until the layer is back), then one compressor, the master gain, the analyser and the speakers;
+// the calibration click plays on orbit 11, straight into the compressor (section 8.3).
 // Variants for the av probe's controls: master-off (the master never reaches the analyser), synth-throw
 // (the synth registration throws), layer-off (one later layer's gate is never connected).
 import * as S from '@strudel/web';
@@ -12,6 +13,7 @@ export const BAR = SIXTEENTH * 16;
 const CPS = BPM / 60 / 4;
 const LOOKAHEAD = 0.12;
 const LATE = 0.05;
+const CLICK_ORBIT = 11;
 
 // Vault City's compileRoom capture (city-audio.js:330-349): every `label:` line is one layer, in file order.
 export function compileTrack(code) {
@@ -39,6 +41,7 @@ export function compileTrack(code) {
 export function createEngine(trackText, variant = '') {
   const status = { state: 'none', time: 0, origin: 0, scheduledVoices: 0, voiceErrors: 0, lateShifted: 0, lateDropped: 0, layerGains: [] };
   let ctx = null;
+  let starting = null;
   let analyser = null;
   let track = null;
   let gates = [];
@@ -103,9 +106,10 @@ export function createEngine(trackText, variant = '') {
     clock: () => (clock ? { offset: clock.offset, valid: clock.valid, resyncs: clock.resyncs } : null),
     context: () => ctx,
     names: () => (track ? [...track.names] : []),
-    // Inside the first keydown: create and resume the context in the same handler (CP V6).
+    // Inside the first keydown: create and resume the context in the same handler (CP V6). A second call
+    // returns the first call's promise, as the product's engine does.
     start() {
-      if (ctx) return Promise.resolve();
+      if (starting) return starting;
       ctx = new AudioContext({ latencyHint: 0.1 });
       const resumed = ctx.resume();
       S.setAudioContext(ctx);
@@ -118,8 +122,8 @@ export function createEngine(trackText, variant = '') {
         controller.output.connectToDestination = () => {};
         let orbit;
         try { orbit = createOrbit(number, channels); } finally { controller.output.connectToDestination = connect; }
-        const gate = gates[number - 1];
-        if (gate) orbit.output.connect(gate);
+        const target = number === CLICK_ORBIT ? compressor : gates[number - 1];
+        if (target) orbit.output.connect(target);
         return orbit;
       };
       const compressor = new DynamicsCompressorNode(ctx, { threshold: -10, knee: 6, ratio: 4, attack: 0.005, release: 0.12 });
@@ -141,7 +145,8 @@ export function createEngine(trackText, variant = '') {
         if (variant === 'synth-throw') throw new Error('control page: planted synth registration failure');
         await S.registerSynthSounds();
       })().catch(() => { status.voiceErrors += 1; });
-      return Promise.all([resumed, registered]).then(() => undefined);
+      starting = Promise.all([resumed, registered]).then(() => undefined);
+      return starting;
     },
     // Restart the transport at cycle 0, 0.1 s from now, with the layers of `mask` (bit k = layer k) back.
     restart(mask, gauntletStartBar = -1) {
@@ -164,6 +169,11 @@ export function createEngine(trackText, variant = '') {
       const t = origin + bar * BAR;
       g.gain.setValueAtTime(0, t - 0.005);
       g.gain.linearRampToValueAtTime(1, t);
+    },
+    // One calibration click at context time `time` (section 8.3).
+    click(time) {
+      if (!ctx) return;
+      S.superdough({ s: 'sbd', decay: 0.08, gain: 0.8, orbit: CLICK_ORBIT }, time, SIXTEENTH, CPS, 0).catch(() => { status.voiceErrors += 1; });
     },
     origin: () => origin,
   };
