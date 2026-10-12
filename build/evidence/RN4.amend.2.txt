@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: RN4
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/render/play-frame.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T15:00:56-05:00
+time-end: 2026-10-12T15:00:56-05:00
+head: 524ef44e42553e5943f264ed31e49da8bd7e2ab7
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/render/play-frame.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/render/play-frame.test.mjs [ tests/render/play-frame.test.mjs ]
+Error: Cannot find module '<repo>/src/render/play-frame.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/render/play-frame.test.mjs:17:11
+     15| import { canonicalLayers, readWitness } from '../../tools/replay.mjs';
+     16|
+     17| const P = await load('HUSH_PLAY_FRAME_MODULE', new URL('../../src/rend…
+       |           ^
+     18| const W = world();
+     19| const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  15:00:56
+   Duration  259ms (worker 96%, environment 4%)
+
+--- end ---

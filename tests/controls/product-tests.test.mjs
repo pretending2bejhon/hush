@@ -26,7 +26,14 @@ function mutate(files, target, from, to) {
 }
 const oracleFiles = ['index.mjs', 'constants.mjs', 'world.mjs', 'sim.mjs'].map((f) => `${ORACLE}/${f}`);
 const oracleMutant = (file, from, to) => path.join(mutate(oracleFiles, `${ORACLE}/${file}`, from, to), 'index.mjs');
-const refMutant = (file, from, to) => path.join(mutate([`${REF}/${file}`], `${REF}/${file}`, from, to), file);
+// A reference that imports the oracle by relative path (art.mjs: FIELDS, for playFrame) keeps that import from its
+// copy in the temp folder, so the copy loads and only the planted fault differs.
+function refMutant(file, from, to) {
+  const out = path.join(mutate([`${REF}/${file}`], `${REF}/${file}`, from, to), file);
+  const text = fs.readFileSync(out, 'utf8');
+  fs.writeFileSync(out, text.replaceAll("from '../oracle/", `from '${pathToFileURL(path.join(REPO, ORACLE)).href}/`));
+  return out;
+}
 const clockMutant = (from, to) => path.join(mutate(['tests/fixtures/control-page/clock.js'], 'tests/fixtures/control-page/clock.js', from, to), 'clock.js');
 // The reference run imports the oracle and the driver reference by relative path: its mutant sits beside them.
 function runMutant(from, to) {
@@ -77,6 +84,8 @@ const cases = [
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('engine.unlockAt(pending, unlockBar(step));', 'engine.unlockAt(pending, unlockBar(step) + 1);') }), 'late'],
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('if (pending !== 0 && pending !== lastPending) engine.unlockAt(pending, unlockBar(step));', '') }), 'none'],
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('engine.gauntlet(gBeat / 4);', '{}') }), 'gauntlet'],
+  // Review R1 (MAJOR 3): the play scene's frame drawing the beat entities 24 steps (0.1 s) ahead of the sim.
+  ['tests/render/play-frame.test.mjs', { HUSH_PLAY_FRAME_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_PLAY_FRAME_MODULE: refMutant('art.mjs', 'beatShapes(room, step, at(\'layers\'), camPx, levels, limiter)', 'beatShapes(room, step + 24, at(\'layers\'), camPx, levels, limiter)') }), 'beat step'],
   // Review R1 (MAJOR 4): the card's beat counted from the ending's first frame instead of the run's origin.
   ['tests/render/ending-art.test.mjs', { HUSH_ENDING_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_ENDING_ART_MODULE: refMutant('art.mjs', 'cardShapes(beatOfBar(heard, run.origin))', 'cardShapes(beatOfBar(heard, t0 + 0.2))') }), 'card beat'],
 ];

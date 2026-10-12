@@ -9,6 +9,9 @@
 // { k: 'ring', x, y, r, lw, c, a } (stroked circle), { k: 'frame', x, y, w, h, lw, c, a } (stroked rect),
 // { k: 'line', p, lw, c, a } (open stroked path), { k: 'outline', p, lw, c, a } (closed stroked path).
 // c is 0xRRGGBB, a the alpha, lw the line width; every number is a plain float.
+// The play scene's frame (playFrame, review R1) reads the sim's state by the oracle's FIELDS names, the one
+// import this file takes.
+import { FIELDS } from '../oracle/sim.mjs';
 
 export const ZOOM = 2.5;
 export const TILE_PX = 40;
@@ -455,6 +458,29 @@ export function moteShapes(field, step) {
     c: COLOR.MOTE,
     a: 0.3,
   }));
+}
+
+// ------------------------------------------------------------------ RN4: the play scene's frame (review R1)
+
+// Everything the play scene draws over its baked images in one frame (section 10.6; amended for review R1,
+// MAJOR 3), read from the run as it stands, so that every shape is bound to the step the sim collides on:
+// sim is the run's live sim (its step, and its save() read by the oracle's FIELDS names), view the creature's box
+// position in sub at the last two steps with the heard time's alpha between them, track the creature's track,
+// field the room's dust, levels the beat entities' levels of the frame before ([] on entering a room) and limiter
+// the scene's flash limiter, its frame begun. Returns the camera in canvas px, the shapes by depth (beat: the
+// beat entities, then the layer's ring, depth 6; creature, 7; dust, 8) and the levels to keep.
+export function playFrame({ room, sim, view, track, field, levels, limiter }) {
+  const saved = sim.save();
+  const at = (name) => saved[FIELDS.indexOf(name)];
+  const step = sim.step;
+  const ix = view.prevX + (view.x - view.prevX) * view.alpha;
+  const iy = view.prevY + (view.y - view.prevY) * view.alpha;
+  const centreX = ix / 256 + 5;
+  const camPx = cameraPx(room, centreX);
+  const beat = beatShapes(room, step, at('layers'), camPx, levels, limiter);
+  const ring = ringShapes(track, step, centreX * ZOOM - camPx, (iy / 256 + 5) * ZOOM);
+  const creature = creatureShapes({ step, x: ix / 256, y: iy / 256, form: at('form'), vy: at('vy'), facing: at('facing'), dead: at('dead'), lock: at('lock') }, track, camPx);
+  return { camPx, levels: beat.levels, beat: [...beat.shapes, ...ring], creature, dust: moteShapes(field, step) };
 }
 
 // ------------------------------------------------------------------ END1: the ending
