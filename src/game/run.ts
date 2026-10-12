@@ -27,6 +27,10 @@ const TRACK_AT = {
 };
 // A creature that moves further than a tile between two steps was placed (a respawn, a new room): no tween.
 const TELEPORT = 4096;
+// A run starts this far ahead of the context time (section 8.4; review R1, MINOR 4): the room's bake in the frame
+// after a start holds the main thread up to 150 ms for the gauntlet, and the transport drops a sixteenth more than
+// 50 ms late, so the run's first sixteenth falls due only after the bake.
+const ORIGIN_LEAD = 0.25;
 
 // The layers of rooms 1 to r - 1, as the bit mask the sim and the gates take.
 export const canonical = (r: number): number => (r <= 1 ? 0 : ((1 << Math.min(r, 11)) - 2) & 0x7fe);
@@ -97,7 +101,7 @@ export function createRun(opts: { world: World; engine: AudioEngine; keys: Keys 
     startRoom(room: number): void {
       const ctx = engine.context();
       if (!ctx) return;
-      origin = ctx.currentTime + 0.1;
+      origin = ctx.currentTime + ORIGIN_LEAD;
       sim = createSim(world, { room, step: 0, layers: canonical(room) });
       track = createTrack();
       keys.attachSource(null);
