@@ -26,7 +26,7 @@ RN1: passes: true (evidence: build/evidence/RN1.green.1.txt)
 RN2: passes: true (evidence: build/evidence/RN2.green.1.txt)
 RN3: passes: true (evidence: build/evidence/RN3.green.1.txt)
 RN4: passes: true (evidence: build/evidence/RN4.green.1.txt)
-END1: passes: false
+END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 
 ## Learnings
 

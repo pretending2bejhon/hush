@@ -7,6 +7,7 @@ import { createKeys } from './input/keys.ts';
 import type { Inspect } from './probe/inspect.ts';
 import { installProbe } from './probe/api.ts';
 import { booted, CalibrationScene } from './render/calibration-scene.ts';
+import { EndingScene } from './render/ending-scene.ts';
 import { createGame } from './render/game.ts';
 import { PlayScene } from './render/play-scene.ts';
 import { compileWorld } from './rooms/compile.ts';
@@ -33,18 +34,12 @@ function skipCalibration(avOffset: number, inputBias: number): void {
   run.startRoom(1);
 }
 
-// The scene `ending` is empty until the ending is built.
-class EndingScene extends Phaser.Scene {
-  constructor() {
-    super('ending');
-  }
-}
-
-// The calibration scene hands its two values over through skipCalibration once its passes are done.
+// The calibration scene hands its two values over through skipCalibration once its passes are done. The ending reads
+// the page's `?playtest` flag, the one sanctioned read of a page flag (spec section 13).
 const game = createGame([
   new CalibrationScene({ engine, onDone: skipCalibration }),
   new PlayScene(run),
-  new EndingScene(),
+  new EndingScene({ engine, run, playtest: new URLSearchParams(window.location.search).has('playtest') }),
 ]);
 
 // The first keydown that is not Escape starts the audio, inside that handler (a user gesture, CP V6).
