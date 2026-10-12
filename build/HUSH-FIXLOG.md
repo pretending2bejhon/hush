@@ -52,6 +52,14 @@ DISPOSITION: R1-MAJOR1 | X7's clear-time unlock (src/game/run.ts:129) and the ga
   - tests/audio/scheduler.test.mjs pins the getter: 8 of 8 on the reference, red on the tree (startBar undefined; build/evidence/AU2.amend.1.txt). A getter stuck at -1 fails, and LOOKAHEAD and the shift still fail (build/evidence/R1-AU2-controls.amend.1.txt).
   - The unlock check reads gauntletBar after room 10's clear: "mapped from bar undefined while its run starts on bar 7 (gBeat 28)" on the tree (build/evidence/GAME1.amend.2.txt). The control page passes, as it has no gauntlet, and the predicate passes 2 of 2 in tests/tools/probe-lib.test.mjs.
   - The applier follows.
+- Part (c) fixed 2026-10-12T15:28-05:00 by the applier in `df7c009` (hush-fix: R1-MAJOR1).
+  - AU2's test passes 8 of 8 (build/evidence/fix/R1-MAJOR1.1.txt).
+  - accept:game passes (console,play,text,visibility,unlock), the unlock check mapping the gauntlet at its entry and its respawn (build/evidence/fix/R1-MAJOR1.2.txt).
+  - Standing is GREEN (build/evidence/fix/R1-MAJOR1.3.txt). R1-MAJOR1 is fixed in all three parts.
+
+Round R1 closed 2026-10-12T15:32-05:00: 9 fixed, 0 rebutted, 0 superseded; NOTE 1 needed no action.
+- Final records: every product-test control 30 of 30 (build/evidence/R1-FIX-product-controls.amend.1.txt), the verifier suite 231 of 231 (build/evidence/R1-FIX-verifiers.amend.1.txt), standing GREEN on df7c009.
+- Not run this session, for VERIFY: the headed av probe on the 0.25 s lead, and the page-probes and calibration controls after their last edits. Their changed cases were run in batches: R1-page-controls.amend.1 and .2, R1-calibration-controls.amend.1 and .2.
 DISPOSITION: R1-MAJOR2 | the calibration scene's tap capture, matching and hand-over never see a tap | 2026-10-12T14:18:00-05:00 | to fix by amendment
 - The flash probe's --calibration mode adds a tapped run on a fresh page. An in-page injector presses a key 40 ms after each click of pass A, timed from the attempt's t0 in heard time, and 25 ms after each ring of pass B, timed from its frameTimes in performance time. Both passes are then accepted at once, so the values in use must be avOffset 15 and inputBias 25 within 5 ms (X8's tolerance), and the scene must be left after two attempts.
 - Section 12 pins the attempt state the injector reads, which the product and the control page already share.
