@@ -6,7 +6,8 @@
 // the vault root name and every denylisted name become <redacted>; the finished text is scanned again
 // before it is written. With --json, the command prints one JSON document between the lines
 // HUSH-JSON-BEGIN and HUSH-JSON-END on stdout; it is redacted the same way and written as
-// <folder>/<kind>-<HEAD sha>.json next to the text envelope.
+// <folder>/<kind>-<HEAD sha>.json next to the text envelope (or <kind>-<expectedSha>.json when the document
+// names the commit it measured in an `expectedSha` field, as the live probe does for the release tag).
 // Phases session, review, fix, audit, verify and live write <folder>/<ID>.<attempt>.txt; proof writes
 // build/evidence/<ID>.proof.<attempt>.txt; any other phase writes build/evidence/<ID>.<phase>.<attempt>.txt.
 // Exit: the command's own code; 2 usage; 3 denylist missing or empty (nothing runs); 4 the record could
@@ -203,8 +204,12 @@ async function main(argv) {
       process.stderr.write('evidence: the JSON still trips check-public after redaction; not written\n');
       return 4;
     }
-    fs.writeFileSync(out.json, json);
-    process.stderr.write(`evidence: ${path.relative(REPO_ROOT, out.json).split(path.sep).join('/')}\n`);
+    // A document about another commit than HEAD (the live probe measures the release tag's commit) names
+    // that commit in `expectedSha`, and the file is named after it.
+    const subject = doc.value && /^[0-9a-f]{40}$/.test(String(doc.value.expectedSha)) ? doc.value.expectedSha : sha;
+    const jsonPath = path.join(path.dirname(out.json), `${a.kind}-${subject}.json`);
+    fs.writeFileSync(jsonPath, json);
+    process.stderr.write(`evidence: ${path.relative(REPO_ROOT, jsonPath).split(path.sep).join('/')}\n`);
   }
   return result.code;
 }

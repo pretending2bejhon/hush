@@ -1,0 +1,3 @@
+toy-room 1
+length 30
+door 20

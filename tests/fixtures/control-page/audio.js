@@ -1,0 +1,170 @@
+// The control page's audio engine (PF-CONTROLS fixture): HUSH-SPEC section 8 at small scale, on the same
+// Strudel bundle the product uses (@strudel/web: one engine instance). Each layer's orbit plays into its own
+// gate gain (0 until the layer is back), then one compressor, the master gain, the analyser and the speakers.
+// Variants for the av probe's controls: master-off (the master never reaches the analyser), synth-throw
+// (the synth registration throws), layer-off (one later layer's gate is never connected).
+import * as S from '@strudel/web';
+import { createOutputClock } from './clock.js';
+
+export const BPM = 140;
+export const SIXTEENTH = 60 / BPM / 4;
+export const BAR = SIXTEENTH * 16;
+const CPS = BPM / 60 / 4;
+const LOOKAHEAD = 0.12;
+const LATE = 0.05;
+
+// Vault City's compileRoom capture (city-audio.js:330-349): every `label:` line is one layer, in file order.
+export function compileTrack(code) {
+  const names = [];
+  const layers = [];
+  const P = S.Pattern.prototype;
+  const previous = P.p;
+  let anonymous = 0;
+  P.p = function capture(name) {
+    const key = name === '$' ? `$${++anonymous}` : String(name);
+    if (!key.startsWith('_') && !names.includes(key)) { names.push(key); layers.push(this); }
+    return this;
+  };
+  try {
+    const scope = { ...S, setcpm() {}, setcps() {}, hush() {}, evaluate() {} };
+    const keys = Object.keys(scope).filter((n) => /^[A-Za-z_$][\w$]*$/.test(n) && !['eval', 'arguments', 'default'].includes(n));
+    const { output } = S.transpiler(code, { addReturn: false, emitMiniLocations: false, emitWidgets: false });
+    Function(...keys, `"use strict";${output}`)(...keys.map((k) => scope[k]));
+  } finally {
+    P.p = previous;
+  }
+  return { names, layers };
+}
+
+export function createEngine(trackText, variant = '') {
+  const status = { state: 'none', time: 0, origin: 0, scheduledVoices: 0, voiceErrors: 0, lateShifted: 0, lateDropped: 0, layerGains: [] };
+  let ctx = null;
+  let analyser = null;
+  let track = null;
+  let gates = [];
+  let clock = null;
+  let origin = 0;
+  let nextStep = 0;
+  let running = false;
+  let startBar = -1;
+
+  function cycleOf(bar) {
+    return startBar >= 0 && bar >= startBar ? bar - startBar : bar;
+  }
+
+  function play(layer, value, time, seconds, cycle) {
+    if (!value || typeof value !== 'object') return;
+    let t = time;
+    if (t < ctx.currentTime) {
+      if (t < ctx.currentTime - LATE) { status.lateDropped += 1; return; }
+      t = ctx.currentTime + 0.005;
+      status.lateShifted += 1;
+    }
+    S.superdough({ ...value, orbit: layer + 1 }, t, seconds, CPS, cycle).catch(() => { status.voiceErrors += 1; });
+    status.scheduledVoices += 1;
+  }
+
+  function scheduleStep(step) {
+    const bar = Math.floor(step / 16);
+    const cycle = cycleOf(bar);
+    const begin = cycle + (step % 16) / 16;
+    track.layers.forEach((pattern, i) => {
+      let haps;
+      try { haps = pattern.queryArc(begin, begin + 1 / 16); } catch { status.voiceErrors += 1; return; }
+      for (const hap of haps) {
+        if (!hap.hasOnset()) continue;
+        const onset = Number(hap.whole.begin);
+        const length = Number(hap.whole.end) - onset;
+        play(i, hap.value, origin + (bar + onset - cycle) * BAR, length * BAR, onset);
+      }
+    });
+  }
+
+  function tick() {
+    if (!ctx || ctx.state !== 'running') return;
+    clock.sample();
+    if (!running) return;
+    const now = ctx.currentTime;
+    while (origin + nextStep * SIXTEENTH < now - LATE) nextStep += 1;
+    while (origin + nextStep * SIXTEENTH < now + LOOKAHEAD) { scheduleStep(nextStep); nextStep += 1; }
+  }
+
+  return {
+    status() {
+      if (ctx) {
+        status.state = ctx.state;
+        status.time = ctx.currentTime;
+        status.layerGains = gates.map((g) => g.gain.value);
+      }
+      return { ...status, layerGains: [...status.layerGains] };
+    },
+    analyser: () => analyser,
+    layerGain: (layer) => gates[layer - 1] ?? null,
+    clock: () => (clock ? { offset: clock.offset, valid: clock.valid, resyncs: clock.resyncs } : null),
+    context: () => ctx,
+    names: () => (track ? [...track.names] : []),
+    // Inside the first keydown: create and resume the context in the same handler (CP V6).
+    start() {
+      if (ctx) return Promise.resolve();
+      ctx = new AudioContext({ latencyHint: 0.1 });
+      const resumed = ctx.resume();
+      S.setAudioContext(ctx);
+      S.miniAllStrings();
+      const controller = S.getSuperdoughAudioController();
+      const createOrbit = controller.getOrbit.bind(controller);
+      controller.getOrbit = (number, channels) => {
+        if (controller.nodes[number] != null) return controller.nodes[number];
+        const connect = controller.output.connectToDestination;
+        controller.output.connectToDestination = () => {};
+        let orbit;
+        try { orbit = createOrbit(number, channels); } finally { controller.output.connectToDestination = connect; }
+        const gate = gates[number - 1];
+        if (gate) orbit.output.connect(gate);
+        return orbit;
+      };
+      const compressor = new DynamicsCompressorNode(ctx, { threshold: -10, knee: 6, ratio: 4, attack: 0.005, release: 0.12 });
+      const master = new GainNode(ctx, { gain: 0.8 });
+      analyser = new AnalyserNode(ctx, { fftSize: 2048, smoothingTimeConstant: 0 });
+      compressor.connect(master);
+      if (variant !== 'master-off') master.connect(analyser);
+      analyser.connect(ctx.destination);
+      track = compileTrack(trackText);
+      gates = track.layers.map((_, i) => {
+        const g = new GainNode(ctx, { gain: 0 });
+        if (!(variant === 'layer-off' && i === track.layers.length - 2)) g.connect(compressor);
+        return g;
+      });
+      clock = createOutputClock(ctx);
+      window.setInterval(() => clock.sample(), 7);
+      window.setInterval(tick, 25);
+      const registered = (async () => {
+        if (variant === 'synth-throw') throw new Error('control page: planted synth registration failure');
+        await S.registerSynthSounds();
+      })().catch(() => { status.voiceErrors += 1; });
+      return Promise.all([resumed, registered]).then(() => undefined);
+    },
+    // Restart the transport at cycle 0, 0.1 s from now, with the layers of `mask` (bit k = layer k) back.
+    restart(mask, gauntletStartBar = -1) {
+      if (!ctx) return;
+      const now = ctx.currentTime;
+      origin = now + 0.1;
+      nextStep = 0;
+      startBar = gauntletStartBar;
+      status.origin = origin;
+      gates.forEach((g, i) => {
+        g.gain.cancelScheduledValues(now);
+        g.gain.setValueAtTime(mask & (1 << (i + 1)) ? 1 : 0, now);
+      });
+      running = true;
+    },
+    // Layer `layer` comes back on bar `bar` of the current transport.
+    unlockAt(layer, bar) {
+      const g = gates[layer - 1];
+      if (!ctx || !g) return;
+      const t = origin + bar * BAR;
+      g.gain.setValueAtTime(0, t - 0.005);
+      g.gain.linearRampToValueAtTime(1, t);
+    },
+    origin: () => origin,
+  };
+}

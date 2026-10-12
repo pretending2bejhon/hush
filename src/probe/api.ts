@@ -1,0 +1,245 @@
+// window.__hush, the test API (D2; spec-owned, PROTECTED). installProbe() installs it only when the page
+// URL carries ?probe; without it the function returns false and touches nothing. Product code calls
+// installProbe(inspect) unconditionally and never reads ?probe itself. Everything the API returns is plain
+// data, so a probe can read it through page.evaluate. It reads the game through the Inspect view and acts
+// only through Inspect.control and the layer gain nodes (the solo test of X7).
+import type { Inspect, ProbeGameObject, ProbeInputSource, ProbeSimStatus } from './inspect.ts';
+
+export const PROBE_VERSION = 1;
+const TEXT_TYPES = new Set(['Text', 'BitmapText', 'DynamicBitmapText']);
+
+export interface MeterSample {
+  t: number;
+  rms: number;
+  peak: number;
+  offset: number;
+  valid: boolean;
+  resyncs: number;
+}
+
+export interface ReplayResult {
+  ok: boolean;
+  why: string;
+  step: number;
+  checksum: string;
+  deaths: number;
+}
+
+export interface PageText {
+  text: string;
+  inside: boolean;
+}
+
+function countText(list: ProbeGameObject[]): number {
+  let n = 0;
+  for (const o of list) {
+    if (TEXT_TYPES.has(o.type)) n += 1;
+    if (Array.isArray(o.list)) n += countText(o.list);
+  }
+  return n;
+}
+
+export function createProbe(inspect: Inspect) {
+  const samples: MeterSample[] = [];
+  let meterTimer = 0;
+  let buffer: Float32Array<ArrayBuffer> | null = null;
+  const frames: number[] = [];
+  let framesOn = false;
+  let lastFrame = -1;
+
+  function onFrame(t: number): void {
+    if (!framesOn) return;
+    if (lastFrame >= 0) frames.push(t - lastFrame);
+    lastFrame = t;
+    window.requestAnimationFrame(onFrame);
+  }
+
+  function meterSample(): void {
+    const a = inspect.analyser();
+    const c = inspect.clock();
+    const s = inspect.audio();
+    let rms = 0;
+    let peak = 0;
+    if (a) {
+      if (!buffer || buffer.length !== a.fftSize) buffer = new Float32Array(a.fftSize);
+      a.getFloatTimeDomainData(buffer);
+      let sum = 0;
+      for (let i = 0; i < buffer.length; i++) {
+        const v = buffer[i] ?? 0;
+        sum += v * v;
+        const m = v < 0 ? -v : v;
+        if (m > peak) peak = m;
+      }
+      rms = Math.sqrt(sum / buffer.length);
+    }
+    samples.push({ t: s ? s.time : 0, rms, peak, offset: c ? c.offset : 0, valid: c ? c.valid : false, resyncs: c ? c.resyncs : 0 });
+    if (samples.length > 20000) samples.splice(0, samples.length - 20000);
+  }
+
+  return {
+    version: PROBE_VERSION,
+    ready(): boolean {
+      return inspect.ready();
+    },
+    scenes(): string[] {
+      const g = inspect.game();
+      return g ? g.scene.getScenes(true).map((s) => s.sys.settings.key) : [];
+    },
+    textObjects(): number {
+      const g = inspect.game();
+      if (!g) return -1;
+      let n = 0;
+      for (const s of g.scene.getScenes(false)) n += countText(s.children.list);
+      return n;
+    },
+    // Every visible text node of the page, and whether it overlaps the canvas (D16: none may).
+    pageTexts(): { title: string; texts: PageText[] } {
+      const canvas = inspect.game()?.canvas ?? document.querySelector('canvas');
+      const cr = canvas ? canvas.getBoundingClientRect() : null;
+      const texts: PageText[] = [];
+      const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        const text = (n.textContent ?? '').trim();
+        const el = n.parentElement;
+        if (!text || !el || el.closest('script, style, noscript, template')) continue;
+        const style = window.getComputedStyle(el);
+        if (style.visibility === 'hidden' || style.opacity === '0') continue;
+        const range = document.createRange();
+        range.selectNodeContents(n);
+        const rects = Array.from(range.getClientRects()).filter((r) => r.width > 0 && r.height > 0);
+        if (!rects.length) continue;
+        const inside = cr ? rects.some((r) => r.right > cr.left && r.left < cr.right && r.bottom > cr.top && r.top < cr.bottom) : false;
+        texts.push({ text, inside });
+      }
+      return { title: document.title, texts };
+    },
+    sim(): { step: number; status: ProbeSimStatus; checksum: string; state: number[] } | null {
+      const s = inspect.sim();
+      return s ? { step: s.step, status: s.status(), checksum: s.checksum(), state: Array.from(s.save()) } : null;
+    },
+    audio() {
+      return inspect.audio();
+    },
+    clock() {
+      return inspect.clock();
+    },
+    calibration() {
+      return inspect.calibration();
+    },
+    startRoom(room: number): void {
+      inspect.control.startRoom(room);
+    },
+    skipCalibration(avOffset: number, inputBias: number): void {
+      inspect.control.skipCalibration(avOffset, inputBias);
+    },
+    stopInput(): void {
+      inspect.control.attachInput(null);
+    },
+    // Restart the run at `room` and play a witness's input changes from its step 0. The source gives 0 as
+    // soon as the room is left (cleared, or the run finished), so nothing leaks into the next room.
+    play(room: number, changes: [number, number][]): void {
+      inspect.control.startRoom(room);
+      let k = 0;
+      let bits = 0;
+      const source: ProbeInputSource = {
+        next(step: number): number {
+          const s = inspect.sim();
+          if (!s) return 0;
+          const st = s.status();
+          if (st.room !== room || st.cleared > 0 || st.finished) return 0;
+          while (k < changes.length) {
+            const c = changes[k];
+            if (!c || c[0] > step) break;
+            bits = c[1];
+            k += 1;
+          }
+          return bits;
+        },
+      };
+      inspect.control.attachInput(source);
+    },
+    // The witness run of tools/replay.mjs, on a fresh headless sim in this page.
+    replay(room: number, changes: [number, number][], end: number, layers: number): ReplayResult | null {
+      const make = inspect.simFactory();
+      if (!make) return null;
+      const sim = make({ room, step: 0, layers, stopAtClear: true });
+      let k = 0;
+      let bits = 0;
+      for (let i = 0; i < end; i++) {
+        while (k < changes.length) {
+          const c = changes[k];
+          if (!c || c[0] !== i) break;
+          bits = c[1];
+          k += 1;
+        }
+        sim.tick(bits);
+        const st = sim.status();
+        if (st.deaths > 0) return { ok: false, why: `died at step ${i + 1}`, step: i + 1, checksum: sim.checksum(), deaths: st.deaths };
+        if (st.cleared > 0 || st.finished) return { ok: true, why: `clear at step ${i + 1}`, step: i + 1, checksum: sim.checksum(), deaths: 0 };
+      }
+      return { ok: false, why: `no clear by step ${end}`, step: end, checksum: sim.checksum(), deaths: 0 };
+    },
+    layerCount(): number {
+      const s = inspect.audio();
+      return s ? s.layerGains.length : 0;
+    },
+    // Sets one layer's gate gain now, through the real node (X7's solo test).
+    setLayerGain(layer: number, value: number): boolean {
+      const g = inspect.layerGain(layer);
+      if (!g) return false;
+      const t = g.context.currentTime;
+      g.gain.cancelScheduledValues(t);
+      g.gain.setValueAtTime(value, t);
+      return true;
+    },
+    layerGainValue(layer: number): number | null {
+      const g = inspect.layerGain(layer);
+      return g ? g.gain.value : null;
+    },
+    // The master analyser and the device clock, sampled in the page every `ms` milliseconds.
+    meterStart(ms = 20): void {
+      if (meterTimer) window.clearInterval(meterTimer);
+      samples.length = 0;
+      meterTimer = window.setInterval(meterSample, ms);
+    },
+    meterTake(): MeterSample[] {
+      return samples.splice(0, samples.length);
+    },
+    meterStop(): void {
+      if (meterTimer) window.clearInterval(meterTimer);
+      meterTimer = 0;
+    },
+    // Animation-frame intervals in milliseconds, for the perf probe.
+    framesStart(): void {
+      frames.length = 0;
+      lastFrame = -1;
+      if (!framesOn) {
+        framesOn = true;
+        window.requestAnimationFrame(onFrame);
+      }
+    },
+    framesTake(): number[] {
+      return frames.splice(0, frames.length);
+    },
+    framesStop(): void {
+      framesOn = false;
+    },
+    webgl(): { renderer: string; vendor: string } {
+      const gl = document.createElement('canvas').getContext('webgl');
+      if (!gl) return { renderer: 'none', vendor: 'none' };
+      const ext = gl.getExtension('WEBGL_debug_renderer_info');
+      return {
+        renderer: String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER)),
+        vendor: String(ext ? gl.getParameter(ext.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR)),
+      };
+    },
+  };
+}
+
+export type HushProbe = ReturnType<typeof createProbe>;
+
+export function installProbe(inspect: Inspect, search: string = window.location.search): boolean {
+  if (!new URLSearchParams(search).has('probe')) return false;
+  (window as unknown as { __hush: HushProbe }).__hush = createProbe(inspect);
+  return true;
+}

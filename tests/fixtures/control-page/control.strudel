@@ -1,0 +1,7 @@
+// The control page's track: four layers in unlock order, the quietest sound kinds of area1 among them
+setcpm(140/4)
+
+kick: s("sbd*4").decay(.3).gain(.85)
+hat: s("white*8").decay(.03).hpf(8000).gain(.16)
+perc: note("c5(5,8)").s("square").decay(.035).hpf(2000).gain(.1)
+arp: n("0 2 4 7 9 7 4 2").scale("C4:minor").s("triangle").decay(.1).sustain(0).gain(.18)

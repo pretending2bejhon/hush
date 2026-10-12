@@ -18,6 +18,14 @@ const VAULT_ROOT_HASHES = new Map([
   [9, new Set(['aecd89bf0078a5075c85eea68cd57dd24d13c3a4f56238de9b577b5b98c42c90'])],
 ]);
 
+// sha256 of each lowercased third-party email a pinned dependency ships inside the built bundle, as public npm
+// metadata: escodegen's maintainer contact, inlined by @strudel/web 1.3.0's prebuilt bundle (found by the deploy
+// dry run of PF-CONTROLS, the only email in the built page). Held as hashes so this file names nothing.
+const THIRD_PARTY_EMAIL_HASHES = new Set([
+  '6a6e0568bbcd7e8b0e458a545ad4b34078198bdb54b31ba03a21e6d12c1aee9c',
+]);
+const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g;
+
 // Public by design: masked before any name or email is matched.
 const PUBLIC_FORMS = [
   new RegExp(escapeRe(REPO_EMAIL), 'gi'),
@@ -124,7 +132,8 @@ export function mask(text) {
     re.lastIndex = 0;
     t = t.replace(re, (m) => ' '.repeat(m.length));
   }
-  return t;
+  EMAIL_RE.lastIndex = 0;
+  return t.replace(EMAIL_RE, (m) => (THIRD_PARTY_EMAIL_HASHES.has(sha256(m.toLowerCase())) ? ' '.repeat(m.length) : m));
 }
 
 function lineOf(text, index) {

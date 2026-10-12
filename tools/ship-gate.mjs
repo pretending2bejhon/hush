@@ -234,7 +234,7 @@ function jsonEvidence(top, folder, kind, want) {
 }
 
 export const PERF_OK = (current) => (j) => j.kind === 'perf' && j.digest === current && j.headed === true && j.swiftshader === false
-  && j.power === 'ac' && j.refreshHz === 60 && Array.isArray(j.heavyApps) && j.heavyApps.length === 0
+  && j.power === 'ac' && j.powerSaver === false && j.refreshHz === 60 && Array.isArray(j.heavyApps) && j.heavyApps.length === 0
   && j.meanFps >= 58 && j.p20 >= 0.99 && j.durationSec >= 60 && j.pass === true;
 export const AV_OK = (current) => (j) => j.kind === 'av' && j.digest === current && j.headed === true && j.contextRunning === true
   && j.scheduledVoices >= j.expectedVoices && j.expectedVoices > 0 && j.voiceErrors === 0 && j.lateDropped === 0

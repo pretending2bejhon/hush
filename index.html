@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Hush</title>
+<link rel="icon" href="data:,">
+<style>
+html, body { margin: 0; height: 100%; background: #07080d; }
+body { display: flex; flex-direction: column; color: #5b6680; font: 12px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+#game { flex: 1 1 auto; min-height: 0; overflow: hidden; }
+footer { flex: 0 0 auto; display: flex; gap: 28px; justify-content: center; padding: 6px 0 10px; }
+footer a { color: #7fd6ff; text-decoration: none; }
+footer a:focus-visible { outline: 1px solid #7fd6ff; outline-offset: 2px; }
+</style>
+</head>
+<body>
+<div id="game"></div>
+<footer>
+<a href="https://github.com/pretending2bejhon/hush">Source (AGPL-3.0)</a>
+<span>Music engine: Strudel, AGPL-3.0-or-later</span>
+<output id="playtest" hidden></output>
+</footer>
+<script type="module" src="/src/main.ts"></script>
+</body>
+</html>

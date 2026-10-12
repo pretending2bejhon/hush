@@ -13,8 +13,22 @@
     "node": "24.18.0"
   },
   "scripts": {
+    "build": "vite build",
+    "smoke": "vite build && node tools/probe-smoke.mjs",
+    "test": "node tools/test-all.mjs",
+    "test:unit": "vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render",
+    "test:av": "vitest run tests/audio tests/sim/progression.test.ts",
+    "test:calibration": "vitest run tests/input/calibrate.test.ts",
+    "test:verifiers": "vitest run tests/tools",
+    "probe:console": "vite build && node tools/probe-play.mjs --check console,play,text && node tools/probe-play.mjs --channel edge --headed --check console,play,text",
+    "probe:flash": "vite build && node tools/probe-flash.mjs --calibration",
+    "probe:perf": "vite build && node tools/probe-perf.mjs",
+    "probe:av": "vite build && node tools/probe-av.mjs",
+    "probe:supply": "vite build && node tools/probe-supply.mjs",
+    "probe:live": "node tools/probe-live.mjs",
+    "standing": "node tools/standing.mjs",
+    "deploy": "node tools/deploy.mjs --release",
     "check:public": "node tools/check-public.mjs",
-    "test": "vitest run",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit"
   },

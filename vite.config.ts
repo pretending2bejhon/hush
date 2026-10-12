@@ -13,6 +13,8 @@ export default defineConfig({
     emptyOutDir: true,
     sourcemap: false,
     target: 'es2022',
+    // Phaser and the Strudel bundle make one 2 MB chunk on purpose (one request, no runtime CDN).
+    chunkSizeWarningLimit: 4096,
   },
   plugins: [
     {
