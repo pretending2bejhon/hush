@@ -504,3 +504,19 @@ export function ceilingShapes(y) {
 export function cardShapes(beatOfBar) {
   return [0, 1, 2].map((i) => ({ k: 'ellipse', x: 640 + (i - 1) * 24 * ZOOM, y: 360, rx: 3 * ZOOM, ry: 3 * ZOOM, c: COLOR.SHELL, a: beatOfBar === i ? 1 : 0.3 }));
 }
+
+// The beat of the bar heard at context time `heard` (0 to 3): the music's bars begin on the run's origin, the
+// context time of sim step 0, every 4 beats (amended for review R1, MAJOR 4).
+export function beatOfBar(heard, origin) {
+  return ((Math.floor((heard - origin) / BEAT_S) % 4) + 4) % 4;
+}
+
+// One frame of the scene `ending` at heard time `heard` (amended for review R1, MAJOR 4): t0 is the heard time of
+// its first frame and run the run, whose origin carries the music's bars. Returns the glimpse image's y, the
+// shapes its Graphics draws (the passing ceiling during the rise, then the card on the beat) and whether the card
+// is up (the moment of the ?playtest line).
+export function endingFrame(heard, t0, run) {
+  const r = riseAt(heard - t0);
+  if (r.u < 1) return { glimpseY: r.glimpseY, card: false, shapes: ceilingShapes(r.ceilingY) };
+  return { glimpseY: r.glimpseY, card: true, shapes: cardShapes(beatOfBar(heard, run.origin)) };
+}

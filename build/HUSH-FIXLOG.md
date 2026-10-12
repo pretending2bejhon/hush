@@ -63,6 +63,10 @@ DISPOSITION: R1-MAJOR3 | the play scene's beat binding (src/render/play-scene.ts
 DISPOSITION: R1-MAJOR4 | the ending card's beat binding (src/render/ending-scene.ts:88) is untested | 2026-10-12T14:18:00-05:00 | to fix by amendment and one applier
 - `endingFrame` (the rise, then the card) and `beatOfBar`, read from the run's origin, move into ending-art.ts (END1 amended).
 - They are compared with the reference in tests/render/ending-art.test.mjs. The scene draws only what endingFrame returns.
+- Amended 2026-10-12T15:00-05:00 in the commit `hush-spec: amend END1 ...` after `020b7a7`.
+  - The test passes 5 of 5 on the reference and is red on the tree before the port: endingFrame is missing (build/evidence/END1.amend.3.txt).
+  - The beat counted from t0 + 0.2 s fails (build/evidence/R1-END1-controls.amend.1.txt).
+  - The applier follows.
 DISPOSITION: R1-MINOR1 | the ending's text guard covers only the first half of the rise | 2026-10-12T14:18:00-05:00 | to fix (verifier): the guard runs to RISE_MS - 400 ms; control ?ending=mid (a line at 60% of the rise)
 - Fixed 2026-10-12T14:55-05:00 in the same amendment commit: ?playtest&ending=mid fails, and the clean page and the other ending faults keep their verdicts (build/evidence/R1-page-controls.amend.1.txt and .2.txt).
 DISPOSITION: R1-MINOR2 | three of CL1's thresholds are unpinned | 2026-10-12T14:18:00-05:00 | to fix (test): a 6 ms downward glitch, a lead of 3 render quanta, a blip of exactly two low pairs

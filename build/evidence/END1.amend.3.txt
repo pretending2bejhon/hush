@@ -1,0 +1,52 @@
+HUSH-EVIDENCE v1
+id: END1
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/render/ending-art.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T14:52:13-05:00
+time-end: 2026-10-12T14:52:14-05:00
+head: 020b7a736e1ec062bd69fd6b656ce2deb8eb7fa7
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/render/ending-art.test.mjs (5 tests | 2 failed) 18ms
+   ❯ END1 ending art (5)
+     × counts the beat of the bar from the run's origin 4ms
+     × draws each frame of the ending: the rise, then the card on the music's beat 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/render/ending-art.test.mjs > END1 ending art > counts the beat of the bar from the run's origin
+TypeError: P.beatOfBar is not a function
+ ❯ tests/render/ending-art.test.mjs:35:81
+     33|   it('counts the beat of the bar from the run\'s origin', () => {
+     34|     for (const origin of [3.7, 12.25]) {
+     35|       for (let heard = origin - 2; heard < origin + 6; heard += 0.031)…
+       |                                                                                 ^
+     36|     }
+     37|     expect(P.beatOfBar(5 + REF.BEAT_S * 1.5, 5)).toBe(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/render/ending-art.test.mjs > END1 ending art > draws each frame of the ending: the rise, then the card on the music's beat
+TypeError: P.endingFrame is not a function
+ ❯ tests/render/ending-art.test.mjs:46:21
+     44|     for (const t0 of [run.origin + 61.3, run.origin + 64.01]) {
+     45|       for (let heard = t0; heard < t0 + REF.RISE_S + 4 * 4 * REF.BEAT_…
+     46|         const p = P.endingFrame(heard, t0, run);
+       |                     ^
+     47|         const r = REF.endingFrame(heard, t0, run);
+     48|         expect(Math.abs(p.glimpseY - r.glimpseY), `${t0} ${heard} glim…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 3 passed (5)
+   Start at  14:52:14
+   Duration  493ms (transform 74%, import 17%, tests 7%, worker 3%)
+
+--- end ---
