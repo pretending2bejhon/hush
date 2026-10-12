@@ -26,7 +26,7 @@ RN1: passes: true (evidence: build/evidence/RN1.green.1.txt)
 RN2: passes: true (evidence: build/evidence/RN2.green.1.txt)
 RN3: passes: true (evidence: build/evidence/RN3.green.1.txt)
 RN4: passes: true (evidence: build/evidence/RN4.green.1.txt)
-END1: blocked (suspect-check)
+END1: passes: false
 
 ## Learnings
 
@@ -44,6 +44,7 @@ END1: blocked (suspect-check)
 - The cap hook denies a shell call that holds a write form (`mv`, `rm`, `>`) next to a `tools/` path, so a move and an `evidence.mjs` run go in separate calls (RN3).
 - END1 attempt 1 (build/evidence/END1.green.1.txt, exit 1): the art test passes 3 of 3 and the playthrough is clean, but the text check reads `?playtest wants one run line, found []`. tools/probe-play.mjs reads the page texts about 1.5 s after the gauntlet finishes (one `waitForTimeout(1500)` after the last room), while section 13 puts the run line at the card, which comes after the 4-bar rise: RISE_S = 16 beats = 6.857 s after the ending scene's first frame. The product follows section 13 line for line; the two cannot meet unless the line comes earlier than the card, which is a design change (END1).
 - END1 attempt 2 (build/evidence/END1.green.2.txt, exit 1) repeated the same implementation after a real red (END1.red.2.txt) and failed the same way, so END1 is `blocked (suspect-check)`: the art test passes 3 of 3, 11 rooms clear, zero console errors, and only the `?playtest` text check fails. The diagnosis is read from the code (the probe's single 1.5 s wait against RISE_S = 6.857 s), not observed: no run was made that waits longer. For the producer: either the probe waits for the card in `?playtest` mode (a verifier change), or section 13 shows the run line when the ending begins (a design change). The attempt's files were reverted by the checkpoint; the implementation is the line-for-line port of section 13 and is quick to redo (END1).
+- A probe that judges a state the product reaches later (the ending's card, RISE_S after the finish) waits for that state through the probe API, never for a fixed delay, and every branch of a verifier has its own control: the `?playtest` branch of tools/probe-play.mjs had none until END1's amendment, so its fault went unseen until an executor hit it (producer, 2026-10-12; build/HUSH-FIXLOG.md).
 
 ## Rounds
 
@@ -60,3 +61,5 @@ HUSH-BUILD: INCOMPLETE (passed=17 blocked=CAL2,RN1,RN2,RN3,RN4,END1)
 HUSH-BUILD: REOPENED (items=CAL2,RN1,RN2,RN3,RN4,END1)
 
 HUSH-BUILD: INCOMPLETE (passed=22 blocked=END1)
+
+HUSH-BUILD: REOPENED (items=END1)
