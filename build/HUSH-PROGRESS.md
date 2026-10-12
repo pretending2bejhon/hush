@@ -4,6 +4,30 @@ The Hush build scoreboard and journal. Under Items, one line per spec item at co
 
 ## Items
 
+S1: passes: false
+SIM1: passes: false
+RM1: passes: false
+CT1: passes: false
+SIM2: passes: false
+W1: passes: false
+W2: passes: false
+W3: passes: false
+CL1: passes: false
+CL2: passes: false
+IN1: passes: false
+CAL1: passes: false
+AU1: passes: false
+AU2: passes: false
+AU3: passes: false
+FX1: passes: false
+GAME1: passes: false
+CAL2: passes: false
+RN1: passes: false
+RN2: passes: false
+RN3: passes: false
+RN4: passes: false
+END1: passes: false
+
 ## Learnings
 
 ## Rounds

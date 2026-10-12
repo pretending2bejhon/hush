@@ -1,0 +1,81 @@
+HUSH-EVIDENCE v1
+id: AU3
+phase: cut-red
+command: npm run test:av
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:12:44-05:00
+time-end: 2026-10-11T23:12:45-05:00
+head: 29fae729541ce7e753ab07e36ac73c71e84f0953
+exit: 1
+--- output ---
+
+> hush@0.0.0 test:av
+> vitest run tests/audio tests/sim/progression.test.mjs
+
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/audio/gates.test.mjs (0 test)
+ ❯ tests/audio/track.test.mjs (0 test)
+ ❯ tests/audio/scheduler.test.mjs (0 test)
+ ❯ tests/sim/progression.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/audio/gates.test.mjs [ tests/audio/gates.test.mjs ]
+Error: Cannot find module '<repo>/src/audio/gates.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/audio/gates.test.mjs:6:11
+      4| import { load } from '../helpers/load.mjs';
+      5|
+      6| const G = await load('HUSH_AUDIO_MODULE', new URL('../../src/audio/gat…
+       |           ^
+      7| const BAR = (60 / 140) * 4;
+      8|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/audio/scheduler.test.mjs [ tests/audio/scheduler.test.mjs ]
+Error: Cannot find module '<repo>/src/audio/scheduler.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/audio/scheduler.test.mjs:11:11
+      9| import { compileTrack } from '../fixtures/reference/audio.mjs';
+     10|
+     11| const T = await load('HUSH_AUDIO_MODULE', new URL('../../src/audio/sch…
+       |           ^
+     12| const { scope, transpiler } = await loadStrudel();
+     13| const { layers } = compileTrack(specBlocks().get('music/area1.strudel'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/audio/track.test.mjs [ tests/audio/track.test.mjs ]
+Error: Cannot find module '<repo>/src/audio/track.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/audio/track.test.mjs:9:11
+      7| import { specBlocks } from '../../tools/spec-content.mjs';
+      8|
+      9| const A = await load('HUSH_AUDIO_MODULE', new URL('../../src/audio/tra…
+       |           ^
+     10| const { scope, transpiler } = await loadStrudel();
+     11| const S = { ...scope, transpiler };
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/sim/progression.test.mjs [ tests/sim/progression.test.mjs ]
+Error: Cannot find module '/src/sim/headless.ts' imported from <repo>/tests/sim/compare.mjs
+ ❯ tests/sim/compare.mjs:14:18
+     12| // mutated copy fails).
+     13| const override = process.env.HUSH_SIM_MODULE;
+     14| export const P = await import(override ? pathToFileURL(path.resolve(ov…
+       |                  ^
+     15|
+     16| const blocks = specBlocks();
+ ❯ tests/sim/progression.test.mjs:8:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  4 failed (4)
+      Tests  no tests
+   Start at  23:12:45
+   Duration  341ms (worker 96%, environment 4%)
+
+--- end ---

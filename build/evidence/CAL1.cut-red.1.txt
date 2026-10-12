@@ -1,0 +1,41 @@
+HUSH-EVIDENCE v1
+id: CAL1
+phase: cut-red
+command: npm run test:calibration
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:12:34-05:00
+time-end: 2026-10-11T23:12:35-05:00
+head: 29fae729541ce7e753ab07e36ac73c71e84f0953
+exit: 1
+--- output ---
+
+> hush@0.0.0 test:calibration
+> vitest run tests/input/calibrate.test.ts
+
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/input/calibrate.test.ts (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/input/calibrate.test.ts [ tests/input/calibrate.test.ts ]
+Error: Cannot find module '<repo>/src/input/calibrate.ts' imported from <repo>/tests/input/calibrate.test.ts
+ ❯ tests/input/calibrate.test.ts:16:14
+     14| const override = process.env.HUSH_CALIBRATE_MODULE;
+     15| const target = override ? pathToFileURL(path.resolve(override)).href :…
+     16| const mod = (await import(target)) as Calibrator;
+       |              ^
+     17|
+     18| function rng(seed: number): () => number {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  23:12:35
+   Duration  161ms (worker 93%, environment 7%)
+
+--- end ---

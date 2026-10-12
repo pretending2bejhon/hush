@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: SIM1
+phase: cut-red
+command: npx vitest run tests/sim/beat.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:12:27-05:00
+time-end: 2026-10-11T23:12:28-05:00
+head: 29fae729541ce7e753ab07e36ac73c71e84f0953
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/sim/beat.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sim/beat.test.mjs [ tests/sim/beat.test.mjs ]
+Error: Cannot find module '<repo>/src/sim/constants.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/sim/beat.test.mjs:7:11
+      5| import * as O from '../fixtures/oracle/index.mjs';
+      6|
+      7| const K = await load('HUSH_CONSTANTS_MODULE', new URL('../../src/sim/c…
+       |           ^
+      8| const B = await load('HUSH_BEAT_MODULE', new URL('../../src/sim/beat.t…
+      9|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  23:12:28
+   Duration  184ms (worker 95%, environment 5%)
+
+--- end ---

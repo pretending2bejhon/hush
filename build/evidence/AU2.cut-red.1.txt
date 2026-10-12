@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: AU2
+phase: cut-red
+command: npx vitest run tests/audio/scheduler.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:12:43-05:00
+time-end: 2026-10-11T23:12:44-05:00
+head: 29fae729541ce7e753ab07e36ac73c71e84f0953
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/audio/scheduler.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/audio/scheduler.test.mjs [ tests/audio/scheduler.test.mjs ]
+Error: Cannot find module '<repo>/src/audio/scheduler.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/audio/scheduler.test.mjs:11:11
+      9| import { compileTrack } from '../fixtures/reference/audio.mjs';
+     10|
+     11| const T = await load('HUSH_AUDIO_MODULE', new URL('../../src/audio/sch…
+       |           ^
+     12| const { scope, transpiler } = await loadStrudel();
+     13| const { layers } = compileTrack(specBlocks().get('music/area1.strudel'…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  23:12:44
+   Duration  250ms (worker 96%, environment 4%)
+
+--- end ---

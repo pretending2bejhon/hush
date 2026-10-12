@@ -1167,3 +1167,5 @@ The executor quotes this section verbatim at completion.
   - the link: `Source (AGPL-3.0)`, to `https://github.com/pretending2bejhon/hush`
   - the notice: `Music engine: Strudel, AGPL-3.0-or-later` (the loop's own choice of words: the licence requires the source offer, not this sentence)
   - and, only with `?playtest` once the ending card is up, `run m:ss · deaths n` in `<output id="playtest">` (section 13). Nothing else, and nothing over the canvas.
+
+HUSH-SPEC: READY (items=23)

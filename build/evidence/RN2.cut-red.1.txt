@@ -1,0 +1,39 @@
+HUSH-EVIDENCE v1
+id: RN2
+phase: cut-red
+command: npm run check:art
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:12:48-05:00
+time-end: 2026-10-11T23:12:49-05:00
+head: 29fae729541ce7e753ab07e36ac73c71e84f0953
+exit: 1
+--- output ---
+
+> hush@0.0.0 check:art
+> vite build && node tools/probe-flash.mjs && node tools/probe-perf.mjs --headed
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 1 modules transformed.
+[31m✗[39m Build failed in 32ms
+[31merror during build:
+[31mBuild failed with 1 error:
+
+[plugin vite:build-html] <repo>/index.html
+Error: Failed to resolve /src/main.ts from <repo>/index.html
+    at <repo>/node_modules/vite/dist/node/chunks/node.js:31580:64
+    at async Promise.all (index 0)
+    at async TransformPluginContextImpl.handler (<repo>/node_modules/vite/dist/node/chunks/node.js:31677:5)
+    at async plugin (<repo>/node_modules/rolldown/dist/shared/bindingify-input-options-XrReX_BJ.mjs:1540:16)
+    at async plugin.<computed> (<repo>/node_modules/rolldown/dist/shared/bindingify-input-options-XrReX_BJ.mjs:2130:12)[31m
+    at aggregateBindingErrorsIntoJsError (<repo>/node_modules/rolldown/dist/shared/error-C7pxws0W.mjs:48:18)
+    at unwrapBindingResult (<repo>/node_modules/rolldown/dist/shared/error-C7pxws0W.mjs:18:128)
+    at #build (<repo>/node_modules/rolldown/dist/shared/rolldown-CgWItHdG.mjs:133:34)
+    at async buildEnvironment (<repo>/node_modules/vite/dist/node/chunks/node.js:34445:66)
+    at async Object.build (<repo>/node_modules/vite/dist/node/chunks/node.js:34866:19)
+    at async Object.buildApp (<repo>/node_modules/vite/dist/node/chunks/node.js:34863:153)
+    at async CAC.<anonymous> (<repo>/node_modules/vite/dist/node/cli.js:780:3) {
+  errors: [Getter/Setter]
+}[39m
+--- end ---

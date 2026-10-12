@@ -1,0 +1,94 @@
+HUSH-EVIDENCE v1
+id: SIM2
+phase: cut-red
+command: npx vitest run tests/sim/oracle-base.test.mjs tests/sim/oracle-dash.test.mjs tests/sim/oracle-beat.test.mjs tests/sim/oracle-wave.test.mjs tests/sim/oracle-gauntlet.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:12:29-05:00
+time-end: 2026-10-11T23:12:31-05:00
+head: 29fae729541ce7e753ab07e36ac73c71e84f0953
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/sim/oracle-wave.test.mjs (0 test)
+ ❯ tests/sim/oracle-base.test.mjs (0 test)
+ ❯ tests/sim/oracle-dash.test.mjs (0 test)
+ ❯ tests/sim/oracle-gauntlet.test.mjs (0 test)
+ ❯ tests/sim/oracle-beat.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/sim/oracle-base.test.mjs [ tests/sim/oracle-base.test.mjs ]
+Error: Cannot find module '/src/sim/headless.ts' imported from <repo>/tests/sim/compare.mjs
+ ❯ tests/sim/compare.mjs:14:18
+     12| // mutated copy fails).
+     13| const override = process.env.HUSH_SIM_MODULE;
+     14| export const P = await import(override ? pathToFileURL(path.resolve(ov…
+       |                  ^
+     15|
+     16| const blocks = specBlocks();
+ ❯ tests/sim/oracle-base.test.mjs:4:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  tests/sim/oracle-beat.test.mjs [ tests/sim/oracle-beat.test.mjs ]
+Error: Cannot find module '/src/sim/headless.ts' imported from <repo>/tests/sim/compare.mjs
+ ❯ tests/sim/compare.mjs:14:18
+     12| // mutated copy fails).
+     13| const override = process.env.HUSH_SIM_MODULE;
+     14| export const P = await import(override ? pathToFileURL(path.resolve(ov…
+       |                  ^
+     15|
+     16| const blocks = specBlocks();
+ ❯ tests/sim/oracle-beat.test.mjs:5:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  tests/sim/oracle-dash.test.mjs [ tests/sim/oracle-dash.test.mjs ]
+Error: Cannot find module '/src/sim/headless.ts' imported from <repo>/tests/sim/compare.mjs
+ ❯ tests/sim/compare.mjs:14:18
+     12| // mutated copy fails).
+     13| const override = process.env.HUSH_SIM_MODULE;
+     14| export const P = await import(override ? pathToFileURL(path.resolve(ov…
+       |                  ^
+     15|
+     16| const blocks = specBlocks();
+ ❯ tests/sim/oracle-dash.test.mjs:4:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  tests/sim/oracle-gauntlet.test.mjs [ tests/sim/oracle-gauntlet.test.mjs ]
+Error: Cannot find module '/src/sim/headless.ts' imported from <repo>/tests/sim/compare.mjs
+ ❯ tests/sim/compare.mjs:14:18
+     12| // mutated copy fails).
+     13| const override = process.env.HUSH_SIM_MODULE;
+     14| export const P = await import(override ? pathToFileURL(path.resolve(ov…
+       |                  ^
+     15|
+     16| const blocks = specBlocks();
+ ❯ tests/sim/oracle-gauntlet.test.mjs:5:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  tests/sim/oracle-wave.test.mjs [ tests/sim/oracle-wave.test.mjs ]
+Error: Cannot find module '/src/sim/headless.ts' imported from <repo>/tests/sim/compare.mjs
+ ❯ tests/sim/compare.mjs:14:18
+     12| // mutated copy fails).
+     13| const override = process.env.HUSH_SIM_MODULE;
+     14| export const P = await import(override ? pathToFileURL(path.resolve(ov…
+       |                  ^
+     15|
+     16| const blocks = specBlocks();
+ ❯ tests/sim/oracle-wave.test.mjs:4:1
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  5 failed (5)
+      Tests  no tests
+   Start at  23:12:30
+   Duration  299ms (worker 96%, environment 4%)
+
+--- end ---

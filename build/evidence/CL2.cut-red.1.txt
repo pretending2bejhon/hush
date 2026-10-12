@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: CL2
+phase: cut-red
+command: npx vitest run tests/clock/driver.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:12:32-05:00
+time-end: 2026-10-11T23:12:33-05:00
+head: 29fae729541ce7e753ab07e36ac73c71e84f0953
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/clock/driver.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/clock/driver.test.mjs [ tests/clock/driver.test.mjs ]
+Error: Cannot find module '<repo>/src/clock/driver.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/clock/driver.test.mjs:7:11
+      5| import { load } from '../helpers/load.mjs';
+      6|
+      7| const D = await load('HUSH_DRIVER_MODULE', new URL('../../src/clock/dr…
+       |           ^
+      8|
+      9| describe('CL2 tick driver', () => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  23:12:33
+   Duration  158ms (worker 95%, environment 5%)
+
+--- end ---

@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: CL1
+phase: cut-red
+command: npx vitest run tests/clock/output-clock.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:12:31-05:00
+time-end: 2026-10-11T23:12:32-05:00
+head: 29fae729541ce7e753ab07e36ac73c71e84f0953
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/clock/output-clock.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/clock/output-clock.test.mjs [ tests/clock/output-clock.test.mjs ]
+Error: Cannot find module '/src/clock/output-clock.ts' imported from <repo>/tests/clock/output-clock.test.mjs
+ ❯ tests/clock/output-clock.test.mjs:7:17
+      5| import * as ref from '../fixtures/control-page/clock.js';
+      6|
+      7| const product = await import(process.env.HUSH_CLOCK_MODULE ? new URL(p…
+       |                 ^
+      8|
+      9| // A scripted context. The device renders in bursts of `burst` seconds…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  23:12:32
+   Duration  170ms (worker 96%, environment 4%)
+
+--- end ---
