@@ -12,7 +12,7 @@ SIM2: passes: true (evidence: build/evidence/SIM2.green.1.txt)
 W1: passes: true (evidence: build/evidence/W1.green.1.txt)
 W2: passes: true (evidence: build/evidence/W2.green.1.txt)
 W3: passes: true (evidence: build/evidence/W3.green.1.txt)
-CL1: passes: false
+CL1: passes: true (evidence: build/evidence/CL1.green.1.txt)
 CL2: passes: false
 IN1: passes: false
 CAL1: passes: false
