@@ -1,0 +1,143 @@
+HUSH-EVIDENCE v1
+id: AU2
+phase: standing
+command: npm run standing
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:51:23-05:00
+time-end: 2026-10-11T23:51:33-05:00
+head: 1ebb8c08ee28c4e648aecf1f138372168ff43d9a
+exit: 0
+--- output ---
+
+> hush@0.0.0 standing
+> node tools/standing.mjs
+
+standing: public-tree: node <repo>\tools\check-public.mjs
+check-public tree (232 files): clean (owner denylist, 4 names + 1 machine names)
+standing: public-tree: ok
+standing: public-history: node <repo>\tools\check-public.mjs --history HEAD
+check-public history (1 refs, 30 commits, 154 trees, 291 blobs): clean (owner denylist, 4 names + 1 machine names)
+standing: public-history: ok
+standing: protect: node <repo>\tools\protect.mjs --check
+protect: clean
+standing: protect: ok
+standing: gates: node <repo>\tools\gates.mjs --lint
+gates: ok, 5 line(s)
+standing: gates: ok
+standing: spec-content: node <repo>\tools\spec-content.mjs --check
+spec-content: spec clean, 13 entries
+standing: spec-content: ok
+standing: mapped-tests: node <repo>\node_modules\vitest\vitest.mjs run tests/sim/beat.test.mjs tests/rooms/compile.test.mjs tests/rooms/gauntlet-pattern.test.mjs tests/sim/oracle-base.test.mjs tests/sim/oracle-dash.test.mjs tests/sim/oracle-beat.test.mjs tests/sim/oracle-wave.test.mjs tests/sim/oracle-gauntlet.test.mjs tests/clock/output-clock.test.mjs tests/clock/driver.test.mjs tests/input/keys.test.mjs tests/audio/track.test.mjs
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  12 passed (12)
+      Tests  48 passed (48)
+   Start at  23:51:24
+   Duration  1.77s (tests 66%, transform 24%, import 9%, worker 1%)
+
+standing: mapped-tests: ok
+standing: npm run smoke: node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js run smoke
+
+> hush@0.0.0 smoke
+> vite build && node tools/probe-smoke.mjs
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 9 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-8-qyiLBF.js  1,379.67 kB │ gzip: 359.99 kB
+
+[32m✓ built in 582ms[39m
+smoke: page: ok: GET /hush/ 200
+smoke: build-meta: ok: hush-build 1ebb8c08ee28
+smoke: boot: ok: scenes ["calibration"]
+smoke: canvas: ok: not blank (1220 by 686)
+smoke: text: ok: title, link and notice only; no text object
+smoke: requests: ok: every request answered below 400
+smoke: console: ok: zero console and page errors
+smoke: PASS (/hush/)
+standing: npm run smoke: ok
+standing: node tools/spec-content.mjs --tree: node <repo>\tools\spec-content.mjs --tree
+rooms/01-wake.txt: ok
+rooms/02-heartbeat.txt: ok
+rooms/03-dash.txt: ok
+rooms/04-thorns.txt: ok
+rooms/05-doors.txt: ok
+rooms/06-wave.txt: ok
+rooms/07-current.txt: ok
+rooms/08-steps.txt: ok
+rooms/09-gates.txt: ok
+rooms/10-crown.txt: ok
+rooms/11-gauntlet.txt: ok
+music/area1.strudel: ok
+spec-content: tree clean, 12 file(s)
+standing: node tools/spec-content.mjs --tree: ok
+standing: node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1: node <repo>\tools\replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1
+replays/01-wake.json: CLEAR clear at step 1618, checksum 6001f0f9 (witness 6001f0f9) OK
+replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: CLEAR clear at step 1684, checksum 04febedf (witness 04febedf) OK
+replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/03-dash.json: CLEAR clear at step 1588, checksum 593d0787 (witness 593d0787) OK
+replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: CLEAR clear at step 1408, checksum 123057cb (witness 123057cb) OK
+replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 4 witness(es)
+standing: node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1: ok
+standing: node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1: node <repo>\tools\replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1
+replays/05-doors.json: CLEAR clear at step 2222, checksum d181a484 (witness d181a484) OK
+replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: CLEAR clear at step 1920, checksum f3496b90 (witness f3496b90) OK
+replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: CLEAR clear at step 1943, checksum 1c7b52e9 (witness 1c7b52e9) OK
+replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: CLEAR clear at step 1494, checksum e6a8f7ba (witness e6a8f7ba) OK
+replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 4 witness(es)
+standing: node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1: ok
+standing: node tools/replay.mjs --all --jitter --seed 1: node <repo>\tools\replay.mjs --all --jitter --seed 1
+replays/01-wake.json: CLEAR clear at step 1618, checksum 6001f0f9 (witness 6001f0f9) OK
+replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: CLEAR clear at step 1684, checksum 04febedf (witness 04febedf) OK
+replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/03-dash.json: CLEAR clear at step 1588, checksum 593d0787 (witness 593d0787) OK
+replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: CLEAR clear at step 1408, checksum 123057cb (witness 123057cb) OK
+replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/05-doors.json: CLEAR clear at step 2222, checksum d181a484 (witness d181a484) OK
+replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: CLEAR clear at step 1920, checksum f3496b90 (witness f3496b90) OK
+replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: CLEAR clear at step 1943, checksum 1c7b52e9 (witness 1c7b52e9) OK
+replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: CLEAR clear at step 1494, checksum e6a8f7ba (witness e6a8f7ba) OK
+replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/09-gates.json: CLEAR clear at step 1905, checksum 9498a96d (witness 9498a96d) OK
+replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/10-crown.json: CLEAR clear at step 2388, checksum 5b909a19 (witness 5b909a19) OK
+replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/11-gauntlet.json: CLEAR clear at step 14278, checksum b3715ef7 (witness b3715ef7) OK
+replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 11 witness(es)
+standing: node tools/replay.mjs --all --jitter --seed 1: ok
+standing: npm run test:calibration: node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js run test:calibration
+
+> hush@0.0.0 test:calibration
+> vitest run tests/input/calibrate.test.ts
+
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  23:51:33
+   Duration  184ms (transform 56%, import 24%, tests 13%, worker 6%)
+
+standing: npm run test:calibration: ok
+standing: GREEN (13 item(s) passed, 12 mapped test file(s), 6 command(s))
+--- end ---
