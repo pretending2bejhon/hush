@@ -126,3 +126,41 @@ Opened 2026-10-12T17:55-05:00 by the producer (Opus standing in for Fable). Find
 
 RESOLVED: HUSH-PHASE3-ESCALATE: R2-count-not-dropping | 2026-10-12T17:55:00-05:00 | f266a19d | 2026-10-12T18:00:49-05:00 | "A, go on with FIX R2" | next: producer
 
+Dispositions, 2026-10-12T18:08-05:00, on the owner's A. Every finding is a gap in a PROTECTED verifier or a stale line of the spec, so each one is the producer's amendment. No product file changes and no applier is dispatched: the reviewer saw the product do what the spec says on HEAD (the real hand-over, the real keys, the room and the glimpse in its screenshots). The browser checks below are new and optional in tools/probe-play.mjs, so the control page's default run is unchanged. They are named where they apply: `keys` in GAME1's acceptance, `scene` in END1's, and both in npm test.
+
+DISPOSITION: R2-MAJOR1 | the play scene's image placement is untested | 2026-10-12T18:08:39-05:00 | to fix by amendment (verifier)
+- The playthrough's new check `scene` reads the play scene's display list and the sim in one page read, once in every room, half-way through its witness.
+- It wants every baked image of section 10.6 (the chunks, the four bands, the fog, the vignette) with its key, size, origin, scale and depth, and nothing else.
+- The chunks and the bands must sit at one camera, and that camera must be the one cameraPx gives for the sim's creature, within one step's motion.
+- It also wants the three Graphics at depths 6, 7 and 8, with the creature's and the dust's drawn.
+- The predicate is controlled in Node (tests/tools/probe-lib.test.mjs), because the control page has no bake.
+DISPOSITION: R2-MAJOR2 | drawShapes is untested | 2026-10-12T18:08:39-05:00 | to fix by amendment (test)
+- tests/render/draw-shapes.test.mjs records every Phaser call through a fake Graphics. Each shape kind must make the calls section 10.6 names, offset by (dx, dy).
+- Its reference is tests/fixtures/reference/draw.mjs; its control is an ellipse drawn at half size.
+- It joins RN1's acceptance and mapped tests.
+DISPOSITION: R2-MAJOR3 | the ending's glimpse is untested | 2026-10-12T18:08:39-05:00 | to fix by amendment (verifier)
+- The check `scene` reads the ending's display list with every text read, through the rise and at the card.
+- It wants the glimpse image with its key, size, origin, depth 0 and x 0, its y never moving back down, and its y 0 once the card is up. It also wants the one Graphics at depth 1.
+- Controlled in Node.
+DISPOSITION: R2-MAJOR4 | the calibration's hand-over to the run is untested | 2026-10-12T18:08:39-05:00 | to fix by amendment (test and verifiers)
+- (a) tests/game/run.test.mjs: setCalibration(a, b) moves the sim's target by displaySec(a) and stepOf by inputLagSec(a, b). The reference run gains both; the controls are displaySec(0) and inputLagSec(0, 0).
+- (b) The playthrough's new check `keys` hands over through skipCalibration(100, -60) and wants room 1 running before it presses keys (MAJOR 5).
+- (c) The tapped calibration wants room 1 running after its own hand-over.
+DISPOSITION: R2-MAJOR5 | no test sends the keyboard to the game | 2026-10-12T18:08:39-05:00 | to fix by amendment (verifier)
+- The check `keys` presses ArrowRight and Space through the browser's keyboard. The page records, for each event, its timeStamp, the clock line's offset and the sim's step.
+- The sim's state after the keys must equal a replay on the oracle from the state before them. In the replay, each key changes the held bits on the step stepOf names for its time (section 9.2), or on the next tick when that step has already passed. It must also differ from the same replay without the keys.
+- With avOffset 100 and inputBias -60, each key lands about 14 steps ahead of the sim, so the step is the one stepOf names, and a lost input lag or calibration shows.
+- Controlled in Node.
+DISPOSITION: R2-MINOR1 | CAL1's trim is untested | 2026-10-12T18:08:39-05:00 | to fix by amendment (test)
+- An asymmetric fixture asserts the MAD: 5 trimmed, not the untrimmed 10.
+- The control is the fixture calibrator tests/fixtures/calibration/untrimmed.mjs.
+DISPOSITION: R2-MINOR2 | the run's track and the ring's place are untested | 2026-10-12T18:08:39-05:00 | to fix by amendment (tests)
+- run.test compares run.track() with the reference's trackStep over every tick of a witness run. The reference run gains the track; the control is a run that never steps it.
+- play-frame.test plays rooms 1 and 6 on past their layer's return, so the ring is drawn and compared. The control is the ring's centre one world px up.
+DISPOSITION: R2-MINOR3 | the tapped calibration can fail a correct product | 2026-10-12T18:08:39-05:00 | to fix by amendment (verifier)
+- The tapper logs every tap it lands (its timeStamp, its heard time, the attempt it fell in) and each attempt's t0, p0 and frameTimes.
+- The check recomputes judgePass and calibrate from those taps (tests/fixtures/calibration/reference.mjs) and wants the values in use equal to them within 0.5 ms. It refuses a run whose taps strayed more than 10 ms from their marks.
+DISPOSITION: R2-MINOR4 | two item lines are stale | 2026-10-12T18:08:39-05:00 | to fix by amendment
+- CL1's decisive line becomes `Tests  11 passed (11)`.
+- END1's text guard is described as the probe runs it.
+
