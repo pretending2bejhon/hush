@@ -6,7 +6,7 @@ The Hush build scoreboard and journal. Under Items, one line per spec item at co
 
 S1: passes: true (evidence: build/evidence/S1.green.2.txt)
 SIM1: passes: true (evidence: build/evidence/SIM1.green.1.txt)
-RM1: passes: false
+RM1: passes: true (evidence: build/evidence/RM1.green.1.txt)
 CT1: passes: false
 SIM2: passes: false
 W1: passes: false

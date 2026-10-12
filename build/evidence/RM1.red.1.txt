@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: RM1
+phase: red
+command: npx vitest run tests/rooms/compile.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:24:06-05:00
+time-end: 2026-10-11T23:24:07-05:00
+head: 6eb4a3d0ec13f26e3c0020f0d4b8cc11ebacd0fc
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/rooms/compile.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/rooms/compile.test.mjs [ tests/rooms/compile.test.mjs ]
+Error: Cannot find module '/src/rooms/compile.ts' imported from <repo>/tests/rooms/compile.test.mjs
+ ❯ tests/rooms/compile.test.mjs:16:11
+     14| const P = override
+     15|   ? await import(pathToFileURL(path.resolve(override)).href)
+     16|   : { ...(await import('../../src/rooms/compile.ts')), ...(await impor…
+       |           ^
+     17| const blocks = specBlocks();
+     18| const ROOMS = [...blocks.keys()].filter((k) => /^rooms\/(0[1-9]|10)-/.…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  23:24:07
+   Duration  207ms (worker 95%, environment 5%)
+
+--- end ---
