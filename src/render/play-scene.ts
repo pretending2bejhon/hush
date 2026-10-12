@@ -1,10 +1,10 @@
 import * as Phaser from 'phaser';
+import { createFlashLimiter } from '../fx/flash-limiter.ts';
 import type { Run } from '../game/run.ts';
-import { entityOn } from '../sim/beat.ts';
-import { SPIKE_BOX } from '../sim/constants.ts';
 import { FIELDS } from '../sim/sim.ts';
 import type { Room, Sim } from '../sim/types.ts';
-import { drawShapes, TILE_PX, VIEW_W, ZOOM } from './art.ts';
+import { drawShapes, TILE_PX, ZOOM } from './art.ts';
+import { beatShapes, ringShapes } from './beat-art.ts';
 import { creatureShapes } from './creature.ts';
 import { bakeChunks, cameraPx, roomShapes } from './room-art.ts';
 
@@ -15,10 +15,9 @@ const FORM = FIELDS.indexOf('form');
 const DEAD = FIELDS.indexOf('dead');
 const LOCK = FIELDS.indexOf('lock');
 const SUB = 256;
-const TILE = 16;
-// The room's baked chunks sit at depth 5, the plain beat entities at depth 6 (until RN3), the creature at depth 7.
+// The room's baked chunks sit at depth 5, the beat entities and the layer's ring at depth 6, the creature at depth 7.
 const DEPTH_CHUNKS = 5;
-const DEPTH_PLAIN = 6;
+const DEPTH_BEAT = 6;
 const DEPTH_CREATURE = 7;
 
 interface Chunk {
@@ -28,15 +27,17 @@ interface Chunk {
 }
 
 // The play scene (spec sections 10.1 and 10.6). The room's static geometry is baked once on entering a room into
-// DynamicTextures, one per chunk of 128 columns, and shown at the camera. The creature is drawn every frame from the
-// reference art's shapes (creature.ts) on its own Graphics; the beat entities are still plain, drawn straight from the
-// run on one Graphics, until RN3 replaces them.
+// DynamicTextures, one per chunk of 128 columns, and shown at the camera. Every frame the beat entities, with the
+// ring of a layer's return, are drawn through the scene's flash limiter on one Graphics, and the creature on another,
+// both from the reference art's shapes (beat-art.ts, creature.ts).
 // The world view is 32 by 18 tiles at zoom 2.5; a wider room scrolls horizontally.
 // When the run finishes it hands over to the scene `ending`.
 export class PlayScene extends Phaser.Scene {
   private run: Run;
-  private g!: Phaser.GameObjects.Graphics;
+  private beat!: Phaser.GameObjects.Graphics;
   private creature!: Phaser.GameObjects.Graphics;
+  private limiter = createFlashLimiter(1280, 720);
+  private levels: number[] = [];
   private ended = false;
   private bakedRoom: Room | null = null;
   private bakedSim: Sim | null = null;
@@ -48,8 +49,10 @@ export class PlayScene extends Phaser.Scene {
   }
 
   create(): void {
-    this.g = this.add.graphics().setDepth(DEPTH_PLAIN);
+    this.beat = this.add.graphics().setDepth(DEPTH_BEAT);
     this.creature = this.add.graphics().setDepth(DEPTH_CREATURE);
+    this.limiter = createFlashLimiter(1280, 720);
+    this.levels = [];
     this.ended = false;
     this.bakedRoom = null;
     this.bakedSim = null;
@@ -85,46 +88,34 @@ export class PlayScene extends Phaser.Scene {
       const image = this.add.image(chunk.col0 * TILE_PX, 0, key).setOrigin(0, 0).setDepth(DEPTH_CHUNKS);
       this.chunks.push({ key, col0: chunk.col0, image });
     });
+    this.levels = [];
     this.bakedRoom = room;
     this.bakedSim = sim;
   }
 
   override update(): void {
-    const g = this.g;
+    this.limiter.beginFrame();
     const run = this.run;
     const sim = run.sim;
     const room = run.currentRoom();
     const view = run.view();
-    g.clear();
+    this.beat.clear();
     this.creature.clear();
     if (!sim || !room || !view) return;
     const st = sim.status();
     // A new room, or a new run, bakes the room again.
     if (this.bakedRoom !== room || this.bakedSim !== sim) this.bake(room, st.room, sim);
     const saved = sim.save();
-    const layers = saved[LAYERS] ?? 0;
     const ix = view.prevX + (view.x - view.prevX) * view.alpha;
     const iy = view.prevY + (view.y - view.prevY) * view.alpha;
-    const camPx = cameraPx(room, ix / SUB + 5);
+    const centreX = ix / SUB + 5;
+    const camPx = cameraPx(room, centreX);
     for (const c of this.chunks) c.image.x = c.col0 * TILE_PX - camPx;
-    const first = Math.max(Math.floor(camPx / TILE_PX) - 1, 0);
-    const last = Math.min(first + VIEW_W / TILE + 2, room.W - 1);
 
-    g.fillStyle(0x7fd6ff, 1);
-    for (const e of room.entities) {
-      if (!entityOn(e, sim.step, layers)) continue;
-      for (const [c, r] of e.cells) {
-        if (c < first || c > last) continue;
-        const x = c * TILE_PX - camPx;
-        const y = r * TILE_PX;
-        if (e.kind === 'spike' && e.dir) {
-          const box = SPIKE_BOX[e.dir];
-          g.fillRect(x + (box[0] / SUB) * ZOOM, y + (box[1] / SUB) * ZOOM, ((box[2] - box[0]) / SUB) * ZOOM, ((box[3] - box[1]) / SUB) * ZOOM);
-        } else {
-          g.fillRect(x, y, TILE_PX, TILE_PX);
-        }
-      }
-    }
+    const beat = beatShapes(room, sim.step, saved[LAYERS] ?? 0, camPx, this.levels, this.limiter);
+    this.levels = beat.levels;
+    drawShapes(this.beat, beat.shapes);
+    drawShapes(this.beat, ringShapes(run.track(), sim.step, centreX * ZOOM - camPx, (iy / SUB + 5) * ZOOM));
 
     const creature = {
       step: sim.step,

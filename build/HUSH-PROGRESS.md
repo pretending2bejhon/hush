@@ -24,7 +24,7 @@ GAME1: passes: true (evidence: build/evidence/GAME1.green.1.txt)
 CAL2: passes: true (evidence: build/evidence/CAL2.green.1.txt)
 RN1: passes: true (evidence: build/evidence/RN1.green.1.txt)
 RN2: passes: true (evidence: build/evidence/RN2.green.1.txt)
-RN3: passes: false
+RN3: passes: true (evidence: build/evidence/RN3.green.1.txt)
 RN4: passes: false
 END1: passes: false
 
@@ -40,6 +40,8 @@ END1: passes: false
 - The art is a port, like the sim: tests/fixtures/reference/art.mjs is normative (HUSH-SPEC section 10.6). The tests compare shape lists within 1e-6, so a port may group its arithmetic differently but keeps every shape, its order, its keys and its colour (producer, 2026-10-12).
 - The cap hook denies any shell call whose text names a `.claude` folder, even a harmless `ls`; never name one in a command (CAL2).
 - The calibration scene is a straight port of the control page's `Calibration` scene; `engine.start()` is idempotent, so the scene's first-key call and main.ts's first-key listener both stand (CAL2).
+- RN3 ordering slip (executor): `RN3.red.1.txt` was run after `src/render/beat-art.ts` had been written, so it shows exit 0 and is not a red. The module was moved aside, `RN3.red.2.txt` is the real red (exit 1, module missing), then the module went back unchanged. Run the red before writing any target (RN3).
+- The cap hook denies a shell call that holds a write form (`mv`, `rm`, `>`) next to a `tools/` path, so a move and an `evidence.mjs` run go in separate calls (RN3).
 
 ## Rounds
 
