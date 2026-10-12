@@ -1,8 +1,10 @@
 // PF-CONTROLS for the headless browser probes, on the control page (tests/fixtures/control-page) built under
 // /hush/: the smoke probe (X1) against a wrong Vite base, the playthrough (X5, X10's browser rows, D3, D8, D16)
-// against every planted fault, the supply probe (X10) against a loose pin, an audit finding and a planted
-// write, and the live probe (X12) against a 404, a wrong build hash, a commit absent from origin's main, a
-// console error and a page that never boots. Each probe must also pass the clean control page.
+// against every planted fault, the ending's included (no hand-over, no run line under ?playtest, a run line
+// without it, one before the card, one from the wrong step), the supply probe (X10) against a loose pin, an
+// audit finding and a planted write, and the live probe (X12) against a 404, a wrong build hash, a commit
+// absent from origin's main, a console error and a page that never boots. Each probe must also pass the clean
+// control page.
 import { execFileSync, spawn, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -72,6 +74,27 @@ describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
   for (const [query, check, line] of faults) {
     it(`fails ?${query} on its ${check} check`, () => {
       const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--query', query, '--check', check]);
+      expect(r.out).toMatch(line);
+      expect(r.code).toBe(1);
+    }, T);
+  }
+
+  it('passes the ?playtest run line on the clean control page once the card is up', () => {
+    const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--query', 'playtest', '--check', 'text']);
+    expect(r.out).toMatch(/text: ok: title, link and notice only, and once the card is up "run 0:0\d · deaths 0"/);
+    expect(r.code).toBe(0);
+  }, T);
+
+  const endings = [
+    ['ending=none', /text: FAIL: the run never handed over to the scene "ending"/],
+    ['playtest&ending=never', /text: FAIL: \?playtest wants one run line, found \[\]/],
+    ['ending=always', /text: FAIL: extra page text \["run 0:0\d · deaths 0"\]/],
+    ['playtest&ending=early', /text: FAIL: a page text before the ending card: \["run 0:0\d · deaths 0"\]/],
+    ['playtest&ending=late', /text: FAIL: the run line says \d+ s, want \d+ to \d+ s/],
+  ];
+  for (const [query, line] of endings) {
+    it(`fails ?${query} on its text check`, () => {
+      const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--query', query, '--check', 'text']);
       expect(r.out).toMatch(line);
       expect(r.code).toBe(1);
     }, T);

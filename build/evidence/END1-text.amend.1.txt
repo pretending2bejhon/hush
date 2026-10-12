@@ -1,0 +1,28 @@
+HUSH-EVIDENCE v1
+id: END1-text
+phase: amend
+command: node tools/probe-play.mjs --query playtest --check console,play,text
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T11:05:10-05:00
+time-end: 2026-10-12T11:07:44-05:00
+head: b579e92dcde90b69ba1fe7f165354591f374d8b9
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 03-dash done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 05-doors done
+play: chrome headless: room 06-wave done
+play: chrome headless: room 07-current done
+play: chrome headless: room 08-steps done
+play: chrome headless: room 09-gates done
+play: chrome headless: room 10-crown done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 12888 ms into it
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: chrome headless: text: FAIL: ?playtest wants one run line, found []
+play: chrome headless: FAIL (console,play,text)
+--- end ---

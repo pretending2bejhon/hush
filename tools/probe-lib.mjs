@@ -16,7 +16,12 @@ export const BASE = '/hush/';
 // ?playtest mode one more text once the ending card is up. Nothing may sit over the canvas.
 export const PAGE_TITLE = 'The Hush';
 export const PAGE_TEXTS = ['Source (AGPL-3.0)', 'Music engine: Strudel, AGPL-3.0-or-later'];
-export const PLAYTEST_TEXT = /^run \d+:[0-5]\d · deaths \d+$/;
+export const PLAYTEST_TEXT = /^run (\d+):([0-5]\d) · deaths (\d+)$/;
+
+// The texts a page shows beyond the link and the notice, any text over the canvas included.
+export function extraTexts(report) {
+  return report.texts.filter((t) => t.inside || !PAGE_TEXTS.includes(t.text)).map((t) => t.text);
+}
 
 export function textProblems(report, { playtest = false } = {}) {
   const problems = [];
@@ -133,7 +138,8 @@ export function loadWitnesses(dir) {
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Every room by witness injection: the in-page headless replay (its checksum against the witness's, D3),
-// then the live run from the room's entrance until it clears, dies or times out.
+// then the live run from the room's entrance until it clears, dies or times out. clearStep is the step on
+// which the in-page replay cleared the room (null when it did not).
 export async function playthrough(page, witnesses, { onRoom = null, timeoutPad = 15 } = {}) {
   const results = [];
   for (const w of witnesses) {
@@ -158,6 +164,7 @@ export async function playthrough(page, witnesses, { onRoom = null, timeoutPad =
       room: w.room, stem: w.stem, ...outcome, seconds: Math.round((Date.now() - started) / 100) / 10,
       inPage: inPage ? `${inPage.why}, checksum ${inPage.checksum}` : 'no simFactory',
       checksumOk: Boolean(inPage && inPage.ok && inPage.checksum === checksum),
+      clearStep: inPage && inPage.ok ? inPage.step : null,
     });
   }
   return results;

@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: END1-perf-controls
+phase: amend
+command: npx vitest run tests/controls/perf-probe.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T10:58:48-05:00
+time-end: 2026-10-12T11:01:03-05:00
+head: b579e92dcde90b69ba1fe7f165354591f374d8b9
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  10:58:49
+   Duration  134.11s (tests 100%)
+
+--- end ---

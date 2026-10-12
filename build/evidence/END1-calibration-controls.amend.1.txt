@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: END1-calibration-controls
+phase: amend
+command: npx vitest run tests/controls/calibration-probe.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T10:54:30-05:00
+time-end: 2026-10-12T10:58:37-05:00
+head: b579e92dcde90b69ba1fe7f165354591f374d8b9
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  10:54:31
+   Duration  245.96s (tests 100%)
+
+--- end ---

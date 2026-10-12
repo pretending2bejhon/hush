@@ -16,7 +16,13 @@
 //                 --calibration check): the first key leaves at once (the shortcut that stood in for the
 //                 passes), a rejected pass is not repeated, pass A plays no click, pass B draws no ring, the
 //                 count-in never fills the key
+//   ?ending=none|never|always|early|late  the ending's planted faults (the playthrough's text check): the run
+//                 never hands over to the scene `ending`; no run line under ?playtest; the run line without
+//                 ?playtest; the run line at once, before the card; the run line from the step at the card
+//                 instead of the step kept at the finish
 // Without ?calib the calibration scene is HUSH-SPEC section 12 itself, the reference the product follows.
+// Clearing the last toy room finishes the run and starts the scene `ending`: section 13 at small scale (the
+// rise, then the card, and under ?playtest the run line in <output id="playtest">).
 import * as Phaser from 'phaser';
 import { installProbe } from '../../../src/probe/api.ts';
 import { calibrate, judgePass } from '../calibration/reference.mjs';
@@ -231,17 +237,30 @@ class Calibration extends Phaser.Scene {
   }
 }
 
+// Every frame of the play and ending scenes, as the product's driver runs whatever scene is up: the driver,
+// then the planted busy wait. drawFaults draws the planted strobes and spikes on the scene's own Graphics.
+function frameStart() {
+  drive();
+  const stress = Number(params.get('stress') || 0);
+  if (stress > 0) busyWait(stress);
+}
+
+function drawFaults(g, t) {
+  g.clear();
+  if (params.has('strobe')) strobe(g, params.get('strobe') || '', t);
+  if (params.has('scroll')) spikes(g, parseInt(params.get('scroll') || 'c8d0e0', 16), t);
+}
+
 class Play extends Phaser.Scene {
   constructor() { super('play'); }
   create() {
     this.track = this.add.graphics();
     this.fx = this.add.graphics();
+    this.ended = false;
     if (params.has('text')) this.add.text(40, 40, 'planted', { color: '#ffffff' });
   }
   update() {
-    drive();
-    const stress = Number(params.get('stress') || 0);
-    if (stress > 0) busyWait(stress);
+    frameStart();
     const t = performance.now();
     this.track.clear();
     this.track.fillStyle(0x161b28, 1);
@@ -251,9 +270,51 @@ class Play extends Phaser.Scene {
       this.track.fillStyle(0xe8ecf4, 1);
       this.track.fillRect(84 + st.x * 18, 396, 24, 24);
     }
-    this.fx.clear();
-    if (params.has('strobe')) strobe(this.fx, params.get('strobe') || '', t);
-    if (params.has('scroll')) spikes(this.fx, parseInt(params.get('scroll') || 'c8d0e0', 16), t);
+    drawFaults(this.fx, t);
+    if (!this.ended && endingFault !== 'none' && sim && room === world.rooms.length && sim.status().cleared > 0) {
+      this.ended = true;
+      this.scene.start('ending');
+    }
+  }
+}
+
+// HUSH-SPEC section 13 at small scale. create() keeps the step at the finish; the first frame keeps the heard
+// time; RISE_S of heard time later the card shows (three small dots, still), and under ?playtest the run line
+// `run m:ss · deaths n` goes into <output id="playtest">, which loses its hidden attribute.
+const RISE_S = 16 * BEAT;
+const endingFault = params.get('ending') || '';
+
+function showRunLine(step) {
+  const s = Math.floor(step / 240);
+  const out = document.getElementById('playtest');
+  out.textContent = `run ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} · deaths ${sim ? sim.status().deaths : 0}`;
+  out.hidden = false;
+}
+
+class Ending extends Phaser.Scene {
+  constructor() { super('ending'); }
+  create() {
+    this.dots = this.add.graphics();
+    this.fx = this.add.graphics();
+    this.finishStep = sim ? sim.step : 0;
+    this.t0 = null;
+    this.card = false;
+    if (endingFault === 'early') showRunLine(this.finishStep);
+  }
+  update() {
+    frameStart();
+    const frameMs = performance.now();
+    drawFaults(this.fx, frameMs);
+    const clock = engine.clock();
+    if (this.card || !clock || !clock.valid) return;
+    const heard = audibleSec(clock, frameMs);
+    if (this.t0 === null) this.t0 = heard;
+    if (heard - this.t0 < RISE_S) return;
+    this.card = true;
+    this.dots.fillStyle(0x7fd6ff, 0.6);
+    for (let i = -1; i <= 1; i++) this.dots.fillCircle(640 + i * 60, 360, 7.5);
+    const line = endingFault === 'always' || (params.has('playtest') && endingFault !== 'never' && endingFault !== 'early');
+    if (line) showRunLine(endingFault === 'late' ? sim.step : this.finishStep);
   }
 }
 
@@ -332,7 +393,7 @@ game = new Phaser.Game({
   audio: { noAudio: true },
   input: { keyboard: false, mouse: false, touch: false, gamepad: false, windowEvents: false },
   banner: false,
-  scene: [Boot, Calibration, Play],
+  scene: [Boot, Calibration, Play, Ending],
 });
 
 installProbe({
