@@ -16,7 +16,7 @@ CL1: passes: true (evidence: build/evidence/CL1.green.1.txt)
 CL2: passes: true (evidence: build/evidence/CL2.green.1.txt)
 IN1: passes: true (evidence: build/evidence/IN1.green.1.txt)
 CAL1: passes: true (evidence: build/evidence/CAL1.green.1.txt)
-AU1: passes: false
+AU1: passes: true (evidence: build/evidence/AU1.green.1.txt)
 AU2: passes: false
 AU3: passes: false
 FX1: passes: false

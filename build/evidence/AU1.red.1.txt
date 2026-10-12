@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: AU1
+phase: red
+command: npx vitest run tests/audio/track.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:50:06-05:00
+time-end: 2026-10-11T23:50:07-05:00
+head: 4d5bb90cf42ffbbb3160197f84c1d2a7665cf6ee
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/audio/track.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/audio/track.test.mjs [ tests/audio/track.test.mjs ]
+Error: Cannot find module '<repo>/src/audio/track.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/audio/track.test.mjs:9:11
+      7| import { specBlocks } from '../../tools/spec-content.mjs';
+      8|
+      9| const A = await load('HUSH_AUDIO_MODULE', new URL('../../src/audio/tra…
+       |           ^
+     10| const { scope, transpiler } = await loadStrudel();
+     11| const S = { ...scope, transpiler };
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  23:50:07
+   Duration  235ms (worker 95%, environment 5%)
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+--- end ---
