@@ -65,6 +65,8 @@ describe('AU2 transport', () => {
     expect(c1.lateDropped).toBe(0);
     expect(c1.lateShifted).toBeGreaterThan(0);
     for (const n of shortStall.notes) expect(n.time).toBeGreaterThanOrEqual(n.at);
+    // Each shifted note sounds exactly 5 ms after the tick that hands it over (section 8.3; review R1, MINOR 3).
+    expect(shortStall.notes.filter((n) => Math.abs(n.time - (n.at + 0.005)) < 1e-9).length).toBe(c1.lateShifted);
     const longStall = run(2, 6, { stallFrom: 3.06, stallTo: 3.39 });
     const c2 = longStall.t.counters();
     expect(c2.lateDropped).toBeGreaterThan(0);

@@ -1,23 +1,24 @@
 // npm test (X2): every unit, replay and e2e suite of the product, in that order, each run even when an earlier
 // one fails; exit non-zero when any fails.
-//   unit    vitest on tests/sim, tests/rooms, tests/audio, tests/clock, tests/input, tests/fx, tests/render
-//   replay  node tools/replay.mjs --all --jitter --seed <first 8 hex of HEAD> (the X3 seed rule)
+//   unit    vitest on tests/sim, tests/rooms, tests/audio, tests/clock, tests/input, tests/fx, tests/render, tests/game
+//   replay  node tools/replay.mjs --all --jitter --seed <first 8 hex of the verdict digest> (the X3 seed rule,
+//           tools/ship-gate.mjs x3Seed; review R1, MINOR 5)
 //   e2e     vite build, then tools/probe-smoke.mjs and tools/probe-play.mjs (every check, headless Chrome)
 // The verifiers' own tests are not here: npm run test:verifiers.
-import { execFileSync, spawnSync } from 'node:child_process';
+import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
-export const UNIT_DIRS = ['tests/sim', 'tests/rooms', 'tests/audio', 'tests/clock', 'tests/input', 'tests/fx', 'tests/render'];
+export const UNIT_DIRS = ['tests/sim', 'tests/rooms', 'tests/audio', 'tests/clock', 'tests/input', 'tests/fx', 'tests/render', 'tests/game'];
 
 function bin(name) {
   return path.join(REPO, 'node_modules', name === 'vitest' ? 'vitest/vitest.mjs' : 'vite/bin/vite.js');
 }
 
-export function seedOf(sha) {
-  return parseInt(sha.slice(0, 8), 16) >>> 0;
+export function seedOf(hex) {
+  return parseInt(hex.slice(0, 8), 16) >>> 0;
 }
 
 function step(label, args) {
@@ -27,12 +28,13 @@ function step(label, args) {
   return r.status === 0;
 }
 
-function main() {
-  const head = execFileSync('git', ['rev-parse', 'HEAD'], { cwd: REPO, encoding: 'utf8' }).trim();
+async function main() {
+  const { digest } = await import('./ship-gate.mjs');
+  const verdict = digest(REPO).digest;
   const dirs = UNIT_DIRS.filter((d) => fs.existsSync(path.join(REPO, d)));
   const results = [
     ['unit', dirs.length ? step('unit', [bin('vitest'), 'run', ...dirs]) : (process.stdout.write('test: unit: no unit test folder\n'), false)],
-    ['replay', step('replay', [path.join(REPO, 'tools', 'replay.mjs'), '--all', '--jitter', '--seed', String(seedOf(head))])],
+    ['replay', step('replay', [path.join(REPO, 'tools', 'replay.mjs'), '--all', '--jitter', '--seed', String(seedOf(verdict))])],
     ['build', step('build', [bin('vite'), 'build'])],
   ];
   const built = results[2][1];
@@ -44,5 +46,5 @@ function main() {
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]).toLowerCase() === fileURLToPath(import.meta.url).toLowerCase()) {
-  try { process.exitCode = main(); } catch (e) { process.stderr.write(`test: ${e.message}\n`); process.exitCode = 2; }
+  main().then((c) => { process.exitCode = c; }, (e) => { process.stderr.write(`test: ${e.message}\n`); process.exitCode = 2; });
 }

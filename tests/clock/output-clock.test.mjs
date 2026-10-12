@@ -11,15 +11,16 @@ const product = await import(process.env.HUSH_CLOCK_MODULE ? new URL(process.env
 // more); through the burst the pair runs ahead with performance time until its context time is clamped to
 // currentTime, from where it sits below the line, untrusted. Settling pairs come `settleHigh` above the line
 // for the first 400 ms; a glitch moves the line by `glitch` from `glitchAt` ms on; stale pairs carry an old
-// performance time until `staleUntil` ms; `stamps: false` is an engine without getOutputTimestamp.
-function device({ offset = -1.2, burst = 0.1, lead = 0.03, settleHigh = 0, glitchAt = Infinity, glitch = 0, stamps = true, staleUntil = -1, baseLatency = 0.01 }) {
+// performance time until `staleUntil` ms; `stamps: false` is an engine without getOutputTimestamp. A glitch with
+// `glitchUntil` ends there (a blip).
+function device({ offset = -1.2, burst = 0.1, lead = 0.03, settleHigh = 0, glitchAt = Infinity, glitchUntil = Infinity, glitch = 0, stamps = true, staleUntil = -1, baseLatency = 0.01 }) {
   const ctx = { state: 'running', sampleRate: 48000, baseLatency, outputLatency: 0.02, currentTime: 0, now: 0 };
   let lastBurst = -1;
   let fresh = null;
   let pair = null;
   ctx.advance = (ms) => {
     ctx.now += ms;
-    const truth = ctx.now / 1000 + offset + (ctx.now >= glitchAt ? glitch : 0);
+    const truth = ctx.now / 1000 + offset + (ctx.now >= glitchAt && ctx.now < glitchUntil ? glitch : 0);
     const b = Math.floor(ctx.now / (burst * 1000));
     if (b !== lastBurst) {
       lastBurst = b;
@@ -49,18 +50,27 @@ function both(ctxA, ctxB, steps, stepMs, hook = () => {}) {
 }
 
 describe('CL1 device-clock line against the reference port', () => {
+  // [the device, whether the reference resyncs: 'yes', 'no' or null for either]. The last three pin a threshold
+  // each (review R1, MINOR 2): CLOCK_JUMP (a 6 ms drop is a move of the line, 4 ms the tolerance), the resync rule
+  // (a blip of exactly two low trusted pairs leaves the line alone, three move it: with a 15 ms lead only each
+  // burst's fresh pair is trusted, so a blip over two bursts is two low pairs 100 ms apart) and the trust rule (a
+  // lead of three render quanta is not trusted, four are, so only the fallback validates that device).
   const scenarios = {
-    steady: {},
-    'settling pairs 28 ms high': { settleHigh: 0.028 },
-    'a glitch moves the line down 20 ms': { glitchAt: 4000, glitch: -0.02 },
-    'stale pairs after a resume': { staleUntil: 600 },
-    'a large output buffer': { baseLatency: 0.09, burst: 0.2 },
+    steady: [{}, null],
+    'settling pairs 28 ms high': [{ settleHigh: 0.028 }, null],
+    'a glitch moves the line down 20 ms': [{ glitchAt: 4000, glitch: -0.02 }, 'yes'],
+    'stale pairs after a resume': [{ staleUntil: 600 }, null],
+    'a large output buffer': [{ baseLatency: 0.09, burst: 0.2 }, null],
+    'a glitch moves the line down 6 ms': [{ glitchAt: 4000, glitch: -0.006 }, 'yes'],
+    'a blip of exactly two low pairs': [{ lead: 0.015, glitchAt: 4000, glitchUntil: 4200, glitch: -0.02 }, 'no'],
+    'a lead of three render quanta': [{ lead: (3 * 128) / 48000 }, null],
   };
-  for (const [name, opts] of Object.entries(scenarios)) {
+  for (const [name, [opts, resync]] of Object.entries(scenarios)) {
     it(`agrees: ${name}`, () => {
       const { a, b } = both(device(opts), device(opts), 1200, 7);
       expect(a.valid).toBe(true);
-      if (opts.glitch) expect(b.resyncs).toBeGreaterThanOrEqual(1);
+      if (resync === 'yes') expect(b.resyncs).toBeGreaterThanOrEqual(1);
+      if (resync === 'no') expect(b.resyncs).toBe(0);
     });
   }
 

@@ -1,14 +1,23 @@
 // What an untouched calibration screen must show (HUSH-SPEC section 12), read by the flash probe's --calibration
 // run. With no tap every attempt is rejected, so the scene runs A1, A2, B1 and B2 before the run starts with
 // 0 and 0: the scene stays up at least four times 23 beats, the master analyser hears the 48 clicks of A1 and
-// A2, and the screencast's centre box shows the 8 count-in fills of A1 and A2 (large pulses) and the 48 rings
-// of B1 and B2 (small pulses). A scene that hands over at once, skips a repeat, plays no click, draws no ring
-// or no count-in cannot pass.
+// A2, and the screencast's centre box shows the 8 count-in fills of A1 and A2 (large pulses, 7 to 9 allowed for
+// one pulse the screencast may split or merge, so a count-in of 3 or 5 cannot pass) and the 48 rings of B1 and
+// B2 (small pulses). A scene that hands over at once, skips a repeat, plays no click, draws no ring or no
+// count-in cannot pass.
+// And what a tapped calibration must give (review R1, MAJOR 2): the probe's tapper (src/probe/api.ts
+// tapCalibration) presses TAP_A_MS after each click of pass A and TAP_B_MS after each ring of pass B, so both
+// first attempts are accepted and the values in use are avOffset TAP_A_MS - TAP_B_MS and inputBias TAP_B_MS
+// within TAP_TOLERANCE_MS (X8's tolerance), the scene left after those two attempts.
 import { luminance } from './flash-analyzer.mjs';
 
 export const BEAT_S = 60 / 140;
 export const MIN_SECONDS = 39.4;
-export const WANT = Object.freeze({ clicks: [44, 52], fills: [6, 10], rings: [44, 52] });
+export const WANT = Object.freeze({ clicks: [44, 52], fills: [7, 9], rings: [44, 52] });
+export const TAP_A_MS = 40;
+export const TAP_B_MS = 25;
+export const TAP_TOLERANCE_MS = 5;
+export const TAPPED_SECONDS = Object.freeze([19, 30]);
 // A click starts when the analyser's peak reaches CLICK_ON from below CLICK_OFF.
 export const CLICK_ON = 0.05;
 export const CLICK_OFF = 0.02;
@@ -80,4 +89,18 @@ export function judgeCalibration({ seconds, samples, trace, values }) {
   range('rings', rings);
   if (!values || values.avOffset !== 0 || values.inputBias !== 0) problems.push(`calibration values ${JSON.stringify(values)} (want avOffset 0 and inputBias 0 after an untouched run)`);
   return { seconds: Math.round(seconds * 10) / 10, clicks, fills, rings, values, frames: trace.length, samples: samples.length, rest, peaks: peaks.slice(0, 80), problems };
+}
+
+// The verdict on one tapped calibration: seconds the scene stayed up after the first key and the values in use
+// once it was left.
+export function judgeTapped({ seconds, values }) {
+  const want = { avOffset: TAP_A_MS - TAP_B_MS, inputBias: TAP_B_MS };
+  const problems = [];
+  const [lo, hi] = TAPPED_SECONDS;
+  if (!(seconds >= lo && seconds <= hi)) problems.push(`tapped calibration left after ${seconds.toFixed(1)} s (want ${lo} to ${hi} s: both passes accepted at their first attempt)`);
+  const off = (k) => (values && Number.isFinite(values[k]) ? Math.abs(values[k] - want[k]) : Infinity);
+  if (!(off('avOffset') <= TAP_TOLERANCE_MS && off('inputBias') <= TAP_TOLERANCE_MS)) {
+    problems.push(`tapped calibration values ${values ? `${values.avOffset} ${values.inputBias}` : 'none'} (want avOffset ${want.avOffset} and inputBias ${want.inputBias} within ${TAP_TOLERANCE_MS} ms)`);
+  }
+  return { seconds: Math.round(seconds * 10) / 10, values, want, problems };
 }

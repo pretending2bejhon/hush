@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R1-page-controls
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/controls/page-probes.test.mjs -t "clean control page|unlock|ending=mid|ending=early|run line on the clean"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T14:32:31-05:00
+time-end: 2026-10-12T14:35:20-05:00
+head: 2e6aacd669983331ccd955581ac3580c216117f6
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  8 passed | 18 skipped (26)
+   Start at  14:32:31
+   Duration  168.82s (tests 100%)
+
+--- end ---

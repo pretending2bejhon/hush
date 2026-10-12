@@ -12,14 +12,17 @@
 //   ?text         a Phaser Text object (D8)                    ?domtext a DOM text over the canvas (D16)
 //   ?novis        no suspension when the page is hidden (D4)
 //   ?av=master-off|synth-throw|layer-off  the av probe's planted faults (X7)
-//   ?calib=skip|norepeat|silent|noring|nofill  the calibration scene's planted faults (the flash probe's
-//                 --calibration check): the first key leaves at once (the shortcut that stood in for the
+//   ?unlock=late|early|none  the playthrough's unlock check (X7's clear-time half): a cleared room's layer
+//                 returns a bar late, a bar early, or never
+//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3  the calibration scene's planted faults (the flash
+//                 probe's --calibration check): the first key leaves at once (the shortcut that stood in for the
 //                 passes), a rejected pass is not repeated, pass A plays no click, pass B draws no ring, the
-//                 count-in never fills the key
-//   ?ending=none|never|always|early|late  the ending's planted faults (the playthrough's text check): the run
-//                 never hands over to the scene `ending`; no run line under ?playtest; the run line without
+//                 count-in never fills the key, pass A's tap offsets have their sign flipped (the tapped run),
+//                 the count-in is 3 beats
+//   ?ending=none|never|always|early|late|mid  the ending's planted faults (the playthrough's text check): the
+//                 run never hands over to the scene `ending`; no run line under ?playtest; the run line without
 //                 ?playtest; the run line at once, before the card; the run line from the step at the card
-//                 instead of the step kept at the finish
+//                 instead of the step kept at the finish; the run line at 60% of the rise, before the card
 // Without ?calib the calibration scene is HUSH-SPEC section 12 itself, the reference the product follows.
 // Clearing the last toy room finishes the run and starts the scene `ending`: section 13 at small scale (the
 // rise, then the card, and under ?playtest the run line in <output id="playtest">).
@@ -43,6 +46,7 @@ const world = compileWorld([
 ]);
 const engine = createEngine(trackText, params.get('av') || '');
 const LAYERS = 4;
+const unlockFault = params.get('unlock') || '';
 
 let game = null;
 let booted = false;
@@ -78,11 +82,14 @@ function drive() {
   const heard = performance.now() / 1000 + c.offset;
   const target = Math.floor((heard - engine.origin()) * 240);
   for (let n = 0; n < 24 && sim.step < target; n++) {
-    sim.tick(source ? source.next(sim.step) : 0);
+    const step = sim.step;
+    sim.tick(source ? source.next(step) : 0);
     const st = sim.status();
     if (st.cleared > 0 && unlocked === room && room <= LAYERS) {
       unlocked = room + 1;
-      engine.unlockAt(room, Math.ceil((sim.step * 7 + 720) / 2880));
+      // The product's unlockBar of the step whose tick cleared the room (section 4.5); ?unlock moves it.
+      const bar = Math.ceil((step * 7 + 720) / 2880);
+      if (unlockFault !== 'none') engine.unlockAt(room, unlockFault === 'late' ? bar + 1 : unlockFault === 'early' ? bar - 1 : bar);
     }
   }
 }
@@ -101,14 +108,14 @@ class Boot extends Phaser.Scene {
 // clicks 5 to 24) and pass B (24 silent rings, taps against the frames that drew rings 5 to 24), each
 // repeated once when rejected, then calibrate() and the run at room 1. Every decision is taken in update()
 // from one performance.now() read and the heard time through the device-clock line.
+const calibFault = params.get('calib') || '';
 const BEAT = 60 / 140;
 const SIXTEENTH = BEAT / 4;
 const LEAD = 0.5;
 const CLICKS = 24;
-const COUNT_IN = 4;
+const COUNT_IN = calibFault === 'count3' ? 3 : 4;
 const TAIL = BEAT / 2;
 const LOOKAHEAD = 0.12;
-const calibFault = params.get('calib') || '';
 
 // The nearest value of xs to v (ties to the earlier), skipping holes; null when there is none.
 function nearest(xs, v) {
@@ -218,7 +225,7 @@ class Calibration extends Phaser.Scene {
     if (a.pass === 'A') {
       const clicks = [];
       for (let i = COUNT_IN; i < CLICKS; i++) clicks.push(a.t0 + i * BEAT);
-      offsets = a.taps.map((h) => (h - nearest(clicks, h)) * 1000);
+      offsets = a.taps.map((h) => (calibFault === 'flip' ? nearest(clicks, h) - h : h - nearest(clicks, h)) * 1000);
     } else {
       const drawn = a.frameTimes.slice(COUNT_IN);
       offsets = a.taps.map((t) => ({ t, f: nearest(drawn, t) })).filter((x) => x.f !== null).map((x) => x.t - x.f);
@@ -299,6 +306,7 @@ class Ending extends Phaser.Scene {
     this.finishStep = sim ? sim.step : 0;
     this.t0 = null;
     this.card = false;
+    this.mid = false;
     if (endingFault === 'early') showRunLine(this.finishStep);
   }
   update() {
@@ -309,6 +317,10 @@ class Ending extends Phaser.Scene {
     if (this.card || !clock || !clock.valid) return;
     const heard = audibleSec(clock, frameMs);
     if (this.t0 === null) this.t0 = heard;
+    if (endingFault === 'mid' && !this.mid && heard - this.t0 >= 0.6 * RISE_S) {
+      this.mid = true;
+      showRunLine(this.finishStep);
+    }
     if (heard - this.t0 < RISE_S) return;
     this.card = true;
     this.dots.fillStyle(0x7fd6ff, 0.6);

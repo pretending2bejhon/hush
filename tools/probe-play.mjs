@@ -9,30 +9,71 @@
 //            witness's checksum, and each live run clears its room with no death
 //   text     no Phaser text object at the end of any room or at the card, nothing over the canvas, and the
 //            page texts exactly the title, link and notice. The run must hand over to the scene `ending`
-//            within ENDING_WAIT_MS of the last room; no other text may show in the first half of its rise
-//            (RISE_MS of heard time); the final read comes AFTER_RISE_MS after the rise, and in ?playtest
+//            within ENDING_WAIT_MS of the last room; no other text may show before its rise ends (RISE_MS of
+//            heard time, less SKEW_MS for the probe's polling); the final read comes AFTER_RISE_MS after the rise, and in ?playtest
 //            mode it waits up to LINE_WAIT_MS after the rise for exactly one run line `run m:ss · deaths n`,
 //            whose time lies between the last room's clear step and the step read when the ending was seen
 //            (section 13 keeps the step at the finish) and whose deaths are the sim's
 //   network  every request goes to the page's own origin (data: and blob: URLs included)
 //   storage  no cookie, localStorage, sessionStorage, IndexedDB or Cache Storage entry at the end
+//   unlock   X7's clear-time half in the live run (review R1, MAJOR 1): room k (each room up to the page's layer
+//            count) returns layer k. Once its witness clears it, nothing restarts the run until that layer's
+//            bar line has passed; layer k's gate must read 0 until GATE_SKEW_S before origin + bar x BAR and 1
+//            from GATE_SKEW_S after it, bar being unlockBar(the clearing step) (section 4.5)
 //   visibility (only when named) the page reported hidden suspends the AudioContext and freezes the sim; visible
 //            again, both run on (D4)
 // Exit 0 every check passes, 1 a check fails, 2 usage, a missing dist or a page that never boots.
+// (Default checks: console, play, text, network, storage and unlock.)
 import fs from 'node:fs';
 import path from 'node:path';
 import { bootGame, emitJson, extraTexts, launch, loadWitnesses, openPage, originViolations, parseOptions, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
 
-const ALL = ['console', 'play', 'text', 'network', 'storage'];
+const ALL = ['console', 'play', 'text', 'network', 'storage', 'unlock'];
 const OPTIONAL = ['visibility'];
 
 // HUSH-SPEC section 13: the camera rises for RISE_S = 16 beats at 140 BPM of heard time, then the card.
 const RISE_MS = ((16 * 60) / 140) * 1000;
+// The probe sees the hand-over up to a poll and a round trip after the ending's first frame: a text before the
+// card is one read earlier than RISE_MS - SKEW_MS into the ending (review R1, MINOR 1: the guard once stopped
+// at half the rise).
+const SKEW_MS = 400;
 const ENDING_WAIT_MS = 15000;
 const AFTER_RISE_MS = 3000;
 const LINE_WAIT_MS = 6000;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// The unlock check's bar line (section 4.5, the oracle's unlockBar): the first bar at least a beat after the step
+// whose tick cleared the room, at 140 BPM; and how far from it the gate is judged.
+const BAR_S = (60 / 140) * 4;
+const unlockBar = (step) => Math.ceil((step * 7 + 720) / 2880);
+const GATE_SKEW_S = 0.03;
+const GATE_WAIT_MS = 5000;
+
+// Room `room` was just cleared by the tick of step `step` and the run goes on untouched: reads the context time
+// and layer `layer`'s gate until GATE_SKEW_S past the bar line. Returns the problems and the reads made.
+async function unlockProblems(page, { room, layer, step }) {
+  const bar = unlockBar(step);
+  const origin = await page.evaluate(() => window.__hush.audio().origin);
+  const at = origin + bar * BAR_S;
+  const label = `room ${room}: layer ${layer}'s gate`;
+  const begun = Date.now();
+  let before = 0;
+  for (;;) {
+    const s = await page.evaluate((l) => ({ t: window.__hush.audio().time, g: window.__hush.layerGainValue(l) }), layer);
+    if (s.g === null) return [`${label} does not exist`];
+    if (s.t >= at + GATE_SKEW_S) {
+      if (!before) return [`${label}: no read before its bar line ${bar} (the clear was seen ${Math.round((s.t - at) * 1000)} ms after it)`];
+      return s.g >= 0.999 ? [] : [`${label} reads ${s.g.toFixed(3)} ${Math.round((s.t - at) * 1000)} ms after its bar line ${bar} (want 1: the layer returns on that bar)`];
+    }
+    if (s.t < at - GATE_SKEW_S) {
+      before += 1;
+      if (s.g > 0.001) return [`${label} reads ${s.g.toFixed(3)} ${Math.round((at - s.t) * 1000)} ms before its bar line ${bar} (want 0 until that bar)`];
+    }
+    if (Date.now() - begun > GATE_WAIT_MS + (at - s.t) * 1000) return [`${label}: the context time stalled at ${s.t.toFixed(3)} s before bar line ${bar}`];
+    await sleep(10);
+  }
+}
 
 // Reports the page hidden, then visible again, through the Page Visibility API the game listens to.
 async function visibilityProblems(page) {
@@ -79,7 +120,7 @@ async function watchEnding(page, { playtest }) {
     final = await texts();
     const now = Date.now();
     const extra = extraTexts(final);
-    if (extra.length && !early && now - seen < RISE_MS / 2) early = { ms: now - seen, texts: extra };
+    if (extra.length && !early && now - seen < RISE_MS - SKEW_MS) early = { ms: now - seen, texts: extra };
     if (now >= hard || (now >= soft && (!playtest || extra.length))) break;
     await sleep(100);
   }
@@ -91,7 +132,7 @@ async function watchEnding(page, { playtest }) {
 function endingProblems(ending, { playtest, clearStep }) {
   if (!ending.started) return [`the run never handed over to the scene "ending" (${ENDING_WAIT_MS / 1000} s after the last room)`];
   const problems = [];
-  if (ending.early) problems.push(`a page text before the ending card: ${JSON.stringify(ending.early.texts.map((t) => t.slice(0, 60)))} ${ending.early.ms} ms into the ending (want none in its first ${Math.round(RISE_MS / 2)} ms)`);
+  if (ending.early) problems.push(`a page text before the ending card: ${JSON.stringify(ending.early.texts.map((t) => t.slice(0, 60)))} ${ending.early.ms} ms into the ending (want none in its first ${Math.round(RISE_MS - SKEW_MS)} ms)`);
   const extra = extraTexts(ending.final);
   const m = playtest && extra.length === 1 ? PLAYTEST_TEXT.exec(extra[0]) : null;
   if (m) {
@@ -129,12 +170,19 @@ async function main(argv) {
       return 2;
     }
     // Text objects are counted at the end of every room, while the play scene is up (a stopped scene's
-    // objects are destroyed), and again at the card.
+    // objects are destroyed), and again at the card. With the unlock check, every room that returns a layer is
+    // then watched up to that layer's bar line before the next room starts.
     const objectCounts = [];
+    const layerCount = await page.evaluate(() => window.__hush.layerCount());
+    const unlock = { watched: 0, problems: [] };
     const rooms = await playthrough(page, witnesses, {
-      onRoom: async (w, phase) => {
+      onRoom: async (w, phase, info) => {
         if (phase !== 'end') return;
         objectCounts.push(await page.evaluate(() => window.__hush.textObjects()));
+        if (want.includes('unlock') && info.ok && info.clearStep !== null && w.room >= 1 && w.room <= layerCount) {
+          unlock.watched += 1;
+          unlock.problems.push(...await unlockProblems(page, { room: w.room, layer: w.room, step: info.clearStep - 1 }));
+        }
         process.stdout.write(`play: ${label}: room ${w.stem} done\n`);
       },
     });
@@ -165,6 +213,8 @@ async function main(argv) {
     checks.text = { ok: tp.length === 0, detail: tp.join('; ') || `title, link and notice only${runLine ? `, and once the card is up ${JSON.stringify(runLine)}` : ' through the ending'}; nothing over the canvas; no text object` };
     checks.network = { ok: violations.length === 0, detail: violations.length ? `other origins: ${violations.join(', ')}` : `${log.requests.length} requests, all to the page's origin` };
     checks.storage = { ok: storage.clean, detail: storage.clean ? 'nothing stored' : JSON.stringify(storage) };
+    if (!unlock.watched && !unlock.problems.length) unlock.problems.push(`no room returned a layer (the page has ${layerCount} layer(s))`);
+    checks.unlock = { ok: unlock.problems.length === 0, detail: unlock.problems.slice(0, 4).join('; ') || `${unlock.watched} rooms cleared, each layer's gate closed until its bar line and open after it` };
     report = {
       kind: 'play', browser: label, rooms, checks, requests: log.requests.length, storage,
       ending: { started: ending.started, early: ending.early, readMs: ending.ms, stepSeen: ending.atStart ? ending.atStart.step : null, runLine },

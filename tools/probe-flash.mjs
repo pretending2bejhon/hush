@@ -7,12 +7,15 @@
 // --calibration lets the calibration screen run its course untouched (both passes, both repeats) before the
 // rooms, so its flashes are measured too, and wants that course seen (tools/calibration-check.mjs): the scene
 // up for four attempts, their clicks on the master analyser, their count-in fills and rings in the
-// screencast, then the values 0 and 0. A run that streamed fewer than 30 frames a second (median), or
-// whose playthrough did not clear every room, cannot pass: what was not seen was not measured.
+// screencast, then the values 0 and 0. Then, on a page of its own, a tapped calibration (review R1, MAJOR 2):
+// the probe's tapper presses at known offsets after each click and each ring, and the values in use must be
+// those offsets' within 5 ms, the scene left after one attempt of each pass. A run that streamed fewer than 30
+// frames a second (median), or whose playthrough did not clear every room, cannot pass: what was not seen was
+// not measured.
 // Exit 0 PASS, 1 FAIL, 2 usage, a missing dist or a page that never boots.
 import fs from 'node:fs';
 import path from 'node:path';
-import { centreSum, judgeCalibration } from './calibration-check.mjs';
+import { centreSum, judgeCalibration, judgeTapped, TAP_A_MS, TAP_B_MS } from './calibration-check.mjs';
 import { createFlashAnalyzer } from './flash-analyzer.mjs';
 import { decodePng } from './png.mjs';
 import { bootGame, emitJson, headSha, launch, loadWitnesses, openGame, openPage, parseOptions, playthrough, REPO, requireDist, serveDir, verdictDigest } from './probe-lib.mjs';
@@ -44,6 +47,28 @@ async function runCalibration(page) {
   return { t0, left, stuck, samples, values };
 }
 
+// The tapped calibration, on a page of its own: one key starts the audio, then the probe's tapper (src/probe/api.ts
+// tapCalibration) presses TAP_A_MS after each click of pass A and TAP_B_MS after each ring of pass B; the values in
+// use are read once the scene `calibration` is gone.
+async function runTapped(browser, url, query) {
+  const { page } = await openPage(browser);
+  await openGame(page, url, { query });
+  const t0 = Date.now();
+  await page.keyboard.press('KeyQ');
+  await page.waitForFunction(() => { const a = window.__hush.audio(); return Boolean(a && a.state === 'running'); }, null, { timeout: 10000 });
+  const armed = await page.evaluate(([a, b]) => window.__hush.tapCalibration(a, b), [TAP_A_MS, TAP_B_MS]);
+  if (!armed) return { seconds: 0, values: null, problems: ['the probe could not reach the scene calibration to tap it'] };
+  let left = 0;
+  while (!left) {
+    const up = await page.evaluate(() => window.__hush.scenes().includes('calibration'));
+    if (!up || Date.now() - t0 > CALIBRATION_TIMEOUT_MS) left = Date.now();
+    else await sleep(50);
+  }
+  const values = await page.evaluate(() => window.__hush.calibration());
+  await page.close();
+  return judgeTapped({ seconds: (left - t0) / 1000, values });
+}
+
 async function main(argv) {
   const o = parseOptions(argv, { dist: 'dist', rooms: 'rooms', replays: 'replays', query: '', calibration: false, minSeconds: 0, tailSeconds: 10, json: false });
   const dist = requireDist(o.dist);
@@ -55,6 +80,7 @@ async function main(argv) {
   let rooms = [];
   let result = null;
   let calib = null;
+  let tapped = null;
   const frameErrors = [];
   const centre = [];
   try {
@@ -114,6 +140,7 @@ async function main(argv) {
     await cdp.send('Page.stopScreencast');
     await chain;
     result = analyzer ? analyzer.result() : null;
+    if (o.calibration) tapped = await runTapped(browser, srv.url, o.query);
   } finally {
     await browser.close();
     await srv.close();
@@ -131,16 +158,21 @@ async function main(argv) {
   const failedRooms = rooms.filter((r) => !r.ok);
   if (failedRooms.length) problems.push(`rooms not covered: ${failedRooms.map((r) => `${r.stem} (${r.why})`).join(', ')}`);
   if (calib) problems.push(...calib.problems);
+  if (tapped) problems.push(...tapped.problems);
   const pass = problems.length === 0;
   if (calib) {
     process.stdout.write(`flash: calibration up ${calib.seconds} s: clicks ${calib.clicks}, count-in fills ${calib.fills}, rings ${calib.rings}, values ${calib.values ? `${calib.values.avOffset} ${calib.values.inputBias}` : 'none'} (${calib.frames} frames, ${calib.samples} analyser samples)\n`);
+  }
+  if (tapped) {
+    const v = tapped.values;
+    process.stdout.write(`flash: tapped calibration up ${tapped.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (taps ${TAP_A_MS} and ${TAP_B_MS} ms after each click and ring: want ${TAP_A_MS - TAP_B_MS} ${TAP_B_MS} within 5)\n`);
   }
   if (result) {
     process.stdout.write(`flash: ${result.frames} frames over ${result.seconds.toFixed(1)} s, median ${result.medianFrameMs} ms; general max ${result.maxGeneralArea} px, red max ${result.maxRedArea} px (limit ${result.areaLimit})\n`);
   }
   for (const p of problems) process.stdout.write(`flash: ${p}\n`);
   process.stdout.write(`flash: ${pass ? 'PASS' : 'FAIL'}\n`);
-  if (o.json) emitJson({ kind: 'flash', head: headSha(), digest: await verdictDigest(), query: o.query, pass, problems, result, calibration: calib, rooms });
+  if (o.json) emitJson({ kind: 'flash', head: headSha(), digest: await verdictDigest(), query: o.query, pass, problems, result, calibration: calib, tapped, rooms });
   return pass ? 0 : 1;
 }
 

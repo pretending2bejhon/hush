@@ -56,9 +56,23 @@ describe('smoke probe (X1)', () => {
 describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
   it('passes every check on the clean control page', () => {
     const r = tool('probe-play.mjs', ['--dist', dist, ...FIX]);
-    expect(r.out).toMatch(/play: chrome headless: PASS \(console,play,text,network,storage\)/);
+    expect(r.out).toMatch(/unlock: ok: 4 rooms cleared, each layer's gate closed until its bar line and open after it/);
+    expect(r.out).toMatch(/play: chrome headless: PASS \(console,play,text,network,storage,unlock\)/);
     expect(r.code).toBe(0);
   }, T);
+
+  // Review R1, MAJOR 1: the clear-time unlock, a bar late, a bar early and never.
+  for (const [query, line] of [
+    ['unlock=late', /unlock: FAIL: room 1: layer 1's gate reads 0\.000 \d+ ms after its bar line \d+ \(want 1/],
+    ['unlock=early', /unlock: FAIL: room 1: layer 1's gate reads 1\.000 \d+ ms before its bar line \d+ \(want 0/],
+    ['unlock=none', /unlock: FAIL: room 1: layer 1's gate reads 0\.000 \d+ ms after its bar line \d+ \(want 1/],
+  ]) {
+    it(`fails ?${query} on its unlock check`, () => {
+      const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--query', query, '--check', 'unlock']);
+      expect(r.out).toMatch(line);
+      expect(r.code).toBe(1);
+    }, T);
+  }
 
   const faults = [
     ['throw', 'console', /console: FAIL: control page: planted page error/],
@@ -91,6 +105,7 @@ describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
     ['ending=always', /text: FAIL: extra page text \["run 0:0\d · deaths 0"\]/],
     ['playtest&ending=early', /text: FAIL: a page text before the ending card: \["run 0:0\d · deaths 0"\]/],
     ['playtest&ending=late', /text: FAIL: the run line says \d+ s, want \d+ to \d+ s/],
+    ['playtest&ending=mid', /text: FAIL: a page text before the ending card: \["run 0:0\d · deaths 0"\] \d+ ms into the ending/],
   ];
   for (const [query, line] of endings) {
     it(`fails ?${query} on its text check`, () => {

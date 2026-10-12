@@ -244,9 +244,12 @@ export const AV_OK = (current) => (j) => j.kind === 'av' && j.digest === current
 export const LIVE_OK = (sha) => (j) => j.kind === 'live' && j.expectedSha === sha && j.status === 200 && j.buildMeta === sha
   && j.onOriginMain === true && j.consoleErrors === 0 && j.pageErrors === 0 && j.bootToCalibration === true && j.pass === true;
 
+// X3's jitter seed: the first 8 hex of the verdict digest (review R1, MINOR 5), so a bookkeeping commit never
+// re-rolls it and every verdict on one digest judges the witnesses on one seed.
+export const x3Seed = (verdictDigest) => parseInt(verdictDigest.slice(0, 8), 16) >>> 0;
+
 function xRows(top, current, ids, rc) {
-  const headSha = git(top, ['rev-parse', 'HEAD']).toString('utf8').trim();
-  const seed = parseInt(headSha.slice(0, 8), 16) >>> 0;
+  const seed = x3Seed(current);
   const defs = {
     X1: () => runCmd(top, 'npm', ['run', 'smoke']),
     X2: () => runCmd(top, 'npm', ['test']),

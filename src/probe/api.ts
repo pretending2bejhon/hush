@@ -3,10 +3,19 @@
 // installProbe(inspect) unconditionally and never reads ?probe itself. Everything the API returns is plain
 // data, so a probe can read it through page.evaluate. It reads the game through the Inspect view and acts
 // only through Inspect.control and the layer gain nodes (the solo test of X7).
-import type { Inspect, ProbeGameObject, ProbeInputSource, ProbeSimStatus } from './inspect.ts';
+import type { Inspect, ProbeCalibrationAttempt, ProbeGameObject, ProbeInputSource, ProbeSimStatus } from './inspect.ts';
 
 export const PROBE_VERSION = 1;
 const TEXT_TYPES = new Set(['Text', 'BitmapText', 'DynamicBitmapText']);
+// The calibration's clock and its tapped marks (section 12): taps go on clicks and rings COUNT_IN to CLICKS - 1.
+const CAL_BEAT = 60 / 140;
+const CAL_COUNT_IN = 4;
+const CAL_CLICKS = 24;
+// A tap is armed this close to its moment (so the clock line it is timed through is fresh), set off by a timer
+// a few ms early and placed on its moment by a busy wait, so the keydown's timeStamp lands on it.
+const TAP_ARM_MS = 40;
+const TAP_SPIN_MS = 6;
+const TAP_GIVE_UP_MS = 90000;
 
 export interface MeterSample {
   t: number;
@@ -125,6 +134,54 @@ export function createProbe(inspect: Inspect) {
     },
     calibration() {
       return inspect.calibration();
+    },
+    // Taps the calibration as a steady player would (review R1, MAJOR 2): a keydown the game ignores (KeyQ), aMs
+    // after each click of pass A from COUNT_IN on, timed in heard time through the device-clock line, and bMs after
+    // each ring of pass B from COUNT_IN on, timed from the frame that first drew it. It reads the scene's attempt
+    // (ProbeCalibrationAttempt) every animation frame until the scene is gone. Returns false without the scene.
+    tapCalibration(aMs: number, bMs: number): boolean {
+      const g = inspect.game();
+      const scene = g ? (g.scene.getScene('calibration') as unknown as { attempt?: ProbeCalibrationAttempt | null } | null) : null;
+      if (!g || !scene) return false;
+      const begun = performance.now();
+      const armed = new Set<string>();
+      let current: ProbeCalibrationAttempt | null = null;
+      let attempt = 0;
+      const press = (): void => {
+        window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyQ', key: 'q' }));
+        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyQ', key: 'q' }));
+      };
+      const pressAt = (ms: number): void => {
+        const fire = (): void => {
+          while (performance.now() < ms) { /* the last few ms, so the event's timeStamp is the moment */ }
+          press();
+        };
+        const wait = ms - performance.now() - TAP_SPIN_MS;
+        if (wait > 0) window.setTimeout(fire, wait);
+        else fire();
+      };
+      const up = (): boolean => g.scene.getScenes(true).some((s) => s.sys.settings.key === 'calibration');
+      const frame = (): void => {
+        const a = scene.attempt ?? null;
+        const c = inspect.clock();
+        if (a && a !== current) {
+          current = a;
+          attempt += 1;
+        }
+        for (let i = CAL_COUNT_IN; a && c && i < CAL_CLICKS; i++) {
+          const key = `${attempt}:${i}`;
+          if (armed.has(key)) continue;
+          let ms: number | null = null;
+          if (a.pass === 'A' && typeof a.t0 === 'number') ms = (a.t0 + i * CAL_BEAT + aMs / 1000 - c.offset) * 1000;
+          else if (a.pass === 'B' && a.frameTimes && typeof a.frameTimes[i] === 'number') ms = (a.frameTimes[i] as number) + bMs;
+          if (ms === null || ms - performance.now() > TAP_ARM_MS) continue;
+          armed.add(key);
+          pressAt(ms);
+        }
+        if (up() && performance.now() - begun < TAP_GIVE_UP_MS) window.requestAnimationFrame(frame);
+      };
+      window.requestAnimationFrame(frame);
+      return true;
     },
     startRoom(room: number): void {
       inspect.control.startRoom(room);

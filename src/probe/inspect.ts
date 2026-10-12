@@ -70,7 +70,17 @@ export interface ProbeScene {
 }
 export interface ProbeGame {
   canvas: HTMLCanvasElement;
-  scene: { getScenes(active: boolean): ProbeScene[] };
+  scene: { getScenes(active: boolean): ProbeScene[]; getScene(key: string): ProbeScene | null };
+}
+
+// The calibration scene's current attempt (HUSH-SPEC section 12, review R1 MAJOR 2), which the probe's tapper reads
+// off the scene `calibration` as its field `attempt`: pass A carries t0 (the context time of click 0), pass B p0 (the
+// performance time flash 0 is due) and frameTimes (the frame that first drew each ring); null between attempts.
+export interface ProbeCalibrationAttempt {
+  pass: 'A' | 'B';
+  t0?: number;
+  p0?: number;
+  frameTimes?: (number | undefined)[];
 }
 
 export interface Inspect {

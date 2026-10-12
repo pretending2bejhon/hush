@@ -44,11 +44,18 @@ DISPOSITION: R1-MAJOR1 | X7's clear-time unlock (src/game/run.ts:129) and the ga
 - (a) The playthrough gains the check `unlock`, in its default set: rooms 1 to 10 are each cleared by their witness in the live run and nothing restarts the run until that layer's bar line has passed. Layer k's gate must read 0 from the clear until 30 ms before origin + bar x BAR, where bar = pendingAt x 7 / 2880 from the sim's state, and 1 from 30 ms after. Its controls are on the control page: ?unlock=late (one bar late) and ?unlock=none.
 - (b) tests/game/run.test.mjs drives the run's wiring with a fake engine and clock over the witnesses. In one continuous run, unlockAt(k, unlockBar(clear step)) must come once per clear, and gauntlet(gBeat / 4) must come on entering the gauntlet from room 10 and on every respawn there. The test joins test:av (X7's unit part) and is controlled by a reference run (tests/fixtures/reference/run.mjs) with planted faults.
 - (c) The engine reports the transport's gauntlet bar (AudioStatus `gauntletBar`; AU2 and GAME1 amended, one applier). The unlock check reads it in the gauntlet after room 10's clear and after a respawn there, and it must equal the sim's gBeat / 4. The control page has no gauntlet, so this predicate is controlled in Node.
+- Landed 2026-10-12T14:55-05:00, parts (a) and (b), in the commit `hush-spec: amend GAME1 AU3 CAL2 ...` that follows `2e6aacd`.
+  - (a) The control page passes; ?unlock=late, early and none fail. The product passes in 10 rooms (build/evidence/R1-page-controls.amend.1.txt and .2.txt, 15 of 15 with the regression of the playthrough's other controls).
+  - (b) 12 of 12 on the product and on the reference. A layer a bar late, none, and no gauntlet mapping each fail (build/evidence/fix/R1-product-controls.1.txt, 26 of 26).
+  - Part (c) is still open.
 DISPOSITION: R1-MAJOR2 | the calibration scene's tap capture, matching and hand-over never see a tap | 2026-10-12T14:18:00-05:00 | to fix by amendment
 - The flash probe's --calibration mode adds a tapped run on a fresh page. An in-page injector presses a key 40 ms after each click of pass A, timed from the attempt's t0 in heard time, and 25 ms after each ring of pass B, timed from its frameTimes in performance time. Both passes are then accepted at once, so the values in use must be avOffset 15 and inputBias 25 within 5 ms (X8's tolerance), and the scene must be left after two attempts.
 - Section 12 pins the attempt state the injector reads, which the product and the control page already share.
 - The untouched run's count-in window tightens from 6 to 10 fills to 7 to 9.
 - Controls on the control page: ?calib=flip (pass A's offset sign flipped) and ?calib=count3 (a count-in of 3).
+- Fixed 2026-10-12T14:55-05:00 in the same amendment commit.
+  - The control page's tapped run gives 15.1 and 25.0. flip gives -65.1 and fails, count3 shows 6 fills and fails, and the five earlier faults still fail (build/evidence/R1-calibration-controls.amend.1.txt and .2.txt, 8 of 8).
+  - The product's `npm run probe:flash` passes: untouched 48 clicks, 8 fills and 48 rings; tapped 15.1 and 25.0.
 DISPOSITION: R1-MAJOR3 | the play scene's beat binding (src/render/play-scene.ts:151) is untested | 2026-10-12T14:18:00-05:00 | to fix by amendment and one applier
 - The scene's per-frame assembly becomes the reference's pure `playFrame` (section 10.6): the camera, the beat entities, the ring, the creature and the dust, all read from the sim it is given. It is ported into src/render/play-frame.ts (RN4 amended).
 - tests/render/play-frame.test.mjs compares product and reference over the witness runs. The scene draws only what playFrame returns.
@@ -57,13 +64,17 @@ DISPOSITION: R1-MAJOR4 | the ending card's beat binding (src/render/ending-scene
 - `endingFrame` (the rise, then the card) and `beatOfBar`, read from the run's origin, move into ending-art.ts (END1 amended).
 - They are compared with the reference in tests/render/ending-art.test.mjs. The scene draws only what endingFrame returns.
 DISPOSITION: R1-MINOR1 | the ending's text guard covers only the first half of the rise | 2026-10-12T14:18:00-05:00 | to fix (verifier): the guard runs to RISE_MS - 400 ms; control ?ending=mid (a line at 60% of the rise)
+- Fixed 2026-10-12T14:55-05:00 in the same amendment commit: ?playtest&ending=mid fails, and the clean page and the other ending faults keep their verdicts (build/evidence/R1-page-controls.amend.1.txt and .2.txt).
 DISPOSITION: R1-MINOR2 | three of CL1's thresholds are unpinned | 2026-10-12T14:18:00-05:00 | to fix (test): a 6 ms downward glitch, a lead of 3 render quanta, a blip of exactly two low pairs
+- Fixed 2026-10-12T14:55-05:00 in the same amendment commit. A blip of two low pairs needs a 15 ms lead, so that only each burst's fresh pair is trusted. CLOCK_JUMP 0.008, 2 quanta and 2 low pairs each fail (build/evidence/fix/R1-product-controls.1.txt), and the product passes 11 of 11.
 DISPOSITION: R1-MINOR3 | AU2's late shift amount is unpinned | 2026-10-12T14:18:00-05:00 | to fix (test): a shifted note's time is its tick's time + 0.005
+- Fixed 2026-10-12T14:55-05:00 in the same amendment commit: a 10 ms shift fails (build/evidence/fix/R1-product-controls.1.txt), and the product passes 7 of 7.
 DISPOSITION: R1-MINOR4 | a run started at the gauntlet stalls about 150 ms on its bake and can drop the first sixteenth | 2026-10-12T14:18:00-05:00 | to fix by amendment and one applier
 - The run's origin lead goes from 0.1 s to 0.25 s (GAME1, section 8.4), so a room's bake ends before its first sixteenth falls due.
 - A player walking in from room 10 never restarts the origin; only the calibration hand-over and the probes do.
 DISPOSITION: R1-MINOR5 | X3's jitter test re-rolls its seed on every commit, and about 1 HEAD in 40 fails it | 2026-10-12T14:18:00-05:00 | to fix by amendment (verifier)
 - X3's seed comes from the verdict digest instead of HEAD's sha (tools/ship-gate.mjs X3, and the replay step of tools/test-all.mjs for X2). A bookkeeping commit never re-rolls it, and every verdict on one digest sees one seed, judged first at VERIFY.
 - 04-thorns' margin is the room's own, as proven at the cut (97 of 100 on the oracle). It is kept as a known property.
+- Fixed 2026-10-12T14:55-05:00 in the same amendment commit: tools/ship-gate.mjs `x3Seed(digest)`, used by X3 and by npm test's replay step. tests/tools/ship-gate.test.mjs shows the seed kept across a record commit, and the verifier suite passes 229 of 229 (build/evidence/R1-verifiers.amend.1.txt).
 DISPOSITION: R1-NOTE1 | four surviving mutations with no effect reachable on the sha-pinned content | 2026-10-12T14:18:00-05:00 | no action
 

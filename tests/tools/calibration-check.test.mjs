@@ -2,7 +2,7 @@
 // rising edge, pulses split into fills and rings by their peak, the resting level taken from the median frame,
 // and the verdict's every rule. The browser side is controlled in tests/controls/calibration-probe.test.mjs.
 import { describe, expect, it } from 'vitest';
-import { centreSum, countClicks, countPulses, judgeCalibration, MIN_SECONDS } from '../../tools/calibration-check.mjs';
+import { centreSum, countClicks, countPulses, judgeCalibration, judgeTapped, MIN_SECONDS, TAP_A_MS, TAP_B_MS } from '../../tools/calibration-check.mjs';
 
 // One analyser sample every 20 ms over `beats` beats with a click of `len` samples on each beat.
 function clickSamples(clicks, len = 4) {
@@ -51,11 +51,25 @@ describe('calibration check (section 12)', () => {
     const bad = judgeCalibration({ seconds: 0.4, samples: [], trace: pulseTrace({ fills: 0, rings: 0 }), values: { avOffset: 12, inputBias: 0 } });
     expect(bad.problems.join(' | ')).toMatch(/left after 0\.4 s/);
     expect(bad.problems.join(' | ')).toMatch(/clicks 0 \(want 44 to 52\)/);
-    expect(bad.problems.join(' | ')).toMatch(/fills 0 \(want 6 to 10\)/);
+    expect(bad.problems.join(' | ')).toMatch(/fills 0 \(want 7 to 9\)/);
     expect(bad.problems.join(' | ')).toMatch(/rings 0 \(want 44 to 52\)/);
     expect(bad.problems.join(' | ')).toMatch(/values/);
     expect(judgeCalibration({ seconds: MIN_SECONDS - 0.1, samples: clickSamples(48), trace: pulseTrace(), values: { avOffset: 0, inputBias: 0 } }).problems).toHaveLength(1);
     expect(judgeCalibration({ seconds: 42, samples: clickSamples(48), trace: pulseTrace(), values: null }).problems).toHaveLength(1);
+  });
+
+  it('wants a count-in of 4 fills per pass A attempt: 6 or 10 fills cannot pass (review R1, MAJOR 2)', () => {
+    for (const [fills, n] of [[6, 1], [7, 0], [9, 0], [10, 1]]) {
+      expect(judgeCalibration({ seconds: 42.3, samples: clickSamples(48), trace: pulseTrace({ fills }), values: { avOffset: 0, inputBias: 0 } }).problems).toHaveLength(n);
+    }
+  });
+
+  it('passes a tapped run within 5 ms of the taps and names every gap (review R1, MAJOR 2)', () => {
+    expect(judgeTapped({ seconds: 21.6, values: { avOffset: TAP_A_MS - TAP_B_MS + 4.9, inputBias: TAP_B_MS - 4.9 } }).problems).toEqual([]);
+    expect(judgeTapped({ seconds: 21.6, values: { avOffset: -(TAP_A_MS + TAP_B_MS), inputBias: TAP_B_MS } }).problems.join(' | ')).toMatch(/tapped calibration values -65 25 \(want avOffset 15 and inputBias 25 within 5 ms\)/);
+    expect(judgeTapped({ seconds: 21.6, values: { avOffset: 15, inputBias: 30.2 } }).problems).toHaveLength(1);
+    expect(judgeTapped({ seconds: 43.1, values: { avOffset: 0, inputBias: 0 } }).problems).toHaveLength(2);
+    expect(judgeTapped({ seconds: 21.6, values: null }).problems).toHaveLength(1);
   });
 
   it('sums the centre box of a canvas crop in canvas px', () => {

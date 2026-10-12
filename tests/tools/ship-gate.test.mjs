@@ -5,6 +5,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { commit, git, makeRepo, put, tool } from './fixture-repo.mjs';
+import { x3Seed } from '../../tools/ship-gate.mjs';
 
 const T = '2026-11-02T20:00:00-05:00';
 const gate = (dir, args) => tool('ship-gate.mjs', args, { cwd: dir });
@@ -57,6 +58,16 @@ describe('ship-gate.mjs verdicts', () => {
     put(dir, 'build/evidence/hook-live.proof.9.txt', 'proof\n');
     commit(dir, ['build/evidence'], 'hush-verify: 0123456');
     expect(digestOf(dir)).toBe(d);
+  });
+
+  it('seeds X3 from the verdict digest, so a record commit never re-rolls it (review R1, MINOR 5)', () => {
+    expect(x3Seed(`deadbeef${'0'.repeat(56)}`)).toBe(0xdeadbeef);
+    const { dir, d } = greenRepo();
+    const before = git(dir, ['rev-parse', 'HEAD']).trim();
+    put(dir, 'build/HUSH-PROGRESS.md', '# HUSH-PROGRESS\n\nFIX R1: record\n');
+    commit(dir, ['build/HUSH-PROGRESS.md'], 'hush-review: R3');
+    expect(git(dir, ['rev-parse', 'HEAD']).trim()).not.toBe(before);
+    expect(x3Seed(digestOf(dir))).toBe(x3Seed(d));
   });
 
   for (const [what, rel, text] of [

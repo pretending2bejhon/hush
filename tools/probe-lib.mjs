@@ -139,7 +139,8 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 // Every room by witness injection: the in-page headless replay (its checksum against the witness's, D3),
 // then the live run from the room's entrance until it clears, dies or times out. clearStep is the step on
-// which the in-page replay cleared the room (null when it did not).
+// which the in-page replay cleared the room (null when it did not): its sim's step after the clearing tick, so
+// that tick ran at step clearStep - 1. onRoom(w, 'end', { ok, clearStep }) runs before the next room starts.
 export async function playthrough(page, witnesses, { onRoom = null, timeoutPad = 15 } = {}) {
   const results = [];
   for (const w of witnesses) {
@@ -159,7 +160,7 @@ export async function playthrough(page, witnesses, { onRoom = null, timeoutPad =
       else await sleep(40);
     }
     await page.evaluate(() => window.__hush.stopInput());
-    if (onRoom) await onRoom(w, 'end');
+    if (onRoom) await onRoom(w, 'end', { ok: outcome.ok, clearStep: inPage && inPage.ok ? inPage.step : null });
     results.push({
       room: w.room, stem: w.stem, ...outcome, seconds: Math.round((Date.now() - started) / 100) / 10,
       inPage: inPage ? `${inPage.why}, checksum ${inPage.checksum}` : 'no simFactory',

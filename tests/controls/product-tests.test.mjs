@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { REPO } from '../tools/fixture-repo.mjs';
 
@@ -27,6 +28,17 @@ const oracleFiles = ['index.mjs', 'constants.mjs', 'world.mjs', 'sim.mjs'].map((
 const oracleMutant = (file, from, to) => path.join(mutate(oracleFiles, `${ORACLE}/${file}`, from, to), 'index.mjs');
 const refMutant = (file, from, to) => path.join(mutate([`${REF}/${file}`], `${REF}/${file}`, from, to), file);
 const clockMutant = (from, to) => path.join(mutate(['tests/fixtures/control-page/clock.js'], 'tests/fixtures/control-page/clock.js', from, to), 'clock.js');
+// The reference run imports the oracle and the driver reference by relative path: its mutant sits beside them.
+function runMutant(from, to) {
+  const file = path.join(REPO, REF, 'run.mjs');
+  const text = fs.readFileSync(file, 'utf8');
+  const out = text.replace(from, to);
+  if (out === text) throw new Error(`mutation not applied in ${REF}/run.mjs`);
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'hush-mutant-'));
+  fs.mkdirSync(path.join(dir, 'reference'));
+  fs.writeFileSync(path.join(dir, 'reference', 'run.mjs'), out.replace("from '../oracle/index.mjs'", `from '${pathToFileURL(path.join(REPO, ORACLE, 'index.mjs')).href}'`).replace("from './driver.mjs'", `from '${pathToFileURL(path.join(REPO, REF, 'driver.mjs')).href}'`));
+  return path.join(dir, 'reference', 'run.mjs');
+}
 
 function vitest(file, env) {
   const r = spawnSync(process.execPath, [path.join(REPO, 'node_modules', 'vitest', 'vitest.mjs'), 'run', file], { cwd: REPO, encoding: 'utf8', env: { ...process.env, ...env } });
@@ -55,11 +67,21 @@ const cases = [
   ['tests/render/beat-art.test.mjs', { HUSH_BEAT_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_BEAT_ART_MODULE: refMutant('art.mjs', 'export const WARN_ALPHA = [0.45, 0.25];', 'export const WARN_ALPHA = [0.5, 0.25];') })],
   ['tests/render/depth-art.test.mjs', { HUSH_DEPTH_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_DEPTH_ART_MODULE: refMutant('art.mjs', 'Math.sqrt(dx * dx + dy * dy) - 0.85)', 'Math.sqrt(dx * dx + dy * dy) - 0.8)') })],
   ['tests/render/ending-art.test.mjs', { HUSH_ENDING_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_ENDING_ART_MODULE: refMutant('art.mjs', 'export const RISE_S = 16 * BEAT_S;', 'export const RISE_S = 12 * BEAT_S;') })],
+  // Review R1 (MINOR 2 and 3): the thresholds the first faults above left unpinned, one planted fault each.
+  ['tests/clock/output-clock.test.mjs', { HUSH_CLOCK_MODULE: 'tests/fixtures/control-page/clock.js' }, () => ({ HUSH_CLOCK_MODULE: clockMutant('const CLOCK_JUMP = 0.004;', 'const CLOCK_JUMP = 0.008;') }), 'CLOCK_JUMP'],
+  ['tests/clock/output-clock.test.mjs', { HUSH_CLOCK_MODULE: 'tests/fixtures/control-page/clock.js' }, () => ({ HUSH_CLOCK_MODULE: clockMutant('(4 * 128) / ctx.sampleRate', '(2 * 128) / ctx.sampleRate') }), 'trust'],
+  ['tests/clock/output-clock.test.mjs', { HUSH_CLOCK_MODULE: 'tests/fixtures/control-page/clock.js' }, () => ({ HUSH_CLOCK_MODULE: clockMutant('low >= 3', 'low >= 2') }), 'resync'],
+  ['tests/audio/scheduler.test.mjs', { HUSH_AUDIO_MODULE: `${REF}/audio.mjs` }, () => ({ HUSH_AUDIO_MODULE: refMutant('audio.mjs', 'note.time = now + 0.005;', 'note.time = now + 0.01;') }), 'shift'],
+  // Review R1 (MAJOR 1): the run's wiring against the reference run, and against a layer returned a bar late, a
+  // layer never returned and a gauntlet never re-mapped.
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('engine.unlockAt(pending, unlockBar(step));', 'engine.unlockAt(pending, unlockBar(step) + 1);') }), 'late'],
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('if (pending !== 0 && pending !== lastPending) engine.unlockAt(pending, unlockBar(step));', '') }), 'none'],
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('engine.gauntlet(gBeat / 4);', '{}') }), 'gauntlet'],
 ];
 
 describe('product tests: green on the reference, red on one planted fault', () => {
-  for (const [file, good, bad] of cases) {
-    it(file, () => {
+  for (const [file, good, bad, label] of cases) {
+    it(label ? `${file} (${label})` : file, () => {
       expect(vitest(file, good)).toBe(0);
       expect(vitest(file, bad())).toBe(1);
     }, 240000);
