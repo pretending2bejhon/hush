@@ -5,14 +5,21 @@ import { SPIKE_BOX } from '../sim/constants.ts';
 import { FIELDS } from '../sim/sim.ts';
 import type { Room, Sim } from '../sim/types.ts';
 import { drawShapes, TILE_PX, VIEW_W, ZOOM } from './art.ts';
+import { creatureShapes } from './creature.ts';
 import { bakeChunks, cameraPx, roomShapes } from './room-art.ts';
 
 const LAYERS = FIELDS.indexOf('layers');
+const VY = FIELDS.indexOf('vy');
+const FACING = FIELDS.indexOf('facing');
+const FORM = FIELDS.indexOf('form');
+const DEAD = FIELDS.indexOf('dead');
+const LOCK = FIELDS.indexOf('lock');
 const SUB = 256;
 const TILE = 16;
-// The room's baked chunks sit at depth 5, the plain beat entities and creature at depth 6 (until RN2 and RN3).
+// The room's baked chunks sit at depth 5, the plain beat entities at depth 6 (until RN3), the creature at depth 7.
 const DEPTH_CHUNKS = 5;
 const DEPTH_PLAIN = 6;
+const DEPTH_CREATURE = 7;
 
 interface Chunk {
   key: string;
@@ -21,13 +28,15 @@ interface Chunk {
 }
 
 // The play scene (spec sections 10.1 and 10.6). The room's static geometry is baked once on entering a room into
-// DynamicTextures, one per chunk of 128 columns, and shown at the camera. The beat entities and the creature are still
-// plain: every frame they are drawn straight from the run on one Graphics, until RN2 and RN3 replace them.
+// DynamicTextures, one per chunk of 128 columns, and shown at the camera. The creature is drawn every frame from the
+// reference art's shapes (creature.ts) on its own Graphics; the beat entities are still plain, drawn straight from the
+// run on one Graphics, until RN3 replaces them.
 // The world view is 32 by 18 tiles at zoom 2.5; a wider room scrolls horizontally.
 // When the run finishes it hands over to the scene `ending`.
 export class PlayScene extends Phaser.Scene {
   private run: Run;
   private g!: Phaser.GameObjects.Graphics;
+  private creature!: Phaser.GameObjects.Graphics;
   private ended = false;
   private bakedRoom: Room | null = null;
   private bakedSim: Sim | null = null;
@@ -40,6 +49,7 @@ export class PlayScene extends Phaser.Scene {
 
   create(): void {
     this.g = this.add.graphics().setDepth(DEPTH_PLAIN);
+    this.creature = this.add.graphics().setDepth(DEPTH_CREATURE);
     this.ended = false;
     this.bakedRoom = null;
     this.bakedSim = null;
@@ -86,11 +96,13 @@ export class PlayScene extends Phaser.Scene {
     const room = run.currentRoom();
     const view = run.view();
     g.clear();
+    this.creature.clear();
     if (!sim || !room || !view) return;
     const st = sim.status();
     // A new room, or a new run, bakes the room again.
     if (this.bakedRoom !== room || this.bakedSim !== sim) this.bake(room, st.room, sim);
-    const layers = sim.save()[LAYERS] ?? 0;
+    const saved = sim.save();
+    const layers = saved[LAYERS] ?? 0;
     const ix = view.prevX + (view.x - view.prevX) * view.alpha;
     const iy = view.prevY + (view.y - view.prevY) * view.alpha;
     const camPx = cameraPx(room, ix / SUB + 5);
@@ -114,10 +126,17 @@ export class PlayScene extends Phaser.Scene {
       }
     }
 
-    if (!st.dead) {
-      g.fillStyle(0xe8ecf4, 1);
-      g.fillRect((ix / SUB) * ZOOM - camPx, (iy / SUB) * ZOOM, 10 * ZOOM, 10 * ZOOM);
-    }
+    const creature = {
+      step: sim.step,
+      x: ix / SUB,
+      y: iy / SUB,
+      form: saved[FORM] ?? 0,
+      vy: saved[VY] ?? 0,
+      facing: saved[FACING] ?? 0,
+      dead: saved[DEAD] ?? 0,
+      lock: saved[LOCK] ?? 0,
+    };
+    drawShapes(this.creature, creatureShapes(creature, run.track(), camPx));
 
     if (run.finished() && !this.ended) {
       this.ended = true;

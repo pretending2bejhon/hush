@@ -1,0 +1,41 @@
+HUSH-EVIDENCE v1
+id: RN2
+phase: red
+command: npm run accept:rn2
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T09:45:54-05:00
+time-end: 2026-10-12T09:45:54-05:00
+head: 7f04fdf4069e8ff496320521c28f2eee75d0d48a
+exit: 1
+--- output ---
+
+> hush@0.0.0 accept:rn2
+> vitest run tests/render/creature.test.mjs && npm run check:art
+
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/render/creature.test.mjs (0 test)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/render/creature.test.mjs [ tests/render/creature.test.mjs ]
+Error: Cannot find module '<repo>/src/render/creature.ts' imported from <repo>/tests/helpers/load.mjs
+ ❯ tests/render/creature.test.mjs:10:11
+      8| import { ALL_ROOMS, inputStates, roomOf, sameShapes, witnessStates, wo…
+      9|
+     10| const P = await load('HUSH_CREATURE_MODULE', new URL('../../src/render…
+       |           ^
+     11| const W = world();
+     12|
+
+ Test Files  1 failed (1)
+      Tests  no tests
+   Start at  09:45:54
+   Duration  251ms (worker 96%, environment 4%)
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+--- end ---

@@ -5,6 +5,8 @@ import type { AudioEngine } from '../audio/engine.ts';
 import { alpha, displaySec, inputLagSec, stepsDue, targetStep } from '../clock/driver.ts';
 import { audibleSec } from '../clock/output-clock.ts';
 import type { createKeys, InputSource } from '../input/keys.ts';
+import { createTrack, trackStep } from '../render/creature.ts';
+import type { Track, TrackState } from '../render/creature.ts';
 import { gauntletStartBeat, unlockBar } from '../sim/beat.ts';
 import { createSim, FIELDS } from '../sim/sim.ts';
 import type { Room, Sim, World } from '../sim/types.ts';
@@ -14,6 +16,15 @@ type Keys = ReturnType<typeof createKeys>;
 const PENDING = FIELDS.indexOf('pendingLayer');
 const GBEAT = FIELDS.indexOf('gBeat');
 const ROOM = FIELDS.indexOf('room');
+const TRACK_AT = {
+  step: FIELDS.indexOf('step'),
+  x: FIELDS.indexOf('x'),
+  y: FIELDS.indexOf('y'),
+  form: FIELDS.indexOf('form'),
+  grounded: FIELDS.indexOf('grounded'),
+  dead: FIELDS.indexOf('dead'),
+  layers: FIELDS.indexOf('layers'),
+};
 // A creature that moves further than a tile between two steps was placed (a respawn, a new room): no tween.
 const TELEPORT = 4096;
 
@@ -29,6 +40,19 @@ export interface RunView {
   alpha: number;
 }
 
+// The sim's state after a tick, as the creature's track reads it (by FIELDS name).
+function trackState(state: Int32Array): TrackState {
+  return {
+    step: state[TRACK_AT.step] ?? 0,
+    x: state[TRACK_AT.x] ?? 0,
+    y: state[TRACK_AT.y] ?? 0,
+    form: state[TRACK_AT.form] ?? 0,
+    grounded: state[TRACK_AT.grounded] ?? 0,
+    dead: state[TRACK_AT.dead] ?? 0,
+    layers: state[TRACK_AT.layers] ?? 0,
+  };
+}
+
 export interface Run {
   readonly sim: Sim | null;
   readonly origin: number;
@@ -36,6 +60,7 @@ export interface Run {
   finished(): boolean;
   currentRoom(): Room | null;
   view(): RunView | null;
+  track(): Track;
   startRoom(room: number): void;
   frame(frameMs: number): void;
   stepOf(eventTimeStampMs: number): number;
@@ -52,6 +77,7 @@ export function createRun(opts: { world: World; engine: AudioEngine; keys: Keys 
   let lastPending = 0;
   let lastGBeat = 0;
   let view: RunView | null = null;
+  let track: Track = createTrack();
 
   const roomOf = (n: number): Room | null => (n === 11 ? world.gauntlet : (world.rooms[n - 1] ?? null));
 
@@ -66,12 +92,14 @@ export function createRun(opts: { world: World; engine: AudioEngine; keys: Keys 
     finished: () => (sim ? sim.status().finished : false),
     currentRoom: () => (sim ? roomOf(sim.status().room) : null),
     view: () => view,
+    track: () => track,
     // A new sim at the room's entrance, the layers of every earlier room back, the track from cycle 0 on a fresh origin.
     startRoom(room: number): void {
       const ctx = engine.context();
       if (!ctx) return;
       origin = ctx.currentTime + 0.1;
       sim = createSim(world, { room, step: 0, layers: canonical(room) });
+      track = createTrack();
       keys.attachSource(null);
       engine.restart(origin, canonical(room), room === 11 ? gauntletStartBeat(0) / 4 : -1);
       const state = sim.save();
@@ -95,6 +123,7 @@ export function createRun(opts: { world: World; engine: AudioEngine; keys: Keys 
         sim.tick(keys.next(step));
         const after = sim.status();
         const state = sim.save();
+        track = trackStep(track, trackState(state));
         const pending = state[PENDING] ?? 0;
         // A room cleared on this step: its layer comes back on the bar line the sim names.
         if (pending !== 0 && pending !== lastPending) engine.unlockAt(pending, unlockBar(step));
