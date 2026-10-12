@@ -1,0 +1,40 @@
+HUSH-EVIDENCE v1
+id: R2-mutation-draw-tri
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/pristine draw-tri-flat
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T17:32:24-05:00
+time-end: 2026-10-12T17:37:44-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+
+== draw-tri-flat (src/render/art.ts): SURVIVED (restored true)
+   - (s.p[4] ?? 0) + dx, (s.p[5] ?? 0) + dy);
+   + (s.p[4] ?? 0) + dx, (s.p[3] ?? 0) + dy);
+   pass  vitest run tests/render
+        Test Files  6 passed (6)
+        Tests  32 passed (32)
+   pass  vite build --logLevel error
+
+   pass  tools/probe-smoke.mjs
+        smoke: boot: ok: scenes ["calibration"]
+        smoke: canvas: ok: not blank (1220 by 686)
+        smoke: text: ok: title, link and notice only; no text object
+        smoke: requests: ok: every request answered below 400
+        smoke: console: ok: zero console and page errors
+        smoke: PASS (/hush/)
+   pass  tools/probe-play.mjs --check console,play,text
+        play: chrome headless: room 11-gauntlet done
+        play: chrome headless: ending seen, texts read 9936 ms into it
+        play: chrome headless: console: ok: zero console and page errors
+        play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+        play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+        play: chrome headless: PASS (console,play,text)
+   pass  tools/probe-flash.mjs
+        flash: 9036 frames over 150.7 s, median 16.44 ms; general max 3781 px, red max 0 px (limit 25600)
+        flash: PASS
+
+mutations: draw-tri-flat SURVIVED
+--- end ---

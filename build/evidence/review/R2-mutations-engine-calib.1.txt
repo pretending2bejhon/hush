@@ -1,0 +1,39 @@
+HUSH-EVIDENCE v1
+id: R2-mutations-engine-calib
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/pristine engine-unlock-late,calib-countin3
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T17:38:42-05:00
+time-end: 2026-10-12T17:45:10-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+
+== engine-unlock-late (src/audio/engine.ts): KILLED (restored true)
+   - openAt(gate.gain, unlockTime(transport.origin, bar));
+   + openAt(gate.gain, unlockTime(transport.origin, bar + 1));
+   pass  vite build --logLevel error
+
+   FAIL(1)  tools/probe-play.mjs --check console,play,unlock
+        play: chrome headless: room 11-gauntlet done
+        play: chrome headless: ending seen, texts read 9963 ms into it
+        play: chrome headless: console: ok: zero console and page errors
+        play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+        play: chrome headless: unlock: FAIL: room 1: layer 1's gate reads 0.000 80 ms after its bar line 5 (want 1: the layer returns on that bar); room 2: layer 2's gate reads 0.000 77 ms after its bar line 
+        play: chrome headless: FAIL (console,play,unlock)
+
+== calib-countin3 (src/render/calibration-scene.ts): KILLED (restored true)
+   - const COUNT_IN = 4;
+   + const COUNT_IN = 3;
+   pass  vite build --logLevel error
+
+   FAIL(1)  tools/probe-flash.mjs --calibration
+        flash: calibration up 43.6 s: clicks 48, count-in fills 6, rings 48, values 0 0 (2611 frames, 2174 analyser samples)
+        flash: tapped calibration up 22 s: values 15.1 25.0 (taps 40 and 25 ms after each click and ring: want 15 25 within 5)
+        flash: 11665 frames over 194.8 s, median 16.48 ms; general max 9556 px, red max 0 px (limit 25600)
+        flash: calibration fills 6 (want 7 to 9)
+        flash: FAIL
+
+mutations: engine-unlock-late KILLED, calib-countin3 KILLED
+--- end ---

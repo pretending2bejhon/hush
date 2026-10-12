@@ -1,0 +1,184 @@
+HUSH-EVIDENCE v1
+id: R2-mutations-unit
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/pristine sim-const,sim-beat-phase,sim-unlock-bar,room-tile,rooms-rest,gauntlet-corridor,track-order,transport-startbar,gates-ramp,clock-window,driver-display,keys-bit,calib-trim,fx-scale,run-gauntlet-map,run-canonical
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T16:28:58-05:00
+time-end: 2026-10-12T16:29:20-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+
+== sim-const (src/sim/constants.ts): KILLED (restored true)
+   - COYOTE: 24,
+   + COYOTE: 23,
+   FAIL(1)  vitest run tests/sim
+        FAIL  tests/sim/oracle-wave.test.mjs > SIM5 wave and portals against the oracle > agrees in room 7 through its wave portal
+        FAIL  tests/sim/oracle-wave.test.mjs > SIM5 wave and portals against the oracle > agrees in room 9 through its wave portal
+        FAIL  tests/sim/oracle-wave.test.mjs > SIM5 wave and portals against the oracle > agrees in room 10 through its wave portal
+        AssertionError: expected { step: +0, field: 'coyote', …(3) } to be null
+        FAIL  tests/sim/oracle-wave.test.mjs > SIM5 wave and portals against the oracle > agrees on the way from the spawn to the portal in 06-wave and on through it
+        AssertionError: expected { step: +0, field: 'coyote', …(3) } to be null
+
+== sim-beat-phase (src/sim/beat.ts): KILLED (restored true)
+   - step * C.TICKS_PER_STEP - e.phase * C.TICKS_PER_SIXTEENTH
+   + step * C.TICKS_PER_STEP + e.phase * C.TICKS_PER_SIXTEENTH
+   FAIL(1)  vitest run tests/sim
+        × turns entities on and off as the oracle does, at rest while their layer is not back 19ms
+        Test Files  1 failed | 6 passed (7)
+        Tests  1 failed | 32 passed (33)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/sim/beat.test.mjs > SIM1 constants and beat functions > turns entities on and off as the oracle does, at rest while their layer is not back
+        AssertionError: expected false to be true // Object.is equality
+
+== sim-unlock-bar (src/sim/beat.ts): KILLED (restored true)
+   - return Math.ceil((step * C.TICKS_PER_STEP + C.TICKS_PER_BEAT) / C.TICKS_PER_BAR);
+   + return Math.ceil((step * C.TICKS_PER_STEP + C.TICKS_PER_BEAT) / C.TICKS_PER_BAR) + 1;
+   FAIL(1)  vitest run tests/sim tests/game
+        FAIL  tests/sim/oracle-base.test.mjs > SIM2 base form against the oracle > agrees on the clear at the right edge
+        AssertionError: expected { step: 168, field: 'pendingAt', …(3) } to be null
+        FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees on the clear, the pending layer and the next room, without stopping at the clear
+        AssertionError: expected { step: 77, field: 'pendingAt', …(3) } to be null
+        FAIL  tests/sim/progression.test.mjs > X7 progression: a layer returns on the bar line > computes the bar line as the oracle does
+        AssertionError: expected 2 to be 1 // Object.is equality
+
+== room-tile (rooms/04-thorns.txt): KILLED (restored true)
+   - ######.....aaa.....bbb.....aaa.....bbb............###....###....###.....
+   + ######.....aaa.....bbb.....aaa.....bbb............###....###...####.....
+   FAIL(1)  tools/spec-content.mjs --tree
+        spec-content: FAIL, 1 file(s)
+   pass  vitest run tests/rooms tests/sim
+        Test Files  9 passed (9)
+        Tests  40 passed (40)
+
+== rooms-rest (src/rooms/compile.ts): KILLED (restored true)
+   - rest: vals.rest === 'on' ? true : vals.rest === 'off' ? false
+   + rest: vals.rest === 'on' ? false : vals.rest === 'off' ? true
+   FAIL(1)  vitest run tests/rooms
+        Tests  2 failed | 5 passed (7)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles every room of the spec to the oracle structure
+        AssertionError: expected { kind: 'room', …(8) } to deeply equal { kind: 'room', …(8) }
+        FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles the world in file order and refuses a gap
+        AssertionError: expected { rooms: [ { …(9) }, …(9) ], …(1) } to deeply equal { rooms: [ { …(9) }, …(9) ], …(1) }
+
+== gauntlet-corridor (src/rooms/gauntlet.ts): KILLED (restored true)
+   - if (r < centre - 2 || r > centre + 2)
+   + if (r < centre - 2 || r > centre + 3)
+   FAIL(1)  vitest run tests/rooms tests/sim
+        FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles the world in file order and refuses a gap
+        AssertionError: expected { rooms: [ { …(9) }, …(9) ], …(1) } to deeply equal { rooms: [ { …(9) }, …(9) ], …(1) }
+        FAIL  tests/rooms/compile.test.mjs > RM2 gauntlet generator > parses the program and generates the oracle grid, byte for byte
+        AssertionError: expected { W: 544, H: 18, …(2) } to deeply equal { W: 544, H: 18, …(2) }
+        FAIL  tests/sim/oracle-gauntlet.test.mjs > SIM6 gauntlet against the oracle > agrees in mid-run, into and out of the wave bars and to the finish
+        AssertionError: expected { step: 125, field: 'x', …(3) } to be null
+
+== track-order (src/audio/track.ts): KILLED (restored true)
+   - layers.push(this);
+   + layers.unshift(this);
+   FAIL(1)  vitest run tests/audio/track.test.mjs
+        × captures the ten layers of area1 in order with their onsets 23ms
+        Test Files  1 failed (1)
+        Tests  1 failed | 1 passed (2)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/audio/track.test.mjs > AU1 track layers > captures the ten layers of area1 in order with their onsets
+        AssertionError: expected [ 'kick', +0, [ +0 ] ] to deeply equal [ 'kick', +0, [ +0, 4, 8, 12 ] ]
+
+== transport-startbar (src/audio/scheduler.ts): KILLED (restored true)
+   - bar >= startBar ? bar - startBar : bar
+   + bar > startBar ? bar - startBar : bar
+   FAIL(1)  vitest run tests/audio/scheduler.test.mjs
+        × maps the gauntlet: from the start bar the pattern starts again at cycle 0 59ms
+        Test Files  1 failed (1)
+        Tests  1 failed | 7 passed (8)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/audio/scheduler.test.mjs > AU2 transport > maps the gauntlet: from the start bar the pattern starts again at cycle 0
+        AssertionError: expected [ 'ab2', 'c3', 'eb3' ] to deeply equal [ 'c3', 'eb3', 'g3' ]
+
+== gates-ramp (src/audio/gates.ts): KILLED (restored true)
+   - param.setValueAtTime(0, t - 0.005);
+   + param.setValueAtTime(0, t - 0.05);
+   FAIL(1)  vitest run tests/audio
+        × opens a gate on its bar line with a 5 ms ramp 12ms
+        Test Files  1 failed | 2 passed (3)
+        Tests  1 failed | 11 passed (12)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/audio/gates.test.mjs > AU3 layer gates > opens a gate on its bar line with a 5 ms ramp
+        AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+
+== clock-window (src/clock/output-clock.ts): KILLED (restored true)
+   - const CLOCK_WINDOW = 1000;
+   + const CLOCK_WINDOW = 500;
+   FAIL(1)  vitest run tests/clock
+        FAIL  tests/clock/output-clock.test.mjs > CL1 device-clock line against the reference port > agrees: a glitch moves the line down 6 ms
+        AssertionError: expected [ 787, -1.206, true, 1 ] to deeply equal [ 787, -1.2059999999999995, true, 1 ]
+        FAIL  tests/clock/output-clock.test.mjs > CL1 device-clock line against the reference port > agrees: a lead of three render quanta
+        AssertionError: expected [ 330, -1.2, false, +0 ] to deeply equal [ 330, -1.1999999999999997, false, +0 ]
+        FAIL  tests/clock/output-clock.test.mjs > CL1 device-clock line against the reference port > agrees on an engine without output timestamps, and on one that never trusts a pair
+        AssertionError: expected [ 629, -1.2000000000000002, true, +0 ] to deeply equal [ 629, -1.1999999999999997, true, +0 ]
+
+== driver-display (src/clock/driver.ts): KILLED (restored true)
+   - clamp(-avOffsetMs / 1000, -0.15, 0.15)
+   + clamp(avOffsetMs / 1000, -0.15, 0.15)
+   FAIL(1)  vitest run tests/clock
+        × turns the calibration into a display shift and an input lag, both clamped 6ms
+        Test Files  1 failed | 1 passed (2)
+        Tests  1 failed | 14 passed (15)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/clock/driver.test.mjs > CL2 tick driver > turns the calibration into a display shift and an input lag, both clamped
+        AssertionError: expected 0.04 to be close to -0.04, received difference is 0.08, but expected 5e-13
+
+== keys-bit (src/input/keys.ts): KILLED (restored true)
+   - KeyC: 16,
+   + KeyC: 32,
+   FAIL(1)  vitest run tests/input/keys.test.mjs
+        × maps the codes of section 3 12ms
+        Test Files  1 failed (1)
+        Tests  1 failed | 4 passed (5)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/input/keys.test.mjs > IN1 keys > maps the codes of section 3
+        AssertionError: expected { ArrowLeft: 1, KeyA: 1, …(12) } to deeply equal { ArrowLeft: 1, KeyA: 1, …(12) }
+
+== calib-trim (src/input/calibrate.ts): SURVIVED (restored true)
+   - .slice(1, -1);
+   + .slice(0);
+   pass  vitest run tests/input
+        Test Files  2 passed (2)
+        Tests  10 passed (10)
+
+== fx-scale (src/fx/flash-limiter.ts): KILLED (restored true)
+   - const scale = (1280 * 720) / (canvasW * canvasH);
+   + const scale = 1;
+   FAIL(1)  vitest run tests/fx
+        × counts areas in canvas pixels at 1280 by 720 5ms
+        Test Files  1 failed (1)
+        Tests  1 failed | 2 passed (3)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/fx/flash-limiter.test.mjs > FX1 flash limiter > counts areas in canvas pixels at 1280 by 720
+        AssertionError: expected 0.5 to be less than 0.1
+
+== run-gauntlet-map (src/game/run.ts): KILLED (restored true)
+   - engine.gauntlet(gBeat / 4);
+   + engine.gauntlet(gBeat / 4 + 1);
+   FAIL(1)  vitest run tests/game tests/audio
+        × maps gBeat / 4 on the entry from room 10 and on every respawn in the gauntlet 98ms
+        Test Files  1 failed | 3 passed (4)
+        Tests  1 failed | 24 passed (25)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/game/run.test.mjs > GAME1 the run maps the gauntlet on every run start > maps gBeat / 4 on the entry from room 10 and on every respawn in the gauntlet
+        AssertionError: expected [ [ 'gauntlet', 8, 2388 ], …(5) ] to deeply equal [ [ 'gauntlet', 7, 2388 ], …(5) ]
+
+== run-canonical (src/game/run.ts): KILLED (restored true)
+   - ((1 << Math.min(r, 11)) - 2) & 0x7fe
+   + ((1 << Math.min(r, 11)) - 4) & 0x7fe
+   FAIL(1)  vitest run tests/game tests/audio
+        FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 9: unlockAt(9, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'restart', 5.25, 508, -1 ] ] to deeply equal [ [ 'restart', 5.25, 510, -1 ] ]
+        FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 10: unlockAt(10, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'restart', 5.25, 1020, -1 ] ] to deeply equal [ [ 'restart', 5.25, 1022, -1 ] ]
+        FAIL  tests/game/run.test.mjs > GAME1 the run maps the gauntlet on every run start > restarts room 11 with the gauntlet mapped from its first run bar
+        AssertionError: expected [ [ 'restart', 5.25, 2044, 1 ] ] to deeply equal [ [ 'restart', 5.25, 2046, 1 ] ]
+
+mutations: sim-const KILLED, sim-beat-phase KILLED, sim-unlock-bar KILLED, room-tile KILLED, rooms-rest KILLED, gauntlet-corridor KILLED, track-order KILLED, transport-startbar KILLED, gates-ramp KILLED, clock-window KILLED, driver-display KILLED, keys-bit KILLED, calib-trim SURVIVED, fx-scale KILLED, run-gauntlet-map KILLED, run-canonical KILLED
+--- end ---

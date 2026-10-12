@@ -1,0 +1,118 @@
+{
+  "kind": "perf",
+  "head": "2f2b8a264dd2a0f7b32a3405befd501d19b51b1c",
+  "digest": "eeca3e10f750b308ac7576c8a4694c1f3545a48dc8ab87925fc15fbe85872638",
+  "query": "",
+  "headed": true,
+  "swiftshader": false,
+  "renderer": "ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "window": {
+    "inner": [
+      1536,
+      826
+    ],
+    "screen": [
+      1536,
+      912
+    ],
+    "dpr": 1.25,
+    "maximized": true
+  },
+  "power": "ac",
+  "powerSaver": false,
+  "plan": "Balanced",
+  "refreshHz": 60,
+  "heavyApps": [
+    "claude 19.5% CPU"
+  ],
+  "sample": {
+    "cpu": [
+      {
+        "name": "claude",
+        "cpu": 19.5
+      },
+      {
+        "name": "chrome",
+        "cpu": 6.6
+      },
+      {
+        "name": "claude",
+        "cpu": 2.3
+      },
+      {
+        "name": "claude",
+        "cpu": 1.7
+      }
+    ],
+    "gpu": [
+      {
+        "name": "claude",
+        "gpu": 9.1
+      },
+      {
+        "name": "WindowsTerminal",
+        "gpu": 0
+      },
+      {
+        "name": "msedgewebview2",
+        "gpu": 0
+      }
+    ]
+  },
+  "meanFps": 30.32,
+  "p20": 0.9836,
+  "p99Ms": 1000.4,
+  "maxMs": 1016.9,
+  "durationSec": 60.3,
+  "phases": {
+    "rooms": {
+      "frames": 1807,
+      "seconds": 40.033300000000004,
+      "meanFps": 45.13742309527318,
+      "p20": 0.9944659656889873,
+      "p99Ms": 16.900000000001455,
+      "maxMs": 1016.9000000000015
+    },
+    "busy": {
+      "frames": 20,
+      "seconds": 20.21670000000001,
+      "meanFps": 0.9892811388604466,
+      "p20": 0,
+      "p99Ms": 1016.9000000000233,
+      "maxMs": 1016.9000000000233
+    }
+  },
+  "played": [
+    {
+      "stem": "01-wake",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "02-heartbeat",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "03-dash",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "04-thorns",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "05-doors",
+      "outcome": "played until the phase ended"
+    },
+    {
+      "stem": "11-gauntlet",
+      "outcome": "never reached the busy window"
+    }
+  ],
+  "problems": [
+    "heavy apps: claude 19.5% CPU",
+    "mean 30.3 fps, under 58",
+    "98.36% of intervals at 20 ms or less, under 99%",
+    "11-gauntlet: never reached the busy window"
+  ],
+  "pass": false
+}

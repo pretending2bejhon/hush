@@ -1,0 +1,31 @@
+HUSH-EVIDENCE v1
+id: R2-playtest-dom-default
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/playtest-dom.mjs <repo> default 1280x720,800x450,900x1200 full
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T16:48:33-05:00
+time-end: 2026-10-12T16:52:22-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+default 1280x720 calibration before the key: scenes ["calibration"], canvas 30,0,1220,686, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 1280x720 calibration running: scenes ["calibration"], canvas 30,0,1220,686, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 1280x720 room 5: scenes ["play"], canvas 30,0,1220,686, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 1280x720 gauntlet: scenes ["play"], canvas 30,0,1220,686, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 1280x720 mid-rise: scenes ["ending"], canvas 30,0,1220,686, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 1280x720 card: scenes ["ending"], canvas 30,0,1220,686, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 800x450 calibration before the key: scenes ["calibration"], canvas 30,0,740,416, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 800x450 calibration running: scenes ["calibration"], canvas 30,0,740,416, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 800x450 room 5: scenes ["play"], canvas 30,0,740,416, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 800x450 gauntlet: scenes ["play"], canvas 30,0,740,416, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 800x450 mid-rise: scenes ["ending"], canvas 30,0,740,416, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 800x450 card: scenes ["ending"], canvas 30,0,740,416, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 900x1200 calibration before the key: scenes ["calibration"], canvas 0,329,900,506, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 900x1200 calibration running: scenes ["calibration"], canvas 0,329,900,506, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 900x1200 room 5: scenes ["play"], canvas 0,329,900,506, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 900x1200 gauntlet: scenes ["play"], canvas 0,329,900,506, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 900x1200 mid-rise: scenes ["ending"], canvas 0,329,900,506, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+default 900x1200 card: scenes ["ending"], canvas 0,329,900,506, text objects 0, DOM texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], elements over the canvas [], #playtest hidden ""
+playtest-dom default: PASS
+--- end ---

@@ -1,0 +1,30 @@
+HUSH-EVIDENCE v1
+id: CAL2
+phase: review
+command: npm run probe:flash
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T15:45:01-05:00
+time-end: 2026-10-12T15:48:42-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 1
+--- output ---
+
+> hush@0.0.0 probe:flash
+> vite build && node tools/probe-flash.mjs --calibration
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-cTzv7JT6.js  2,092.45 kB │ gzip: 593.28 kB
+
+[32m✓ built in 814ms[39m
+flash: calibration up 43.6 s: clicks 48, count-in fills 8, rings 48, values 0 0 (2612 frames, 2174 analyser samples)
+flash: tapped calibration up 22 s: values 10.6 32.7 (taps 40 and 25 ms after each click and ring: want 15 25 within 5)
+flash: 11680 frames over 195.0 s, median 16.71 ms; general max 9618 px, red max 0 px (limit 25600)
+flash: tapped calibration values 10.608952376480744 32.70000000298023 (want avOffset 15 and inputBias 25 within 5 ms)
+flash: FAIL
+--- end ---

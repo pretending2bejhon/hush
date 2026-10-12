@@ -1,0 +1,19 @@
+HUSH-EVIDENCE v1
+id: R2-tapped-battery
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/tapped.mjs <repo> 6 bg
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T17:16:00-05:00
+time-end: 2026-10-12T17:18:19-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+tapped bg run 1: {"run":1,"seconds":22.1,"avOffset":9.5,"inputBias":30.5,"ok":false,"frames":{"n":1318,"median":16.69999999999891,"p95":16.900000000001455,"max":66.60000000000218,"over25":2}}
+tapped bg run 2: {"run":2,"seconds":22.2,"avOffset":12,"inputBias":28.1,"ok":true,"frames":{"n":1322,"median":16.69999999999891,"p95":16.80000000000109,"max":50.099999999998545,"over25":1}}
+tapped bg run 3: {"run":3,"seconds":22,"avOffset":11.3,"inputBias":28.9,"ok":true,"frames":{"n":1317,"median":16.69999999999891,"p95":16.80000000000109,"max":50.099999999998545,"over25":2}}
+tapped bg run 4: {"run":4,"seconds":22.1,"avOffset":10.7,"inputBias":29.6,"ok":true,"frames":{"n":1322,"median":16.69999999999891,"p95":16.80000000000109,"max":50,"over25":1}}
+tapped bg run 5: {"run":5,"seconds":22,"avOffset":11.7,"inputBias":28.4,"ok":true,"frames":{"n":1316,"median":16.69999999999891,"p95":16.80000000000109,"max":50,"over25":1}}
+tapped bg run 6: {"run":6,"seconds":22.1,"avOffset":12.6,"inputBias":27.5,"ok":true,"frames":{"n":1322,"median":16.69999999999891,"p95":16.800000000000182,"max":49.900000000001455,"over25":1}}
+tapped bg load 0: 5/6 within 5 ms
+--- end ---

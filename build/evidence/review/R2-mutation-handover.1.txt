@@ -1,0 +1,43 @@
+HUSH-EVIDENCE v1
+id: R2-mutation-handover
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/pristine run-track,main-handover-start
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T17:23:16-05:00
+time-end: 2026-10-12T17:29:50-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+
+== run-track (src/game/run.ts): SURVIVED (restored true)
+   - track = trackStep(track, trackState(state));
+   + void trackStep;
+   pass  vitest run tests/game tests/render
+        Test Files  7 passed (7)
+        Tests  45 passed (45)
+
+== main-handover-start (src/main.ts): SURVIVED (restored true)
+   -   run.startRoom(1);
+
+   + 
+   pass  vitest run tests/game tests/clock tests/input
+        Test Files  5 passed (5)
+        Tests  38 passed (38)
+   pass  vite build --logLevel error
+
+   pass  tools/probe-flash.mjs --calibration
+        flash: calibration up 44 s: clicks 48, count-in fills 8, rings 48, values 0 0 (2621 frames, 2180 analyser samples)
+        flash: tapped calibration up 22 s: values 15.1 25.0 (taps 40 and 25 ms after each click and ring: want 15 25 within 5)
+        flash: 11685 frames over 195.2 s, median 16.46 ms; general max 9684 px, red max 0 px (limit 25600)
+        flash: PASS
+   pass  tools/probe-play.mjs --check console,play,text,visibility,unlock
+        play: chrome headless: console: ok: zero console and page errors
+        play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+        play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+        play: chrome headless: visibility: ok: hidden: audio suspended, sim frozen; visible: both run on
+        play: chrome headless: unlock: ok: 10 rooms cleared, each layer's gate closed until its bar line and open after it; the gauntlet's track mapped from its run's bar at its entry and its respawn (73 read
+        play: chrome headless: PASS (console,play,text,visibility,unlock)
+
+mutations: run-track SURVIVED, main-handover-start SURVIVED
+--- end ---

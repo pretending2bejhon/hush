@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: CL2
+phase: review
+command: npx vitest run tests/clock/driver.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T15:41:21-05:00
+time-end: 2026-10-12T15:41:22-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  15:41:22
+   Duration  188ms (transform 62%, import 24%, worker 7%, tests 6%)
+
+--- end ---

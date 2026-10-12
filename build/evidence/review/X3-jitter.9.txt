@@ -1,0 +1,35 @@
+HUSH-EVIDENCE v1
+id: X3-jitter
+phase: review
+command: node tools/replay.mjs --all --jitter --seed 3204272157
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T16:24:51-05:00
+time-end: 2026-10-12T16:24:51-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+replays/01-wake.json: CLEAR clear at step 1618, checksum 6001f0f9 (witness 6001f0f9) OK
+replays/01-wake.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: CLEAR clear at step 1684, checksum 04febedf (witness 04febedf) OK
+replays/02-heartbeat.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/03-dash.json: CLEAR clear at step 1588, checksum 593d0787 (witness 593d0787) OK
+replays/03-dash.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: CLEAR clear at step 1408, checksum 123057cb (witness 123057cb) OK
+replays/04-thorns.json: jitter seed 3204272157: 18/20 clear (need 18) [++++++++++++++-+-+++] PASS
+replays/05-doors.json: CLEAR clear at step 2222, checksum d181a484 (witness d181a484) OK
+replays/05-doors.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: CLEAR clear at step 1920, checksum f3496b90 (witness f3496b90) OK
+replays/06-wave.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: CLEAR clear at step 1943, checksum 1c7b52e9 (witness 1c7b52e9) OK
+replays/07-current.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: CLEAR clear at step 1494, checksum e6a8f7ba (witness e6a8f7ba) OK
+replays/08-steps.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/09-gates.json: CLEAR clear at step 1905, checksum 9498a96d (witness 9498a96d) OK
+replays/09-gates.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/10-crown.json: CLEAR clear at step 2388, checksum 5b909a19 (witness 5b909a19) OK
+replays/10-crown.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/11-gauntlet.json: CLEAR clear at step 14278, checksum b3715ef7 (witness b3715ef7) OK
+replays/11-gauntlet.json: jitter seed 3204272157: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 11 witness(es)
+--- end ---

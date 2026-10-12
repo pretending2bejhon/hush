@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: R2-mutation-main-keys
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/pristine main-keys-target
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T17:19:34-05:00
+time-end: 2026-10-12T17:22:29-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+
+== main-keys-target (src/main.ts): SURVIVED (restored true)
+   - createKeys({ target: window, stepOf: (t) => run.stepOf(t) })
+   + createKeys({ target: new EventTarget(), stepOf: (t) => run.stepOf(t) })
+   pass  vitest run tests/input tests/game tests/clock
+        Test Files  5 passed (5)
+        Tests  38 passed (38)
+   pass  vite build --logLevel error
+
+   pass  tools/probe-smoke.mjs
+        smoke: boot: ok: scenes ["calibration"]
+        smoke: canvas: ok: not blank (1220 by 686)
+        smoke: text: ok: title, link and notice only; no text object
+        smoke: requests: ok: every request answered below 400
+        smoke: console: ok: zero console and page errors
+        smoke: PASS (/hush/)
+   pass  tools/probe-play.mjs --check console,play,text,network,storage,unlock,visibility
+        play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+        play: chrome headless: network: ok: 3 requests, all to the page's origin
+        play: chrome headless: storage: ok: nothing stored
+        play: chrome headless: unlock: ok: 10 rooms cleared, each layer's gate closed until its bar line and open after it; the gauntlet's track mapped from its run's bar at its entry and its respawn (74 read
+        play: chrome headless: visibility: ok: hidden: audio suspended, sim frozen; visible: both run on
+        play: chrome headless: PASS (console,play,text,network,storage,unlock,visibility)
+
+mutations: main-keys-target SURVIVED
+--- end ---

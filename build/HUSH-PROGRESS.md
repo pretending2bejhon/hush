@@ -49,12 +49,14 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - A design fix that needs the product changed is one amendment commit with its applier right after it. Between the two, standing is red on the new test, so a second applier would fail its standing on the first finding's test: one pair at a time (producer, review R1).
 - A reference that gains an import breaks each planted fault copied alone into a temp folder, and a mutant that cannot load fails for the wrong reason, hiding a dead control: refMutant rewrites the oracle import (producer, review R1).
 - Evidence is written only through tools/evidence.mjs and the hook lets no session delete it, so a run under the wrong phase leaves a file to commit. Producers record their own runs as `amend` (or `session`), appliers as `fix` (producer, review R1).
+- Review R2 found R1's class again, one step further out. The values are tested, but the step that applies them is not: the scenes' image placement, drawShapes, the calibration's hand-over to the run, the window's keys. A path is covered only when a check reads its output where the player meets it (a pixel, the run's own value, a real key), or when the whole path up to the Phaser call sits inside one tested function (producer, review R2).
 
 ## Rounds
 
 CYCLE 1: start | 2026-10-12T11:27:30-05:00 | build-complete | head=715cf1273aae0b59c06144832da824b449899187
 HUSH-REVIEW-R1: FAIL (head=cb90b060d62078e5a1fd373bcecfe9033b638a1a digest=46bcc3dcae54cdeaea737683412ffc32c145b9bcb1657c909c3b51facd8a88b9 blockers=0 majors=4 minors=5)
 FIX R1: 2026-10-12T15:32:21-05:00 | fixed=9 rebutted=0 superseded=0
+HUSH-REVIEW-R2: FAIL (head=2f2b8a264dd2a0f7b32a3405befd501d19b51b1c digest=eeca3e10f750b308ac7576c8a4694c1f3545a48dc8ab87925fc15fbe85872638 blockers=0 majors=5 minors=4)
 
 ## Checkpoint
 

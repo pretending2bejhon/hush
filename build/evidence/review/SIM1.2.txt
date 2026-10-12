@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: SIM1
+phase: review
+command: npx vitest run tests/sim/beat.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T15:41:01-05:00
+time-end: 2026-10-12T15:41:03-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed (3)
+   Start at  15:41:02
+   Duration  767ms (tests 81%, transform 14%, import 4%, worker 1%)
+
+--- end ---

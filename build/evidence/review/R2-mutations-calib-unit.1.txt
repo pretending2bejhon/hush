@@ -1,0 +1,90 @@
+HUSH-EVIDENCE v1
+id: R2-mutations-calib-unit
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/pristine run-display,run-inputlag,room-art-edge,creature-squash,beat-warn,depth-mote,playframe-ring,ending-card
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T17:08:29-05:00
+time-end: 2026-10-12T17:08:57-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+
+== run-display (src/game/run.ts): SURVIVED (restored true)
+   - const display = displaySec(avOffset);
+   + const display = displaySec(0);
+   pass  vitest run tests/game tests/clock tests/input
+        Test Files  5 passed (5)
+        Tests  38 passed (38)
+
+== run-inputlag (src/game/run.ts): SURVIVED (restored true)
+   - - inputLagSec(avOffset, inputBias)) * 240
+   + - inputLagSec(0, 0)) * 240
+   pass  vitest run tests/game tests/clock tests/input
+        Test Files  5 passed (5)
+        Tests  38 passed (38)
+
+== room-art-edge (src/render/room-art.ts): KILLED (restored true)
+   - if (codeAt(room, c - 1, r) !== CODE.SOLID) out.push({ k: 'rect', x, y, w: LINE_PX
+   + if (codeAt(room, c - 1, r) === CODE.EMPTY) out.push({ k: 'rect', x, y, w: LINE_PX
+   FAIL(1)  vitest run tests/render
+        × draws every chunk of every room with the reference shapes 12ms
+        Test Files  1 failed | 5 passed (6)
+        Tests  1 failed | 31 passed (32)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/render/room-art.test.mjs > RN1 room art > draws every chunk of every room with the reference shapes
+        AssertionError: 01-wake 0: 344 shapes, want 347
+
+== creature-squash (src/render/creature.ts): KILLED (restored true)
+   - export const SQUASH_STEPS = 6;
+   + export const SQUASH_STEPS = 5;
+   FAIL(1)  vitest run tests/render
+        FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through room 6, right then jump held
+        AssertionError: room 6, right then jump held step 405 a 1 cam 0: [0] ellipse.y 627.5, want 628.75
+        FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws every frame of the rooms' witness runs as the reference does
+        AssertionError: room 1 step 693: creature: [0] ellipse.y 467.5, want 468.75
+        FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws the gauntlet's witness run as the reference does
+        AssertionError: room 11 step 1001: creature: [0] ellipse.y 587.5, want 588.75
+
+== beat-warn (src/render/beat-art.ts): KILLED (restored true)
+   - if (until <= C.TICKS_PER_BEAT) return
+   + if (until < C.TICKS_PER_BEAT) return
+   FAIL(1)  vitest run tests/render
+        × gives every entity the reference look, layer back or not 99ms
+        Test Files  1 failed | 5 passed (6)
+        Tests  1 failed | 31 passed (32)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/render/beat-art.test.mjs > RN3 beat art > gives every entity the reference look, layer back or not
+        AssertionError: 4 b 0 2046: expected { look: 'off', alpha: 0.25 } to deeply equal { look: 'warn', alpha: 0.25 }
+
+== depth-mote (src/render/depth-art.ts): KILLED (restored true)
+   - const sec = step / 240;
+   + const sec = step / 120;
+   FAIL(1)  vitest run tests/render
+        FAIL  tests/render/depth-art.test.mjs > RN4 depth > drifts the dust of every room
+        AssertionError: 01-wake motes 997: [0] rect.x 90.15969325305207, want 84.7023905277311
+        FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws every frame of the rooms' witness runs as the reference does
+        AssertionError: room 1 step 1: dust: [0] rect.x 79.2560352502042, want 79.25056152630702
+        FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws the gauntlet's witness run as the reference does
+        AssertionError: room 11 step 1: dust: [0] rect.x 78.553795556887, want 78.51618217461521
+
+== playframe-ring (src/render/play-frame.ts): SURVIVED (restored true)
+   - (iy / SUB + 5) * ZOOM
+   + (iy / SUB + 4) * ZOOM
+   pass  vitest run tests/render
+        Test Files  6 passed (6)
+        Tests  32 passed (32)
+
+== ending-card (src/render/ending-art.ts): KILLED (restored true)
+   - a: beatOfBar === i ? 1 : 0.3
+   + a: beatOfBar === i + 1 ? 1 : 0.3
+   FAIL(1)  vitest run tests/render
+        Tests  2 failed | 30 passed (32)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/render/ending-art.test.mjs > END1 ending art > lights one dot a beat and rests on the fourth
+        AssertionError: card 0: [0] ellipse.a 0.3, want 1
+        FAIL  tests/render/ending-art.test.mjs > END1 ending art > draws each frame of the ending: the rise, then the card on the music's beat
+        AssertionError: ending 65 71.86810000000233: [2] ellipse.a 1, want 0.3
+
+mutations: run-display SURVIVED, run-inputlag SURVIVED, room-art-edge KILLED, creature-squash KILLED, beat-warn KILLED, depth-mote KILLED, playframe-ring SURVIVED, ending-card KILLED
+--- end ---

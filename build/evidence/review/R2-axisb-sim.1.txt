@@ -1,0 +1,35 @@
+HUSH-EVIDENCE v1
+id: R2-axisb-sim
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2/axisb-sim.mjs <repo> 50
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T16:47:46-05:00
+time-end: 2026-10-12T16:47:53-05:00
+head: 2f2b8a264dd2a0f7b32a3405befd501d19b51b1c
+exit: 0
+--- output ---
+determinism 01-wake: clear at step 1618, checksum 6001f0f9 twice true, witness 6001f0f9, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 02-heartbeat: clear at step 1684, checksum 04febedf twice true, witness 04febedf, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 03-dash: clear at step 1588, checksum 593d0787 twice true, witness 593d0787, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 04-thorns: clear at step 1408, checksum 123057cb twice true, witness 123057cb, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 05-doors: clear at step 2222, checksum d181a484 twice true, witness d181a484, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 06-wave: clear at step 1920, checksum f3496b90 twice true, witness f3496b90, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 07-current: clear at step 1943, checksum 1c7b52e9 twice true, witness 1c7b52e9, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 08-steps: clear at step 1494, checksum e6a8f7ba twice true, witness e6a8f7ba, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 09-gates: clear at step 1905, checksum 9498a96d twice true, witness 9498a96d, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 10-crown: clear at step 2388, checksum 5b909a19 twice true, witness 5b909a19, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+determinism 11-gauntlet: clear at step 14278, checksum b3715ef7 twice true, witness b3715ef7, save() equal twice true, equal to the oracle at the clear true and at every step true: ok
+layers room 1: cleared by the tick of step 1617, layer bits gained 2 (want 2) by the tick of step 2058, bar 5 line step 2058, 4.279 beats after the clear: ok
+layers room 2: cleared by the tick of step 1683, layer bits gained 4 (want 4) by the tick of step 2058, bar 5 line step 2058, 3.638 beats after the clear: ok
+layers room 3: cleared by the tick of step 1587, layer bits gained 8 (want 8) by the tick of step 2058, bar 5 line step 2058, 4.571 beats after the clear: ok
+layers room 4: cleared by the tick of step 1407, layer bits gained 16 (want 16) by the tick of step 1646, bar 4 line step 1646, 2.321 beats after the clear: ok
+layers room 5: cleared by the tick of step 2221, layer bits gained 32 (want 32) by the tick of step 2469, bar 6 line step 2469, 2.407 beats after the clear: ok
+layers room 6: cleared by the tick of step 1919, layer bits gained 64 (want 64) by the tick of step 2058, bar 5 line step 2058, 1.343 beats after the clear: ok
+layers room 7: cleared by the tick of step 1942, layer bits gained 128 (want 128) by the tick of step 2058, bar 5 line step 2058, 1.119 beats after the clear: ok
+layers room 8: cleared by the tick of step 1493, layer bits gained 256 (want 256) by the tick of step 1646, bar 4 line step 1646, 1.485 beats after the clear: ok
+layers room 9: cleared by the tick of step 1904, layer bits gained 512 (want 512) by the tick of step 2058, bar 5 line step 2058, 1.489 beats after the clear: ok
+layers room 10: cleared by the tick of step 2387, layer bits gained 1024 (want 1024) by the tick of step 2880, bar 7 line step 2880, 4.793 beats after the clear: ok
+wave: 510 form changes over 11 witnesses and 50 jittered runs each, 0 off a portal of their kind; the wave entered in rooms 6, 7, 9, 10, 11; W cells in rooms 6, 7, 9, 10, 11
+axisb-sim: PASS
+--- end ---
