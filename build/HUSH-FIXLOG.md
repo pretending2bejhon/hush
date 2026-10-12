@@ -124,3 +124,5 @@ Opened 2026-10-12T17:55-05:00 by the producer (Opus standing in for Fable). Find
   - R2-MINOR3: the tapper records the taps it lands, and the check judges the values in use against those taps. A verifier amendment.
   - R2-MINOR4: the two stale item lines of the spec (an amendment).
 
+RESOLVED: HUSH-PHASE3-ESCALATE: R2-count-not-dropping | 2026-10-12T17:55:00-05:00 | f266a19d | 2026-10-12T18:00:49-05:00 | "A, go on with FIX R2" | next: producer
+
