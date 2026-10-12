@@ -17,7 +17,7 @@
     "smoke": "vite build && node tools/probe-smoke.mjs",
     "test": "node tools/test-all.mjs",
     "test:unit": "vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render",
-    "test:av": "vitest run tests/audio tests/sim/progression.test.ts",
+    "test:av": "vitest run tests/audio tests/sim/progression.test.mjs",
     "test:calibration": "vitest run tests/input/calibrate.test.ts",
     "test:verifiers": "vitest run tests/tools",
     "probe:console": "vite build && node tools/probe-play.mjs --check console,play,text && node tools/probe-play.mjs --channel edge --headed --check console,play,text",
