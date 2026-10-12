@@ -1,0 +1,24 @@
+HUSH-EVIDENCE v1
+id: R1-axisb-sim
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/wave-portals.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mut/hush
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T13:25:35-05:00
+time-end: 2026-10-12T13:26:24-05:00
+head: cb90b060d62078e5a1fd373bcecfe9033b638a1a
+exit: 0
+--- output ---
+wave: 2006 form changes, 0 off a portal; wave form seen in rooms 1-5: 0 steps
+layers: room 1: cleared on step 471, layer 1 back on step 823 (bar 2, 1.467 s later), layers 0x0 -> 0x2 OK
+layers: room 2: cleared on step 1332, layer 2 back on step 1646 (bar 4, 1.308 s later), layers 0x2 -> 0x6 OK
+layers: room 3: cleared on step 2192, layer 3 back on step 2469 (bar 6, 1.154 s later), layers 0x6 -> 0xe OK
+layers: room 4: cleared on step 3052, layer 4 back on step 3292 (bar 8, 1.000 s later), layers 0xe -> 0x1e OK
+layers: room 5: cleared on step 3912, layer 5 back on step 4115 (bar 10, 0.846 s later), layers 0x1e -> 0x3e OK
+layers: room 6: cleared on step 4772, layer 6 back on step 4938 (bar 12, 0.692 s later), layers 0x3e -> 0x7e OK
+layers: room 7: cleared on step 5632, layer 7 back on step 5760 (bar 14, 0.533 s later), layers 0x7e -> 0xfe OK
+layers: room 8: cleared on step 6491, layer 8 back on step 6995 (bar 17, 2.100 s later), layers 0xfe -> 0x1fe OK
+layers: room 9: cleared on step 7763, layer 9 back on step 8229 (bar 20, 1.942 s later), layers 0x1fe -> 0x3fe OK
+layers: room 10: cleared on step 9034, layer 10 back on step 9463 (bar 23, 1.788 s later), layers 0x3fe -> 0x7fe OK
+layers: PASS: one layer per room, each on the bar line the sim and the audio share; the run now in room 11 with layers 0x7fe
+--- end ---

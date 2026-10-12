@@ -1,0 +1,34 @@
+HUSH-EVIDENCE v1
+id: R1-x7-inpage
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/x7-browser.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mut/hush
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T13:28:43-05:00
+time-end: 2026-10-12T13:30:17-05:00
+head: cb90b060d62078e5a1fd373bcecfe9033b638a1a
+exit: 0
+--- output ---
+x7: room  1: sim sampled at steps 2055 and 2059 around 2058
+x7: room  1: pendingAt 2058 (bar 5, 8.571 s after origin); gate 1 before 0 after 1; sim layer 1 before off after on; other gates [*,0,0,0,0,0,0,0,0,0] OK
+x7: room  2: sim sampled at steps 2054 and 2062 around 2058
+x7: room  2: pendingAt 2058 (bar 5, 8.571 s after origin); gate 2 before 0 after 1; sim layer 2 before off after on; other gates [1,*,0,0,0,0,0,0,0,0] OK
+x7: room  3: sim sampled at steps 2055 and 2063 around 2058
+x7: room  3: pendingAt 2058 (bar 5, 8.571 s after origin); gate 3 before 0 after 1; sim layer 3 before off after on; other gates [1,1,*,0,0,0,0,0,0,0] OK
+x7: room  4: sim sampled at steps 1642 and 1650 around 1646
+x7: room  4: pendingAt 1646 (bar 4, 6.857 s after origin); gate 4 before 0 after 1; sim layer 4 before off after on; other gates [1,1,1,*,0,0,0,0,0,0] OK
+x7: room  5: sim sampled at steps 2466 and 2470 around 2469
+x7: room  5: pendingAt 2469 (bar 6, 10.286 s after origin); gate 5 before 0 after 1; sim layer 5 before off after on; other gates [1,1,1,1,*,0,0,0,0,0] OK
+x7: room  6: sim sampled at steps 2054 and 2063 around 2058
+x7: room  6: pendingAt 2058 (bar 5, 8.571 s after origin); gate 6 before 0 after 1; sim layer 6 before off after on; other gates [1,1,1,1,1,*,0,0,0,0] OK
+x7: room  7: sim sampled at steps 2054 and 2062 around 2058
+x7: room  7: pendingAt 2058 (bar 5, 8.571 s after origin); gate 7 before 0 after 1; sim layer 7 before off after on; other gates [1,1,1,1,1,1,*,0,0,0] OK
+x7: room  8: sim sampled at steps 1642 and 1650 around 1646
+x7: room  8: pendingAt 1646 (bar 4, 6.857 s after origin); gate 8 before 0 after 1; sim layer 8 before off after on; other gates [1,1,1,1,1,1,1,*,0,0] OK
+x7: room  9: sim sampled at steps 2054 and 2062 around 2058
+x7: room  9: pendingAt 2058 (bar 5, 8.571 s after origin); gate 9 before 0 after 1; sim layer 9 before off after on; other gates [1,1,1,1,1,1,1,1,*,0] OK
+x7: room 10: sim sampled at steps 2878 and 2886 around 2880
+x7: room 10: pendingAt 2880 (bar 7, 12.000 s after origin); gate 10 before 0 after 1; sim layer 10 before off after on; other gates [1,1,1,1,1,1,1,1,1,*] OK
+x7: console errors 0, page errors 0
+x7: PASS (every layer back on its bar line, sim and gate together)
+--- end ---

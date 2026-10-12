@@ -1,0 +1,29 @@
+HUSH-EVIDENCE v1
+id: R1-playtest-dom
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/playtest-dom.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mut/hush
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T13:30:23-05:00
+time-end: 2026-10-12T13:32:47-05:00
+head: cb90b060d62078e5a1fd373bcecfe9033b638a1a
+exit: 0
+--- output ---
+default calibration screen: canvas 1220x686 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y693","Music engine: Strudel, AGPL-3.0-or-later @y693"]; #playtest hidden=true text="" top=0; text objects 0 OK
+default in the gauntlet: canvas 1220x686 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y693","Music engine: Strudel, AGPL-3.0-or-later @y693"]; #playtest hidden=true text="" top=0; text objects 0 OK
+default halfway through the rise: canvas 1220x686 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y693","Music engine: Strudel, AGPL-3.0-or-later @y693"]; #playtest hidden=true text="" top=0; text objects 0 OK
+default card up: canvas 1220x686 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y693","Music engine: Strudel, AGPL-3.0-or-later @y693"]; #playtest hidden=true text="" top=0; text objects 0 OK
+default card up, viewport 800x450: canvas 740x416 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y423","Music engine: Strudel, AGPL-3.0-or-later @y423"]; #playtest hidden=true text="" top=0; text objects 0 OK
+default card up, viewport 1920x1080: canvas 1860x1046 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y1053","Music engine: Strudel, AGPL-3.0-or-later @y1053"]; #playtest hidden=true text="" top=0; text objects 0 OK
+default card up, viewport 900x1200: canvas 900x506 at (0,329); elements over the canvas []; texts ["Source (AGPL-3.0) @y1173","Music engine: Strudel, AGPL-3.0-or-later @y1173"]; #playtest hidden=true text="" top=0; text objects 0 OK
+default: console errors 0, page errors 0
+?playtest calibration screen: canvas 1220x686 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y693","Music engine: Strudel, AGPL-3.0-or-later @y693"]; #playtest hidden=true text="" top=0; text objects 0 OK
+?playtest in the gauntlet: canvas 1220x686 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y693","Music engine: Strudel, AGPL-3.0-or-later @y693"]; #playtest hidden=true text="" top=0; text objects 0 OK
+?playtest halfway through the rise: canvas 1220x686 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y693","Music engine: Strudel, AGPL-3.0-or-later @y693"]; #playtest hidden=true text="" top=0; text objects 0 OK
+?playtest card up: canvas 1220x686 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y693","Music engine: Strudel, AGPL-3.0-or-later @y693","run 0:59 · deaths 0 @y693"]; #playtest hidden=false text="run 0:59 · deaths 0" top=692; text objects 0 OK
+?playtest card up, viewport 800x450: canvas 740x416 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y423","Music engine: Strudel, AGPL-3.0-or-later @y423","run 0:59 · deaths 0 @y423"]; #playtest hidden=false text="run 0:59 · deaths 0" top=422; text objects 0 OK
+?playtest card up, viewport 1920x1080: canvas 1860x1046 at (30,0); elements over the canvas []; texts ["Source (AGPL-3.0) @y1053","Music engine: Strudel, AGPL-3.0-or-later @y1053","run 0:59 · deaths 0 @y1053"]; #playtest hidden=false text="run 0:59 · deaths 0" top=1052; text objects 0 OK
+?playtest card up, viewport 900x1200: canvas 900x506 at (0,329); elements over the canvas []; texts ["Source (AGPL-3.0) @y1173","Music engine: Strudel, AGPL-3.0-or-later @y1173","run 0:59 · deaths 0 @y1173"]; #playtest hidden=false text="run 0:59 · deaths 0" top=1172; text objects 0 OK
+?playtest: console errors 0, page errors 0
+playtest-dom: PASS
+--- end ---

@@ -49,6 +49,7 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 ## Rounds
 
 CYCLE 1: start | 2026-10-12T11:27:30-05:00 | build-complete | head=715cf1273aae0b59c06144832da824b449899187
+HUSH-REVIEW-R1: FAIL (head=cb90b060d62078e5a1fd373bcecfe9033b638a1a digest=46bcc3dcae54cdeaea737683412ffc32c145b9bcb1657c909c3b51facd8a88b9 blockers=0 majors=4 minors=5)
 
 ## Checkpoint
 

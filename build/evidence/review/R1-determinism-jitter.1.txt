@@ -1,0 +1,34 @@
+HUSH-EVIDENCE v1
+id: R1-determinism-jitter
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/jitter-margin.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mut/hush 400
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T13:26:32-05:00
+time-end: 2026-10-12T13:28:43-05:00
+head: cb90b060d62078e5a1fd373bcecfe9033b638a1a
+exit: 0
+--- output ---
+determinism 01-wake.json: run 1 6001f0f9 at step 1618, run 2 6001f0f9 at step 1618, witness 6001f0f9, full state equal
+determinism 02-heartbeat.json: run 1 04febedf at step 1684, run 2 04febedf at step 1684, witness 04febedf, full state equal
+determinism 03-dash.json: run 1 593d0787 at step 1588, run 2 593d0787 at step 1588, witness 593d0787, full state equal
+determinism 04-thorns.json: run 1 123057cb at step 1408, run 2 123057cb at step 1408, witness 123057cb, full state equal
+determinism 05-doors.json: run 1 d181a484 at step 2222, run 2 d181a484 at step 2222, witness d181a484, full state equal
+determinism 06-wave.json: run 1 f3496b90 at step 1920, run 2 f3496b90 at step 1920, witness f3496b90, full state equal
+determinism 07-current.json: run 1 1c7b52e9 at step 1943, run 2 1c7b52e9 at step 1943, witness 1c7b52e9, full state equal
+determinism 08-steps.json: run 1 e6a8f7ba at step 1494, run 2 e6a8f7ba at step 1494, witness e6a8f7ba, full state equal
+determinism 09-gates.json: run 1 9498a96d at step 1905, run 2 9498a96d at step 1905, witness 9498a96d, full state equal
+determinism 10-crown.json: run 1 5b909a19 at step 2388, run 2 5b909a19 at step 2388, witness 5b909a19, full state equal
+determinism 11-gauntlet.json: run 1 b3715ef7 at step 14278, run 2 b3715ef7 at step 14278, witness b3715ef7, full state equal
+jitter 01-wake.json: 100.00% of 8000 jittered runs clear; 0 of 400 seeds under 18/20 (0.0%); worst seed 20/20
+jitter 02-heartbeat.json: 100.00% of 8000 jittered runs clear; 0 of 400 seeds under 18/20 (0.0%); worst seed 20/20
+jitter 03-dash.json: 100.00% of 8000 jittered runs clear; 0 of 400 seeds under 18/20 (0.0%); worst seed 20/20
+jitter 04-thorns.json: 97.53% of 8000 jittered runs clear; 9 of 400 seeds under 18/20 (2.3%); worst seed 16/20
+jitter 05-doors.json: 99.96% of 8000 jittered runs clear; 0 of 400 seeds under 18/20 (0.0%); worst seed 19/20
+jitter 06-wave.json: 100.00% of 8000 jittered runs clear; 0 of 400 seeds under 18/20 (0.0%); worst seed 20/20
+jitter 07-current.json: 100.00% of 8000 jittered runs clear; 0 of 400 seeds under 18/20 (0.0%); worst seed 20/20
+jitter 08-steps.json: 100.00% of 8000 jittered runs clear; 0 of 400 seeds under 18/20 (0.0%); worst seed 20/20
+jitter 09-gates.json: 98.97% of 8000 jittered runs clear; 0 of 400 seeds under 18/20 (0.0%); worst seed 18/20
+jitter 10-crown.json: 98.14% of 8000 jittered runs clear; 1 of 400 seeds under 18/20 (0.3%); worst seed 17/20
+jitter 11-gauntlet.json: 100.00% of 8000 jittered runs clear; 0 of 400 seeds under 18/20 (0.0%); worst seed 20/20
+--- end ---

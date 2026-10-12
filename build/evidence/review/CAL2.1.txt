@@ -1,0 +1,28 @@
+HUSH-EVIDENCE v1
+id: CAL2
+phase: review
+command: npm run probe:flash
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T11:36:47-05:00
+time-end: 2026-10-12T11:40:02-05:00
+head: cb90b060d62078e5a1fd373bcecfe9033b638a1a
+exit: 0
+--- output ---
+
+> hush@0.0.0 probe:flash
+> vite build && node tools/probe-flash.mjs --calibration
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 46 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-Dr5PQjya.js  2,091.07 kB │ gzip: 592.77 kB
+
+[32m✓ built in 626ms[39m
+flash: calibration up 43.9 s: clicks 48, count-in fills 8, rings 48, values 0 0 (2621 frames, 2181 analyser samples)
+flash: 11568 frames over 193.2 s, median 15.71 ms; general max 9592 px, red max 0 px (limit 25600)
+flash: PASS
+--- end ---

@@ -1,0 +1,57 @@
+HUSH-EVIDENCE v1
+id: R1-mutations-unit2
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mutate2.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mut/hush <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/pristine
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T13:25:26-05:00
+time-end: 2026-10-12T13:25:35-05:00
+head: cb90b060d62078e5a1fd373bcecfe9033b638a1a
+exit: 0
+--- output ---
+C1-clock-settle | device clock (CL1) | KILLED (tests fail)
+        Test Files  1 failed (1)
+        Tests  7 failed | 1 passed (8)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/clock/output-clock.test.mjs > CL1 device-clock line against the reference port > agrees: steady
+C2-clock-fallback | device clock (CL1) | KILLED (tests fail)
+        Test Files  1 failed (1)
+        Tests  1 failed | 7 passed (8)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/clock/output-clock.test.mjs > CL1 device-clock line against the reference port > agrees on an engine without output timestamps, and on one that neve
+C3-clock-window | device clock (CL1) | KILLED (tests fail)
+        Test Files  1 failed (1)
+        Tests  5 failed | 3 passed (8)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/clock/output-clock.test.mjs > CL1 device-clock line against the reference port > agrees: steady
+C4-clock-trusted | device clock (CL1) | SURVIVED (tests pass)
+        Test Files  1 passed (1)
+        Tests  8 passed (8)
+C5-clock-resync | device clock (CL1) | SURVIVED (tests pass)
+        Test Files  1 passed (1)
+        Tests  8 passed (8)
+C6-clock-burst | device clock (CL1) | KILLED (tests fail)
+        Test Files  1 failed (1)
+        Tests  5 failed | 3 passed (8)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/clock/output-clock.test.mjs > CL1 device-clock line against the reference port > agrees: steady
+T1-transport-drop | transport (AU2) | SURVIVED (tests pass)
+        Test Files  1 passed (1)
+        Tests  7 passed (7)
+T2-transport-gauntlet | transport (AU2) | KILLED (tests fail)
+        Test Files  1 failed (1)
+        Tests  2 failed | 5 passed (7)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/audio/scheduler.test.mjs > AU2 transport > maps the gauntlet: from the start bar the pattern starts again at cycle 0
+K1-keys-step | keys (IN1) | KILLED (tests fail)
+        Test Files  1 failed (1)
+        Tests  2 failed | 3 passed (5)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/input/keys.test.mjs > IN1 keys > applies each event at its step, holds the OR of the keys down, keeps mapped keys from the page
+K2-keys-prevent | keys (IN1) | KILLED (tests fail)
+        Test Files  1 failed (1)
+        Tests  2 failed | 3 passed (5)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/input/keys.test.mjs > IN1 keys > applies each event at its step, holds the OR of the keys down, keeps mapped keys from the page
+restored: yes, every mutated file equals HEAD
+--- end ---

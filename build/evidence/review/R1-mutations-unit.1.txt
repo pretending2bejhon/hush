@@ -1,0 +1,173 @@
+HUSH-EVIDENCE v1
+id: R1-mutations-unit
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mut/hush <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/pristine
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T13:25:01-05:00
+time-end: 2026-10-12T13:25:26-05:00
+head: cb90b060d62078e5a1fd373bcecfe9033b638a1a
+exit: 0
+--- output ---
+M01-physics-constant | physics (SIM1/SIM2) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-base.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-dash.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-beat.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-wave.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-gauntlet.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\beat.test.mjs
+        ❯ tests/sim/oracle-wave.test.mjs (5 tests | 5 failed) 33ms
+        ❯ tests/sim/oracle-dash.test.mjs (2 tests | 2 failed) 37ms
+        ❯ tests/sim/oracle-base.test.mjs (4 tests | 3 failed) 49ms
+        ❯ tests/sim/oracle-beat.test.mjs (6 tests | 5 failed) 89ms
+        ❯ tests/sim/beat.test.mjs (3 tests | 1 failed) 687ms
+        Test Files  5 failed | 1 passed (6)
+M02-step-respawn | step function (SIM2) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-base.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-dash.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-beat.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-wave.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-gauntlet.test.mjs
+        ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 2 failed) 50ms
+        ❯ tests/sim/oracle-wave.test.mjs (5 tests | 5 failed) 69ms
+        ❯ tests/sim/oracle-beat.test.mjs (6 tests | 6 failed) 148ms
+        ❯ tests/sim/oracle-base.test.mjs (4 tests | 1 failed) 275ms
+        ❯ tests/sim/oracle-dash.test.mjs (2 tests | 1 failed) 300ms
+        Test Files  5 failed (5)
+M03-beat-entityOn | beat binding (SIM1) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\beat.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\progression.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\oracle-beat.test.mjs
+        ❯ tests/sim/beat.test.mjs (3 tests | 1 failed) 92ms
+        ❯ tests/sim/progression.test.mjs (11 tests | 2 failed) 96ms
+        ❯ tests/sim/oracle-beat.test.mjs (6 tests | 1 failed) 1163ms
+        Test Files  3 failed (3)
+        Tests  4 failed | 16 passed (20)
+        Duration  1.60s (tests 66%, transform 25%, import 7%, worker 1%)
+M04-beat-unlockBar | layer return bar (SIM1, X7 sim side) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\beat.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\progression.test.mjs
+        ❯ tests/sim/progression.test.mjs (11 tests | 1 failed) 71ms
+        ❯ tests/sim/beat.test.mjs (3 tests | 1 failed) 553ms
+        Test Files  2 failed (2)
+        Tests  2 failed | 12 passed (14)
+        Duration  881ms (tests 58%, transform 34%, import 7%, worker 1%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+M05-room-tile | room content (CT1, W1) | KILLED (tests fail)
+    exit 1: tools\spec-content.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\--tree
+        spec-content: FAIL, 1 file(s)
+    exit 0: tools\replay.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\--all
+        replay: PASS, 11 witness(es)
+M06-compiler-codes | room compiler (RM1) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\rooms\compile.test.mjs
+        ❯ tests/rooms/compile.test.mjs (5 tests | 3 failed) 114ms
+        Test Files  1 failed (1)
+        Tests  3 failed | 2 passed (5)
+        Duration  416ms (tests 44%, transform 42%, import 12%, worker 2%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles every room of the spec to the oracle structure
+M07-gauntlet-kick | gauntlet generator (RM1) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\rooms\compile.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\rooms\gauntlet-pattern.test.mjs
+        ❯ tests/rooms/compile.test.mjs (5 tests | 2 failed) 194ms
+        Test Files  1 failed | 1 passed (2)
+        Tests  2 failed | 5 passed (7)
+        Duration  738ms (tests 64%, transform 25%, import 10%, worker 1%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles the world in file order and refuses a gap
+M07b-gauntlet-hat | gauntlet generator, hat row (RM1, exploratory) | SURVIVED (tests pass)
+    exit 0: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\rooms\compile.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\rooms\gauntlet-pattern.test.mjs
+        Test Files  2 passed (2)
+        Tests  7 passed (7)
+        Duration  729ms (tests 50%, transform 35%, import 14%, worker 1%)
+M08-track-clap | track beat binding (CT1, section 7) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\rooms\gauntlet-pattern.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\audio\track.test.mjs
+        ❯ tests/rooms/gauntlet-pattern.test.mjs (2 tests | 1 failed) 211ms
+        Test Files  1 failed | 1 passed (2)
+        Tests  1 failed | 3 passed (4)
+        Duration  557ms (transform 45%, tests 33%, import 20%, worker 1%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/rooms/gauntlet-pattern.test.mjs > the gauntlet is built from the pattern > puts every obstacle on an onset of its layer
+    exit 1: tools\spec-content.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\--tree
+        spec-content: FAIL, 1 file(s)
+M09-audio-capture | audio track capture (AU1) | SURVIVED (tests pass)
+    exit 0: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\audio\track.test.mjs
+        Test Files  1 passed (1)
+        Tests  2 passed (2)
+        Duration  577ms (transform 63%, import 23%, tests 13%, worker 1%)
+M10-transport-late | transport (AU2) | SURVIVED (tests pass)
+    exit 0: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\audio\scheduler.test.mjs
+        Test Files  1 passed (1)
+        Tests  7 passed (7)
+        Duration  765ms (tests 47%, transform 36%, import 17%, worker 1%)
+M11-gates-mask | gates (AU3) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\audio\gates.test.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\tests\sim\progression.test.mjs
+        ❯ tests/audio/gates.test.mjs (2 tests | 1 failed) 11ms
+        Test Files  1 failed | 1 passed (2)
+        Tests  1 failed | 12 passed (13)
+        Duration  569ms (transform 69%, tests 17%, import 13%, worker 2%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/audio/gates.test.mjs > AU3 layer gates > sets every gate to the mask of the layers back on a restart
+M12-clock-jump | device clock (CL1) | SURVIVED (tests pass)
+    exit 0: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\clock\output-clock.test.mjs
+        Test Files  1 passed (1)
+        Tests  8 passed (8)
+        Duration  323ms (tests 60%, transform 29%, import 9%, worker 3%)
+M13-driver-target | driver (CL2) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\clock\driver.test.mjs
+        ❯ tests/clock/driver.test.mjs (4 tests | 1 failed) 22ms
+        Test Files  1 failed (1)
+        Tests  1 failed | 3 passed (4)
+        Duration  292ms (transform 65%, tests 17%, import 14%, worker 4%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/clock/driver.test.mjs > CL2 tick driver > takes the target step from the heard time, the origin and the display shift: one step past the time
+M14-keys-repeat | keys (IN1) | SURVIVED (tests pass)
+    exit 0: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\input\keys.test.mjs
+        Test Files  1 passed (1)
+        Tests  5 passed (5)
+        Duration  215ms (transform 65%, import 21%, tests 7%, worker 6%)
+M15-calibrate-bias | calibration math (CAL1, X8) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\input\calibrate.test.ts
+        ❯ tests/input/calibrate.test.ts (5 tests | 2 failed) 12ms
+        Test Files  1 failed (1)
+        Tests  2 failed | 3 passed (5)
+        Duration  249ms (transform 59%, import 19%, tests 16%, worker 6%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/input/calibrate.test.ts > calibration (X8) > returns avOffset and inputBias within 5 ms of the injected values
+M16-limiter-latch | flash limiter (FX1) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\fx\flash-limiter.test.mjs
+        ❯ tests/fx/flash-limiter.test.mjs (3 tests | 1 failed) 9ms
+        Test Files  1 failed (1)
+        Tests  1 failed | 2 passed (3)
+        Duration  278ms (transform 73%, import 15%, tests 8%, worker 4%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/fx/flash-limiter.test.mjs > FX1 flash limiter > lets changes through until the frame would reach the limit, then keeps them under 0.1
+M17-art-camera | room art and camera (RN1) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\render\room-art.test.mjs
+        ❯ tests/render/room-art.test.mjs (3 tests | 1 failed) 97ms
+        Test Files  1 failed (1)
+        Tests  1 failed | 2 passed (3)
+        Duration  466ms (transform 55%, tests 30%, import 13%, worker 1%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/render/room-art.test.mjs > RN1 room art > frames the view on the creature, clamped to the room, in whole canvas px
+M18-art-trail | creature (RN2) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\render\creature.test.mjs
+        ❯ tests/render/creature.test.mjs (14 tests | 6 failed) 1242ms
+        Test Files  1 failed (1)
+        Tests  6 failed | 8 passed (14)
+        Duration  1.66s (tests 83%, transform 14%, import 3%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 06-wave
+M19-art-warn | beat entities (RN3) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\render\beat-art.test.mjs
+        ❯ tests/render/beat-art.test.mjs (4 tests | 2 failed) 34ms
+        Test Files  1 failed (1)
+        Tests  2 failed | 2 passed (4)
+        Duration  505ms (transform 75%, import 14%, tests 10%, worker 1%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/render/beat-art.test.mjs > RN3 beat art > gives every entity the reference look, layer back or not
+M20-art-bands | depth (RN4) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\render\depth-art.test.mjs
+        ❯ tests/render/depth-art.test.mjs (4 tests | 1 failed) 82ms
+        Test Files  1 failed (1)
+        Tests  1 failed | 3 passed (4)
+        Duration  469ms (transform 58%, tests 27%, import 14%, worker 1%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/render/depth-art.test.mjs > RN4 depth > draws the four bands of every room
+M21-art-rise | ending art (END1) | KILLED (tests fail)
+    exit 1: node_modules\vitest\vitest.mjs ..\..\..\..\..\..\..\..\..\..\code\hush\run ..\..\..\..\..\..\..\..\..\..\code\hush\tests\render\ending-art.test.mjs
+        ❯ tests/render/ending-art.test.mjs (3 tests | 1 failed) 10ms
+        Test Files  1 failed (1)
+        Tests  1 failed | 2 passed (3)
+        Duration  427ms (transform 79%, import 16%, tests 4%, worker 2%)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+        FAIL  tests/render/ending-art.test.mjs > END1 ending art > rises over four bars
+restored: yes, every mutated file equals HEAD
+--- end ---

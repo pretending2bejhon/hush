@@ -1,0 +1,36 @@
+HUSH-EVIDENCE v1
+id: R1-room-entry-stalls
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/stall-probe.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mut/hush
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T13:44:39-05:00
+time-end: 2026-10-12T13:46:33-05:00
+head: cb90b060d62078e5a1fd373bcecfe9033b638a1a
+exit: 0
+--- output ---
+renderer: ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11)
+(a) a run started at each room (startRoom, as the av probe does):
+  room  1: longest frame 17.1 ms (0 over 50 ms); late shifted +0, dropped +0
+  room  2: longest frame 17.1 ms (0 over 50 ms); late shifted +0, dropped +0
+  room  3: longest frame 17.1 ms (0 over 50 ms); late shifted +0, dropped +0
+  room  4: longest frame 17.1 ms (0 over 50 ms); late shifted +0, dropped +0
+  room  5: longest frame 17.1 ms (0 over 50 ms); late shifted +0, dropped +0
+  room  6: longest frame 17.0 ms (0 over 50 ms); late shifted +0, dropped +0
+  room  7: longest frame 16.9 ms (0 over 50 ms); late shifted +0, dropped +0
+  room  8: longest frame 17.0 ms (0 over 50 ms); late shifted +0, dropped +0
+  room  9: longest frame 17.1 ms (0 over 50 ms); late shifted +0, dropped +0
+  room 10: longest frame 17.2 ms (0 over 50 ms); late shifted +0, dropped +0
+  room 11: longest frame 149.9 ms (1 over 50 ms); late shifted +0, dropped +0
+(b) walking into each room from the one before (witness clears the room, the next is baked in play):
+  into room  2: longest frame 17.0 ms (0 over 50 ms); late shifted +0, dropped +0
+  into room  3: longest frame 50.2 ms (1 over 50 ms); late shifted +0, dropped +0
+  into room  4: longest frame 17.0 ms (0 over 50 ms); late shifted +0, dropped +0
+  into room  5: longest frame 16.9 ms (0 over 50 ms); late shifted +0, dropped +0
+  into room  6: longest frame 17.0 ms (0 over 50 ms); late shifted +0, dropped +0
+  into room  7: longest frame 17.0 ms (0 over 50 ms); late shifted +0, dropped +0
+  into room  8: longest frame 17.0 ms (0 over 50 ms); late shifted +0, dropped +0
+  into room  9: longest frame 17.4 ms (0 over 50 ms); late shifted +0, dropped +0
+  into room 10: longest frame 16.9 ms (0 over 50 ms); late shifted +0, dropped +0
+  into room 11: longest frame 49.9 ms (0 over 50 ms); late shifted +0, dropped +0
+--- end ---

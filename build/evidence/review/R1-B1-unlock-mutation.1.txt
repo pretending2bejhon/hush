@@ -1,0 +1,61 @@
+HUSH-EVIDENCE v1
+id: R1-B1-unlock-mutation
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mutate-browser.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/mut/hush <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/01eccd82-1fb5-45e1-8358-527afef3a363/scratchpad/r1/pristine B1-run-unlock-bar
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T13:32:55-05:00
+time-end: 2026-10-12T13:38:38-05:00
+head: cb90b060d62078e5a1fd373bcecfe9033b638a1a
+exit: 0
+--- output ---
+B1-run-unlock-bar | the run's X7 wiring (GAME1): layer k unmuted one bar late
+  src/game/run.ts: "engine.unlockAt(pending, unlockBar(step));" -> "engine.unlockAt(pending, unlockBar(step) + 1);"
+  [exit 0] unit
+      Test Files  4 passed (4)
+      Tests  22 passed (22)
+  [exit 0] build
+      [32m✓ built in 1.73s[39m
+  [exit 0] smoke
+      smoke: page: ok: GET /hush/ 200
+      smoke: build-meta: ok: hush-build cb90b060d620
+      smoke: boot: ok: scenes ["calibration"]
+      smoke: canvas: ok: not blank (1220 by 686)
+      smoke: text: ok: title, link and notice only; no text object
+      smoke: requests: ok: every request answered below 400
+      smoke: console: ok: zero console and page errors
+      smoke: PASS (/hush/)
+  [exit 0] play (GAME1 acceptance + npm test e2e)
+      play: chrome headless: ending seen, texts read 9964 ms into it
+      play: chrome headless: console: ok: zero console and page errors
+      play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+      play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+      play: chrome headless: network: ok: 3 requests, all to the page's origin
+      play: chrome headless: storage: ok: nothing stored
+      play: chrome headless: visibility: ok: hidden: audio suspended, sim frozen; visible: both run on
+      play: chrome headless: PASS (console,play,text,network,storage,visibility)
+  [exit 1] av (X7, headed)
+      av: 2167 voices scheduled for 2142 onsets, 0 errors, 18 dropped, 0 shifted; clock 0.154 ms p-p, 0 resyncs; 68.6 s
+      av: silence peak 0.00e+0; windows rms 0.3983 0.4176 0.3952 0.3954 0.4100 0.3896 0.4042 0.3887 0.3887 0.3802
+      av: solos rms 0.3983 0.0733 0.0127 0.0476 0.0080 0.0293 0.0067 0.0158 0.0131 0.1194; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+      av: 18 late-dropped notes
+      av: FAIL
+  [exit 1] reviewer x7-browser
+      x7: room  5: sim sampled at steps 2468 and 2472 around 2469
+      x7: room  5: pendingAt 2469 (bar 6, 10.286 s after origin); gate 5 before 0 after 0; sim layer 5 before off after on; other gates [1,1,1,1,*,0,0,0,0,0] WRONG
+      x7: room  6: sim sampled at steps 2056 and 2060 around 2058
+      x7: room  6: pendingAt 2058 (bar 5, 8.571 s after origin); gate 6 before 0 after 0; sim layer 6 before off after on; other gates [1,1,1,1,1,*,0,0,0,0] WRONG
+      x7: room  7: sim sampled at steps 2056 and 2060 around 2058
+      x7: room  7: pendingAt 2058 (bar 5, 8.571 s after origin); gate 7 before 0 after 0; sim layer 7 before off after on; other gates [1,1,1,1,1,1,*,0,0,0] WRONG
+      x7: room  8: sim sampled at steps 1644 and 1648 around 1646
+      x7: room  8: pendingAt 1646 (bar 4, 6.857 s after origin); gate 8 before 0 after 0; sim layer 8 before off after on; other gates [1,1,1,1,1,1,1,*,0,0] WRONG
+      x7: room  9: sim sampled at steps 2056 and 2060 around 2058
+      x7: room  9: pendingAt 2058 (bar 5, 8.571 s after origin); gate 9 before 0 after 0; sim layer 9 before off after on; other gates [1,1,1,1,1,1,1,1,*,0] WRONG
+      x7: room 10: sim sampled at steps 2876 and 2884 around 2880
+      x7: room 10: pendingAt 2880 (bar 7, 12.000 s after origin); gate 10 before 0 after 0; sim layer 10 before off after on; other gates [1,1,1,1,1,1,1,1,1,*] WRONG
+      x7: console errors 0, page errors 0
+      x7: FAIL (10 room(s) where layer k did not come back on its bar line)
+  [exit 0] restore + rebuild pristine
+      file restored to HEAD
+B1-run-unlock-bar: KILLED: a test of the area fails
+--- end ---
