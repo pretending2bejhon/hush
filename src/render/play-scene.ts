@@ -1,23 +1,14 @@
 import * as Phaser from 'phaser';
 import { createFlashLimiter } from '../fx/flash-limiter.ts';
 import type { Run } from '../game/run.ts';
-import { FIELDS } from '../sim/sim.ts';
 import type { Room, Sim } from '../sim/types.ts';
 import { drawShapes, TILE_PX, ZOOM } from './art.ts';
 import type { Shape } from './art.ts';
-import { beatShapes, ringShapes } from './beat-art.ts';
-import { creatureShapes } from './creature.ts';
-import { depthBands, fogShapes, moteField, moteShapes, vignetteShapes } from './depth-art.ts';
+import { depthBands, fogShapes, moteField, vignetteShapes } from './depth-art.ts';
 import type { Mote } from './depth-art.ts';
-import { bakeChunks, cameraPx, roomShapes } from './room-art.ts';
+import { playFrame } from './play-frame.ts';
+import { bakeChunks, roomShapes } from './room-art.ts';
 
-const LAYERS = FIELDS.indexOf('layers');
-const VY = FIELDS.indexOf('vy');
-const FACING = FIELDS.indexOf('facing');
-const FORM = FIELDS.indexOf('form');
-const DEAD = FIELDS.indexOf('dead');
-const LOCK = FIELDS.indexOf('lock');
-const SUB = 256;
 // Back to front: the four bands 0 to 3 (far to near), the fog 4, the room's chunks 5, the beat entities and the
 // layer's ring 6, the creature 7, the dust 8, the vignette 9.
 const DEPTH_FOG = 4;
@@ -38,9 +29,10 @@ interface Baked {
 
 // The play scene (spec sections 10.1 and 10.6). The fog and the vignette are baked once when the scene is created;
 // the room's four parallax bands and its static geometry, one DynamicTexture per chunk of 128 columns, are baked once
-// on entering a room and shown at the camera. Every frame the beat entities, with the ring of a layer's return, are
-// drawn through the scene's flash limiter on one Graphics, the creature on another and the dust on a third, all from
-// the reference art's shapes (beat-art.ts, creature.ts, depth-art.ts).
+// on entering a room and shown at the camera. Every frame is one call of playFrame (play-frame.ts), read from the run's
+// sim: the scene sets its images' x from the camera it returns and draws its lists, the beat entities with the ring
+// of a layer's return (through the scene's flash limiter) on one Graphics, the creature on another and the dust on a
+// third, and nothing else.
 // The world view is 32 by 18 tiles at zoom 2.5; a wider room scrolls horizontally.
 // When the run finishes it hands over to the scene `ending`.
 export class PlayScene extends Phaser.Scene {
@@ -128,6 +120,8 @@ export class PlayScene extends Phaser.Scene {
     this.bakedSim = sim;
   }
 
+  // Every frame is playFrame's alone (section 10.6, "The frame"): the scene begins its limiter's frame, sets its
+  // images' x from the camera playFrame returns, keeps the levels for the next frame and draws the three lists.
   override update(): void {
     this.limiter.beginFrame();
     const run = this.run;
@@ -138,33 +132,14 @@ export class PlayScene extends Phaser.Scene {
     this.creature.clear();
     this.dust.clear();
     if (!sim || !room || !view) return;
-    const st = sim.status();
     // A new room, or a new run, bakes the room again.
-    if (this.bakedRoom !== room || this.bakedSim !== sim) this.bake(room, st.room, sim);
-    const saved = sim.save();
-    const ix = view.prevX + (view.x - view.prevX) * view.alpha;
-    const iy = view.prevY + (view.y - view.prevY) * view.alpha;
-    const centreX = ix / SUB + 5;
-    const camPx = cameraPx(room, centreX);
-    for (const b of this.baked) b.image.x = b.xAt(camPx);
-
-    const beat = beatShapes(room, sim.step, saved[LAYERS] ?? 0, camPx, this.levels, this.limiter);
-    this.levels = beat.levels;
-    drawShapes(this.beat, beat.shapes);
-    drawShapes(this.beat, ringShapes(run.track(), sim.step, centreX * ZOOM - camPx, (iy / SUB + 5) * ZOOM));
-
-    const creature = {
-      step: sim.step,
-      x: ix / SUB,
-      y: iy / SUB,
-      form: saved[FORM] ?? 0,
-      vy: saved[VY] ?? 0,
-      facing: saved[FACING] ?? 0,
-      dead: saved[DEAD] ?? 0,
-      lock: saved[LOCK] ?? 0,
-    };
-    drawShapes(this.creature, creatureShapes(creature, run.track(), camPx));
-    drawShapes(this.dust, moteShapes(this.field, sim.step));
+    if (this.bakedRoom !== room || this.bakedSim !== sim) this.bake(room, sim.status().room, sim);
+    const f = playFrame({ room, sim, view, track: run.track(), field: this.field, levels: this.levels, limiter: this.limiter });
+    for (const b of this.baked) b.image.x = b.xAt(f.camPx);
+    this.levels = f.levels;
+    drawShapes(this.beat, f.beat);
+    drawShapes(this.creature, f.creature);
+    drawShapes(this.dust, f.dust);
 
     if (run.finished() && !this.ended) {
       this.ended = true;
