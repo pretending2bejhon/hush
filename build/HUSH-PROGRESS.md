@@ -5,7 +5,7 @@ The Hush build scoreboard and journal. Under Items, one line per spec item at co
 ## Items
 
 S1: passes: true (evidence: build/evidence/S1.green.2.txt)
-SIM1: passes: false
+SIM1: passes: true (evidence: build/evidence/SIM1.green.1.txt)
 RM1: passes: false
 CT1: passes: false
 SIM2: passes: false
@@ -31,6 +31,7 @@ END1: passes: false
 ## Learnings
 
 - Phaser 4.2.1 types do not declare `create` on `Phaser.Scene`, so `override create()` fails tsc with TS4113 under `noImplicitOverride`; write `create()` without `override` (S1).
+- `src/sim/types.ts` imports `Gauntlet` from `src/rooms/gauntlet.ts` as section 14 writes it, so `tsc --noEmit` reports TS2307 from SIM1 until RM1 creates that module; the acceptance (vitest) and eslint are unaffected and `accept:game` is the first item that runs tsc (SIM1).
 
 ## Rounds
 

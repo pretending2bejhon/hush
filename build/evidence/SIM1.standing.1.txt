@@ -1,0 +1,55 @@
+HUSH-EVIDENCE v1
+id: SIM1
+phase: standing
+command: npm run standing
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-11T23:23:00-05:00
+time-end: 2026-10-11T23:23:08-05:00
+head: b238773fc2d890c84e0346015801eba653927578
+exit: 0
+--- output ---
+
+> hush@0.0.0 standing
+> node tools/standing.mjs
+
+standing: public-tree: node <repo>\tools\check-public.mjs
+check-public tree (162 files): clean (owner denylist, 4 names + 1 machine names)
+standing: public-tree: ok
+standing: public-history: node <repo>\tools\check-public.mjs --history HEAD
+check-public history (1 refs, 18 commits, 97 trees, 207 blobs): clean (owner denylist, 4 names + 1 machine names)
+standing: public-history: ok
+standing: protect: node <repo>\tools\protect.mjs --check
+protect: clean
+standing: protect: ok
+standing: gates: node <repo>\tools\gates.mjs --lint
+gates: ok, 5 line(s)
+standing: gates: ok
+standing: spec-content: node <repo>\tools\spec-content.mjs --check
+spec-content: spec clean, 13 entries
+standing: spec-content: ok
+standing: npm run smoke: node C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js run smoke
+
+> hush@0.0.0 smoke
+> vite build && node tools/probe-smoke.mjs
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 9 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-8-qyiLBF.js  1,379.67 kB │ gzip: 359.99 kB
+
+[32m✓ built in 674ms[39m
+smoke: page: ok: GET /hush/ 200
+smoke: build-meta: ok: hush-build b238773fc2d8
+smoke: boot: ok: scenes ["calibration"]
+smoke: canvas: ok: not blank (1220 by 686)
+smoke: text: ok: title, link and notice only; no text object
+smoke: requests: ok: every request answered below 400
+smoke: console: ok: zero console and page errors
+smoke: PASS (/hush/)
+standing: npm run smoke: ok
+standing: GREEN (1 item(s) passed, 0 mapped test file(s), 1 command(s))
+--- end ---
