@@ -16,7 +16,7 @@ PF-REPO: done | 2026-10-11T15:12:31-05:00 | git init -b main with the noreply id
 PF-HOOK: done | 2026-10-11T15:31:24-05:00 | tools/cap-hook.mjs and tests/tools/cap-hook.test.mjs written; red before the hook existed (150 of 150 failed, MODULE_NOT_FOUND), then green on the final hook file (150 of 150 passed, hook sha256 49f74193...c82e); each denial checked for its own reason; install and uninstall scripts written, their merge logic proven on a temp file under Windows PowerShell 5.1; install steps handed to the owner | evidence: build/evidence/session/PF-HOOK-red.1.txt, build/evidence/session/PF-HOOK-green.2.txt
 PF-HOOK-LIVE: done | 2026-10-11T15:59:08-05:00 | session 2: the first report read the managed settings ACL as unreadable (Get-Acl translated each rule to an account name and fails on ALL APPLICATION PACKAGES), fixed in 909b31ec to read rules by SID, hook test red then green (151 of 151); the armed crash test blocked one Bash call with a hook error and was consumed, that call uncounted; the three-call Sonnet subagent showed 4 events under one agent id (Read, Read, Glob, SubagentHandback), escalated and accepted by the owner as the three instructed calls plus one hand-back (proof.1 to proof.5); after the owner reinstalled 909b31ec's hook: two reports one call apart, both exit 0, calls 45 then 46, copies equal (87e5342a), admin-only yes (folder, hook, managed settings), onFailure block yes on all three events, version 2.1.295, no .claude folder | evidence: build/evidence/hook-live.proof.1.txt to build/evidence/hook-live.proof.7.txt
 PF-CONTROLS: open
-PF-CAP: open | the owner's words received 2026-10-11T16:00:10-05:00, whole message: "JHON-CAPS-RESIDUAL: all-sessions I accept the residual." | the GATES line is written by this session's last commit (hush-gate ends a spec session)
+PF-CAP: done | 2026-10-11T16:00:17-05:00 | N8b (a): hook installed and proven live (PF-HOOK-LIVE), and the owner's acceptance of the residual, whole message "JHON-CAPS-RESIDUAL: all-sessions I accept the residual.", written as the JHON-CAPS-RESIDUAL: all-sessions line; gates.mjs --check JHON-CAPS-RESIDUAL all-sessions exit 0 | evidence: build/GATES.md
 
 ## Spec areas
 
@@ -60,6 +60,12 @@ N8b caps on this runtime: (a) the hook under managed settings with Administrator
 - Windows PowerShell 5.1 ConvertTo-Json keeps nested single-element arrays as arrays when they are built with @() and +=.
 - Get-Acl's .Access translates every rule to an account name and throws on ALL APPLICATION PACKAGES (S-1-15-2-1), which every file inheriting from Program Files carries; GetAccessRules($true, $true, [SecurityIdentifier]) reads the SIDs without translating.
 - Every subagent returns through a SubagentHandback tool call, which the hook sees and counts under the subagent's agent id: a subagent told to make n calls shows n + 1.
+- The hook reads shell text: a word like `rooms` or `src` next to a redirect or `sed -i` is a product write to it, even in a heredoc or a scratch path. Write scratch scripts with the Write tool and name scratch folders neutrally.
+- Node 24 strips TypeScript types itself, so the tools import src/*.ts directly; the product must use erasable syntax only and `.ts` import extensions.
+- @strudel/core 1.2.6 imports @kabelsalat/web, whose package main is a non-module build in Node: tools/strudel-node.mjs registers a resolve hook to its dist/index.mjs. Vite uses the `module` field and is not affected.
+- A witness survives the jitter test only with held inputs: each input change carries its own error, and in wave sections the errors add up. The solver therefore costs changes and dashes, centres every change in its window, scores 100 jittered runs on seeds 1 to 5 and wants 98; near-duplicate candidates are capped at 4 per cost stage, or the first stage eats the budget.
+- A foreground Bash call is cut at 10 minutes and moved to the background by the harness, which a hush session must not rely on: keep one solve per call (default --seconds 480).
+- The executor prompt names index.html among the executor's files, but the writer table gives the page text to the spec and the hook protects index.html: the spec writes index.html and the executor's entry point is src/main.ts (for the canon pass).
 
 ## Escalations
 

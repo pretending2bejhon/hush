@@ -5,4 +5,5 @@ Gate lines for The Hush, written only by the spec session or the phase-3 produce
 CONSENT: repo-create | 2026-10-11T14:40:07-05:00 | "a, b and c approved. names already done,  claude code was updated through the terminal, don't know if it shows here because i am using the desktop app with you" | redacted: no
 CONSENT: github-private | 2026-10-11T14:40:07-05:00 | "a, b and c approved. names already done,  claude code was updated through the terminal, don't know if it shows here because i am using the desktop app with you" | redacted: no
 CONSENT: npm-install | 2026-10-11T14:40:07-05:00 | "a, b and c approved. names already done,  claude code was updated through the terminal, don't know if it shows here because i am using the desktop app with you" | redacted: no
+JHON-CAPS-RESIDUAL: all-sessions | 2026-10-11T16:00:17-05:00 | "JHON-CAPS-RESIDUAL: all-sessions I accept the residual." | redacted: no
 
