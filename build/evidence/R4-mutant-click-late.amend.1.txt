@@ -1,0 +1,23 @@
+HUSH-EVIDENCE v1
+id: R4-mutant-click-late
+phase: amend
+command: node tools/probe-flash.mjs --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\mut\click-late\dist --calibration
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T10:50:53-05:00
+time-end: 2026-10-13T10:55:18-05:00
+head: bf70c77f45ca68a00e88ef87c94595a4e8517d8d
+exit: 1
+--- output ---
+flash: calibration up 43.6 s: clicks 40, count-in fills 8, rings 48, values 0 0, Escape ignored (2609 frames, 2170 analyser samples); click starts 0 of 48 on their marks
+flash: tapped calibration up 22.1 s: values 7.4 34.5 (the taps' own 7.4 34.5; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5); click starts 0 of 24 on their marks
+flash: retried calibration up 43.5 s: values 5.6 34.5 (the taps' own 5.6 34.5; A1 and B1 untapped, A2 and B2 tapped as above; marks 5.5 34.5); click starts 0 of 48 on their marks
+flash: 11759 frames over 196.1 s, median 15.73 ms; general max 9570 px, red max 0 px (limit 25600)
+flash: calibration clicks 40 (want 44 to 52)
+flash: calibration click starts: A1 has 0 of 24 clicks started on their marks and 48 off them (the first +100.0 ms from its mark) (want each click started within 1 ms of t0 + i x BEAT)
+flash: calibration click starts: A2 has 0 of 24 clicks started on their marks and 48 off them (the first +100.0 ms from its mark) (want each click started within 1 ms of t0 + i x BEAT)
+flash: tapped calibration click starts: A1 has 0 of 24 clicks started on their marks and 48 off them (the first +100.0 ms from its mark) (want each click started within 1 ms of t0 + i x BEAT)
+flash: retried calibration click starts: A1 has 0 of 24 clicks started on their marks and 48 off them (the first +100.0 ms from its mark) (want each click started within 1 ms of t0 + i x BEAT)
+flash: retried calibration click starts: A2 has 0 of 24 clicks started on their marks and 48 off them (the first +100.0 ms from its mark) (want each click started within 1 ms of t0 + i x BEAT)
+flash: FAIL
+--- end ---

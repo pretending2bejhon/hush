@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R4-calibration-controls
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/controls/calibration-probe.test.mjs -t "does not repeat|without its clicks|without its rings"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T11:11:08-05:00
+time-end: 2026-10-13T11:16:29-05:00
+head: bf70c77f45ca68a00e88ef87c94595a4e8517d8d
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed | 9 skipped (12)
+   Start at  11:11:08
+   Duration  321.02s (tests 100%)
+
+--- end ---

@@ -10,14 +10,16 @@
 //   5. the counters: scheduled voices at or above the track's onsets for the time elapsed in every segment
 //      (all layers are scheduled from the start, muted or not), zero voice errors, zero late-dropped notes;
 //   6. the device clock: valid, and the peak-to-peak of its offset after it became valid under the bound;
-//   7. the mix (review R3, MINOR 4): the speakers' chain as the page built it, held to section 8.4's values.
+//   7. the mix (review R3, MINOR 4): the speakers' chain as the page built it, held to section 8.4's values;
+//   8. the starts (review R4, MAJOR 1): every voice handed to superdough from the first room on, held to an onset of its
+//      own layer in the run that handed it over, and every onset given a voice start of its layer (judgeStarts).
 //   node tools/probe-av.mjs --headed [--dist dist] [--replays replays] [--track music/area1.strudel]
 //        [--gauntlet-room 11] [--query <q>] [--json]
 // Exit 0 PASS, 1 FAIL, 2 usage or a page that never boots.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { audioGraphProblems, bootGame, emitJson, headSha, launch, loadWitnesses, openPage, parseOptions, REPO, requireDist, serveDir, verdictDigest } from './probe-lib.mjs';
+import { audioGraphProblems, bootGame, emitJson, headSha, isVoiceStart, launch, loadWitnesses, openPage, parseOptions, REPO, requireDist, serveDir, verdictDigest } from './probe-lib.mjs';
 import { compileTrack } from './strudel-node.mjs';
 
 // Measured on the control page's synths through the same graph [VL]: the quietest solo (a square at gain .1,
@@ -46,6 +48,124 @@ export function countOnsets(layers, origin, end, startBar = -1) {
   return n;
 }
 
+// Review R4 (MAJOR 1): when each sound is handed over. The page records every start of an AudioScheduledSourceNode
+// (src/probe/api.ts starts(): its type, when, the context time at the call, the transport's origin then, and the layer
+// gate it plays into). A voice start is an OscillatorNode's or an AudioBufferSourceNode's start asked for ahead of the
+// call: superdough's ConstantSourceNodes (its timers and DC offsets) and every node started at once (an FM modulator, the
+// reverb's player) are not voices, and a voice that reaches no gate and no speaker (layer -1) cannot sound. Every other
+// voice start must lie within [t - START_EARLY_S, t + START_LATE_S] of an onset t of its own layer in the run whose origin
+// was in force at the call, or be the transport's late shift of such an onset (section 8.3: an onset due at most LATE
+// before the call starts SHIFT_S after it, and counts in lateShifted). And every onset of every layer from START_SETTLE_S
+// into its run until the run ended must have a voice start of its layer there. So music handed over off the sim's beat,
+// or a layer played through another layer's gate, cannot pass.
+export const START_EARLY_S = 0.001;
+export const START_LATE_S = 0.006;
+export const START_SETTLE_S = 0.3;
+// Notes the lookahead handed over before a run was left, past its end.
+const START_TAIL_S = 0.25;
+const LATE_S = 0.05;
+const SHIFT_S = 0.005;
+
+// The onset times of each layer in [origin, end), walked as countOnsets walks them: one sorted list of distinct times per
+// layer (index 0 is layer 1).
+export function layerOnsets(layers, origin, end, startBar = -1) {
+  const out = layers.map(() => []);
+  for (let b = 0; origin + b * BAR < end; b++) {
+    const cycle = startBar >= 0 && b >= startBar ? b - startBar : b;
+    layers.forEach((pattern, i) => {
+      for (const h of pattern.queryArc(cycle, cycle + 1)) {
+        if (!h.hasOnset()) continue;
+        const t = origin + (b + Number(h.whole.begin) - cycle) * BAR;
+        if (t < end) out[i].push(t);
+      }
+    });
+  }
+  return out.map((ts) => ts.sort((a, b) => a - b).filter((t, k, a) => k === 0 || t - a[k - 1] > 1e-9));
+}
+
+// The index of the time in sorted `ts` nearest to x among those in [lo, hi], or -1.
+function nearestIn(ts, x, lo, hi) {
+  let a = 0;
+  let b = ts.length;
+  while (a < b) {
+    const m = (a + b) >> 1;
+    if (ts[m] < lo) a = m + 1;
+    else b = m;
+  }
+  let best = -1;
+  for (let k = a; k < ts.length && ts[k] <= hi; k++) if (best < 0 || Math.abs(ts[k] - x) < Math.abs(ts[best] - x)) best = k;
+  return best;
+}
+
+// The verdict on the starts of a run of segments ({ room, origin, end, startBar }), the track's layers and the
+// transport's own count of shifted notes.
+export function judgeStarts(starts, segments, layers, lateShifted = 0) {
+  const voices = (starts || []).filter(isVoiceStart);
+  const segs = segments.map((s) => ({ ...s, onsets: layerOnsets(layers, s.origin, s.end + START_TAIL_S, s.startBar ?? -1), hit: layers.map(() => new Set()) }));
+  const r = { voices: voices.length, matched: 0, shifted: 0, silent: 0, onsets: 0, covered: 0, earliestMs: null, latestMs: null };
+  const off = [];
+  const orphan = [];
+  const ungated = [];
+  const tangled = [];
+  const unread = [];
+  for (const v of voices) {
+    if (v.layer === null || v.layer === undefined) { unread.push(v); continue; }
+    if (v.layer === -1) { r.silent += 1; continue; }
+    if (v.layer === 0) { ungated.push(v); continue; }
+    if (!(v.layer >= 1 && v.layer <= layers.length)) { tangled.push(v); continue; }
+    // Two runs started on one context time share their origin: the later one is in force.
+    const seg = segs.findLast((s) => typeof v.origin === 'number' && Math.abs(s.origin - v.origin) < 1e-9);
+    if (!seg) { orphan.push(v); continue; }
+    const ts = seg.onsets[v.layer - 1];
+    const k = nearestIn(ts, v.when, v.when - START_LATE_S, v.when + START_EARLY_S);
+    if (k >= 0) {
+      seg.hit[v.layer - 1].add(k);
+      r.matched += 1;
+      const d = (v.when - ts[k]) * 1000;
+      r.earliestMs = r.earliestMs === null ? d : Math.min(r.earliestMs, d);
+      r.latestMs = r.latestMs === null ? d : Math.max(r.latestMs, d);
+      continue;
+    }
+    if (v.when - v.at <= SHIFT_S + 0.0005) {
+      const j = nearestIn(ts, v.when - SHIFT_S, v.when - SHIFT_S - LATE_S - 0.0005, v.when - SHIFT_S);
+      if (j >= 0) {
+        seg.hit[v.layer - 1].add(j);
+        r.shifted += 1;
+        continue;
+      }
+    }
+    const n = nearestIn(ts, v.when, -Infinity, Infinity);
+    off.push({ layer: v.layer, room: seg.room, ms: n >= 0 ? (v.when - ts[n]) * 1000 : null });
+  }
+  const missing = [];
+  for (const s of segs) {
+    s.onsets.forEach((ts, i) => ts.forEach((t, k) => {
+      if (t < s.origin + START_SETTLE_S || t >= s.end) return;
+      r.onsets += 1;
+      if (s.hit[i].has(k)) r.covered += 1;
+      else missing.push({ layer: i + 1, room: s.room, at: t - s.origin, t });
+    }));
+  }
+  const problems = [];
+  const ms = (x) => (x === null ? 'none' : `${x >= 0 ? '+' : ''}${x.toFixed(1)} ms`);
+  if (!voices.length) problems.push('starts: no voice start recorded (the probe API records every start under ?probe)');
+  if (unread.length) problems.push(`starts: ${unread.length} voice start(s) whose layer was never read`);
+  if (ungated.length) problems.push(`starts: ${ungated.length} voice start(s) reach the speakers through no layer gate`);
+  if (tangled.length) problems.push(`starts: ${tangled.length} voice start(s) meet more than one way out (layer ${tangled[0].layer})`);
+  if (orphan.length) problems.push(`starts: ${orphan.length} voice start(s) under a transport origin no run of the probe had`);
+  if (off.length) problems.push(`starts: ${off.length} of ${voices.length} voice start(s) off their layer's onsets (want ${-START_EARLY_S * 1000} to +${START_LATE_S * 1000} ms), the first in room ${off[0].room}: layer ${off[0].layer} at ${ms(off[0].ms)} from its nearest onset`);
+  if (missing.length) problems.push(`starts: ${missing.length} of ${r.onsets} onset(s) without a voice start of their layer, the first: layer ${missing[0].layer} ${missing[0].at.toFixed(3)} s into room ${missing[0].room}`);
+  if (r.shifted > 2 * lateShifted) problems.push(`starts: ${r.shifted} voice start(s) read as late shifts, the transport shifted ${lateShifted} note(s)`);
+  const runs = segs.map((s, n) => ({
+    room: s.room,
+    seconds: Math.round((s.end - s.origin) * 1000) / 1000,
+    voices: voices.filter((v) => typeof v.origin === 'number' && Math.abs(s.origin - v.origin) < 1e-9 && !segs.slice(n + 1).some((u) => Math.abs(u.origin - v.origin) < 1e-9)).length,
+    onsets: s.onsets.map((ts) => ts.filter((t) => t >= s.origin + START_SETTLE_S && t < s.end).length),
+    started: s.onsets.map((ts, i) => ts.filter((t, k) => t >= s.origin + START_SETTLE_S && t < s.end && s.hit[i].has(k)).length),
+  }));
+  return { ...r, off: off.length, missing: missing.length, ungated: ungated.length, tangled: tangled.length, orphan: orphan.length, unread: unread.length, runs, firstOff: off.slice(0, 5), firstMissing: missing.slice(0, 5), problems };
+}
+
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function main(argv) {
@@ -66,6 +186,10 @@ async function main(argv) {
   let started = 0;
   let deaths = 0;
   let graph = null;
+  let starts = [];
+  let takenAt = null;
+  // The run the hand-over starts, before the probe's first room: its starts are judged too (review R4, MAJOR 1).
+  let pre = null;
   try {
     const { page } = await openPage(browser);
     const take = async () => { samples.push(...await page.evaluate(() => window.__hush.meterTake())); };
@@ -75,6 +199,7 @@ async function main(argv) {
     const startRoom = async (room, idle = false) => {
       const t = await now();
       if (segments.length) segments[segments.length - 1].end = t;
+      else if (pre) pre.end = t;
       const w = idle ? null : witnessOf(room);
       if (w) await page.evaluate(([r, ch]) => window.__hush.play(r, ch), [room, w.witness.changes]);
       else await page.evaluate((r) => window.__hush.startRoom(r), room);
@@ -86,6 +211,10 @@ async function main(argv) {
       await bootGame(page, srv.url, { query: o.query, skip: false });
       contextRunning = true;
       await page.evaluate(() => window.__hush.skipCalibration(0, 0));
+      const a0 = await page.evaluate(() => window.__hush.audio());
+      pre = { room: 1, origin: a0.origin, end: a0.time, gauntlet: false };
+      // Everything started before the hand-over's run (the calibration's clicks) is left out.
+      await page.evaluate(() => window.__hush.starts());
     } catch (e) {
       process.stdout.write(`av: the page never booted to a running AudioContext: ${String(e.message).split('\n')[0]}\n`);
       return 2;
@@ -130,6 +259,11 @@ async function main(argv) {
     await take();
     const fin = await page.evaluate(() => window.__hush.sim());
     if (fin) deaths += fin.status.deaths;
+    // Review R4 (MAJOR 1): every start since the hand-over whose layer was read, taken before the run's end is read; the
+    // onsets the take must cover end at its own context time.
+    const taken = await page.evaluate(() => window.__hush.starts());
+    starts = taken.starts;
+    takenAt = taken.time;
     audioEnd = await page.evaluate(() => window.__hush.audio());
     segments[segments.length - 1].end = audioEnd.time;
     await page.evaluate(() => window.__hush.meterStop());
@@ -172,12 +306,18 @@ async function main(argv) {
   if (doc.durationSec < MIN_SECONDS) problems.push(`ran ${doc.durationSec} s, under ${MIN_SECONDS}`);
   doc.graph = graph;
   problems.push(...audioGraphProblems(graph, N));
+  const runs = [...(pre ? [pre] : []), ...segments].map((s) => ({ room: s.room, origin: s.origin, end: typeof takenAt === 'number' ? Math.min(s.end, takenAt) : s.end, startBar: s.gauntlet ? gauntletStartBar : -1 }));
+  const st = judgeStarts(starts, runs, layers, audioEnd.lateShifted);
+  doc.starts = { ...st, problems: undefined, recorded: starts.length };
+  problems.push(...st.problems);
   doc.problems = problems;
   doc.pass = problems.length === 0;
   process.stdout.write(`av: ${doc.scheduledVoices} voices scheduled for ${doc.expectedVoices} onsets, ${doc.voiceErrors} errors, ${doc.lateDropped} dropped, ${doc.lateShifted} shifted; clock ${doc.clockJitterMs} ms p-p, ${resyncs} resyncs; ${doc.durationSec} s\n`);
   process.stdout.write(`av: silence peak ${checks.silence.peak.toExponential(2)}; windows rms ${checks.windows.map((w) => w.rms.toFixed(4)).join(' ')}\n`);
   process.stdout.write(`av: solos rms ${checks.solos.map((l) => l.rms.toFixed(4)).join(' ')}; muted peaks ${checks.solos.map((l) => l.peak.toExponential(1)).join(' ')}\n`);
   process.stdout.write(`av: mix ${graph ? `speakers <- ${graph.analyserAtSpeakers ? 'AnalyserNode' : 'no analyser'} and ${graph.others.length} other(s), ${graph.others.filter((n) => n.silent).length} silent by construction; master gain ${graph.master ? graph.master.gain : 'none'}; compressor ${graph.compressor ? `${graph.compressor.threshold} ${graph.compressor.knee} ${graph.compressor.ratio} ${graph.compressor.attack} ${graph.compressor.release}` : 'none'}; ${graph.gatesIn.filter(Boolean).length} of ${graph.gatesIn.length} gates in, ${graph.compressorInputs} inputs` : 'not read'}\n`);
+  const fmtMs = (x) => (x === null ? 'n/a' : `${x >= 0 ? '+' : ''}${x.toFixed(2)}`);
+  process.stdout.write(`av: starts ${st.voices} voice start(s) of ${starts.length} recorded: ${st.matched} on their layer's onsets (${fmtMs(st.earliestMs)} to ${fmtMs(st.latestMs)} ms), ${st.shifted} late-shifted, ${st.silent} unable to sound, ${st.off} off; ${st.covered} of ${st.onsets} onsets started\n`);
   for (const p of problems) process.stdout.write(`av: ${p}\n`);
   process.stdout.write(`av: ${doc.pass ? 'PASS' : 'FAIL'}\n`);
   if (o.json) emitJson(doc);

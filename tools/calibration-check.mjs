@@ -21,8 +21,11 @@
 // untapped (its Escapes still pressed), so both are rejected and the scene runs A1, A2, B1 and B2. It is left after
 // those four attempts (RETRY_SECONDS), and its values must be the taps' own, which section 12 takes from the last
 // attempt of each pass, so a scene that keeps a pass's first result cannot pass.
+// Review R4 (MAJOR 1): and every click of pass A, in each of the three runs, must start on the mark the scene judges taps
+// by (clickStartProblems), read from the starts the page records, so a click that sounds off its mark cannot pass.
 import { calibrate, judgePass } from '../tests/fixtures/calibration/reference.mjs';
 import { luminance } from './flash-analyzer.mjs';
+import { isVoiceStart } from './probe-lib.mjs';
 
 export const BEAT_S = 60 / 140;
 export const MIN_SECONDS = 39.4;
@@ -96,10 +99,40 @@ export function countPulses(trace) {
   return { fills, rings: peaks.length - fills, peaks: peaks.map((d) => Math.round(d)), rest: Math.round(rest) };
 }
 
+// Review R4 (MAJOR 1): when each click is handed over. A click is a voice start (probe-lib isVoiceStart) that reaches the
+// speakers through no layer gate (layer 0: the calibration orbit, wired straight into the compressor, section 8.3). In
+// every pass-A attempt the probe saw, each click i (0 to 23) must have a click start within CLICK_START_MS of
+// t0 + i x BEAT, and every click start from half a beat before t0 to half a beat after click 23 must sit on one of those
+// marks. Starts are matched by time, never through the analyser's click count (review R4, NOTE 1).
+export const CLICK_START_MS = 1;
+export function clickStartProblems(starts, attempts, name) {
+  if (!Array.isArray(starts)) return { problems: [`${name} click starts: the probe recorded no start`], clicks: 0, marks: 0 };
+  const clicks = starts.filter((s) => isVoiceStart(s) && s.layer === 0);
+  const passA = (attempts || []).filter((a) => a && a.pass === 'A' && typeof a.t0 === 'number');
+  if (!passA.length) return { problems: [`${name} click starts: no pass-A attempt to hold the clicks to`], clicks: 0, marks: 0 };
+  const tol = CLICK_START_MS / 1000;
+  const problems = [];
+  let on = 0;
+  passA.forEach((a, n) => {
+    const marks = Array.from({ length: CLICKS }, (_, i) => a.t0 + i * BEAT_S);
+    const mine = clicks.filter((s) => s.when >= a.t0 - BEAT_S / 2 && s.when < a.t0 + (CLICKS - 0.5) * BEAT_S);
+    const offMarks = mine.filter((s) => !marks.some((m) => Math.abs(s.when - m) <= tol));
+    const started = marks.filter((m) => mine.some((s) => Math.abs(s.when - m) <= tol)).length;
+    on += started;
+    if (offMarks.length || started < CLICKS) {
+      const first = offMarks[0];
+      const from = first ? (first.when - marks.reduce((b, m) => (Math.abs(first.when - m) < Math.abs(first.when - b) ? m : b))) * 1000 : null;
+      problems.push(`${name} click starts: A${n + 1} has ${started} of ${CLICKS} clicks started on their marks and ${offMarks.length} off them${from === null ? '' : ` (the first ${from >= 0 ? '+' : ''}${from.toFixed(1)} ms from its mark)`} (want each click started within ${CLICK_START_MS} ms of t0 + i x BEAT)`);
+    }
+  });
+  return { problems, clicks: on, marks: passA.length * CLICKS };
+}
+
 // The verdict on one untouched calibration: seconds the scene stayed up after the first key, the analyser
-// samples and the centre trace taken while it was up, the values in use once it was left, and (review R3, MINOR 5)
-// what the page showed after Escape was pressed before the first key ({ started, scenes }: whether the audio ran).
-export function judgeCalibration({ seconds, samples, trace, values, escape }) {
+// samples and the centre trace taken while it was up, the values in use once it was left, (review R3, MINOR 5)
+// what the page showed after Escape was pressed before the first key ({ started, scenes }: whether the audio ran),
+// and (review R4, MAJOR 1) the starts the page recorded and the attempts the probe watched.
+export function judgeCalibration({ seconds, samples, trace, values, escape, starts, attempts }) {
   const clicks = countClicks(samples);
   const { fills, rings, peaks, rest } = countPulses(trace);
   const problems = [];
@@ -114,7 +147,9 @@ export function judgeCalibration({ seconds, samples, trace, values, escape }) {
   range('fills', fills);
   range('rings', rings);
   if (!values || values.avOffset !== 0 || values.inputBias !== 0) problems.push(`calibration values ${JSON.stringify(values)} (want avOffset 0 and inputBias 0 after an untouched run)`);
-  return { seconds: Math.round(seconds * 10) / 10, clicks, fills, rings, values, escape: escape ? !escape.started : null, frames: trace.length, samples: samples.length, rest, peaks: peaks.slice(0, 80), problems };
+  const cs = clickStartProblems(starts, attempts, 'calibration');
+  problems.push(...cs.problems);
+  return { seconds: Math.round(seconds * 10) / 10, clicks, fills, rings, values, escape: escape ? !escape.started : null, frames: trace.length, samples: samples.length, rest, peaks: peaks.slice(0, 80), clickStarts: cs.clicks, clickMarks: cs.marks, problems };
 }
 
 // What the tapper did in attempt k of its log (review R3, MINOR 5 and 6): its taps before the count-in's end, which a
@@ -172,8 +207,9 @@ export function tapLogValues(log) {
 // The verdict on one tapped calibration: seconds the scene stayed up after the first key, the values in use once
 // it was left, the tapper's log, and the run read twice after the hand-over ({ scenes, room, from, to }). With `retry`
 // (review R4, MAJOR 2) the tapper left the first attempt of each pass untapped: those two must be rejected, the scene
-// must run each pass's repeat, and the repeats are the attempts whose taps must count.
-export function judgeTapped({ seconds, values, log, handover, retry = false }) {
+// must run each pass's repeat, and the repeats are the attempts whose taps must count. And (review R4, MAJOR 1) the
+// starts the page recorded: every pass-A attempt of the log must have its clicks on their marks.
+export function judgeTapped({ seconds, values, log, handover, retry = false, starts }) {
   const name = retry ? 'retried calibration' : 'tapped calibration';
   const marks = { avOffset: TAP_A_MS - TAP_B_MS - TAP_B_MID, inputBias: TAP_B_MS + TAP_B_MID };
   const problems = [];
@@ -208,5 +244,7 @@ export function judgeTapped({ seconds, values, log, handover, retry = false }) {
   if (!handover || !handover.scenes.includes('play') || handover.room !== 1 || !(handover.to > handover.from)) {
     problems.push(`${name}: no run at room 1 after the hand-over (${handover ? `scenes ${JSON.stringify(handover.scenes)}, room ${handover.room}, step ${handover.from} then ${handover.to}` : 'not read'})`);
   }
-  return { seconds: Math.round(seconds * 10) / 10, values, own, marks, problems };
+  const cs = clickStartProblems(starts, log && log.attempts, name);
+  problems.push(...cs.problems);
+  return { seconds: Math.round(seconds * 10) / 10, values, own, marks, clickStarts: cs.clicks, clickMarks: cs.marks, problems };
 }

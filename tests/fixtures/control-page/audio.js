@@ -4,7 +4,8 @@
 // the calibration click plays on orbit 11, straight into the compressor (section 8.3).
 // Variants for the av probe's controls: master-off (the master never reaches the analyser), synth-throw
 // (the synth registration throws), layer-off (one later layer's gate is never connected), master-low (the master gain at
-// 0.4 instead of 0.8; review R3, MINOR 4).
+// 0.4 instead of 0.8; review R3, MINOR 4), late (every note handed to superdough 0.1 s after its time) and swap (layers 1
+// and 2 play through each other's gate) (review R4, MAJOR 1).
 import * as S from '@strudel/web';
 import { createOutputClock } from './clock.js';
 
@@ -64,7 +65,8 @@ export function createEngine(trackText, variant = '') {
       t = ctx.currentTime + 0.005;
       status.lateShifted += 1;
     }
-    S.superdough({ ...value, orbit: layer + 1 }, t, seconds, CPS, cycle).catch(() => { status.voiceErrors += 1; });
+    const orbit = variant === 'swap' && layer < 2 ? 2 - layer : layer + 1;
+    S.superdough({ ...value, orbit }, t + (variant === 'late' ? 0.1 : 0), seconds, CPS, cycle).catch(() => { status.voiceErrors += 1; });
     status.scheduledVoices += 1;
   }
 

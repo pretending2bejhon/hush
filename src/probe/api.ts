@@ -143,6 +143,10 @@ export interface TapLog {
 // own output (a merger into a gain into the speakers, which every patched orbit leaves unfed), nothing of a voice. The
 // wrappers change nothing they pass on.
 const graphInputs = new Map<AudioNode, Set<AudioNode>>();
+// Review R4 (MAJOR 1): every live edge between two nodes, by its source, so that a started source can be followed to the
+// layer gate it plays into. An edge leaves the map when its source disconnects it (superdough disconnects every node of a
+// voice when it releases the voice), so the map holds what the graph holds.
+const graphOutputs = new Map<AudioNode, Set<AudioNode>>();
 let graphRecording = false;
 
 function recordAudioGraph(): void {
@@ -156,19 +160,112 @@ function recordAudioGraph(): void {
     src instanceof DynamicsCompressorNode || src instanceof ChannelMergerNode;
   proto.connect = function (this: AudioNode, ...args: unknown[]): unknown {
     const dst = args[0];
-    if (dst instanceof AudioNode && kept(this, dst)) {
-      let ins = graphInputs.get(dst);
-      if (!ins) graphInputs.set(dst, (ins = new Set()));
-      ins.add(this);
+    if (dst instanceof AudioNode) {
+      if (kept(this, dst)) {
+        let ins = graphInputs.get(dst);
+        if (!ins) graphInputs.set(dst, (ins = new Set()));
+        ins.add(this);
+      }
+      let outs = graphOutputs.get(this);
+      if (!outs) graphOutputs.set(this, (outs = new Set()));
+      outs.add(dst);
     }
     return connect.apply(this, args);
   };
   proto.disconnect = function (this: AudioNode, ...args: unknown[]): unknown {
     const dst = args[0];
-    if (dst instanceof AudioNode) graphInputs.get(dst)?.delete(this);
-    else if (args.length === 0 || typeof dst === 'number') for (const ins of graphInputs.values()) ins.delete(this);
+    if (dst instanceof AudioNode) {
+      graphInputs.get(dst)?.delete(this);
+      graphOutputs.get(this)?.delete(dst);
+    } else if (args.length === 0 || typeof dst === 'number') {
+      for (const ins of graphInputs.values()) ins.delete(this);
+      graphOutputs.delete(this);
+    }
     return disconnect.apply(this, args);
   };
+}
+
+// Review R4 (MAJOR 1): when each sound is handed to the speakers. Under ?probe only, installProbe wraps
+// AudioScheduledSourceNode.prototype.start before the first key, and every call it passes on is kept: the node's type,
+// its `when` (the context time at the call when the argument is 0, absent or past), the context time at the call, the
+// transport's origin at the call (the run that handed the note over; 0 before any run, null before the audio), and the
+// layer it plays into, read once the voice is built (a timer of 0 ms after the call: superdough builds a voice's chain in
+// the same task, after its sources are started). The layer: k (1 to N) when every path out of the node meets layer gate
+// k first; 0 when the node reaches the speakers through no gate (the calibration orbit); -1 when it reaches neither (it
+// cannot sound); -2 when its paths meet more than one way out. The wrapper changes nothing it passes on.
+export interface StartRecord {
+  type: string;
+  when: number;
+  at: number;
+  origin: number | null;
+  layer: number | null;
+}
+
+const START_MAX = 60000;
+const startLog: StartRecord[] = [];
+let startRecording = false;
+
+function layerOf(inspect: Inspect, node: AudioNode): number {
+  const n = inspect.audio()?.layerGains.length ?? 0;
+  const gates = new Map<AudioNode, number>();
+  for (let k = 1; k <= n; k++) {
+    const g = inspect.layerGain(k);
+    if (g) gates.set(g, k);
+  }
+  const hit = new Set<number>();
+  let bare = false;
+  const seen = new Set<AudioNode>([node]);
+  const queue: AudioNode[] = [node];
+  while (queue.length && seen.size < 512) {
+    const m = queue.shift() as AudioNode;
+    const k = gates.get(m);
+    if (k !== undefined) {
+      hit.add(k);
+      continue;
+    }
+    if (m instanceof AudioDestinationNode) {
+      bare = true;
+      continue;
+    }
+    for (const o of graphOutputs.get(m) ?? []) {
+      if (seen.has(o)) continue;
+      seen.add(o);
+      queue.push(o);
+    }
+  }
+  if (hit.size === 1 && !bare) return hit.values().next().value as number;
+  if (hit.size === 0) return bare ? 0 : -1;
+  return -2;
+}
+
+// AudioBufferSourceNode declares a start of its own (when, offset, duration), so both prototypes are wrapped.
+function recordStarts(inspect: Inspect): void {
+  if (startRecording || typeof AudioScheduledSourceNode === 'undefined') return;
+  startRecording = true;
+  const protos: unknown[] = [AudioScheduledSourceNode.prototype];
+  if (typeof AudioBufferSourceNode !== 'undefined' && Object.prototype.hasOwnProperty.call(AudioBufferSourceNode.prototype, 'start')) protos.push(AudioBufferSourceNode.prototype);
+  for (const p of protos) {
+    const proto = p as { start: (...args: unknown[]) => unknown };
+    const start = proto.start;
+    proto.start = function (this: AudioScheduledSourceNode, ...args: unknown[]): unknown {
+      const at = this.context.currentTime;
+      const asked = args[0];
+      const audio = inspect.audio();
+      const rec: StartRecord = {
+        type: this.constructor.name,
+        when: typeof asked === 'number' && asked > at ? asked : at,
+        at,
+        origin: audio ? audio.origin : null,
+        layer: null,
+      };
+      if (startLog.length < START_MAX) startLog.push(rec);
+      const node = this;
+      window.setTimeout(() => {
+        rec.layer = layerOf(inspect, node);
+      }, 0);
+      return start.apply(this, args);
+    };
+  }
 }
 
 // One node of that graph as plain data: its kind and the parameters section 8.4 fixes.
@@ -432,6 +529,42 @@ export function createProbe(inspect: Inspect) {
     keyLogTake(): KeyRecord[] {
       return keyLog.splice(0, keyLog.length);
     },
+    // Every start since the last call whose layer has been read (review R4, MAJOR 1), taken 50 ms after the call, with the
+    // context time of the take. The layers are read in the order of the starts, so the ones not read yet are the latest;
+    // they stay for the next call.
+    starts(): Promise<{ time: number | null; starts: StartRecord[] }> {
+      return new Promise((resolve) => {
+        window.setTimeout(() => {
+          const cut = startLog.findIndex((s) => s.layer === null);
+          const taken = startLog.splice(0, cut < 0 ? startLog.length : cut).map((s) => ({ ...s }));
+          resolve({ time: inspect.audio()?.time ?? null, starts: taken });
+        }, 50);
+      });
+    },
+    // Watches the calibration without touching it (review R4, MAJOR 1): every attempt the scene runs goes into the
+    // tapper's record (tapLog().attempts), with no tap and no Escape, so that the untouched run's clicks can be held to
+    // the marks of its attempts. Returns false without the scene.
+    watchCalibration(): boolean {
+      const g = inspect.game();
+      const scene = g ? (g.scene.getScene('calibration') as unknown as { attempt?: ProbeCalibrationAttempt | null } | null) : null;
+      if (!g || !scene) return false;
+      tapTaps.length = 0;
+      tapEscapes.length = 0;
+      tapAttempts.length = 0;
+      const begun = performance.now();
+      let current: ProbeCalibrationAttempt | null = null;
+      const up = (): boolean => g.scene.getScenes(true).some((s) => s.sys.settings.key === 'calibration');
+      const frame = (): void => {
+        const a = scene.attempt ?? null;
+        if (a && a !== current) {
+          current = a;
+          tapAttempts.push(a);
+        }
+        if (up() && performance.now() - begun < TAP_GIVE_UP_MS) window.requestAnimationFrame(frame);
+      };
+      window.requestAnimationFrame(frame);
+      return true;
+    },
     // The tapper's record of the last tapped calibration (review R2, MINOR 3).
     tapLog(): TapLog {
       return {
@@ -678,6 +811,7 @@ export type HushProbe = ReturnType<typeof createProbe>;
 export function installProbe(inspect: Inspect, search: string = window.location.search): boolean {
   if (!new URLSearchParams(search).has('probe')) return false;
   recordAudioGraph();
+  recordStarts(inspect);
   (window as unknown as { __hush: HushProbe }).__hush = createProbe(inspect);
   return true;
 }

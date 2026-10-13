@@ -11,16 +11,19 @@
 //   ?fetch=<url>  one request to that URL (X10)                ?store=local|session|cookie|idb (X10)
 //   ?text         a Phaser Text object (D8)                    ?domtext a DOM text over the canvas (D16)
 //   ?novis        no suspension when the page is hidden (D4)
-//   ?av=master-off|synth-throw|layer-off|master-low  the av probe's planted faults (X7; master-low, the mix of section 8.4)
+//   ?av=master-off|synth-throw|layer-off|master-low|late|swap  the av probe's planted faults (X7; master-low, the mix of
+//                 section 8.4; late, every note handed over 0.1 s after its time, and swap, layers 1 and 2 through each
+//                 other's gate: review R4, MAJOR 1)
 //   ?unlock=late|early|none  the playthrough's unlock check (X7's clear-time half): a cleared room's layer
 //                 returns a bar late, a bar early, or never
-//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow|first  the calibration scene's planted faults
+//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow|first|clicklate  the calibration scene's planted faults
 //                 (the flash probe's --calibration check): the first key leaves at once (the shortcut that stood in
 //                 for the passes), a rejected pass is not repeated, pass A plays no click, pass B draws no ring, the
 //                 count-in never fills the key, pass A's tap offsets have their sign flipped (the tapped run),
 //                 the count-in is 3 beats, Escape is a key like any other (it starts the audio and taps; review R3,
 //                 MINOR 5), taps during the count-in are counted (review R3, MINOR 6), a pass keeps its first result
-//                 instead of its last (the retried run; review R4, MAJOR 2)
+//                 instead of its last (the retried run; review R4, MAJOR 2), every click is handed over 0.1 s after
+//                 its mark (review R4, MAJOR 1)
 //   ?ending=none|never|always|early|late|mid  the ending's planted faults (the playthrough's text check): the
 //                 run never hands over to the scene `ending`; no run line under ?playtest; the run line without
 //                 ?playtest; the run line at once, before the card; the run line from the step at the card
@@ -198,7 +201,7 @@ class Calibration extends Phaser.Scene {
     let ended = false;
     if (a.pass === 'A') {
       while (a.sent < CLICKS && a.t0 + a.sent * BEAT < ctx.currentTime + LOOKAHEAD) {
-        if (calibFault !== 'silent') engine.click(a.t0 + a.sent * BEAT);
+        if (calibFault !== 'silent') engine.click(a.t0 + a.sent * BEAT + (calibFault === 'clicklate' ? 0.1 : 0));
         a.sent += 1;
       }
       for (let i = 0; i < COUNT_IN; i++) {

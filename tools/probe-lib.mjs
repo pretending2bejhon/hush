@@ -204,6 +204,11 @@ export function gauntletMapProblems(reads) {
 // the master one, the compressor (threshold -10, knee 6, ratio 4, attack 0.005, release 0.12). Every layer gate is an
 // input of the compressor, besides at most one more (the calibration orbit). The parameters are read back as float32,
 // hence MIX_TOLERANCE.
+// Review R4 (MAJOR 1): a voice start among the starts the page records (src/probe/api.ts starts()): an OscillatorNode's or
+// an AudioBufferSourceNode's start asked for ahead of the call. superdough's ConstantSourceNodes (its timers and DC
+// offsets) and the nodes it starts at once (an FM modulator, the reverb's player) are not voices.
+export const isVoiceStart = (s) => Boolean(s) && (s.type === 'OscillatorNode' || s.type === 'AudioBufferSourceNode') && s.when > s.at;
+
 export const MIX = Object.freeze({ fftSize: 2048, smoothing: 0, gain: 0.8, threshold: -10, knee: 6, ratio: 4, attack: 0.005, release: 0.12 });
 export const MIX_TOLERANCE = 1e-5;
 

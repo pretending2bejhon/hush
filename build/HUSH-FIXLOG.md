@@ -370,3 +370,27 @@ The nine regression controls, 2026-10-13T03:54-05:00 (committed in `1d2ea62`): t
 - After that commit the digest is 232b03a2, and X3's seed rolls to 590021538. Every witness passes on it, 10-crown at 19 of 20 and the others at 20 of 20 (checked this session, not recorded).
 - The R4 section's times were first written as estimates. They were corrected to the commits' own times (fc32706 03:08, 618ca0c 03:33, d68cf9a 03:34, 1d2ea62 03:54) in the commit after this one.
 
+MAJOR 1 fixed 2026-10-13T11:40-05:00 in the commit `hush-spec: amend the av probe and the calibration check ...` after `bf70c77`, by the next producer (Opus standing in for Fable). Still no product file changes and no applier.
+- **How it landed**, against the disposition above:
+  - The recorder (src/probe/api.ts `starts()`) wraps the `start` of AudioScheduledSourceNode and of AudioBufferSourceNode, which declares its own.
+  - Each record also carries the layer the node plays into, read from every live edge between nodes once the voice is built. The connect wrapper now keeps every edge by its source, beside the speakers' chain it kept already.
+  - So the av probe holds each voice start to the onsets of its own layer, not of any layer. A layer played through another layer's gate fails too, which the disposition did not ask for. A voice that reaches no gate and no speaker cannot sound and covers no onset.
+  - The calibration check holds the clicks in all three runs, not only the untouched one. The untouched run watches the attempts without a tap (`watchCalibration()`).
+- **Three faults of the check itself**, found by its first runs on the product (session records, not committed) and fixed before any record:
+  - AudioBufferSourceNode's own `start` was not wrapped, so the noise voices had no record: the hat, the clap, the open hat and the kick's noise.
+  - The hand-over's run and the probe's first room were started on one context time, so they shared one origin. A start is now filed under the later run with that origin.
+  - The take missed the starts of its last tick, whose layers were not read yet. The take keeps only read starts (the rest wait for the next take), and the onsets it must cover end at the take's own context time.
+- **On the product:**
+  - `npm run probe:av -- --headed` passes. 2311 voice starts, each exactly on an onset of its layer, and 1909 of 1909 onsets started (build/evidence/R4-av-product.amend.1.txt).
+  - CAL2's acceptance passes: click starts 48 of 48, 24 of 24 and 48 of 48 on their marks (build/evidence/CAL2.amend.6.txt).
+  - GAME1's acceptance passes with the recorder in the page: `PASS (console,play,text,visibility,unlock,keys)`, tsc and eslint clean (build/evidence/GAME1.amend.6.txt).
+- **The mutants**, each built in a scratch clone of HEAD with the working tree's probe API:
+  - every note 0.1 s late (engine.ts:64): 2315 of 2315 voice starts off, +100.0 ms, and no onset started (build/evidence/R4-mutant-note-late.amend.1.txt);
+  - every click 0.1 s late (engine.ts:172): every click of every attempt off its mark by +100.0 ms, in all three runs (build/evidence/R4-mutant-click-late.amend.1.txt);
+  - the orbits into rotated gates (engine.ts:114, `gates[number % 10]`): 1558 starts off and 1347 onsets unstarted, every other av check green (build/evidence/R4-mutant-gate-rotate.amend.1.txt).
+- **Controls:**
+  - the av probe on the control page, 7 of 7: `?av=late` and `?av=swap` fail on the starts alone, and the clean page and the five earlier faults keep their verdicts (build/evidence/R4-av-controls.amend.1.txt and .2.txt);
+  - the calibration check on the control page, 12 of 12: `?calib=clicklate` fails on its click starts in all three runs, and the clean page shows every click on its mark (build/evidence/R4-calibration-controls.amend.6.txt to .9.txt);
+  - in Node, tests/tools/av-starts.test.mjs (new, 9 tests) and tests/tools/calibration-check.test.mjs (12 tests); the verifier suite passes 269 of 269 (build/evidence/R4-verifiers.amend.2.txt).
+- **Still open:** MINOR 1 (the line's deaths) is left for the next cycle, as its disposition allows: a MINOR does not block a PASS. Next: the blocker, RN1 to RN4 on AC, then `FIX R4` and review R5.
+

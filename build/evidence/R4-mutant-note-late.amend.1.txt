@@ -1,0 +1,22 @@
+HUSH-EVIDENCE v1
+id: R4-mutant-note-late
+phase: amend
+command: node tools/probe-av.mjs --headed --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\mut\note-late\dist
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T10:48:26-05:00
+time-end: 2026-10-13T10:49:37-05:00
+head: bf70c77f45ca68a00e88ef87c94595a4e8517d8d
+exit: 1
+--- output ---
+cannot use window: not in browser?
+🌀 @strudel/core loaded 🌀
+av: 2158 voices scheduled for 2140 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.146 ms p-p, 0 resyncs; 68.5 s
+av: silence peak 0.00e+0; windows rms 0.4141 0.4138 0.4089 0.4085 0.4082 0.4033 0.4040 0.4009 0.4009 0.3910
+av: solos rms 0.3768 0.0611 0.0148 0.0485 0.0088 0.0289 0.0066 0.0134 0.0163 0.0724; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 2 other(s), 2 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: starts 2315 voice start(s) of 4456 recorded: 0 on their layer's onsets (n/a to n/a ms), 0 late-shifted, 0 unable to sound, 2315 off; 0 of 1909 onsets started
+av: starts: 2315 of 2315 voice start(s) off their layer's onsets (want -1 to +6 ms), the first in room 1: layer 1 at +100.0 ms from its nearest onset
+av: starts: 1909 of 1909 onset(s) without a voice start of their layer, the first: layer 1 0.429 s into room 1
+av: FAIL
+--- end ---

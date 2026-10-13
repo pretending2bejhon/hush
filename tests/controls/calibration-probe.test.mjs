@@ -6,7 +6,9 @@
 // count-in of 3 beats (the untouched run's fills). Review R2: the tapped run is judged against the values its logged
 // taps give, and its hand-over must start a run at room 1. Review R3: a scene that takes Escape as a key (MINOR 5)
 // and one that counts taps during the count-in (MINOR 6) must each fail. Review R4 (MAJOR 2): the retried run must pass,
-// and a scene that keeps a pass's first result instead of its last must fail it.
+// and a scene that keeps a pass's first result instead of its last must fail it. Review R4 (MAJOR 1): every click of the
+// clean page starts on its mark in all three runs, and a scene whose clicks are handed over 0.1 s late must fail on
+// their starts.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -37,8 +39,21 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).toMatch(/flash: retried calibration up (39|4\d|50)(\.\d)? s: values ([0-9]|10)\.\d (29|3\d)\.\d \(the taps' own ([0-9]|10)\.\d (29|3\d)\.\d;/);
     expect(r.out).not.toMatch(/no run at room 1/);
     expect(r.out).not.toMatch(/the tapper landed/);
+    // Review R4 (MAJOR 1): A1 and A2, A1, then A1 and A2 again, every click on its mark.
+    expect(r.out).toMatch(/flash: calibration up .*; click starts 48 of 48 on their marks/);
+    expect(r.out).toMatch(/flash: tapped calibration up .*; click starts 24 of 24 on their marks/);
+    expect(r.out).toMatch(/flash: retried calibration up .*; click starts 48 of 48 on their marks/);
     expect(r.out).toMatch(/flash: PASS/);
     expect(r.code).toBe(0);
+  }, 240000);
+
+  it('fails a scene whose clicks are handed over 0.1 s after their marks (review R4, MAJOR 1)', () => {
+    const r = flash('calib=clicklate');
+    expect(r.out).toMatch(/flash: calibration click starts: A1 has 0 of 24 clicks started on their marks and \d+ off them \(the first \+100\.0 ms from its mark\)/);
+    expect(r.out).toMatch(/flash: tapped calibration click starts: A1 has 0 of 24/);
+    expect(r.out).toMatch(/flash: retried calibration click starts: A2 has 0 of 24/);
+    expect(r.out).toMatch(/flash: FAIL/);
+    expect(r.code).toBe(1);
   }, 240000);
 
   it('fails a scene that keeps a pass\'s first result instead of its last (review R4, MAJOR 2)', () => {
