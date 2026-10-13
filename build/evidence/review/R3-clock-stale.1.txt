@@ -1,0 +1,29 @@
+HUSH-EVIDENCE v1
+id: R3-clock-stale
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/stale-clock.mjs .
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T22:05:15-05:00
+time-end: 2026-10-12T22:05:15-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 1
+--- output ---
+<home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/stale-clock.mjs:15
+const dir = fs.mkdtempSync(path.join(path.dirname(new URL(import.meta.url).pathname.replace(/^/([A-Za-z]:)/, '$1')), 'tmp-stale-'));
+                                                                                                       ^
+
+SyntaxError: missing ) after argument list
+    at compileSourceTextModule (node:internal/modules/esm/utils:318:16)
+    at ModuleLoader.moduleStrategy (node:internal/modules/esm/translators:89:18)
+    at #translate (node:internal/modules/esm/loader:434:20)
+    at afterLoad (node:internal/modules/esm/loader:502:29)
+    at ModuleLoader.loadAndTranslate (node:internal/modules/esm/loader:507:12)
+    at #getOrCreateModuleJobAfterResolve (node:internal/modules/esm/loader:560:36)
+    at afterResolve (node:internal/modules/esm/loader:607:52)
+    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:613:12)
+    at node:internal/modules/esm/loader:632:32
+    at TracingChannel.tracePromise (node:diagnostics_channel:362:14)
+
+Node.js v24.18.0
+--- end ---

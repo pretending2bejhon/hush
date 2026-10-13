@@ -1,0 +1,39 @@
+HUSH-EVIDENCE v1
+id: R3-axisb-sim
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/axisb-sim.mjs .
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T21:52:30-05:00
+time-end: 2026-10-12T21:52:34-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== determinism: each witness run twice on fresh product sims, the oracle compared at every step
+01-wake: run 1 6001f0f9 at step 1618, run 2 6001f0f9, witness 6001f0f9, oracle equal at every step OK
+02-heartbeat: run 1 04febedf at step 1684, run 2 04febedf, witness 04febedf, oracle equal at every step OK
+03-dash: run 1 593d0787 at step 1588, run 2 593d0787, witness 593d0787, oracle equal at every step OK
+04-thorns: run 1 123057cb at step 1408, run 2 123057cb, witness 123057cb, oracle equal at every step OK
+05-doors: run 1 d181a484 at step 2222, run 2 d181a484, witness d181a484, oracle equal at every step OK
+06-wave: run 1 f3496b90 at step 1920, run 2 f3496b90, witness f3496b90, oracle equal at every step OK
+07-current: run 1 1c7b52e9 at step 1943, run 2 1c7b52e9, witness 1c7b52e9, oracle equal at every step OK
+08-steps: run 1 e6a8f7ba at step 1494, run 2 e6a8f7ba, witness e6a8f7ba, oracle equal at every step OK
+09-gates: run 1 9498a96d at step 1905, run 2 9498a96d, witness 9498a96d, oracle equal at every step OK
+10-crown: run 1 5b909a19 at step 2388, run 2 5b909a19, witness 5b909a19, oracle equal at every step OK
+11-gauntlet: run 1 b3715ef7 at step 14278, run 2 b3715ef7, witness b3715ef7, oracle equal at every step OK
+== the wave only through portals: every form change, each witness and 50 jittered runs (HEAD sha seeds)
+506 form changes, 0 off a portal of the right kind; the wave seen in rooms 6, 7, 9, 10, 11; W cells by room 01:0 02:0 03:0 04:0 05:0 06:6 07:6 08:0 09:7 10:6 11:13
+the first room holding a wave portal: 6
+== layers: one per room, on the bar line nextBarStep(clear), each room played from its entrance and run on
+room 1: cleared by the tick of step 1617, layer 1 back on the tick of step 2058 (nextBarStep 2058, bar 5, 4.29 beats after the clear), other mask changes 0 OK
+room 2: cleared by the tick of step 1683, layer 2 back on the tick of step 2058 (nextBarStep 2058, bar 5, 3.65 beats after the clear), other mask changes 0 OK
+room 3: cleared by the tick of step 1587, layer 3 back on the tick of step 2058 (nextBarStep 2058, bar 5, 4.58 beats after the clear), other mask changes 0 OK
+room 4: cleared by the tick of step 1407, layer 4 back on the tick of step 1646 (nextBarStep 1646, bar 4, 2.32 beats after the clear), other mask changes 0 OK
+room 5: cleared by the tick of step 2221, layer 5 back on the tick of step 2469 (nextBarStep 2469, bar 6, 2.41 beats after the clear), other mask changes 0 OK
+room 6: cleared by the tick of step 1919, layer 6 back on the tick of step 2058 (nextBarStep 2058, bar 5, 1.35 beats after the clear), other mask changes 0 OK
+room 7: cleared by the tick of step 1942, layer 7 back on the tick of step 2058 (nextBarStep 2058, bar 5, 1.13 beats after the clear), other mask changes 0 OK
+room 8: cleared by the tick of step 1493, layer 8 back on the tick of step 1646 (nextBarStep 1646, bar 4, 1.49 beats after the clear), other mask changes 0 OK
+room 9: cleared by the tick of step 1904, layer 9 back on the tick of step 2058 (nextBarStep 2058, bar 5, 1.50 beats after the clear), other mask changes 0 OK
+room 10: cleared by the tick of step 2387, layer 10 back on the tick of step 2880 (nextBarStep 2880, bar 7, 4.79 beats after the clear), other mask changes 0 OK
+axisb-sim: PASS
+--- end ---

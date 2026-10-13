@@ -1,0 +1,30 @@
+HUSH-EVIDENCE v1
+id: R3-av-head-and-gain
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/pristine head-av engine-master-gain
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T21:44:42-05:00
+time-end: 2026-10-12T21:47:04-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== head-av: SURVIVED (restored true; copy clean)
+   pass  node_modules/vite/bin/vite.js build --logLevel error (exit 0, 1 s)
+   pass  tools/probe-av.mjs --headed (exit 0, 70 s)
+        av: 2157 voices scheduled for 2135 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.153 ms p-p, 0 resyncs; 68.4 s
+        av: silence peak 0.00e+0; windows rms 0.4148 0.4104 0.4078 0.4017 0.4061 0.3957 0.4000 0.3826 0.3876 0.3870
+        av: solos rms 0.3736 0.0593 0.0152 0.0491 0.0086 0.0288 0.0066 0.0155 0.0167 0.0741; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+        av: PASS
+== engine-master-gain: SURVIVED (restored true; copy clean)
+   - src/audio/engine.ts: "new GainNode(context, { gain: 0.8 })"
+   + "new GainNode(context, { gain: 0.4 })"
+   pass  node_modules/vite/bin/vite.js build --logLevel error (exit 0, 1 s)
+   pass  tools/probe-av.mjs --headed (exit 0, 70 s)
+        av: 2153 voices scheduled for 2135 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.123 ms p-p, 0 resyncs; 68.3 s
+        av: silence peak 0.00e+0; windows rms 0.2075 0.2041 0.2031 0.2001 0.2031 0.1984 0.2005 0.1965 0.1993 0.1948
+        av: solos rms 0.1873 0.0296 0.0073 0.0245 0.0041 0.0144 0.0033 0.0078 0.0083 0.0370; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+        av: PASS
+
+mutations: head-av SURVIVED, engine-master-gain SURVIVED
+--- end ---

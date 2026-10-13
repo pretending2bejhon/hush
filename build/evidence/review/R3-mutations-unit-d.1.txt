@@ -1,0 +1,34 @@
+HUSH-EVIDENCE v1
+id: R3-mutations-unit-d
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/pristine clock-jump fx-scale
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T22:27:13-05:00
+time-end: 2026-10-12T22:27:14-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== clock-jump: KILLED (restored true; copy clean)
+   - src/clock/output-clock.ts: "const CLOCK_JUMP = 0.004;"
+   + "const CLOCK_JUMP = 0.008;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/clock (exit 1, 1 s)
+             × agrees: a glitch moves the line down 6 ms 8ms
+         Test Files  1 failed | 1 passed (2)
+              Tests  1 failed | 14 passed (15)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/clock/output-clock.test.mjs > CL1 device-clock line against the reference port > agrees: a glitch moves the line down 6 ms
+        AssertionError: expected [ 585, -1.1999999999999993, true, +0 ] to deeply equal [ 585, -1.206, true, 1 ]
+== fx-scale: KILLED (restored true; copy clean)
+   - src/fx/flash-limiter.ts: "const scale = (1280 * 720) / (canvasW * canvasH);"
+   + "const scale = 1;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/fx (exit 1, 1 s)
+             × counts areas in canvas pixels at 1280 by 720 2ms
+         Test Files  1 failed (1)
+              Tests  1 failed | 2 passed (3)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/fx/flash-limiter.test.mjs > FX1 flash limiter > counts areas in canvas pixels at 1280 by 720
+        AssertionError: expected 0.5 to be less than 0.1
+
+mutations: clock-jump KILLED, fx-scale KILLED
+--- end ---

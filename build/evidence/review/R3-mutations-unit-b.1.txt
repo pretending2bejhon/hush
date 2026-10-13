@@ -1,0 +1,311 @@
+HUSH-EVIDENCE v1
+id: R3-mutations-unit-b
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/pristine witness-bits gates-ramp fx-limit-edge run-unlock-late run-gauntlet-map run-lead run-display-cal run-input-lag run-track-step draw-ellipse room-art-edge room-art-camera creature-squash beat-warn beat-limiter-area depth-seed frame-step-ahead frame-ring-up ending-beat ending-rise
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T20:12:44-05:00
+time-end: 2026-10-12T20:13:39-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== witness-bits: SURVIVED (restored true; copy clean)
+   * replays/04-thorns.json: the JUMP bit of the middle input change dropped
+   pass  tools/replay.mjs --all --jitter --seed 1 (exit 0, 0 s)
+        replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replay: PASS, 11 witness(es)
+== gates-ramp: KILLED (restored true; copy clean)
+   - src/audio/gates.ts: "param.setValueAtTime(0, t - 0.005);"
+   + "param.setValueAtTime(0, t - 0.05);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/audio (exit 1, 1 s)
+             × opens a gate on its bar line with a 5 ms ramp 11ms
+         Test Files  1 failed | 2 passed (3)
+              Tests  1 failed | 11 passed (12)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/audio/gates.test.mjs > AU3 layer gates > opens a gate on its bar line with a 5 ms ramp
+        AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+== fx-limit-edge: SURVIVED (restored true; copy clean)
+   - src/fx/flash-limiter.ts: "sum + area >= FLASH_AREA_LIMIT"
+   + "sum + area > FLASH_AREA_LIMIT"
+   pass  node_modules/vitest/vitest.mjs run tests/fx (exit 0, 1 s)
+         Test Files  1 passed (1)
+              Tests  3 passed (3)
+== run-unlock-late: KILLED (restored true; copy clean)
+   - src/game/run.ts: "engine.unlockAt(pending, unlockBar(step));"
+   + "engine.unlockAt(pending, unlockBar(step) + 1);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/game tests/audio tests/sim (exit 1, 2 s)
+             × room 1: unlockAt(1, unlockBar(clear step)) once, right after the clearing tick 63ms
+             × room 2: unlockAt(2, unlockBar(clear step)) once, right after the clearing tick 36ms
+             × room 3: unlockAt(3, unlockBar(clear step)) once, right after the clearing tick 28ms
+             × room 4: unlockAt(4, unlockBar(clear step)) once, right after the clearing tick 23ms
+             × room 5: unlockAt(5, unlockBar(clear step)) once, right after the clearing tick 37ms
+             × room 6: unlockAt(6, unlockBar(clear step)) once, right after the clearing tick 28ms
+             × room 7: unlockAt(7, unlockBar(clear step)) once, right after the clearing tick 23ms
+             × room 8: unlockAt(8, unlockBar(clear step)) once, right after the clearing tick 18ms
+             × room 9: unlockAt(9, unlockBar(clear step)) once, right after the clearing tick 26ms
+             × room 10: unlockAt(10, unlockBar(clear step)) once, right after the clearing tick 35ms
+         Test Files  1 failed | 10 passed (11)
+              Tests  10 failed | 51 passed (61)
+        ⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 1: unlockAt(1, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 1, 6, 1618 ] ] to deeply equal [ [ 'unlockAt', 1, 5, 1618 ] ]
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 2: unlockAt(2, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 2, 6, 1684 ] ] to deeply equal [ [ 'unlockAt', 2, 5, 1684 ] ]
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 3: unlockAt(3, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 3, 6, 1588 ] ] to deeply equal [ [ 'unlockAt', 3, 5, 1588 ] ]
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 4: unlockAt(4, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 4, 5, 1408 ] ] to deeply equal [ [ 'unlockAt', 4, 4, 1408 ] ]
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 5: unlockAt(5, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 5, 7, 2222 ] ] to deeply equal [ [ 'unlockAt', 5, 6, 2222 ] ]
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 6: unlockAt(6, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 6, 6, 1920 ] ] to deeply equal [ [ 'unlockAt', 6, 5, 1920 ] ]
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 7: unlockAt(7, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 7, 6, 1943 ] ] to deeply equal [ [ 'unlockAt', 7, 5, 1943 ] ]
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 8: unlockAt(8, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 8, 5, 1494 ] ] to deeply equal [ [ 'unlockAt', 8, 4, 1494 ] ]
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 9: unlockAt(9, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 9, 6, 1905 ] ] to deeply equal [ [ 'unlockAt', 9, 5, 1905 ] ]
+         FAIL  tests/game/run.test.mjs > GAME1 the run returns a layer on the bar line of its clear > room 10: unlockAt(10, unlockBar(clear step)) once, right after the clearing tick
+        AssertionError: expected [ [ 'unlockAt', 10, 8, 2388 ] ] to deeply equal [ [ 'unlockAt', 10, 7, 2388 ] ]
+== run-gauntlet-map: KILLED (restored true; copy clean)
+   - src/game/run.ts: "engine.gauntlet(gBeat / 4);"
+   + "engine.gauntlet(gBeat / 4 + 1);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/game (exit 1, 1 s)
+             × maps gBeat / 4 on the entry from room 10 and on every respawn in the gauntlet 72ms
+         Test Files  1 failed (1)
+              Tests  1 failed | 15 passed (16)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/game/run.test.mjs > GAME1 the run maps the gauntlet on every run start > maps gBeat / 4 on the entry from room 10 and on every respawn in the gauntlet
+        AssertionError: expected [ [ 'gauntlet', 8, 2388 ], …(5) ] to deeply equal [ [ 'gauntlet', 7, 2388 ], …(5) ]
+== run-lead: KILLED (restored true; copy clean)
+   - src/game/run.ts: "const ORIGIN_LEAD = 0.25;"
+   + "const ORIGIN_LEAD = 0.1;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/game (exit 1, 1 s)
+             × puts step 0 at 0.25 s past the context time when a run starts 5ms
+         Test Files  1 failed (1)
+              Tests  1 failed | 15 passed (16)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/game/run.test.mjs > GAME1 the run starts ahead of the heard time > puts step 0 at 0.25 s past the context time when a run starts
+        AssertionError: expected 5.1 to be close to 5.25, received difference is 0.15000000000000036, but expected 5e-13
+== run-display-cal: KILLED (restored true; copy clean)
+   - src/game/run.ts: "const display = displaySec(avOffset);"
+   + "const display = displaySec(0);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/game (exit 1, 1 s)
+           ❯ GAME1 the run follows its calibration (review R2, MAJOR 4) (2)
+             × ends every frame one step past the heard time less displaySec(avOffset) 10ms
+         Test Files  1 failed (1)
+              Tests  1 failed | 15 passed (16)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/game/run.test.mjs > GAME1 the run follows its calibration (review R2, MAJOR 4) > ends every frame one step past the heard time less displaySec(avOffset)
+        AssertionError: avOffset 100 inputBias -60 at 0.75 s: expected 189 to be 165 // Object.is equality
+== run-input-lag: KILLED (restored true; copy clean)
+   - src/game/run.ts: "- inputLagSec(avOffset, inputBias)) * 240"
+   + "- inputLagSec(0, 0)) * 240"
+   FAIL  node_modules/vitest/vitest.mjs run tests/game (exit 1, 1 s)
+           ❯ GAME1 the run follows its calibration (review R2, MAJOR 4) (2)
+             × stamps an input event with the step heard at its time less inputLagSec(avOffset, inputBias) 8ms
+         Test Files  1 failed (1)
+              Tests  1 failed | 15 passed (16)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/game/run.test.mjs > GAME1 the run follows its calibration (review R2, MAJOR 4) > stamps an input event with the step heard at its time less inputLagSec(avOffset, inputBias)
+        AssertionError: avOffset 100 inputBias -60 at 0.5 s: expected 129 to be 120 // Object.is equality
+== run-track-step: KILLED (restored true; copy clean)
+   - src/game/run.ts: "        track = trackStep(track, trackState(state));\n"
+   + ""
+   FAIL  node_modules/vitest/vitest.mjs run tests/game tests/render (exit 1, 4 s)
+             × steps the track after every tick, as trackStep over the sim's states, through landings, the wave and a layer's return 34ms
+         Test Files  1 failed | 7 passed (8)
+              Tests  1 failed | 51 passed (52)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/game/run.test.mjs > GAME1 the run keeps the creature's track (review R2, MINOR 2) > steps the track after every tick, as trackStep over the sim's states, through landings, the wave and a layer's return
+        AssertionError: room 6 at step 120: expected { landedAt: -1000, grounded: 1, …(3) } to deeply equal { landedAt: -1000, grounded: 1, …(3) }
+== draw-ellipse: KILLED (restored true; copy clean)
+   - src/render/art.ts: "g.fillEllipse(s.x + dx, s.y + dy, 2 * s.rx, 2 * s.ry);"
+   + "g.fillEllipse(s.x + dx, s.y + dy, s.rx, s.ry);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 4 s)
+             × draws each shape kind by its style call and its draw call, offset by (dx, dy) 13ms
+             × draws at the shapes' own place without an offset, in list order 4ms
+         Test Files  1 failed | 6 passed (7)
+              Tests  2 failed | 34 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/draw-shapes.test.mjs > RN1 drawShapes, section 10.6 > draws each shape kind by its style call and its draw call, offset by (dx, dy)
+        AssertionError: expected [ [ 'fillStyle', 1448744, 1 ], …(15) ] to deeply equal [ [ 'fillStyle', 1448744, 1 ], …(15) ]
+         FAIL  tests/render/draw-shapes.test.mjs > RN1 drawShapes, section 10.6 > draws at the shapes' own place without an offset, in list order
+        AssertionError: expected [ Array(6) ] to deeply equal [ Array(6) ]
+== room-art-edge: KILLED (restored true; copy clean)
+   - src/render/room-art.ts: "if (codeAt(room, c, r - 1) !== CODE.SOLID) out.push"
+   + "if (codeAt(room, c, r - 1) === CODE.EMPTY) out.push"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 4 s)
+             × draws every chunk of every room with the reference shapes 8ms
+         Test Files  1 failed | 6 passed (7)
+              Tests  1 failed | 35 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/room-art.test.mjs > RN1 room art > draws every chunk of every room with the reference shapes
+        AssertionError: 01-wake 0: 335 shapes, want 347
+== room-art-camera: KILLED (restored true; copy clean)
+   - src/render/room-art.ts: "const lead = room.kind === 'gauntlet' ? 160 : VIEW_W / 2;"
+   + "const lead = room.kind === 'gauntlet' ? 150 : VIEW_W / 2;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 3 s)
+             × frames the view on the creature, clamped to the room, in whole canvas px 51ms
+             × draws the gauntlet's witness run as the reference does 30ms
+         Test Files  2 failed | 5 passed (7)
+              Tests  2 failed | 34 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws the gauntlet's witness run as the reference does
+        AssertionError: room 11 step 541: camera: expected 3 to be +0 // Object.is equality
+         FAIL  tests/render/room-art.test.mjs > RN1 room art > frames the view on the creature, clamped to the room, in whole canvas px
+        AssertionError: 11-gauntlet 151.4: expected 4 to be +0 // Object.is equality
+== creature-squash: KILLED (restored true; copy clean)
+   - src/render/creature.ts: "export const SQUASH_STEPS = 6;"
+   + "export const SQUASH_STEPS = 5;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 2 s)
+             × draws every frame of the rooms' witness runs as the reference does 121ms
+             × draws the layer's ring as the reference does, past a room's clear until the ring has run out 104ms
+             × draws the gauntlet's witness run as the reference does 42ms
+             × tracks and draws the creature through 01-wake 78ms
+             × tracks and draws the creature through 02-heartbeat 41ms
+             × tracks and draws the creature through 03-dash 53ms
+             × tracks and draws the creature through 04-thorns 20ms
+             × tracks and draws the creature through 05-doors 67ms
+             × tracks and draws the creature through 07-current 16ms
+             × tracks and draws the creature through 08-steps 22ms
+             × tracks and draws the creature through 09-gates 21ms
+             × tracks and draws the creature through 10-crown 20ms
+             × tracks and draws the creature through 11-gauntlet 72ms
+             × tracks and draws the creature through room 6, right then jump held 32ms
+         Test Files  2 failed | 5 passed (7)
+              Tests  14 failed | 22 passed (36)
+        ⎯⎯⎯⎯⎯⎯ Failed Tests 14 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 01-wake
+        AssertionError: 01-wake step 326 a 1 cam 9: [0] ellipse.y 587.5, want 588.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 02-heartbeat
+        AssertionError: 02-heartbeat step 265 a 1 cam 0: [0] ellipse.y 547.5, want 548.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 03-dash
+        AssertionError: 03-dash step 443 a 1 cam 300: [0] ellipse.y 627.5, want 628.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 04-thorns
+        AssertionError: 04-thorns step 203 a 1 cam 0: [0] ellipse.y 627.5, want 628.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 05-doors
+        AssertionError: 05-doors step 697 a 1 cam 352: [0] ellipse.y 627.5, want 628.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 07-current
+        AssertionError: 07-current step 202 a 1 cam 0: [0] ellipse.y 627.5, want 628.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 08-steps
+        AssertionError: 08-steps step 225 a 1 cam 0: [0] ellipse.y 507.5, want 508.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 09-gates
+        AssertionError: 09-gates step 216 a 1 cam 0: [0] ellipse.y 627.5, want 628.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 10-crown
+        AssertionError: 10-crown step 274 a 1 cam 0: [0] ellipse.y 547.5, want 548.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through 11-gauntlet
+        AssertionError: 11-gauntlet step 1001 a 1 cam 696: [0] ellipse.y 587.5, want 588.75
+         FAIL  tests/render/creature.test.mjs > RN2 creature > tracks and draws the creature through room 6, right then jump held
+        AssertionError: room 6, right then jump held step 405 a 1 cam 0: [0] ellipse.y 627.5, want 628.75
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws every frame of the rooms' witness runs as the reference does
+== beat-warn: KILLED (restored true; copy clean)
+   - src/render/beat-art.ts: "export const WARN_ALPHA: readonly [number, number] = [0.45, 0.25];"
+   + "export const WARN_ALPHA: readonly [number, number] = [0.5, 0.25];"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 3 s)
+             × gives every entity the reference look, layer back or not 23ms
+             × draws frame after frame through the limiter as the reference does 17ms
+             × draws every frame of the rooms' witness runs as the reference does 237ms
+             × draws the layer's ring as the reference does, past a room's clear until the ring has run out 197ms
+         Test Files  2 failed | 5 passed (7)
+              Tests  4 failed | 32 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/beat-art.test.mjs > RN3 beat art > gives every entity the reference look, layer back or not
+        AssertionError: 2 a 180 2046: expected { look: 'warn', alpha: 0.5 } to deeply equal { look: 'warn', alpha: 0.45 }
+         FAIL  tests/render/beat-art.test.mjs > RN3 beat art > draws frame after frame through the limiter as the reference does
+        AssertionError: room 2 cam 0 step 80: [28] rect.a 0.5, want 0.45
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws every frame of the rooms' witness runs as the reference does
+        AssertionError: room 2 step 79: beat: [28] rect.a 0.5, want 0.45
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws the layer's ring as the reference does, past a room's clear until the ring has run out
+        AssertionError: room 1 step 2137: beat: [28] rect.a 0.5, want 0.45
+== beat-limiter-area: KILLED (restored true; copy clean)
+   - src/render/beat-art.ts: "e.cells.length * (e.kind === 'spike' ? SPIKE_AREA : TILE_PX * TILE_PX)"
+   + "(e.kind === 'spike' ? SPIKE_AREA : TILE_PX * TILE_PX)"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 3 s)
+             × draws frame after frame through the limiter as the reference does 10ms
+             × draws every frame of the rooms' witness runs as the reference does 227ms
+             × draws the layer's ring as the reference does, past a room's clear until the ring has run out 178ms
+         Test Files  2 failed | 5 passed (7)
+              Tests  3 failed | 33 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/beat-art.test.mjs > RN3 beat art > draws frame after frame through the limiter as the reference does
+        AssertionError: room 2 cam 0 step 52: 48 shapes, want 76
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws every frame of the rooms' witness runs as the reference does
+        AssertionError: room 2 step 53: beat: 48 shapes, want 76
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws the layer's ring as the reference does, past a room's clear until the ring has run out
+        AssertionError: room 1 step 2110: beat: 49 shapes, want 77
+== depth-seed: KILLED (restored true; copy clean)
+   - src/render/depth-art.ts: "const rng = makeRng(roomNumber(room));"
+   + "const rng = makeRng(roomNumber(room) + 1);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 4 s)
+             × draws the four bands of every room 10ms
+         Test Files  1 failed | 6 passed (7)
+              Tests  1 failed | 35 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/depth-art.test.mjs > RN4 depth > draws the four bands of every room
+        AssertionError: 01-wake band 0: 10 shapes, want 7
+== frame-step-ahead: KILLED (restored true; copy clean)
+   - src/render/play-frame.ts: "const step = sim.step;"
+   + "const step = sim.step + 24;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 3 s)
+             × draws every frame of the rooms' witness runs as the reference does 15ms
+             × draws the layer's ring as the reference does, past a room's clear until the ring has run out 3ms
+             × draws the gauntlet's witness run as the reference does 3ms
+         Test Files  1 failed | 6 passed (7)
+              Tests  3 failed | 33 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws every frame of the rooms' witness runs as the reference does
+        AssertionError: room 1 step 1: dust: [0] rect.x 79.38193089983542, want 79.25056152630702
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws the layer's ring as the reference does, past a room's clear until the ring has run out
+        AssertionError: room 1 step 1: dust: [0] rect.x 79.38193089983542, want 79.25056152630702
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws the gauntlet's witness run as the reference does
+        AssertionError: room 11 step 1: dust: [0] rect.x 79.41890334914206, want 78.51618217461521
+== frame-ring-up: KILLED (restored true; copy clean)
+   - src/render/play-frame.ts: "(iy / SUB + 5) * ZOOM);"
+   + "(iy / SUB + 4) * ZOOM);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 5 s)
+             × draws the layer's ring as the reference does, past a room's clear until the ring has run out 156ms
+         Test Files  1 failed | 6 passed (7)
+              Tests  1 failed | 35 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/play-frame.test.mjs > RN4 the play scene's frame > draws the layer's ring as the reference does, past a room's clear until the ring has run out
+        AssertionError: room 1 step 2059: beat: [56] ring.y 625, want 627.5
+== ending-beat: KILLED (restored true; copy clean)
+   - src/render/ending-art.ts: "return ((Math.floor((heard - origin) / BEAT_S) % 4) + 4) % 4;"
+   + "return ((Math.floor((heard - origin) / BEAT_S + 1) % 4) + 4) % 4;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 5 s)
+             × counts the beat of the bar from the run's origin 13ms
+             × draws each frame of the ending: the rise, then the card on the music's beat 17ms
+         Test Files  1 failed | 6 passed (7)
+              Tests  2 failed | 34 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/ending-art.test.mjs > END1 ending art > counts the beat of the bar from the run's origin
+        AssertionError: 3.7 1.7000000000000002: expected +0 to be 3 // Object.is equality
+         FAIL  tests/render/ending-art.test.mjs > END1 ending art > draws each frame of the ending: the rise, then the card on the music's beat
+        AssertionError: ending 65 71.86810000000233: [0] ellipse.a 1, want 0.3
+== ending-rise: KILLED (restored true; copy clean)
+   - src/render/ending-art.ts: "export const RISE_S = 16 * BEAT_S;"
+   + "export const RISE_S = 15 * BEAT_S;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/render (exit 1, 4 s)
+             × rises over four bars 6ms
+             × draws each frame of the ending: the rise, then the card on the music's beat 2ms
+         Test Files  1 failed | 6 passed (7)
+              Tests  2 failed | 34 passed (36)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/render/ending-art.test.mjs > END1 ending art > rises over four bars
+        AssertionError: expected 6.428571428571428 to be close to 6.857142857142857, received difference is 0.4285714285714288, but expected 5e-10
+         FAIL  tests/render/ending-art.test.mjs > END1 ending art > draws each frame of the ending: the rise, then the card on the music's beat
+        AssertionError: 65 65.0173 glimpseY: expected 0.0018893162261974794 to be less than 0.000001
+
+mutations: witness-bits SURVIVED, gates-ramp KILLED, fx-limit-edge SURVIVED, run-unlock-late KILLED, run-gauntlet-map KILLED, run-lead KILLED, run-display-cal KILLED, run-input-lag KILLED, run-track-step KILLED, draw-ellipse KILLED, room-art-edge KILLED, room-art-camera KILLED, creature-squash KILLED, beat-warn KILLED, beat-limiter-area KILLED, depth-seed KILLED, frame-step-ahead KILLED, frame-ring-up KILLED, ending-beat KILLED, ending-rise KILLED
+--- end ---

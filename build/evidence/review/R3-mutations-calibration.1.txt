@@ -1,0 +1,29 @@
+HUSH-EVIDENCE v1
+id: R3-mutations-calibration
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/pristine cal-count-in-3 cal-countin-taps
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T21:07:03-05:00
+time-end: 2026-10-12T21:39:24-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== cal-count-in-3: KILLED (restored true; copy clean)
+   - src/render/calibration-scene.ts: "const COUNT_IN = 4;"
+   + "const COUNT_IN = 3;"
+   pass  node_modules/vite/bin/vite.js build --logLevel error (exit 0, 1 s)
+   FAIL  tools/probe-flash.mjs --calibration (exit 1, 219 s)
+        flash: calibration up 43.5 s: clicks 48, count-in fills 6, rings 48, values 0 0 (2608 frames, 2171 analyser samples)
+        flash: tapped calibration up 22 s: values 15.1 25.0 (the taps' own 15.1 25.0; taps 40 and 25 ms after each click and ring, marks 15 25)
+        flash: 11670 frames over 194.7 s, median 15.71 ms; general max 9706 px, red max 0 px (limit 25600)
+        flash: calibration fills 6 (want 7 to 9)
+        flash: FAIL
+== cal-countin-taps: KILLED (restored true; copy clean)
+   - src/render/calibration-scene.ts: "if (h >= a.t0 + (COUNT_IN - 0.5) * BEAT) a.taps.push(h);"
+   + "a.taps.push(h);"
+   pass  node_modules/vite/bin/vite.js build --logLevel error (exit 0, 1 s)
+   FAIL  tools/probe-flash.mjs --calibration (exit null, 1719 s)
+
+mutations: cal-count-in-3 KILLED, cal-countin-taps KILLED
+--- end ---

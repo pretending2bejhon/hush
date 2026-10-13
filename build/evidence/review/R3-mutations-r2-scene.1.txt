@@ -1,0 +1,58 @@
+HUSH-EVIDENCE v1
+id: R3-mutations-r2-scene
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/pristine r2-scene-chunk-cam r2-ending-glimpse-y
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T20:56:20-05:00
+time-end: 2026-10-12T21:01:26-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== r2-scene-chunk-cam: KILLED (restored true; copy clean)
+   - src/render/play-scene.ts: "xAt: (camPx) => chunk.col0 * TILE_PX - camPx"
+   + "xAt: () => chunk.col0 * TILE_PX"
+   pass  node_modules/vite/bin/vite.js build --logLevel error (exit 0, 1 s)
+   FAIL  tools/probe-play.mjs --check console,play,text,scene (exit 1, 152 s)
+        play: chrome headless: room 01-wake done
+        play: chrome headless: room 02-heartbeat done
+        play: chrome headless: room 03-dash done
+        play: chrome headless: room 04-thorns done
+        play: chrome headless: room 05-doors done
+        play: chrome headless: room 06-wave done
+        play: chrome headless: room 07-current done
+        play: chrome headless: room 08-steps done
+        play: chrome headless: room 09-gates done
+        play: chrome headless: room 10-crown done
+        play: chrome headless: room 11-gauntlet done
+        play: chrome headless: ending seen, texts read 9864 ms into it
+        play: chrome headless: console: ok: zero console and page errors
+        play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+        play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+        play: chrome headless: scene: FAIL: room 01-wake at step 814: band-01-0 at x -127, want 0 (factor 0.15 of the camera 0); room 01-wake at step 814: band-01-1 at x -296, want 0 (factor 0.35 of the camera 0); room 01-wake at step 814: band-01-2 at x -508, want 0 (factor 0.6 of the camera 0)
+        play: chrome headless: FAIL (console,play,text,scene)
+== r2-ending-glimpse-y: KILLED (restored true; copy clean)
+   - src/render/ending-scene.ts: "if (this.glimpse) this.glimpse.y = f.glimpseY;"
+   + "if (this.glimpse) this.glimpse.y = 720;"
+   pass  node_modules/vite/bin/vite.js build --logLevel error (exit 0, 1 s)
+   FAIL  tools/probe-play.mjs --query playtest --check console,play,text,scene (exit 1, 152 s)
+        play: chrome headless: room 01-wake done
+        play: chrome headless: room 02-heartbeat done
+        play: chrome headless: room 03-dash done
+        play: chrome headless: room 04-thorns done
+        play: chrome headless: room 05-doors done
+        play: chrome headless: room 06-wave done
+        play: chrome headless: room 07-current done
+        play: chrome headless: room 08-steps done
+        play: chrome headless: room 09-gates done
+        play: chrome headless: room 10-crown done
+        play: chrome headless: room 11-gauntlet done
+        play: chrome headless: ending seen, texts read 9877 ms into it
+        play: chrome headless: console: ok: zero console and page errors
+        play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+        play: chrome headless: text: ok: title, link and notice only, and once the card is up "run 0:59 · deaths 0"; nothing over the canvas; no text object
+        play: chrome headless: scene: FAIL: ending: the glimpse at y 720 once the card is up, want 0
+        play: chrome headless: FAIL (console,play,text,scene)
+
+mutations: r2-scene-chunk-cam KILLED, r2-ending-glimpse-y KILLED
+--- end ---

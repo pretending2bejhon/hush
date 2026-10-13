@@ -1,0 +1,62 @@
+HUSH-EVIDENCE v1
+id: R3-playtest-dom
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/playtest-dom.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mut
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T21:54:51-05:00
+time-end: 2026-10-12T21:57:35-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== bare page (no query)
+  window.__hush present: false
+  bare, calibration before the first key @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects null; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  bare, calibration before the first key @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects null; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  bare, calibration before the first key @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects null; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  bare, calibration after the first key @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects null; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  bare, calibration after the first key @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects null; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  bare, calibration after the first key @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects null; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  console errors 0, page errors 0
+== default (with ?probe to drive the run)
+  default, calibration before the first key @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  default, calibration before the first key @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  default, calibration before the first key @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  default, calibration after the first key @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  default, calibration after the first key @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  default, calibration after the first key @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  default, room 5 @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  default, room 5 @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  default, room 5 @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  default, the gauntlet @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  default, the gauntlet @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  default, the gauntlet @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  default, mid-rise (3 s in) @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  default, mid-rise (3 s in) @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  default, mid-rise (3 s in) @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  default, the card (9.4 s in) @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  default, the card (9.4 s in) @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  default, the card (9.4 s in) @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  console errors 0, page errors 0
+== ?playtest (with ?probe to drive the run)
+  ?playtest, calibration before the first key @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  ?playtest, calibration before the first key @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  ?playtest, calibration before the first key @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  ?playtest, calibration after the first key @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  ?playtest, calibration after the first key @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  ?playtest, calibration after the first key @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  ?playtest, room 5 @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  ?playtest, room 5 @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  ?playtest, room 5 @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  ?playtest, the gauntlet @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  ?playtest, the gauntlet @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  ?playtest, the gauntlet @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  ?playtest, mid-rise (3 s in) @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,1220,686]
+  ?playtest, mid-rise (3 s in) @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [30,0,740,416]
+  ?playtest, mid-rise (3 s in) @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later"]; over the canvas []; text objects 0; #playtest {"hidden":true,"text":""}; canvas [0,329,900,506]
+  ?playtest, the card (9.4 s in) @1280x720: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later","output#playtest:run 0:59 · deaths 0"]; over the canvas []; text objects 0; #playtest {"hidden":false,"text":"run 0:59 · deaths 0"}; canvas [30,0,1220,686]
+  ?playtest, the card (9.4 s in) @800x450: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later","output#playtest:run 0:59 · deaths 0"]; over the canvas []; text objects 0; #playtest {"hidden":false,"text":"run 0:59 · deaths 0"}; canvas [30,0,740,416]
+  ?playtest, the card (9.4 s in) @900x1200: title "The Hush"; texts ["a:Source (AGPL-3.0)","span:Music engine: Strudel, AGPL-3.0-or-later","output#playtest:run 0:59 · deaths 0"]; over the canvas []; text objects 0; #playtest {"hidden":false,"text":"run 0:59 · deaths 0"}; canvas [0,329,900,506]
+  console errors 0, page errors 0
+playtest-dom: PASS
+--- end ---

@@ -1,0 +1,100 @@
+HUSH-EVIDENCE v1
+id: R3-npm-test
+phase: review
+command: npm test
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T22:06:06-05:00
+time-end: 2026-10-12T22:09:05-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+
+> hush@0.0.0 test
+> node tools/test-all.mjs
+
+test: unit: node_modules\vitest\vitest.mjs run tests\sim tests\rooms tests\audio tests\clock tests\input tests\fx tests\render tests\game
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  25 passed (25)
+      Tests  133 passed (133)
+   Start at  22:06:07
+   Duration  4.43s (tests 78%, transform 14%, import 7%, worker 1%)
+
+    Isolate  25 workers spawned · ~324ms startup each (spawn + environment, per file)
+             at least ~299ms faster with isolate: false — reuses workers across files instead of one per file
+
+test: unit: exit 0
+test: replay: tools\replay.mjs --all --jitter --seed 1161287634
+replays/01-wake.json: CLEAR clear at step 1618, checksum 6001f0f9 (witness 6001f0f9) OK
+replays/01-wake.json: jitter seed 1161287634: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: CLEAR clear at step 1684, checksum 04febedf (witness 04febedf) OK
+replays/02-heartbeat.json: jitter seed 1161287634: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/03-dash.json: CLEAR clear at step 1588, checksum 593d0787 (witness 593d0787) OK
+replays/03-dash.json: jitter seed 1161287634: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: CLEAR clear at step 1408, checksum 123057cb (witness 123057cb) OK
+replays/04-thorns.json: jitter seed 1161287634: 18/20 clear (need 18) [+++++-+++-++++++++++] PASS
+replays/05-doors.json: CLEAR clear at step 2222, checksum d181a484 (witness d181a484) OK
+replays/05-doors.json: jitter seed 1161287634: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: CLEAR clear at step 1920, checksum f3496b90 (witness f3496b90) OK
+replays/06-wave.json: jitter seed 1161287634: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: CLEAR clear at step 1943, checksum 1c7b52e9 (witness 1c7b52e9) OK
+replays/07-current.json: jitter seed 1161287634: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: CLEAR clear at step 1494, checksum e6a8f7ba (witness e6a8f7ba) OK
+replays/08-steps.json: jitter seed 1161287634: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/09-gates.json: CLEAR clear at step 1905, checksum 9498a96d (witness 9498a96d) OK
+replays/09-gates.json: jitter seed 1161287634: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/10-crown.json: CLEAR clear at step 2388, checksum 5b909a19 (witness 5b909a19) OK
+replays/10-crown.json: jitter seed 1161287634: 19/20 clear (need 18) [+++++++++++++-++++++] PASS
+replays/11-gauntlet.json: CLEAR clear at step 14278, checksum b3715ef7 (witness b3715ef7) OK
+replays/11-gauntlet.json: jitter seed 1161287634: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 11 witness(es)
+test: replay: exit 0
+test: build: node_modules\vite\bin\vite.js build
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-D9OYl_oW.js  2,093.59 kB │ gzip: 593.67 kB
+
+[32m✓ built in 768ms[39m
+test: build: exit 0
+test: smoke: tools\probe-smoke.mjs
+smoke: page: ok: GET /hush/ 200
+smoke: build-meta: ok: hush-build 81a66ae93491
+smoke: boot: ok: scenes ["calibration"]
+smoke: canvas: ok: not blank (1220 by 686)
+smoke: text: ok: title, link and notice only; no text object
+smoke: requests: ok: every request answered below 400
+smoke: console: ok: zero console and page errors
+smoke: PASS (/hush/)
+test: smoke: exit 0
+test: play: tools\probe-play.mjs --check console,play,text,network,storage,unlock,scene,keys
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 03-dash done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 05-doors done
+play: chrome headless: room 06-wave done
+play: chrome headless: room 07-current done
+play: chrome headless: room 08-steps done
+play: chrome headless: room 09-gates done
+play: chrome headless: room 10-crown done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 9961 ms into it
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+play: chrome headless: network: ok: 3 requests, all to the page's origin
+play: chrome headless: storage: ok: nothing stored
+play: chrome headless: unlock: ok: 10 rooms cleared, each layer's gate closed until its bar line and open after it; the gauntlet's track mapped from its run's bar at its entry and its respawn (83 reads)
+play: chrome headless: scene: ok: 11 rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera; the glimpse risen to y 0 by the card (92 ending reads)
+play: chrome headless: keys: ok: after the hand-over (100, -60) a run at room 1; real keys reached the sim on the steps stepOf names, every state read while they were pressed and after equal to their replay
+play: chrome headless: PASS (console,play,text,network,storage,unlock,scene,keys)
+test: play: exit 0
+test: PASS (unit, replay, e2e)
+--- end ---

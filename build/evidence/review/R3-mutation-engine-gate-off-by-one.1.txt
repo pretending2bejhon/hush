@@ -1,0 +1,42 @@
+HUSH-EVIDENCE v1
+id: R3-mutation-engine-gate-off-by-one
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/pristine engine-gate-off-by-one
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T21:47:15-05:00
+time-end: 2026-10-12T21:51:12-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== engine-gate-off-by-one: KILLED (restored true; copy clean)
+   - src/audio/engine.ts: "const target = number === CLICK_ORBIT ? compressor : gates[number - 1];"
+   + "const target = number === CLICK_ORBIT ? compressor : gates[number];"
+   pass  node_modules/vite/bin/vite.js build --logLevel error (exit 0, 1 s)
+   pass  tools/probe-play.mjs --check console,play,unlock (exit 0, 166 s)
+        play: chrome headless: room 01-wake done
+        play: chrome headless: room 02-heartbeat done
+        play: chrome headless: room 03-dash done
+        play: chrome headless: room 04-thorns done
+        play: chrome headless: room 05-doors done
+        play: chrome headless: room 06-wave done
+        play: chrome headless: room 07-current done
+        play: chrome headless: room 08-steps done
+        play: chrome headless: room 09-gates done
+        play: chrome headless: room 10-crown done
+        play: chrome headless: room 11-gauntlet done
+        play: chrome headless: ending seen, texts read 9906 ms into it
+        play: chrome headless: console: ok: zero console and page errors
+        play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+        play: chrome headless: unlock: ok: 10 rooms cleared, each layer's gate closed until its bar line and open after it; the gauntlet's track mapped from its run's bar at its entry and its respawn (84 reads)
+        play: chrome headless: PASS (console,play,unlock)
+   FAIL  tools/probe-av.mjs --headed (exit 1, 70 s)
+        av: 2155 voices scheduled for 2135 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.132 ms p-p, 0 resyncs; 68.2 s
+        av: silence peak 0.00e+0; windows rms 0.0000 0.4096 0.4160 0.4036 0.4090 0.4038 0.4040 0.3977 0.4024 0.3979
+        av: solos rms 0.0000 0.3749 0.0656 0.0139 0.0480 0.0059 0.0287 0.0066 0.0145 0.0164; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+        av: no master signal in room 2 with 1 layer(s) back (rms 0.00e+0)
+        av: layer 1 soloed: no signal (rms 0.00e+0)
+        av: FAIL
+
+mutations: engine-gate-off-by-one KILLED
+--- end ---

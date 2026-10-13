@@ -1,0 +1,333 @@
+HUSH-EVIDENCE v1
+id: R3-mutations-unit-a
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/pristine sim-const-gravity sim-const-jump sim-beat-binding sim-unlock-bar sim-clear-edge sim-portal-kind rooms-tile-0 rooms-compile-dir rooms-gauntlet-corridor witness-step clock-stale driver-target driver-lag-clamp keys-apply cal-trim cal-threshold track-order sched-shift sched-late
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T20:10:58-05:00
+time-end: 2026-10-12T20:11:24-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== sim-const-gravity: KILLED (restored true; copy clean)
+   - src/sim/constants.ts: "GRAVITY: 8,"
+   + "GRAVITY: 9,"
+   FAIL  node_modules/vitest/vitest.mjs run tests/sim (exit 1, 2 s)
+             × agrees in an open room on dashes in every direction 14ms
+             × agrees in 03-dash 3ms
+             × agrees from the start: the wait for the bar, the first obstacles, deaths and restarts 22ms
+             × agrees in mid-run, into and out of the wave bars and to the finish 10ms
+             × agrees in room 2 with its layers back, and with none back (rest states) 15ms
+             × agrees in room 4 with its layers back, and with none back (rest states) 3ms
+             × agrees in room 5 with its layers back, and with none back (rest states) 4ms
+             × agrees in room 8 with its layers back, and with none back (rest states) 2ms
+             × agrees on the crush: a block that comes on over the creature 4ms
+             × agrees on the clear, the pending layer and the next room, without stopping at the clear 2ms
+             × agrees in an open room on held walks and jumps 16ms
+             × agrees in 01-wake, spikes, pits, deaths and respawns included 4ms
+             × agrees on the clear at the right edge 4ms
+             × agrees in room 6 through its wave portal 24ms
+             × agrees in room 7 through its wave portal 13ms
+             × agrees in room 9 through its wave portal 19ms
+             × agrees in room 10 through its wave portal 5ms
+             × agrees on the way from the spawn to the portal in 06-wave and on through it 3ms
+             × has the oracle constants, bits and spike boxes 12ms
+         Test Files  6 failed | 1 passed (7)
+              Tests  19 failed | 14 passed (33)
+        ⎯⎯⎯⎯⎯⎯ Failed Tests 19 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/sim/beat.test.mjs > SIM1 constants and beat functions > has the oracle constants, bits and spike boxes
+        AssertionError: expected { SUB: 256, TILE: 4096, …(33) } to deeply equal { SUB: 256, TILE: 4096, …(33) }
+         FAIL  tests/sim/oracle-base.test.mjs > SIM2 base form against the oracle > agrees in an open room on held walks and jumps
+        AssertionError: expected { step: 41, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-base.test.mjs > SIM2 base form against the oracle > agrees in 01-wake, spikes, pits, deaths and respawns included
+        AssertionError: expected { step: 48, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-base.test.mjs > SIM2 base form against the oracle > agrees on the clear at the right edge
+        AssertionError: expected { step: 48, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 2 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 48, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 4 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 48, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 5 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 124, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 8 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 59, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees on the crush: a block that comes on over the creature
+        AssertionError: expected { step: +0, field: 'y', …(3) } to be null
+== sim-const-jump: KILLED (restored true; copy clean)
+   - src/sim/constants.ts: "JUMP_VY: -224,"
+   + "JUMP_VY: -223,"
+   FAIL  node_modules/vitest/vitest.mjs run tests/sim (exit 1, 1 s)
+             × agrees in an open room on dashes in every direction 13ms
+             × agrees in 03-dash 5ms
+             × agrees from the start: the wait for the bar, the first obstacles, deaths and restarts 26ms
+             × agrees in mid-run, into and out of the wave bars and to the finish 4ms
+             × agrees in an open room on held walks and jumps 12ms
+             × agrees in 01-wake, spikes, pits, deaths and respawns included 2ms
+             × agrees on the clear at the right edge 2ms
+             × agrees in room 6 through its wave portal 22ms
+             × agrees in room 7 through its wave portal 8ms
+             × agrees in room 9 through its wave portal 14ms
+             × agrees in room 10 through its wave portal 7ms
+             × agrees on the way from the spawn to the portal in 06-wave and on through it 7ms
+             × agrees in room 2 with its layers back, and with none back (rest states) 15ms
+             × agrees in room 4 with its layers back, and with none back (rest states) 3ms
+             × agrees in room 5 with its layers back, and with none back (rest states) 9ms
+             × agrees in room 8 with its layers back, and with none back (rest states) 4ms
+             × agrees on the clear, the pending layer and the next room, without stopping at the clear 2ms
+             × has the oracle constants, bits and spike boxes 13ms
+         Test Files  6 failed | 1 passed (7)
+              Tests  18 failed | 15 passed (33)
+        ⎯⎯⎯⎯⎯⎯ Failed Tests 18 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/sim/beat.test.mjs > SIM1 constants and beat functions > has the oracle constants, bits and spike boxes
+        AssertionError: expected { SUB: 256, TILE: 4096, …(33) } to deeply equal { SUB: 256, TILE: 4096, …(33) }
+         FAIL  tests/sim/oracle-base.test.mjs > SIM2 base form against the oracle > agrees in an open room on held walks and jumps
+        AssertionError: expected { step: +0, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-base.test.mjs > SIM2 base form against the oracle > agrees in 01-wake, spikes, pits, deaths and respawns included
+        AssertionError: expected { step: +0, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-base.test.mjs > SIM2 base form against the oracle > agrees on the clear at the right edge
+        AssertionError: expected { step: +0, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 2 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: +0, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 4 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: +0, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 5 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 295, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 8 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 42, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees on the clear, the pending layer and the next room, without stopping at the clear
+        AssertionError: expected { step: +0, field: 'y', …(3) } to be null
+         FAIL  tests/sim/oracle-dash.test.mjs > SIM3 dash against the oracle > agrees in an open room on dashes in every direction
+== sim-beat-binding: KILLED (restored true; copy clean)
+   - src/sim/beat.ts: "period) < e.on * C.TICKS_PER_SIXTEENTH"
+   + "period) <= e.on * C.TICKS_PER_SIXTEENTH"
+   FAIL  node_modules/vitest/vitest.mjs run tests/sim (exit 1, 2 s)
+             × turns entities on and off as the oracle does, at rest while their layer is not back 19ms
+             × room 1: layer 1 back on the bar line, its hazards at rest until then 19ms
+             × room 8: layer 8 back on the bar line, its hazards at rest until then 5ms
+             × agrees in room 9 through its wave portal 43ms
+             × agrees in room 5 with its layers back, and with none back (rest states) 112ms
+         Test Files  4 failed | 3 passed (7)
+              Tests  5 failed | 28 passed (33)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/sim/beat.test.mjs > SIM1 constants and beat functions > turns entities on and off as the oracle does, at rest while their layer is not back
+        AssertionError: expected true to be false // Object.is equality
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 5 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 2880, field: 'x', …(3) } to be null
+         FAIL  tests/sim/oracle-wave.test.mjs > SIM5 wave and portals against the oracle > agrees in room 9 through its wave portal
+        AssertionError: expected { step: 1246, field: 'x', …(3) } to be null
+         FAIL  tests/sim/progression.test.mjs > X7 progression: a layer returns on the bar line > room 1: layer 1 back on the bar line, its hazards at rest until then
+         FAIL  tests/sim/progression.test.mjs > X7 progression: a layer returns on the bar line > room 8: layer 8 back on the bar line, its hazards at rest until then
+        AssertionError: expected true to be false // Object.is equality
+== sim-unlock-bar: KILLED (restored true; copy clean)
+   - src/sim/beat.ts: "(step * C.TICKS_PER_STEP + C.TICKS_PER_BEAT) / C.TICKS_PER_BAR"
+   + "(step * C.TICKS_PER_STEP + C.TICKS_PER_SIXTEENTH) / C.TICKS_PER_BAR"
+   FAIL  node_modules/vitest/vitest.mjs run tests/sim (exit 1, 2 s)
+             × computes the bar line as the oracle does 13ms
+             × finds the bar lines as the oracle does 9ms
+             × agrees on the clear, the pending layer and the next room, without stopping at the clear 66ms
+         Test Files  3 failed | 4 passed (7)
+              Tests  3 failed | 30 passed (33)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/sim/beat.test.mjs > SIM1 constants and beat functions > finds the bar lines as the oracle does
+        AssertionError: expected 1 to be 2 // Object.is equality
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees on the clear, the pending layer and the next room, without stopping at the clear
+        AssertionError: expected { step: 28, field: 'pendingAt', …(3) } to be null
+         FAIL  tests/sim/progression.test.mjs > X7 progression: a layer returns on the bar line > computes the bar line as the oracle does
+        AssertionError: expected 1 to be 2 // Object.is equality
+== sim-clear-edge: KILLED (restored true; copy clean)
+   - src/sim/sim.ts: "if (s.x + BW >= R.W * T) clearRoom();"
+   + "if (s.x + BW > R.W * T) clearRoom();"
+   FAIL  node_modules/vitest/vitest.mjs run tests/sim (exit 1, 2 s)
+             × agrees on the clear, the pending layer and the next room, without stopping at the clear 135ms
+         Test Files  1 failed | 6 passed (7)
+              Tests  1 failed | 32 passed (33)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees on the clear, the pending layer and the next room, without stopping at the clear
+        AssertionError: expected { step: 28, field: 'room', …(3) } to be null
+== sim-portal-kind: SURVIVED (restored true; copy clean)
+   - src/sim/sim.ts: "else if (k === CODE.BASE && found === 0) found = 2;"
+   + "else if (k === CODE.BASE) found = 2;"
+   pass  node_modules/vitest/vitest.mjs run tests/sim (exit 0, 2 s)
+         Test Files  7 passed (7)
+              Tests  33 passed (33)
+== rooms-tile-0: KILLED (restored true; copy clean)
+   - rooms/04-thorns.txt: "######.....aaa.....bbb.....aaa.....bbb............###....###....###....."
+   + "######.....aaa.....bbb.....aaa.....bbb............###....###....##......"
+   FAIL  tools/spec-content.mjs --tree (exit 1, 0 s)
+        spec-content: FAIL, 1 file(s)
+== rooms-compile-dir: KILLED (restored true; copy clean)
+   - src/rooms/codes.ts: "'^': 2, v: 3"
+   + "'^': 3, v: 2"
+   FAIL  node_modules/vitest/vitest.mjs run tests/rooms tests/sim (exit 1, 2 s)
+             × agrees from the start: the wait for the bar, the first obstacles, deaths and restarts 116ms
+             × agrees in mid-run, into and out of the wave bars and to the finish 48ms
+             × compiles every room of the spec to the oracle structure 31ms
+             × compiles the world in file order and refuses a gap 114ms
+             × parses the program and generates the oracle grid, byte for byte 46ms
+             × agrees in 01-wake, spikes, pits, deaths and respawns included 22ms
+             × agrees in 03-dash 14ms
+             × agrees in room 2 with its layers back, and with none back (rest states) 48ms
+             × agrees in room 5 with its layers back, and with none back (rest states) 21ms
+             × agrees in room 8 with its layers back, and with none back (rest states) 29ms
+             × agrees on the crush: a block that comes on over the creature 12ms
+             × agrees on the clear, the pending layer and the next room, without stopping at the clear 4ms
+             × agrees in room 10 through its wave portal 13ms
+         Test Files  6 failed | 3 passed (9)
+              Tests  13 failed | 27 passed (40)
+        ⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles every room of the spec to the oracle structure
+        AssertionError: expected { kind: 'room', name: '01-wake', …(7) } to deeply equal { kind: 'room', name: '01-wake', …(7) }
+         FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles the world in file order and refuses a gap
+        AssertionError: expected { rooms: [ { …(9) }, …(9) ], …(1) } to deeply equal { rooms: [ { …(9) }, …(9) ], …(1) }
+         FAIL  tests/rooms/compile.test.mjs > RM2 gauntlet generator > parses the program and generates the oracle grid, byte for byte
+        AssertionError: expected { kind: 'gauntlet', …(10) } to deeply equal { kind: 'gauntlet', …(10) }
+         FAIL  tests/sim/oracle-base.test.mjs > SIM2 base form against the oracle > agrees in 01-wake, spikes, pits, deaths and respawns included
+        AssertionError: expected { step: 1196, field: 'vx', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 2 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 438, field: 'vy', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 5 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 1610, field: 'vx', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 8 with its layers back, and with none back (rest states)
+        AssertionError: expected { step: 2388, field: 'vx', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees on the crush: a block that comes on over the creature
+        AssertionError: expected { step: 91, field: 'vy', …(3) } to be null
+         FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees on the clear, the pending layer and the next room, without stopping at the clear
+        AssertionError: expected { step: 377, field: 'vx', …(3) } to be null
+         FAIL  tests/sim/oracle-dash.test.mjs > SIM3 dash against the oracle > agrees in 03-dash
+        AssertionError: expected { step: 482, field: 'vx', …(3) } to be null
+         FAIL  tests/sim/oracle-gauntlet.test.mjs > SIM6 gauntlet against the oracle > agrees from the start: the wait for the bar, the first obstacles, deaths and restarts
+        AssertionError: expected { step: 1937, field: 'vx', …(3) } to be null
+         FAIL  tests/sim/oracle-gauntlet.test.mjs > SIM6 gauntlet against the oracle > agrees in mid-run, into and out of the wave bars and to the finish
+        AssertionError: expected { step: 809, field: 'vx', …(3) } to be null
+== rooms-gauntlet-corridor: KILLED (restored true; copy clean)
+   - src/rooms/gauntlet.ts: "if (r < centre - 2 || r > centre + 2)"
+   + "if (r < centre - 2 || r > centre + 3)"
+   FAIL  node_modules/vitest/vitest.mjs run tests/rooms tests/sim (exit 1, 2 s)
+             × compiles the world in file order and refuses a gap 191ms
+             × parses the program and generates the oracle grid, byte for byte 4ms
+             × agrees in mid-run, into and out of the wave bars and to the finish 92ms
+         Test Files  2 failed | 7 passed (9)
+              Tests  3 failed | 37 passed (40)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles the world in file order and refuses a gap
+        AssertionError: expected { rooms: [ { …(9) }, …(9) ], …(1) } to deeply equal { rooms: [ { …(9) }, …(9) ], …(1) }
+         FAIL  tests/rooms/compile.test.mjs > RM2 gauntlet generator > parses the program and generates the oracle grid, byte for byte
+        AssertionError: expected { W: 544, H: 18, …(2) } to deeply equal { W: 544, H: 18, …(2) }
+         FAIL  tests/sim/oracle-gauntlet.test.mjs > SIM6 gauntlet against the oracle > agrees in mid-run, into and out of the wave bars and to the finish
+        AssertionError: expected { step: 125, field: 'x', …(3) } to be null
+== witness-step: SURVIVED (restored true; copy clean)
+   * replays/04-thorns.json: the middle input change moved 12 steps later
+   pass  tools/replay.mjs --all --jitter --seed 1 (exit 0, 0 s)
+        replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+        replay: PASS, 11 witness(es)
+== clock-stale: SURVIVED (restored true; copy clean)
+   - src/clock/output-clock.ts: "const CLOCK_STALE = 500;"
+   + "const CLOCK_STALE = 5000;"
+   pass  node_modules/vitest/vitest.mjs run tests/clock (exit 0, 1 s)
+         Test Files  2 passed (2)
+              Tests  15 passed (15)
+== driver-target: KILLED (restored true; copy clean)
+   - src/clock/driver.ts: "Math.floor((heardSec - origin + displaySecs) * 240) + 1;"
+   + "Math.floor((heardSec - origin + displaySecs) * 240);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/clock (exit 1, 1 s)
+             × takes the target step from the heard time, the origin and the display shift: one step past the time 5ms
+         Test Files  1 failed | 1 passed (2)
+              Tests  1 failed | 14 passed (15)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/clock/driver.test.mjs > CL2 tick driver > takes the target step from the heard time, the origin and the display shift: one step past the time
+        AssertionError: expected 120 to be 121 // Object.is equality
+== driver-lag-clamp: KILLED (restored true; copy clean)
+   - src/clock/driver.ts: "clamp((avOffsetMs + inputBiasMs) / 1000, 0, 0.15)"
+   + "clamp((avOffsetMs + inputBiasMs) / 1000, -0.15, 0.15)"
+   FAIL  node_modules/vitest/vitest.mjs run tests/clock tests/game (exit 1, 1 s)
+             × turns the calibration into a display shift and an input lag, both clamped 9ms
+           ❯ GAME1 the run follows its calibration (review R2, MAJOR 4) (2)
+             × stamps an input event with the step heard at its time less inputLagSec(avOffset, inputBias) 7ms
+         Test Files  2 failed | 1 passed (3)
+              Tests  2 failed | 29 passed (31)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/clock/driver.test.mjs > CL2 tick driver > turns the calibration into a display shift and an input lag, both clamped
+        AssertionError: expected -0.06 to be +0 // Object.is equality
+         FAIL  tests/game/run.test.mjs > GAME1 the run follows its calibration (review R2, MAJOR 4) > stamps an input event with the step heard at its time less inputLagSec(avOffset, inputBias)
+        AssertionError: avOffset -80 inputBias 30 at 0.5 s: expected 141 to be 129 // Object.is equality
+== keys-apply: KILLED (restored true; copy clean)
+   - src/input/keys.ts: "if (q.step <= step) {"
+   + "if (q.step < step) {"
+   FAIL  node_modules/vitest/vitest.mjs run tests/input (exit 1, 1 s)
+             × applies each event at its step, holds the OR of the keys down, keeps mapped keys from the page 5ms
+             × skips repeats and leaves unmapped keys alone 1ms
+         Test Files  1 failed | 1 passed (2)
+              Tests  2 failed | 9 passed (11)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/input/keys.test.mjs > IN1 keys > applies each event at its step, holds the OR of the keys down, keeps mapped keys from the page
+        AssertionError: expected +0 to be 2 // Object.is equality
+         FAIL  tests/input/keys.test.mjs > IN1 keys > skips repeats and leaves unmapped keys alone
+        AssertionError: expected +0 to be 32 // Object.is equality
+== cal-trim: KILLED (restored true; copy clean)
+   - src/input/calibrate.ts: ".sort((a, b) => a - b).slice(1, -1);"
+   + ".sort((a, b) => a - b).slice(0);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/input (exit 1, 1 s)
+           ❯ calibration (X8) (6)
+             × drops the lowest and the highest tap before the spread 3ms
+         Test Files  1 failed | 1 passed (2)
+              Tests  1 failed | 10 passed (11)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/input/calibrate.test.ts > calibration (X8) > drops the lowest and the highest tap before the spread
+        AssertionError: expected 10 to be close to 5, received difference is 5, but expected 5e-7
+== cal-threshold: KILLED (restored true; copy clean)
+   - src/input/calibrate.ts: "accepted: mad <= 35 }"
+   + "accepted: mad <= 40 }"
+   FAIL  node_modules/vitest/vitest.mjs run tests/input (exit 1, 1 s)
+           ❯ calibration (X8) (6)
+             × rejects a run whose deviation is over 35 ms and keeps a steady one 6ms
+         Test Files  1 failed | 1 passed (2)
+              Tests  1 failed | 10 passed (11)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/input/calibrate.test.ts > calibration (X8) > rejects a run whose deviation is over 35 ms and keeps a steady one
+        AssertionError: expected true to be false // Object.is equality
+== track-order: KILLED (restored true; copy clean)
+   - src/audio/track.ts: "names.push(key);\n      layers.push(this);"
+   + "names.unshift(key);\n      layers.unshift(this);"
+   FAIL  node_modules/vitest/vitest.mjs run tests/audio (exit 1, 1 s)
+             × captures the ten layers of area1 in order with their onsets 29ms
+             × numbers $ labels, mutes _ labels, and ignores the tempo call 3ms
+         Test Files  1 failed | 2 passed (3)
+              Tests  2 failed | 10 passed (12)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/audio/track.test.mjs > AU1 track layers > captures the ten layers of area1 in order with their onsets
+        AssertionError: expected [ 'sub', 'ohat', 'lead', 'perc', …(6) ] to deeply equal [ 'kick', 'pad', 'hat', 'bass', …(6) ]
+         FAIL  tests/audio/track.test.mjs > AU1 track layers > numbers $ labels, mutes _ labels, and ignores the tempo call
+        AssertionError: expected [ '$2', 'hat', '$1' ] to deeply equal [ '$1', 'hat', '$2' ]
+== sched-shift: KILLED (restored true; copy clean)
+   - src/audio/scheduler.ts: "note.time = now + 0.005;"
+   + "note.time = now + 0.01;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/audio (exit 1, 1 s)
+             × shifts a note up to 50 ms late and drops one later than that, counting both 30ms
+         Test Files  1 failed | 2 passed (3)
+              Tests  1 failed | 11 passed (12)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/audio/scheduler.test.mjs > AU2 transport > shifts a note up to 50 ms late and drops one later than that, counting both
+        AssertionError: expected +0 to be 2 // Object.is equality
+== sched-late: KILLED (restored true; copy clean)
+   - src/audio/scheduler.ts: "export const LATE = 0.05;"
+   + "export const LATE = 0.08;"
+   FAIL  node_modules/vitest/vitest.mjs run tests/audio (exit 1, 1 s)
+             × has the constants of section 8 10ms
+         Test Files  1 failed | 2 passed (3)
+              Tests  1 failed | 11 passed (12)
+        ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+         FAIL  tests/audio/scheduler.test.mjs > AU2 transport > has the constants of section 8
+        AssertionError: expected 0.08 to be 0.05 // Object.is equality
+
+mutations: sim-const-gravity KILLED, sim-const-jump KILLED, sim-beat-binding KILLED, sim-unlock-bar KILLED, sim-clear-edge KILLED, sim-portal-kind SURVIVED, rooms-tile-0 KILLED, rooms-compile-dir KILLED, rooms-gauntlet-corridor KILLED, witness-step SURVIVED, clock-stale SURVIVED, driver-target KILLED, driver-lag-clamp KILLED, keys-apply KILLED, cal-trim KILLED, cal-threshold KILLED, track-order KILLED, sched-shift KILLED, sched-late KILLED
+--- end ---

@@ -1,0 +1,54 @@
+HUSH-EVIDENCE v1
+id: R3-mutations-r2-keys
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/6c41ac2e-6cfb-4835-9360-ac452d6251aa/scratchpad/r3/pristine r2-main-keys r2-main-setcal
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T21:01:42-05:00
+time-end: 2026-10-12T21:06:55-05:00
+head: 81a66ae934912449e125d07e883c5f4bc6a5cc83
+exit: 0
+--- output ---
+== r2-main-keys: KILLED (restored true; copy clean)
+   - src/main.ts: "createKeys({ target: window,"
+   + "createKeys({ target: new EventTarget(),"
+   pass  node_modules/vite/bin/vite.js build --logLevel error (exit 0, 1 s)
+   FAIL  tools/probe-play.mjs --check console,keys (exit 1, 156 s)
+        play: chrome headless: room 01-wake done
+        play: chrome headless: room 02-heartbeat done
+        play: chrome headless: room 03-dash done
+        play: chrome headless: room 04-thorns done
+        play: chrome headless: room 05-doors done
+        play: chrome headless: room 06-wave done
+        play: chrome headless: room 07-current done
+        play: chrome headless: room 08-steps done
+        play: chrome headless: room 09-gates done
+        play: chrome headless: room 10-crown done
+        play: chrome headless: room 11-gauntlet done
+        play: chrome headless: ending seen, texts read 9885 ms into it
+        play: chrome headless: console: ok: zero console and page errors
+        play: chrome headless: keys: FAIL: keys: the sim's states while the keys were pressed differ from their replay on the steps stepOf names (at step 86 x live 8960, replay 9212; 4 key events, 29 reads from step 62); keys: the run went on as if no key had been pressed
+        play: chrome headless: FAIL (console,keys)
+== r2-main-setcal: KILLED (restored true; copy clean)
+   - src/main.ts: "  run.setCalibration(avOffset, inputBias);\n"
+   + ""
+   pass  node_modules/vite/bin/vite.js build --logLevel error (exit 0, 1 s)
+   FAIL  tools/probe-play.mjs --check console,keys (exit 1, 154 s)
+        play: chrome headless: room 01-wake done
+        play: chrome headless: room 02-heartbeat done
+        play: chrome headless: room 03-dash done
+        play: chrome headless: room 04-thorns done
+        play: chrome headless: room 05-doors done
+        play: chrome headless: room 06-wave done
+        play: chrome headless: room 07-current done
+        play: chrome headless: room 08-steps done
+        play: chrome headless: room 09-gates done
+        play: chrome headless: room 10-crown done
+        play: chrome headless: room 11-gauntlet done
+        play: chrome headless: ending seen, texts read 9917 ms into it
+        play: chrome headless: console: ok: zero console and page errors
+        play: chrome headless: keys: FAIL: keys: the sim stood at step 92 when ArrowRight went down, where the heard time less the display offset names step 69 (want at most 69, and no more than 24 behind); keys: the sim stood at step 168 when ArrowRight came up, where the heard time less the display offset names step 147 (want at most 147, and no more than 24 behind)
+        play: chrome headless: FAIL (console,keys)
+
+mutations: r2-main-keys KILLED, r2-main-setcal KILLED
+--- end ---
