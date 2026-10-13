@@ -59,6 +59,8 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - A picture is checked in the renderer's own terms. A Graphics' command buffer, encoded in Node from the reference lists, is equal to the frame drawn, and a DynamicTexture's stored pixels are premultiplied composites of its shapes. The judge replays every frame, not only the frames it compares, because the limiter's levels carry from frame to frame (producer, review R3 FIX).
 - Heavy judging inside a timed probe moves the probe's own clock. Judging the gauntlet's frame log before watching the ending made the text guard see the ending 0.5 s late. Collect during the run, and judge once every timed read is done (producer, review R3 FIX).
 - The cap hook denies a shell call that names a product folder next to a copy, even one that copies out of it. A scratch script that only reads the repo and writes under the scratchpad builds mutants and witness subsets (producer, review R3 FIX).
+- A run that only ever takes the happy path cannot test what a scene does on a retry. Each branch a player can reach needs a run that reaches it: the calibration's repeat runs only when a first attempt is rejected, so the probe now leaves one untapped (producer, review R4 FIX).
+- The laptop's power is part of the review's environment. A review on battery is BLOCKED by the perf probe, and a long session drains it. The owner plugs it in before a review or a VERIFY (producer, review R4).
 
 ## Rounds
 

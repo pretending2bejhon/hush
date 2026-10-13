@@ -338,3 +338,28 @@ DISPOSITION: R4-NOTE1 | the headless click count depends on where a click falls 
 DISPOSITION: R4-NOTE2 | the page's sanctioned texts | 2026-10-13T03:20:00-05:00 | no action
 DISPOSITION: R4-NOTE3 | the perf numbers on battery | 2026-10-13T03:20:00-05:00 | no action; X4 is measured on AC at VERIFY
 
+MAJOR 2 and MINOR 2 fixed 2026-10-13T03:45-05:00 in `618ca0c` (hush-spec: amend CAL2 GAME1 ...), by the producer. No product file changes.
+- MAJOR 2, the retried run:
+  - src/probe/api.ts: `tapCalibration(a, b, untapFirst)` leaves each pass's first attempt untapped, with its Escapes still pressed.
+  - tools/calibration-check.mjs: `judgeTapped({ ..., retry: true })` wants A1 and B1 rejected, 39.4 to 50 s, the repeats' values and the tapper's log as section 12 now says.
+  - tools/probe-flash.mjs runs the retried run on a third page after the tapped one.
+  - On the product, CAL2's acceptance passes (build/evidence/CAL2.amend.5.txt): untouched 48 clicks, 8 fills, 48 rings and 0 0; tapped 5.5 34.6; retried 43.6 s, values 5.3 34.8, the taps' own 5.3 34.8.
+  - The reviewer's mutant (calibration-scene.ts:175 `??=`) fails the retried run alone, `values 0.0 0.0, the taps' own 5.4 34.7`, while its untouched and tapped runs pass (build/evidence/R4-mutant-calib-first.amend.1.txt).
+  - On the control page (build/evidence/R4-calibration-controls.amend.1.txt), the clean page passes all three runs and `?calib=first` fails on the retried values. In Node, tests/tools/calibration-check.test.mjs passes 11 of 11, with the retried judge's pass, a kept first result, no repeat, tapped first attempts and a stray tap in a first attempt.
+- MINOR 2: tests/game/run.test.mjs passes 17 of 17 on the product. A frame heard 100 steps past the sim ticks 24, then 24, then up to the target. The run's controls pass 8 of 8, the reference without the cap failing (build/evidence/R4-run-controls.amend.1.txt).
+- The verifier suite passes 259 of 259 (build/evidence/R4-verifiers.amend.1.txt), and standing is GREEN (build/evidence/R4-standing.amend.1.txt).
+- The digest is now 263fbb18. X3's seed rolls to 641710872, and all 11 witnesses clear 20 of 20 on it (checked this session, not recorded).
+
+State at 2026-10-13T03:50-05:00, the end of this producer session (one hush-review commit, its budget):
+- **Open:** MAJOR 1 (the sound's starts; design above), MINOR 1 (the line's deaths; design above), and the blocker (RN1 to RN4 on AC). The control page's other nine calibration controls are re-run below if the battery lasts.
+- **Not yet recorded:** the `FIX R4` line. The next producer starts at re-entry row 9:
+  1. it finishes FIX R4: MAJOR 1, MINOR 1 if time allows, and the nine regression controls if they are not recorded below;
+  2. it clears the blocker on AC, recording RN1 to RN4's acceptances as `amend`;
+  3. it records `FIX R4`;
+  4. it runs review R5, the cycle's last.
+- **Notes for MAJOR 1, read this session from superdough's source (node_modules/superdough):**
+  - Synth voices start OscillatorNodes at the note's `t` (synth.mjs) and noise at `t` (noise.mjs).
+  - webAudioTimeout starts a ConstantSourceNode at its startTime (helpers.mjs:372-389), and modulators.mjs starts a DC ConstantSourceNode at `params.begin`.
+  - An FM modulator starts with `osc.start()` at once (helpers.mjs:404), and a released node that was never started gets `start(currentTime + 5)` (helpers.mjs:641).
+  - tools/probe-av.mjs countOnsets already walks the onsets per segment. Its time `origin + (b + whole.begin - cycle) x BAR` is the one to hold the starts to.
+
