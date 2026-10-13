@@ -195,3 +195,10 @@ The probes part landed 2026-10-12T19:30-05:00 in the commit `hush-spec: amend GA
   - tests/controls/page-probes.test.mjs, the playthrough's regression on the changed probe: 26 of 26 (build/evidence/R2-page-controls.amend.1.txt).
   - The verifier suite: 243 of 243 (build/evidence/R2-verifiers.amend.1.txt).
 
+Round R2 closed 2026-10-12T19:19-05:00: 9 fixed, 0 rebutted, 0 superseded, every one by the producer's amendment and no applier. The product is unchanged since the review (src/ outside src/probe, rooms, music and replays as at 2f2b8a2). Standing is GREEN on 2af5356 (build/evidence/R2-probes-standing.amend.1.txt); the digest is now 4537d7d2.
+- Not run this session, for VERIFY:
+  - the headed perf probe of check:art: RN2's and RN4's review runs were refused on the machine's state, not on the product, and no art changed since;
+  - the headed av probe;
+  - npm test with the new checks, whose parts ran one by one above.
+- The next step is review R3, in a fresh producer session: this session holds one hush-review commit, and a review takes about two active hours.
+
