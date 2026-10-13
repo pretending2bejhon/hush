@@ -105,6 +105,9 @@ const cases = [
   // Review R2 (MINOR 2): a run that never steps the creature's track, and the frame's ring one world px up.
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('track = trackStep(track, named(state));', '') }), 'track'],
   ['tests/render/play-frame.test.mjs', { HUSH_PLAY_FRAME_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_PLAY_FRAME_MODULE: refMutant('art.mjs', '(iy / 256 + 5) * ZOOM)', '(iy / 256 + 4) * ZOOM)') }), 'ring'],
+  // Review R3 (MINOR 1 and 2): the clock line's stale-pair rule at 5000 ms, and the limiter's edge at `>`.
+  ['tests/clock/output-clock.test.mjs', { HUSH_CLOCK_MODULE: 'tests/fixtures/control-page/clock.js' }, () => ({ HUSH_CLOCK_MODULE: clockMutant('const CLOCK_STALE = 500;', 'const CLOCK_STALE = 5000;') }), 'stale'],
+  ['tests/fx/flash-limiter.test.mjs', { HUSH_FX_MODULE: `${REF}/flash-limiter.mjs` }, () => ({ HUSH_FX_MODULE: refMutant('flash-limiter.mjs', 'sum + area >= FLASH_AREA_LIMIT', 'sum + area > FLASH_AREA_LIMIT') }), 'edge'],
 ];
 
 describe('product tests: green on the reference, red on one planted fault', () => {

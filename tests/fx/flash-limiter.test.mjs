@@ -28,6 +28,16 @@ describe('FX1 flash limiter', () => {
     expect(f.request(25000, 0.02, 0.5)).toBe(0.5);
   });
 
+  // Review R3 (MINOR 2): room 2's stones are 16 cells each, 25,600 px, exactly the limit, so the limit's own edge
+  // decides whether their changes are held.
+  it('holds a change whose area reaches the limit exactly, and passes one just under it', () => {
+    const f = F.createFlashLimiter(1280, 720);
+    f.beginFrame();
+    expect(f.request(25600, 0, 0.5)).toBeLessThan(0.1);
+    f.beginFrame();
+    expect(f.request(25599, 0, 0.5)).toBe(0.5);
+  });
+
   it('counts areas in canvas pixels at 1280 by 720', () => {
     const half = F.createFlashLimiter(640, 360);
     half.beginFrame();

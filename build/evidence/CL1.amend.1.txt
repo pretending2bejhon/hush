@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: CL1
+phase: amend
+command: npx vitest run tests/clock/output-clock.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T22:45:51-05:00
+time-end: 2026-10-12T22:45:53-05:00
+head: b94a3668c830f0bfe989fc78eb68a305ef9a89b4
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  11 passed (11)
+   Start at  22:45:52
+   Duration  381ms (tests 71%, transform 19%, import 8%, worker 2%)
+
+--- end ---

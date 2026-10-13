@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R3-product-controls
+phase: amend
+command: npx vitest run tests/controls/product-tests.test.mjs -t output-clock|flash-limiter
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T22:46:16-05:00
+time-end: 2026-10-12T22:46:27-05:00
+head: b94a3668c830f0bfe989fc78eb68a305ef9a89b4
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed | 31 skipped (38)
+   Start at  22:46:17
+   Duration  10.14s (tests 99%)
+
+--- end ---

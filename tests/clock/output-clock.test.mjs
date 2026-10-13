@@ -12,9 +12,10 @@ const product = await import(process.env.HUSH_CLOCK_MODULE ? new URL(process.env
 // currentTime, from where it sits below the line, untrusted. Settling pairs come `settleHigh` above the line
 // for the first 400 ms; a glitch moves the line by `glitch` from `glitchAt` ms on; stale pairs carry an old
 // performance time until `staleUntil` ms; `stamps: false` is an engine without getOutputTimestamp. A glitch with
-// `glitchUntil` ends there (a blip).
-function device({ offset = -1.2, burst = 0.1, lead = 0.03, settleHigh = 0, glitchAt = Infinity, glitchUntil = Infinity, glitch = 0, stamps = true, staleUntil = -1, baseLatency = 0.01 }) {
-  const ctx = { state: 'running', sampleRate: 48000, baseLatency, outputLatency: 0.02, currentTime: 0, now: 0 };
+// `glitchUntil` ends there (a blip). `start` is the performance time of the first sample (review R3, MINOR 1: a
+// stale stamp 900 ms old must be positive to reach the stale rule, so the stale scenario starts at 2000 ms).
+function device({ offset = -1.2, burst = 0.1, lead = 0.03, settleHigh = 0, glitchAt = Infinity, glitchUntil = Infinity, glitch = 0, stamps = true, staleUntil = -1, baseLatency = 0.01, start = 0 }) {
+  const ctx = { state: 'running', sampleRate: 48000, baseLatency, outputLatency: 0.02, currentTime: 0, now: start };
   let lastBurst = -1;
   let fresh = null;
   let pair = null;
@@ -59,7 +60,7 @@ describe('CL1 device-clock line against the reference port', () => {
     steady: [{}, null],
     'settling pairs 28 ms high': [{ settleHigh: 0.028 }, null],
     'a glitch moves the line down 20 ms': [{ glitchAt: 4000, glitch: -0.02 }, 'yes'],
-    'stale pairs after a resume': [{ staleUntil: 600 }, null],
+    'stale pairs after a resume': [{ start: 2000, staleUntil: 2600 }, null],
     'a large output buffer': [{ baseLatency: 0.09, burst: 0.2 }, null],
     'a glitch moves the line down 6 ms': [{ glitchAt: 4000, glitch: -0.006 }, 'yes'],
     'a blip of exactly two low pairs': [{ lead: 0.015, glitchAt: 4000, glitchUntil: 4200, glitch: -0.02 }, 'no'],
