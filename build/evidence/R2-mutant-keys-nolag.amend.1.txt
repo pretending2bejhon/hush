@@ -1,0 +1,16 @@
+HUSH-EVIDENCE v1
+id: R2-mutant-keys-nolag
+phase: amend
+command: node tools/probe-play.mjs --dist <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2fix/mut/dist --replays <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2fix/one --check keys
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T18:40:38-05:00
+time-end: 2026-10-12T18:41:06-05:00
+head: d495056ac8bfd24314ee2142882597c5bd54ba5e
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: ending never started
+play: chrome headless: keys: FAIL: keys: the sim's states while the keys were pressed differ from their replay on the steps stepOf names (at step 76 x live 8960, replay 9080; 4 key events, 28 reads from step 56)
+play: chrome headless: FAIL (keys)
+--- end ---

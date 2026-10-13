@@ -1,0 +1,51 @@
+HUSH-EVIDENCE v1
+id: R2-calibration-controls
+phase: amend
+command: npx vitest run tests/controls/calibration-probe.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T18:52:12-05:00
+time-end: 2026-10-12T19:02:26-05:00
+head: d495056ac8bfd24314ee2142882597c5bd54ba5e
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/calibration-probe.test.mjs (8 tests | 1 failed) 607281ms
+   ❯ flash probe --calibration (section 12) (8)
+     × fails a count-in of three beats 87822ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/calibration-probe.test.mjs > flash probe --calibration (section 12) > fails a count-in of three beats
+AssertionError: expected 'flash: calibration up 44.2 s: clicks …' to match /flash: calibration fills 6 \(want 7 t…/
+
+- Expected:
+/flash: calibration fills 6 \(want 7 to 9\)/
+
++ Received:
+"flash: calibration up 44.2 s: clicks 48, count-in fills 5, rings 48, values 0 0 (1911 frames, 2189 analyser samples)
+flash: tapped calibration up 22.3 s: values 15.1 25.0 (the taps' own 15.1 25.0; taps 40 and 25 ms after each click and ring, marks 15 25)
+flash: 2232 frames over 51.2 s, median 17.13 ms; general max 0 px, red max 0 px (limit 25600)
+flash: calibration fills 5 (want 7 to 9)
+flash: FAIL
+"
+
+ ❯ tests/controls/calibration-probe.test.mjs:50:19
+     48|   it('fails a count-in of three beats', () => {
+     49|     const r = flash('calib=count3');
+     50|     expect(r.out).toMatch(/flash: calibration fills 6 \(want 7 to 9\)/…
+       |                   ^
+     51|     expect(r.out).not.toMatch(/flash: tapped calibration (values|left …
+     52|     expect(r.out).toMatch(/flash: FAIL/);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  18:52:16
+   Duration  609.70s (tests 100%)
+
+--- end ---

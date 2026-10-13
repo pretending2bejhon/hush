@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R2-page-controls
+phase: amend
+command: npx vitest run tests/controls/page-probes.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T19:04:54-05:00
+time-end: 2026-10-12T19:15:50-05:00
+head: d495056ac8bfd24314ee2142882597c5bd54ba5e
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  26 passed (26)
+   Start at  19:04:56
+   Duration  653.71s (tests 100%)
+
+--- end ---

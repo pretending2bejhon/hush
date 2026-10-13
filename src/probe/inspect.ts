@@ -61,10 +61,25 @@ export interface ProbeInputSource {
   next(step: number): number;
 }
 
-// The parts of a Phaser.Game the probe walks to count text objects and read the active scene keys.
+// The parts of a Phaser.Game the probe walks to count text objects and read the active scene keys, and (review
+// R2, MAJOR 1 and 3) to read a scene's layout: where each image and Graphics sits, at what scale and depth, its
+// texture and size, and how many commands a Graphics holds. Every layout field is optional: a game object that
+// lacks one reads as its default.
 export interface ProbeGameObject {
   type: string;
   list?: ProbeGameObject[];
+  x?: number;
+  y?: number;
+  scaleX?: number;
+  scaleY?: number;
+  originX?: number;
+  originY?: number;
+  depth?: number;
+  visible?: boolean;
+  alpha?: number;
+  texture?: { key: string };
+  frame?: { width: number; height: number };
+  commandBuffer?: unknown[];
 }
 export interface ProbeScene {
   sys: { settings: { key: string } };

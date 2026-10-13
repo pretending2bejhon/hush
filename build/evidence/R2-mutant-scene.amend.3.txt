@@ -1,0 +1,26 @@
+HUSH-EVIDENCE v1
+id: R2-mutant-scene
+phase: amend
+command: node tools/probe-play.mjs --dist <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2fix/mut/dist --check scene
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T18:29:50-05:00
+time-end: 2026-10-12T18:32:22-05:00
+head: d495056ac8bfd24314ee2142882597c5bd54ba5e
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 03-dash done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 05-doors done
+play: chrome headless: room 06-wave done
+play: chrome headless: room 07-current done
+play: chrome headless: room 08-steps done
+play: chrome headless: room 09-gates done
+play: chrome headless: room 10-crown done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 9882 ms into it
+play: chrome headless: scene: FAIL: room 01-wake at step 817: band-01-0 at x -128, want 0 (factor 0.15 of the camera 0); room 01-wake at step 817: band-01-1 at x -298, want 0 (factor 0.35 of the camera 0); room 01-wake at step 817: band-01-2 at x -511, want 0 (factor 0.6 of the camera 0); ending: the glimpse at y 720 once the card is up, want 0
+play: chrome headless: FAIL (scene)
+--- end ---

@@ -8,8 +8,9 @@
 // rooms, so its flashes are measured too, and wants that course seen (tools/calibration-check.mjs): the scene
 // up for four attempts, their clicks on the master analyser, their count-in fills and rings in the
 // screencast, then the values 0 and 0. Then, on a page of its own, a tapped calibration (review R1, MAJOR 2):
-// the probe's tapper presses at known offsets after each click and each ring, and the values in use must be
-// those offsets' within 5 ms, the scene left after one attempt of each pass. A run that streamed fewer than 30
+// the probe's tapper presses at known offsets after each click and each ring, the scene is left after one attempt
+// of each pass, and (review R2) the values in use must be the ones its logged taps give through section 12, those
+// taps near their marks, and a run at room 1 must be running after the hand-over. A run that streamed fewer than 30
 // frames a second (median), or whose playthrough did not clear every room, cannot pass: what was not seen was
 // not measured.
 // Exit 0 PASS, 1 FAIL, 2 usage, a missing dist or a page that never boots.
@@ -65,8 +66,14 @@ async function runTapped(browser, url, query) {
     else await sleep(50);
   }
   const values = await page.evaluate(() => window.__hush.calibration());
+  const log = await page.evaluate(() => window.__hush.tapLog());
+  // Review R2 (MAJOR 4): the hand-over starts a run at room 1, which must be running.
+  const read = () => page.evaluate(() => { const s = window.__hush.sim(); return { scenes: window.__hush.scenes(), room: s ? s.status.room : null, step: s ? s.step : null }; });
+  const a = await read();
+  await sleep(600);
+  const b = await read();
   await page.close();
-  return judgeTapped({ seconds: (left - t0) / 1000, values });
+  return judgeTapped({ seconds: (left - t0) / 1000, values, log, handover: { scenes: b.scenes, room: b.room, from: a.step, to: b.step } });
 }
 
 async function main(argv) {
@@ -165,7 +172,8 @@ async function main(argv) {
   }
   if (tapped) {
     const v = tapped.values;
-    process.stdout.write(`flash: tapped calibration up ${tapped.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (taps ${TAP_A_MS} and ${TAP_B_MS} ms after each click and ring: want ${TAP_A_MS - TAP_B_MS} ${TAP_B_MS} within 5)\n`);
+    const own = tapped.own;
+    process.stdout.write(`flash: tapped calibration up ${tapped.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (the taps' own ${own ? `${own.avOffset.toFixed(1)} ${own.inputBias.toFixed(1)}` : 'none'}; taps ${TAP_A_MS} and ${TAP_B_MS} ms after each click and ring, marks ${TAP_A_MS - TAP_B_MS} ${TAP_B_MS})\n`);
   }
   if (result) {
     process.stdout.write(`flash: ${result.frames} frames over ${result.seconds.toFixed(1)} s, median ${result.medianFrameMs} ms; general max ${result.maxGeneralArea} px, red max ${result.maxRedArea} px (limit ${result.areaLimit})\n`);

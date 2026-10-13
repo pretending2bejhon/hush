@@ -39,6 +39,43 @@ export interface PageText {
   inside: boolean;
 }
 
+// One object of a scene's display list as the layout check reads it (review R2, MAJOR 1 and 3).
+export interface LayoutObject {
+  type: string;
+  key: string | null;
+  x: number;
+  y: number;
+  scaleX: number;
+  scaleY: number;
+  originX: number;
+  originY: number;
+  depth: number;
+  visible: boolean;
+  alpha: number;
+  w: number | null;
+  h: number | null;
+  commands: number | null;
+}
+
+// A keydown or keyup as it reached the page (review R2, MAJOR 5): its time stamp, the device-clock line's offset
+// and the sim's step at that moment, the inputs of the step the game stamps it with.
+export interface KeyRecord {
+  type: string;
+  code: string;
+  repeat: boolean;
+  t: number;
+  offset: number | null;
+  step: number | null;
+}
+
+// The tapper's own record of a tapped calibration (review R2, MINOR 3): every tap it landed, with its time stamp,
+// its heard time through the clock line and the attempt that was up when it landed (-1 for none); and every attempt
+// it saw, with the marks the scene judged it against.
+export interface TapLog {
+  taps: { attempt: number; t: number; h: number }[];
+  attempts: { pass: 'A' | 'B'; t0: number | null; p0: number | null; frameTimes: (number | null)[] | null }[];
+}
+
 function countText(list: ProbeGameObject[]): number {
   let n = 0;
   for (const o of list) {
@@ -55,6 +92,19 @@ export function createProbe(inspect: Inspect) {
   const frames: number[] = [];
   let framesOn = false;
   let lastFrame = -1;
+  const keyLog: KeyRecord[] = [];
+  let keyLogOn = false;
+  const tapTaps: TapLog['taps'] = [];
+  const tapAttempts: ProbeCalibrationAttempt[] = [];
+
+  // Runs in the capture phase on window after the game's own key listeners, inside the same dispatch, so the clock
+  // line's offset it reads is the one the game's stepOf read.
+  function onKeyLog(e: KeyboardEvent): void {
+    if (!keyLogOn) return;
+    const c = inspect.clock();
+    const s = inspect.sim();
+    keyLog.push({ type: e.type, code: e.code, repeat: e.repeat, t: e.timeStamp, offset: c ? c.offset : null, step: s ? s.step : null });
+  }
 
   function onFrame(t: number): void {
     if (!framesOn) return;
@@ -126,6 +176,52 @@ export function createProbe(inspect: Inspect) {
       const s = inspect.sim();
       return s ? { step: s.step, status: s.status(), checksum: s.checksum(), state: Array.from(s.save()) } : null;
     },
+    // The display list of the scene `key` (review R2, MAJOR 1 and 3), as plain data; null without the scene.
+    layout(key: string): LayoutObject[] | null {
+      const g = inspect.game();
+      const scene = g ? g.scene.getScene(key) : null;
+      if (!scene) return null;
+      return scene.children.list.map((o) => ({
+        type: o.type,
+        key: o.texture ? o.texture.key : null,
+        x: o.x ?? 0,
+        y: o.y ?? 0,
+        scaleX: o.scaleX ?? 1,
+        scaleY: o.scaleY ?? 1,
+        originX: o.originX ?? 0,
+        originY: o.originY ?? 0,
+        depth: o.depth ?? 0,
+        visible: o.visible ?? true,
+        alpha: o.alpha ?? 1,
+        w: o.frame ? o.frame.width : null,
+        h: o.frame ? o.frame.height : null,
+        commands: Array.isArray(o.commandBuffer) ? o.commandBuffer.length : null,
+      }));
+    },
+    // Records every keydown and keyup from now on (review R2, MAJOR 5), for a probe to replay the keys on the steps
+    // the game must give them.
+    keyLogStart(): void {
+      keyLog.length = 0;
+      if (keyLogOn) return;
+      keyLogOn = true;
+      window.addEventListener('keydown', onKeyLog, true);
+      window.addEventListener('keyup', onKeyLog, true);
+    },
+    keyLogTake(): KeyRecord[] {
+      return keyLog.splice(0, keyLog.length);
+    },
+    // The tapper's record of the last tapped calibration (review R2, MINOR 3).
+    tapLog(): TapLog {
+      return {
+        taps: tapTaps.map((t) => ({ ...t })),
+        attempts: tapAttempts.map((a) => ({
+          pass: a.pass,
+          t0: typeof a.t0 === 'number' ? a.t0 : null,
+          p0: typeof a.p0 === 'number' ? a.p0 : null,
+          frameTimes: a.frameTimes ? Array.from(a.frameTimes, (v) => (typeof v === 'number' ? v : null)) : null,
+        })),
+      };
+    },
     audio() {
       return inspect.audio();
     },
@@ -139,16 +235,25 @@ export function createProbe(inspect: Inspect) {
     // after each click of pass A from COUNT_IN on, timed in heard time through the device-clock line, and bMs after
     // each ring of pass B from COUNT_IN on, timed from the frame that first drew it. It reads the scene's attempt
     // (ProbeCalibrationAttempt) every animation frame until the scene is gone. Returns false without the scene.
+    // Every tap it lands and every attempt it sees go into its record (tapLog; review R2, MINOR 3): a tap's time
+    // stamp and its heard time are read just before the keydown is dispatched, through the same clock line the
+    // scene's listener reads inside that dispatch.
     tapCalibration(aMs: number, bMs: number): boolean {
       const g = inspect.game();
       const scene = g ? (g.scene.getScene('calibration') as unknown as { attempt?: ProbeCalibrationAttempt | null } | null) : null;
       if (!g || !scene) return false;
+      tapTaps.length = 0;
+      tapAttempts.length = 0;
       const begun = performance.now();
       const armed = new Set<string>();
       let current: ProbeCalibrationAttempt | null = null;
       let attempt = 0;
       const press = (): void => {
-        window.dispatchEvent(new KeyboardEvent('keydown', { code: 'KeyQ', key: 'q' }));
+        const down = new KeyboardEvent('keydown', { code: 'KeyQ', key: 'q' });
+        const c = inspect.clock();
+        const live = scene.attempt ?? null;
+        tapTaps.push({ attempt: live ? tapAttempts.indexOf(live) : -1, t: down.timeStamp, h: down.timeStamp / 1000 + (c ? c.offset : 0) });
+        window.dispatchEvent(down);
         window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyQ', key: 'q' }));
       };
       const pressAt = (ms: number): void => {
@@ -167,6 +272,7 @@ export function createProbe(inspect: Inspect) {
         if (a && a !== current) {
           current = a;
           attempt += 1;
+          tapAttempts.push(a);
         }
         for (let i = CAL_COUNT_IN; a && c && i < CAL_CLICKS; i++) {
           const key = `${attempt}:${i}`;

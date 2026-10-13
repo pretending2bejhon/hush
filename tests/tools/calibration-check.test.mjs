@@ -2,7 +2,7 @@
 // rising edge, pulses split into fills and rings by their peak, the resting level taken from the median frame,
 // and the verdict's every rule. The browser side is controlled in tests/controls/calibration-probe.test.mjs.
 import { describe, expect, it } from 'vitest';
-import { centreSum, countClicks, countPulses, judgeCalibration, judgeTapped, MIN_SECONDS, TAP_A_MS, TAP_B_MS } from '../../tools/calibration-check.mjs';
+import { BEAT_S, centreSum, countClicks, countPulses, judgeCalibration, judgeTapped, MIN_SECONDS, TAP_A_MS, TAP_B_MS, tapLogValues } from '../../tools/calibration-check.mjs';
 
 // One analyser sample every 20 ms over `beats` beats with a click of `len` samples on each beat.
 function clickSamples(clicks, len = 4) {
@@ -64,12 +64,53 @@ describe('calibration check (section 12)', () => {
     }
   });
 
-  it('passes a tapped run within 5 ms of the taps and names every gap (review R1, MAJOR 2)', () => {
-    expect(judgeTapped({ seconds: 21.6, values: { avOffset: TAP_A_MS - TAP_B_MS + 4.9, inputBias: TAP_B_MS - 4.9 } }).problems).toEqual([]);
-    expect(judgeTapped({ seconds: 21.6, values: { avOffset: -(TAP_A_MS + TAP_B_MS), inputBias: TAP_B_MS } }).problems.join(' | ')).toMatch(/tapped calibration values -65 25 \(want avOffset 15 and inputBias 25 within 5 ms\)/);
-    expect(judgeTapped({ seconds: 21.6, values: { avOffset: 15, inputBias: 30.2 } }).problems).toHaveLength(1);
-    expect(judgeTapped({ seconds: 43.1, values: { avOffset: 0, inputBias: 0 } }).problems).toHaveLength(2);
-    expect(judgeTapped({ seconds: 21.6, values: null }).problems).toHaveLength(1);
+  // Review R2 (MINOR 3 and MAJOR 4): a tapper's log of one attempt of each pass, pass A's taps aMs after clicks 4 to
+  // 23 in heard time, pass B's bMs after rings 4 to 23 drawn 5 ms after they were due; `extra` taps are appended.
+  function tapLog(aMs = TAP_A_MS, bMs = TAP_B_MS, { jitterB = 0, extra = [] } = {}) {
+    const t0 = 10;
+    const p0 = 30000;
+    const frameTimes = Array.from({ length: 24 }, (_, i) => p0 + i * BEAT_S * 1000 + 5);
+    const taps = [];
+    for (let i = 4; i < 24; i++) taps.push({ attempt: 0, t: 0, h: t0 + i * BEAT_S + aMs / 1000 });
+    for (let i = 4; i < 24; i++) taps.push({ attempt: 1, t: frameTimes[i] + bMs + (i % 2 ? jitterB : -jitterB), h: 0 });
+    return { taps: [...taps, ...extra], attempts: [{ pass: 'A', t0, p0: null, frameTimes: null }, { pass: 'B', t0: null, p0, frameTimes }] };
+  }
+  const running = { scenes: ['play'], room: 1, from: 120, to: 264 };
+
+  it('recomputes the values section 12 gives for the logged taps (review R2, MINOR 3)', () => {
+    const r = tapLogValues(tapLog());
+    expect(r.values.avOffset).toBeCloseTo(TAP_A_MS - TAP_B_MS, 6);
+    expect(r.values.inputBias).toBeCloseTo(TAP_B_MS, 6);
+    expect(r.passes.A.map((p) => p.accepted)).toEqual([true]);
+    // A tap that landed between attempts is not the scene's: it changes nothing.
+    const between = tapLogValues(tapLog(TAP_A_MS, TAP_B_MS, { extra: [{ attempt: -1, t: 0, h: 999 }] }));
+    expect(between.values).toEqual(r.values);
+  });
+
+  it('passes a tapped run whose values are its taps\' own and whose run starts, and names every gap', () => {
+    const own = tapLogValues(tapLog()).values;
+    expect(judgeTapped({ seconds: 21.6, values: own, log: tapLog(), handover: running }).problems).toEqual([]);
+    // Taps that landed 6 ms late still judge a correct scene by its own taps.
+    const late = tapLog(TAP_A_MS + 6, TAP_B_MS + 6);
+    expect(judgeTapped({ seconds: 21.6, values: tapLogValues(late).values, log: late, handover: running }).problems).toEqual([]);
+    expect(judgeTapped({ seconds: 21.6, values: { avOffset: -65, inputBias: 25 }, log: tapLog(), handover: running }).problems.join(' | ')).toMatch(/tapped calibration values -65\.0 25\.0, the taps' own 15\.0 25\.0 \(want equal within 0\.5 ms\)/);
+    expect(judgeTapped({ seconds: 21.6, values: { avOffset: own.avOffset + 0.6, inputBias: own.inputBias }, log: tapLog(), handover: running }).problems).toHaveLength(1);
+    expect(judgeTapped({ seconds: 21.6, values: tapLogValues(tapLog(TAP_A_MS + 20)).values, log: tapLog(TAP_A_MS + 20), handover: running }).problems.join(' | ')).toMatch(/the taps strayed from their marks, they give 35\.0 25\.0/);
+    expect(judgeTapped({ seconds: 21.6, values: own, log: tapLog(TAP_A_MS, TAP_B_MS, { jitterB: 60 }), handover: running }).problems.join(' | ')).toMatch(/the taps strayed, the first attempts judge A MAD 0\.0 on 20 taps, B MAD 60\.0 on 20 taps/);
+    expect(judgeTapped({ seconds: 21.6, values: own, log: { taps: [], attempts: [] }, handover: running }).problems.join(' | ')).toMatch(/the tapper logged no attempt/);
+    expect(judgeTapped({ seconds: 43.1, values: own, log: tapLog(), handover: running }).problems.join(' | ')).toMatch(/left after 43\.1 s/);
+  });
+
+  it('wants a run at room 1 running after the tapped hand-over (review R2, MAJOR 4)', () => {
+    const own = tapLogValues(tapLog()).values;
+    const bad = [
+      { scenes: ['calibration'], room: null, from: null, to: null },
+      { scenes: ['play'], room: null, from: null, to: null },
+      { scenes: ['play'], room: 2, from: 10, to: 90 },
+      { scenes: ['play'], room: 1, from: 120, to: 120 },
+      undefined,
+    ];
+    for (const handover of bad) expect(judgeTapped({ seconds: 21.6, values: own, log: tapLog(), handover }).problems.join(' | ')).toMatch(/no run at room 1 after the hand-over/);
   });
 
   it('sums the centre box of a canvas crop in canvas px', () => {

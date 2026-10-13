@@ -3,7 +3,8 @@
 // scene at once (the shortcut that stood in for the passes before CAL2), a rejected pass not repeated, pass A
 // without its clicks, pass B without its rings and pass A without its count-in must each fail, for its own
 // reason, and so must (review R1, MAJOR 2) pass A's tap offsets with their sign flipped (the tapped run) and a
-// count-in of 3 beats (the untouched run's fills).
+// count-in of 3 beats (the untouched run's fills). Review R2: the tapped run is judged against the values its logged
+// taps give, and its hand-over must start a run at room 1.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -29,14 +30,16 @@ describe('flash probe --calibration (section 12)', () => {
   it('passes the control page\'s untouched calibration and its tapped one', () => {
     const r = flash('');
     expect(r.out).toMatch(new RegExp(`flash: calibration up \\d+(\\.\\d)? s: clicks ${IN_RANGE}, count-in fills [7-9], rings ${IN_RANGE}, values 0 0`));
-    expect(r.out).toMatch(/flash: tapped calibration up (19|2\d|30)(\.\d)? s: values (1\d|20)\.\d (2\d|30)\.\d /);
+    expect(r.out).toMatch(/flash: tapped calibration up (19|2\d|30)(\.\d)? s: values (1\d|20)\.\d (2\d|30)\.\d \(the taps' own (1\d|20)\.\d (2\d|30)\.\d;/);
+    expect(r.out).not.toMatch(/no run at room 1/);
     expect(r.out).toMatch(/flash: PASS/);
     expect(r.code).toBe(0);
   }, 180000);
 
   it('fails a tapped run whose pass A offsets have their sign flipped', () => {
     const r = flash('calib=flip');
-    expect(r.out).toMatch(/flash: tapped calibration values -6\d(\.\d+)? 2\d(\.\d+)? \(want avOffset 15 and inputBias 25 within 5 ms\)/);
+    // Review R2 (MINOR 3): judged against the values the logged taps give.
+    expect(r.out).toMatch(/flash: tapped calibration values -6\d\.\d 2\d\.\d, the taps' own 1\d\.\d 2\d\.\d \(want equal within 0\.5 ms\)/);
     expect(r.out).not.toMatch(/flash: calibration (left after|clicks|fills|rings|values)/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
@@ -44,7 +47,8 @@ describe('flash probe --calibration (section 12)', () => {
 
   it('fails a count-in of three beats', () => {
     const r = flash('calib=count3');
-    expect(r.out).toMatch(/flash: calibration fills 6 \(want 7 to 9\)/);
+    // Six fills, or five when the screencast misses one pulse (review R2: a run at 43 frames a second saw 5).
+    expect(r.out).toMatch(/flash: calibration fills [56] \(want 7 to 9\)/);
     expect(r.out).not.toMatch(/flash: tapped calibration (values|left after)/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);

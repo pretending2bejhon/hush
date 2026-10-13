@@ -1,0 +1,16 @@
+HUSH-EVIDENCE v1
+id: R2-mutant-keys-nocal
+phase: amend
+command: node tools/probe-play.mjs --dist <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2fix/mut/dist --replays <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2fix/one --check keys
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T18:33:31-05:00
+time-end: 2026-10-12T18:33:57-05:00
+head: d495056ac8bfd24314ee2142882597c5bd54ba5e
+exit: 0
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: ending never started
+play: chrome headless: keys: ok: after the hand-over (100, -60) a run at room 1; real keys reached the sim on the steps stepOf names, the state after them equal to their replay
+play: chrome headless: PASS (keys)
+--- end ---

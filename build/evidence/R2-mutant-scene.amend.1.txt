@@ -1,0 +1,16 @@
+HUSH-EVIDENCE v1
+id: R2-mutant-scene
+phase: amend
+command: node tools/probe-play.mjs --dist <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/cd23d447-7a3c-467e-8b40-3be49e2c4845/scratchpad/r2fix/mut/dist --check scene
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T18:26:46-05:00
+time-end: 2026-10-12T18:26:52-05:00
+head: d495056ac8bfd24314ee2142882597c5bd54ba5e
+exit: 2
+--- output ---
+play: page.evaluate: TypeError: window.__hush.layout is not a function
+    at eval (eval at evaluate (:311:30), <anonymous>:1:32)
+    at UtilityScript.evaluate (<anonymous>:313:16)
+    at UtilityScript.<anonymous> (<anonymous>:1:44)
+--- end ---

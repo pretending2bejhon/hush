@@ -7,6 +7,10 @@ import http from 'node:http';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { chromium } from '@playwright/test';
+import { createSim, FIELDS } from '../tests/fixtures/oracle/index.mjs';
+import { bakeChunks, cameraPx, depthBands, TILE_PX, ZOOM } from '../tests/fixtures/reference/art.mjs';
+import { displaySec, inputLagSec } from '../tests/fixtures/reference/driver.mjs';
+import { KEY_BITS } from '../tests/fixtures/reference/keys.mjs';
 import { canonicalLayers, readWitness, roomNumber } from './replay.mjs';
 
 export const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
@@ -140,8 +144,9 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // Every room by witness injection: the in-page headless replay (its checksum against the witness's, D3),
 // then the live run from the room's entrance until it clears, dies or times out. clearStep is the step on
 // which the in-page replay cleared the room (null when it did not): its sim's step after the clearing tick, so
-// that tick ran at step clearStep - 1. onRoom(w, 'end', { ok, clearStep }) runs before the next room starts.
-export async function playthrough(page, witnesses, { onRoom = null, timeoutPad = 15 } = {}) {
+// that tick ran at step clearStep - 1. onRoom(w, 'end', { ok, clearStep }) runs before the next room starts;
+// onPoll(w, s, clearStep), when given, runs after every read of the sim while the room is still being played.
+export async function playthrough(page, witnesses, { onRoom = null, onPoll = null, timeoutPad = 15 } = {}) {
   const results = [];
   for (const w of witnesses) {
     const { changes, end, checksum } = w.witness;
@@ -157,7 +162,10 @@ export async function playthrough(page, witnesses, { onRoom = null, timeoutPad =
       else if (s.status.deaths > 0) outcome = { ok: false, why: `died by step ${s.step}` };
       else if (s.status.cleared > 0 || s.status.room !== w.room || s.status.finished) outcome = { ok: true, why: `clear by step ${s.step}` };
       else if (Date.now() - started > limit) outcome = { ok: false, why: `no clear in ${Math.round(limit / 1000)} s (step ${s.step})` };
-      else await sleep(40);
+      else {
+        if (onPoll) await onPoll(w, s, inPage && inPage.ok ? inPage.step : null);
+        await sleep(40);
+      }
     }
     await page.evaluate(() => window.__hush.stopInput());
     if (onRoom) await onRoom(w, 'end', { ok: outcome.ok, clearStep: inPage && inPage.ok ? inPage.step : null });
@@ -181,6 +189,159 @@ export function gauntletMapProblems(reads) {
   if (wrong) problems.push(`the gauntlet's track is mapped from bar ${wrong.bar} while its run starts on bar ${wrong.gBeat / 4} (gBeat ${wrong.gBeat})`);
   const starts = new Set(reads.map((o) => o.gBeat)).size;
   if (starts < 2) problems.push(`the gauntlet's mapping was read for ${starts} run start(s), want the entry and a respawn`);
+  return problems;
+}
+
+// The playthrough's scene check (review R2, MAJOR 1): one read of the play scene's display list (src/probe/api.ts
+// layout) with the sim's state, taken between two frames in room `number`. Section 10.6 places the room's baked
+// images: chunk i of bakeChunks(room) at depth 5, at x col0 x 40 less the camera; band b of depthBands(room) at depth
+// b and scale ZOOM, at x -round(factor x camera); the fog at depth 4 and the vignette at depth 9, at (0, 0); every one
+// with origin (0, 0), y 0, its baked size, visible and opaque, and no other image. The camera they share must be
+// cameraPx(room, the creature's centre) within CAMERA_SLACK_PX: the frame drew the creature between its last two
+// steps, and it moves at most 1.75 world px (a dash) in one. The beat entities, the creature and the dust are three
+// Graphics at depths 6, 7 and 8, unmoved and unscaled, the creature's and the dust's holding commands.
+export const CAMERA_SLACK_PX = 5;
+const X_FIELD = FIELDS.indexOf('x');
+
+export function playLayoutProblems(layout, { room, number, state, label }) {
+  if (!Array.isArray(layout)) return [`${label}: the play scene could not be read`];
+  const problems = [];
+  const nn = String(number).padStart(2, '0');
+  const want = new Map();
+  bakeChunks(room).forEach((c, i) => want.set(`room-${nn}-${i}`, { kind: 'chunk', col0: c.col0, w: c.w, h: c.h, depth: 5, scale: 1 }));
+  depthBands(room).forEach((b, i) => want.set(`band-${nn}-${i}`, { kind: 'band', factor: b.factor, w: b.w, h: b.h, depth: i, scale: ZOOM }));
+  want.set('fog', { kind: 'fixed', w: 1280, h: 720, depth: 4, scale: 1 });
+  want.set('vignette', { kind: 'fixed', w: 1280, h: 720, depth: 9, scale: 1 });
+  const seen = new Map();
+  for (const o of layout.filter((g) => g.type === 'Image')) {
+    if (!want.has(o.key)) problems.push(`${label}: an image ${JSON.stringify(o.key)} that the room does not bake`);
+    else if (seen.has(o.key)) problems.push(`${label}: the image ${o.key} shown twice`);
+    else seen.set(o.key, o);
+  }
+  for (const k of want.keys()) if (!seen.has(k)) problems.push(`${label}: the image ${k} is missing`);
+  for (const [k, o] of seen) {
+    const w = want.get(k);
+    if (o.originX !== 0 || o.originY !== 0) problems.push(`${label}: ${k} has origin (${o.originX}, ${o.originY}), want (0, 0)`);
+    if (o.y !== 0) problems.push(`${label}: ${k} at y ${o.y}, want 0`);
+    if (o.scaleX !== w.scale || o.scaleY !== w.scale) problems.push(`${label}: ${k} at scale ${o.scaleX} by ${o.scaleY}, want ${w.scale}`);
+    if (o.depth !== w.depth) problems.push(`${label}: ${k} at depth ${o.depth}, want ${w.depth}`);
+    if (!o.visible || o.alpha !== 1) problems.push(`${label}: ${k} hidden or faded (visible ${o.visible}, alpha ${o.alpha})`);
+    // A texture's side may come out one px over an odd size asked for (the gauntlet's far band, 1741 px wide, is 1742).
+    if (!(o.w >= w.w && o.w <= w.w + 1) || !(o.h >= w.h && o.h <= w.h + 1)) problems.push(`${label}: ${k} is ${o.w} by ${o.h}, want ${w.w} by ${w.h}`);
+    if (w.kind === 'fixed' && o.x !== 0) problems.push(`${label}: ${k} at x ${o.x}, want 0`);
+  }
+  const first = seen.get(`room-${nn}-0`);
+  if (first) {
+    const camPx = -first.x;
+    for (const [k, o] of seen) {
+      const w = want.get(k);
+      if (w.kind === 'chunk' && o.x !== w.col0 * TILE_PX - camPx) problems.push(`${label}: ${k} at x ${o.x}, want ${w.col0 * TILE_PX - camPx} (column ${w.col0} at the camera ${camPx} of the first chunk)`);
+      if (w.kind === 'band' && o.x !== -Math.round(w.factor * camPx)) problems.push(`${label}: ${k} at x ${o.x}, want ${-Math.round(w.factor * camPx)} (factor ${w.factor} of the camera ${camPx})`);
+    }
+    const centreX = state[X_FIELD] / 256 + 5;
+    const expected = cameraPx(room, centreX);
+    if (Math.abs(camPx - expected) > CAMERA_SLACK_PX) problems.push(`${label}: the room is drawn at camera ${camPx} px, the creature's camera is ${expected} px (want within ${CAMERA_SLACK_PX} px, one step's motion)`);
+  }
+  const graphics = layout.filter((g) => g.type === 'Graphics');
+  const depths = graphics.map((g) => g.depth).sort((a, b) => a - b);
+  if (depths.join(',') !== '6,7,8') problems.push(`${label}: Graphics at depths ${JSON.stringify(depths)}, want 6, 7 and 8 (the beat entities, the creature, the dust)`);
+  for (const g of graphics) {
+    if (g.x !== 0 || g.y !== 0 || g.scaleX !== 1 || g.scaleY !== 1 || !g.visible || g.alpha !== 1) problems.push(`${label}: the Graphics at depth ${g.depth} is moved, scaled, hidden or faded`);
+    if ((g.depth === 7 || g.depth === 8) && !(g.commands > 0)) problems.push(`${label}: the Graphics at depth ${g.depth} draws nothing (want the ${g.depth === 7 ? 'creature' : 'dust'})`);
+  }
+  return problems;
+}
+
+// The scene check's ending half (review R2, MAJOR 3): reads of the ending's display list ({ layout, final }, in time
+// order) through the rise and, `final`, once the card is up. Section 13 shows the glimpse as one image of 1280 by 720
+// at depth 0, origin (0, 0), x 0 and scale 1, rising from y 720 to rest at y 0 (riseAt): its y never moves back down,
+// a read in the rise's first half sees it at 360 or below the view's middle, and once the card is up it is 0. The
+// Graphics of the ceiling and the card sits at depth 1.
+export function endingLayoutProblems(reads, { label = 'ending' } = {}) {
+  const problems = [];
+  const ys = [];
+  for (const r of reads) {
+    if (!Array.isArray(r.layout)) { problems.push(`${label}: the ending scene could not be read`); break; }
+    const images = r.layout.filter((g) => g.type === 'Image');
+    const graphics = r.layout.filter((g) => g.type === 'Graphics');
+    const glimpse = images.filter((g) => g.key === 'glimpse');
+    if (glimpse.length !== 1 || images.length !== 1) { problems.push(`${label}: images ${JSON.stringify(images.map((g) => g.key))}, want the one glimpse`); break; }
+    const o = glimpse[0];
+    if (o.x !== 0 || o.originX !== 0 || o.originY !== 0 || o.scaleX !== 1 || o.scaleY !== 1 || o.depth !== 0 || !o.visible || o.alpha !== 1 || o.w !== 1280 || o.h !== 720) {
+      problems.push(`${label}: the glimpse at x ${o.x}, origin (${o.originX}, ${o.originY}), scale ${o.scaleX}, depth ${o.depth}, visible ${o.visible}, alpha ${o.alpha}, ${o.w} by ${o.h} (want x 0, origin (0, 0), scale 1, depth 0, shown, 1280 by 720)`);
+      break;
+    }
+    if (graphics.length !== 1 || graphics[0].depth !== 1 || !graphics[0].visible) { problems.push(`${label}: Graphics at depths ${JSON.stringify(graphics.map((g) => g.depth))}, want one at depth 1`); break; }
+    ys.push({ y: o.y, final: Boolean(r.final), early: Boolean(r.early) });
+  }
+  if (problems.length) return problems;
+  for (let i = 1; i < ys.length; i++) if (ys[i].y > ys[i - 1].y) { problems.push(`${label}: the glimpse moved back down from y ${ys[i - 1].y} to ${ys[i].y}`); break; }
+  if (!ys.some((r) => r.early && r.y >= 360)) problems.push(`${label}: the glimpse was never below the view's middle in the rise's first half (reads ${JSON.stringify(ys.filter((r) => r.early).map((r) => Math.round(r.y)))})`);
+  const last = ys[ys.length - 1];
+  if (!last || !last.final) problems.push(`${label}: no read once the card was up`);
+  else if (last.y !== 0) problems.push(`${label}: the glimpse at y ${last.y} once the card is up, want 0`);
+  return problems;
+}
+
+// The playthrough's key check (review R2, MAJOR 5): the keys a probe pressed through the browser, as the page saw
+// them (src/probe/api.ts keyLog), against the sim's state before and after them, on a run handed over with
+// (avOffset, inputBias). When a key arrives, the sim stands where the driver puts it (section 9.1): at most
+// targetStep(its heard time, the origin, displaySec(avOffset)), and no more than KEY_SIM_SLACK steps (one late frame)
+// behind it. The game stamps each key with stepOf (section 9.2), floor((its time through the clock line - the run's
+// origin - inputLagSec) x 240), and the keys' queue applies it on the first tick at or after that step once it has
+// arrived: max(stepOf, the sim's step when it arrived). Replayed so on the oracle from the state before, the keys
+// must give every state read while they were pressed and after (`reads`, in step order), field for field: a room
+// without beat entities forgets when a move happened once the creature stands still again, so the reads taken while
+// it moves are the ones that pin the steps. The same replay without the keys must differ from them.
+export const KEY_SIM_SLACK = 24;
+
+export function keyReplayProblems({ world, before, reads, events, origin, avOffset, inputBias }) {
+  if (!before || !reads || !reads.length || reads.some((r) => !r)) return ['keys: the sim could not be read before and after the keys'];
+  const lag = inputLagSec(avOffset, inputBias);
+  const display = displaySec(avOffset);
+  const placed = [];
+  for (const e of events) {
+    const tgt = Math.floor((e.t / 1000 + e.offset - origin + display) * 240) + 1;
+    if (!(e.step <= tgt + 1 && e.step >= tgt - KEY_SIM_SLACK)) placed.push(`keys: the sim stood at step ${e.step} when ${e.code} ${e.type === 'keydown' ? 'went down' : 'came up'}, where the heard time less the display offset names step ${tgt} (want at most ${tgt}, and no more than ${KEY_SIM_SLACK} behind)`);
+  }
+  if (placed.length) return placed.slice(0, 2);
+  const queue = events.filter((e) => KEY_BITS[e.code] !== undefined && !e.repeat).map((e) => ({
+    code: e.code,
+    down: e.type === 'keydown',
+    at: Math.max(Math.floor((e.t / 1000 + e.offset - origin - lag) * 240), e.step),
+  }));
+  if (!queue.some((q) => q.down)) return [`keys: no game key reached the page (${events.length} key events)`];
+  const sorted = [...reads].filter((r) => r.step >= before.step).sort((a, b) => a.step - b.step);
+  // The first read the replay does not give, as a phrase, or null when it gives every one.
+  const replay = (withKeys) => {
+    const sim = createSim(world, { room: 1, step: 0, layers: 0 });
+    sim.load(Int32Array.from(before.state));
+    const held = new Set();
+    const done = new Set();
+    for (const r of sorted) {
+      while (sim.step < r.step) {
+        const s = sim.step;
+        if (withKeys) {
+          queue.forEach((q, i) => {
+            if (done.has(i) || q.at > s) return;
+            done.add(i);
+            if (q.down) held.add(q.code); else held.delete(q.code);
+          });
+        }
+        let bits = 0;
+        for (const c of held) bits |= KEY_BITS[c];
+        sim.tick(bits);
+      }
+      const got = sim.save();
+      const i = got.findIndex((v, k) => v !== r.state[k]);
+      if (i >= 0) return `at step ${r.step} ${FIELDS[i]} live ${r.state[i]}, replay ${got[i]}`;
+    }
+    return null;
+  };
+  const problems = [];
+  const keyed = replay(true);
+  if (keyed) problems.push(`keys: the sim's states while the keys were pressed differ from their replay on the steps stepOf names (${keyed}; ${queue.length} key events, ${sorted.length} reads from step ${before.step})`);
+  if (!replay(false)) problems.push('keys: the run went on as if no key had been pressed');
   return problems;
 }
 

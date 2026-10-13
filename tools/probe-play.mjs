@@ -24,15 +24,31 @@
 //            gauntletBar must be the sim's gBeat / 4 (tools/probe-lib.mjs gauntletMapProblems)
 //   visibility (only when named) the page reported hidden suspends the AudioContext and freezes the sim; visible
 //            again, both run on (D4)
+//   scene    (only when named; review R2, MAJOR 1 and 3) once in every room, half-way through its witness, the play
+//            scene's baked images and Graphics where section 10.6 puts them, at the camera of the sim's creature
+//            (tools/probe-lib.mjs playLayoutProblems); and through the ending, the glimpse rising to rest at y 0 by
+//            the card (endingLayoutProblems)
+//   keys     (only when named; review R2, MAJOR 4 and 5) on a page of its own: the hand-over skipCalibration(KEYS_AV_MS,
+//            KEYS_BIAS_MS) starts a run at room 1, then real keys pressed through the browser must reach the sim on
+//            the steps stepOf names for them (keyReplayProblems)
 // Exit 0 every check passes, 1 a check fails, 2 usage, a missing dist or a page that never boots.
 // (Default checks: console, play, text, network, storage and unlock.)
 import fs from 'node:fs';
 import path from 'node:path';
+import { compileWorld } from '../tests/fixtures/oracle/index.mjs';
 import { FIELDS } from '../tests/fixtures/oracle/sim.mjs';
-import { bootGame, emitJson, extraTexts, gauntletMapProblems, launch, loadWitnesses, openPage, originViolations, parseOptions, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
+import { bootGame, emitJson, endingLayoutProblems, extraTexts, gauntletMapProblems, keyReplayProblems, launch, loadWitnesses, openPage, originViolations, parseOptions, playLayoutProblems, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
+import { loadRoomFiles } from './replay.mjs';
 
 const ALL = ['console', 'play', 'text', 'network', 'storage', 'unlock'];
-const OPTIONAL = ['visibility'];
+const OPTIONAL = ['visibility', 'scene', 'keys'];
+
+// The key check's hand-over (review R2): with avOffset 100 and inputBias -60 the sim runs 0.1 s behind the heard time
+// and a key is stamped 0.04 s behind it, so every key lands about 14 steps ahead of the sim and is applied on the
+// very step stepOf names; a run that dropped the calibration, or its input lag, applies it elsewhere.
+const KEYS_AV_MS = 100;
+const KEYS_BIAS_MS = -60;
+const KEYS_RUN_WAIT_MS = 5000;
 
 // HUSH-SPEC section 13: the camera rises for RISE_S = 16 beats at 140 BPM of heard time, then the card.
 const RISE_MS = ((16 * 60) / 140) * 1000;
@@ -132,8 +148,10 @@ async function visibilityProblems(page) {
 
 // Waits for the scene `ending`, then reads the page texts every 100 ms through the rise until the card is up.
 // Returns whether it started, the first text beyond the link and notice seen in the first half of the rise,
-// the last read, and the sim when the ending was seen and at the last read.
-async function watchEnding(page, { playtest }) {
+// the last read, and the sim when the ending was seen and at the last read. With `layouts`, every read also takes
+// the ending's display list (the scene check, review R2), marked early while the rise is surely in its first half
+// and final at the last read.
+async function watchEnding(page, { playtest, layouts = null }) {
   const texts = () => page.evaluate(() => window.__hush.pageTexts());
   const sim = () => page.evaluate(() => window.__hush.sim());
   const begun = Date.now();
@@ -148,14 +166,70 @@ async function watchEnding(page, { playtest }) {
   let early = null;
   let final;
   for (;;) {
-    final = await texts();
+    const read = await page.evaluate((withLayout) => ({ texts: window.__hush.pageTexts(), layout: withLayout ? window.__hush.layout('ending') : null }), Boolean(layouts));
+    final = read.texts;
     const now = Date.now();
     const extra = extraTexts(final);
     if (extra.length && !early && now - seen < RISE_MS - SKEW_MS) early = { ms: now - seen, texts: extra };
-    if (now >= hard || (now >= soft && (!playtest || extra.length))) break;
+    const last = now >= hard || (now >= soft && (!playtest || extra.length));
+    if (layouts) layouts.push({ layout: read.layout, early: now - seen < RISE_MS / 2 - SKEW_MS, final: last });
+    if (last) break;
     await sleep(100);
   }
   return { started: true, early, final, atStart, atEnd: await sim(), ms: Date.now() - seen };
+}
+
+// The key check (review R2, MAJOR 4 and 5), on a page of its own: the probe's hand-over with a calibration, a run at
+// room 1 that must be running, then ArrowRight held and Space tapped through the browser's own keyboard while the
+// page records each key (src/probe/api.ts keyLog). Returns its problems.
+async function keysProblems(browser, url, { query, world }) {
+  const { page, log } = await openPage(browser);
+  const problems = [];
+  try {
+    await bootGame(page, url, { query, avOffset: KEYS_AV_MS, inputBias: KEYS_BIAS_MS });
+    const read = () => page.evaluate(() => ({ scenes: window.__hush.scenes(), sim: window.__hush.sim(), audio: window.__hush.audio(), calibration: window.__hush.calibration() }));
+    let first = await read();
+    const begun = Date.now();
+    for (;;) {
+      await sleep(200);
+      const now = await read();
+      if (now.scenes.includes('play') && now.sim && now.sim.status.room === 1 && first.sim && now.sim.step > first.sim.step) { first = now; break; }
+      if (Date.now() - begun > KEYS_RUN_WAIT_MS) {
+        problems.push(`keys: no run at room 1 after the hand-over (scenes ${JSON.stringify(now.scenes)}, room ${now.sim ? now.sim.status.room : 'none'}, step ${now.sim ? now.sim.step : 'none'} after ${first.sim ? first.sim.step : 'none'})`);
+        return problems;
+      }
+      first = now;
+    }
+    await page.evaluate(() => window.__hush.keyLogStart());
+    const before = await page.evaluate(() => ({ sim: window.__hush.sim(), origin: window.__hush.audio().origin }));
+    // The sim is read every 30 ms while the keys go down and up and the creature moves, and once at the end.
+    const reads = [];
+    const watch = async (ms) => {
+      const until = Date.now() + ms;
+      while (Date.now() < until) {
+        reads.push(await page.evaluate(() => window.__hush.sim()));
+        await sleep(30);
+      }
+    };
+    await page.keyboard.down('ArrowRight');
+    await watch(300);
+    await page.keyboard.up('ArrowRight');
+    await watch(120);
+    await page.keyboard.down('Space');
+    await watch(150);
+    await page.keyboard.up('Space');
+    await watch(600);
+    const after = await page.evaluate(() => ({ sim: window.__hush.sim(), origin: window.__hush.audio().origin, events: window.__hush.keyLogTake() }));
+    reads.push(after.sim);
+    if (after.origin !== before.origin) problems.push(`keys: the run restarted while the keys were pressed (origin ${before.origin} then ${after.origin})`);
+    problems.push(...keyReplayProblems({ world, before: before.sim, reads, events: after.events, origin: before.origin, avOffset: KEYS_AV_MS, inputBias: KEYS_BIAS_MS }));
+    for (const e of [...log.pageErrors, ...log.consoleErrors].slice(0, 3)) problems.push(`keys: page error ${e}`);
+  } catch (e) {
+    problems.push(`keys: ${String(e.message).split('\n')[0]}`);
+  } finally {
+    await page.close();
+  }
+  return problems;
 }
 
 // The ending's part of the text check: the hand-over, nothing before the card, and in ?playtest mode the run
@@ -206,7 +280,20 @@ async function main(argv) {
     const objectCounts = [];
     const layerCount = await page.evaluate(() => window.__hush.layerCount());
     const unlock = { watched: 0, gauntletReads: 0, problems: [] };
+    // The scene check reads each room once, half-way to the step its witness clears it on, the layout and the sim in
+    // one page read.
+    const world = want.includes('scene') || want.includes('keys') ? compileWorld(loadRoomFiles(path.resolve(REPO, o.rooms))) : null;
+    const scene = { sampled: new Set(), problems: [], endingReads: want.includes('scene') ? [] : null };
+    const onPoll = want.includes('scene') ? async (w, s, clearStep) => {
+      if (scene.sampled.has(w.room) || clearStep === null || s.step < clearStep / 2 || s.status.room !== w.room) return;
+      const r = await page.evaluate(() => ({ layout: window.__hush.layout('play'), sim: window.__hush.sim() }));
+      if (!r.sim || r.sim.status.room !== w.room) return;
+      scene.sampled.add(w.room);
+      const room = w.room === 11 ? world.gauntlet : world.rooms[w.room - 1];
+      scene.problems.push(...playLayoutProblems(r.layout, { room, number: w.room, state: r.sim.state, label: `room ${w.stem} at step ${r.sim.step}` }));
+    } : null;
     const rooms = await playthrough(page, witnesses, {
+      onPoll,
       onRoom: async (w, phase, info) => {
         if (phase !== 'end') return;
         objectCounts.push(await page.evaluate(() => window.__hush.textObjects()));
@@ -223,11 +310,23 @@ async function main(argv) {
       },
     });
     const last = rooms.length ? rooms[rooms.length - 1] : null;
-    const ending = await watchEnding(page, { playtest });
+    const ending = await watchEnding(page, { playtest, layouts: scene.endingReads });
     process.stdout.write(`play: ${label}: ending ${ending.started ? `seen, texts read ${ending.ms} ms into it` : 'never started'}\n`);
     if (want.includes('visibility')) {
       const vp = await visibilityProblems(page);
       checks.visibility = { ok: vp.length === 0, detail: vp.join('; ') || 'hidden: audio suspended, sim frozen; visible: both run on' };
+    }
+    if (want.includes('scene')) {
+      const unread = witnesses.filter((w) => !scene.sampled.has(w.room)).map((w) => w.stem);
+      if (unread.length) scene.problems.push(`no layout read in ${unread.join(', ')}`);
+      const endingSide = ending.started ? endingLayoutProblems(scene.endingReads) : ['the ending never started, so its layout was not read'];
+      // The rooms' first problems and the ending's, so that neither hides the other.
+      const shown = [...scene.problems.slice(0, 3), ...endingSide.slice(0, 2)];
+      checks.scene = { ok: scene.problems.length + endingSide.length === 0, detail: shown.join('; ') || `${scene.sampled.size} rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera; the glimpse risen to y 0 by the card (${scene.endingReads.length} ending reads)` };
+    }
+    if (want.includes('keys')) {
+      const kp = await keysProblems(browser, srv.url, { query: o.query, world });
+      checks.keys = { ok: kp.length === 0, detail: kp.slice(0, 4).join('; ') || `after the hand-over (${KEYS_AV_MS}, ${KEYS_BIAS_MS}) a run at room 1; real keys reached the sim on the steps stepOf names, every state read while they were pressed and after equal to their replay` };
     }
     objectCounts.push(await page.evaluate(() => window.__hush.textObjects()));
     const objects = Math.max(...objectCounts);

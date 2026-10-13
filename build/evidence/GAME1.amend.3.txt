@@ -1,0 +1,44 @@
+HUSH-EVIDENCE v1
+id: GAME1
+phase: amend
+command: npm run accept:game
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T18:41:31-05:00
+time-end: 2026-10-12T18:44:37-05:00
+head: d495056ac8bfd24314ee2142882597c5bd54ba5e
+exit: 0
+--- output ---
+
+> hush@0.0.0 accept:game
+> vite build && node tools/probe-play.mjs --check console,play,text,visibility,unlock,keys && tsc --noEmit && eslint src
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-D9OYl_oW.js  2,093.59 kB │ gzip: 593.67 kB
+
+[32m✓ built in 846ms[39m
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 03-dash done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 05-doors done
+play: chrome headless: room 06-wave done
+play: chrome headless: room 07-current done
+play: chrome headless: room 08-steps done
+play: chrome headless: room 09-gates done
+play: chrome headless: room 10-crown done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 9877 ms into it
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+play: chrome headless: visibility: ok: hidden: audio suspended, sim frozen; visible: both run on
+play: chrome headless: unlock: ok: 10 rooms cleared, each layer's gate closed until its bar line and open after it; the gauntlet's track mapped from its run's bar at its entry and its respawn (83 reads)
+play: chrome headless: keys: ok: after the hand-over (100, -60) a run at room 1; real keys reached the sim on the steps stepOf names, the state after them equal to their replay
+play: chrome headless: PASS (console,play,text,visibility,unlock,keys)
+--- end ---

@@ -175,3 +175,23 @@ The tests part landed 2026-10-12T18:15-05:00 in the commit `hush-spec: amend RN1
 - Standing is GREEN: 22 mapped files and 114 tests, calibration 6, test:av 39 (build/evidence/R2-tests-standing.amend.1.txt).
 - The spec: section 1.6, the drawShapes and track paragraphs of 10.6, section 12's X8 line, three rows of section 15, and the acceptances of CL1, CAL1, RN1 (with draw-shapes mapped), RN4 and END1.
 
+The probes part landed 2026-10-12T19:30-05:00 in the commit `hush-spec: amend GAME1 CAL2 END1 and the probes ...` after `d495056`. That fixes R2-MAJOR1, R2-MAJOR3, R2-MAJOR5, R2-MINOR3, and parts (b) and (c) of R2-MAJOR4.
+- tools/probe-play.mjs gains the optional checks `scene` and `keys`, with src/probe/api.ts `layout` and `keyLog`. GAME1's acceptance names `keys`, END1's names `scene`, and npm test names both.
+- The product passes:
+  - accept:game `PASS (console,play,text,visibility,unlock,keys)`, tsc and eslint clean (build/evidence/GAME1.amend.3.txt);
+  - accept:ending `PASS (console,play,text,scene)`, 11 rooms read and 88 ending reads (build/evidence/END1.amend.4.txt);
+  - probe:flash with the tapped run `values 15.1 25.0 (the taps' own 15.1 25.0 ...)` and a run at room 1 after the hand-over (build/evidence/CAL2.amend.2.txt).
+- The reviewer's mutants, each built in a scratch copy of HEAD with the new probe API, fail:
+  - the chunks unscrolled, with the glimpse kept at y 720: `scene` FAIL on both (build/evidence/R2-mutant-scene.amend.3.txt). Runs .1 and .2 were the producer's setup slips: .1 built HEAD's old probe API (exit 2), and .2 showed only the room's four problems.
+  - the keys on a detached target: `keys` FAIL, the run went on as if no key had been pressed (R2-mutant-keys-unwired.amend.1.txt);
+  - the calibration dropped at the hand-over: `keys` FAIL, the sim standing 21 to 22 steps ahead of where displaySec puts it (R2-mutant-keys-nocal.amend.2.txt). Run .1 passed, and that pass taught the check its step bound: without the calibration, every key arrives late and goes in on the next tick either way.
+  - no run after the hand-over: `keys` FAIL (R2-mutant-keys-norun.amend.1.txt);
+  - the input lag lost in run.ts: `keys` FAIL at a read taken while the creature moved (R2-mutant-keys-nolag.amend.1.txt). Room 1 has no beat entities, so a uniform shift of every key leaves the same state once the creature stands still. tests/tools/probe-lib.test.mjs asserts exactly that, and the check now compares every read taken while the keys are pressed.
+- Node controls:
+  - tests/tools/probe-lib.test.mjs, 11 of 11: the play layout's and the glimpse's faults, and the keys' faults;
+  - tests/tools/calibration-check.test.mjs, 8 of 8: late taps judged by their own values, flipped values, a stray, a rejected first attempt, no log, no run after the hand-over.
+- Browser controls:
+  - tests/controls/calibration-probe.test.mjs: 7 of 8 in build/evidence/R2-calibration-controls.amend.1.txt. The count-in-of-3 page failed the probe as it must, on its fills, but its screencast at 43 frames a second saw 5 fills where the control expected exactly 6. The control now takes 5 or 6, and passes (R2-calibration-controls.amend.2.txt).
+  - tests/controls/page-probes.test.mjs, the playthrough's regression on the changed probe: 26 of 26 (build/evidence/R2-page-controls.amend.1.txt).
+  - The verifier suite: 243 of 243 (build/evidence/R2-verifiers.amend.1.txt).
+

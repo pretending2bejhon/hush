@@ -50,6 +50,8 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - A reference that gains an import breaks each planted fault copied alone into a temp folder, and a mutant that cannot load fails for the wrong reason, hiding a dead control: refMutant rewrites the oracle import (producer, review R1).
 - Evidence is written only through tools/evidence.mjs and the hook lets no session delete it, so a run under the wrong phase leaves a file to commit. Producers record their own runs as `amend` (or `session`), appliers as `fix` (producer, review R1).
 - Review R2 found R1's class again, one step further out. The values are tested, but the step that applies them is not: the scenes' image placement, drawShapes, the calibration's hand-over to the run, the window's keys. A path is covered only when a check reads its output where the player meets it (a pixel, the run's own value, a real key), or when the whole path up to the Phaser call sits inside one tested function (producer, review R2).
+- A check that compares only the state a run settles into cannot see a uniform shift in time where nothing moves on the beat: room 1 ends in the same state whether every key came 10 steps late or not. Compare states read while something moves. And when a fault makes the input late, it can hide behind the "next tick" rule: also hold the sim's own step to where the calibration puts it (producer, review R2, the key check).
+- A browser mutant built in a scratch copy needs the working tree's src/probe, or the probe fails for the wrong reason (exit 2, a missing API). The cap hook's detach ban matches the word "detached" anywhere in a shell call, an evidence name included (producer, review R2).
 
 ## Rounds
 
