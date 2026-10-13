@@ -1,0 +1,46 @@
+HUSH-EVIDENCE v1
+id: RN3
+phase: amend
+command: npm run accept:rn3
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T11:38:17-05:00
+time-end: 2026-10-13T11:44:00-05:00
+head: 7c6ecd0e5624c361ac0835a4d4a9cc5327c4aa2e
+exit: 1
+--- output ---
+
+> hush@0.0.0 accept:rn3
+> vitest run tests/render/beat-art.test.mjs && npm run check:art
+
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  11:38:18
+   Duration  1.61s (tests 85%, transform 11%, import 4%)
+
+
+> hush@0.0.0 check:art
+> vite build && node tools/probe-flash.mjs && node tools/probe-perf.mjs --headed
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-DVAN02ji.js  2,099.21 kB │ gzip: 595.67 kB
+
+✓ built in 841ms
+flash: 9020 frames over 150.5 s, median 15.91 ms; general max 9667 px, red max 0 px (limit 25600)
+flash: PASS
+perf: 13.07 fps mean, 93.59% of 780 intervals <= 20 ms, p99 1016.6 ms, over 59.7 s (headed, ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11))
+perf: machine: power ac, saver off (Balanced), refresh [60], heavy apps none
+perf: mean 13.1 fps, under 58
+perf: 93.59% of intervals at 20 ms or less, under 99%
+perf: 11-gauntlet: never reached the busy window
+perf: FAIL
+--- end ---

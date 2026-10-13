@@ -394,3 +394,13 @@ MAJOR 1 fixed 2026-10-13T11:40-05:00 in the commit `hush-spec: amend the av prob
   - in Node, tests/tools/av-starts.test.mjs (new, 9 tests) and tests/tools/calibration-check.test.mjs (12 tests); the verifier suite passes 269 of 269 (build/evidence/R4-verifiers.amend.2.txt).
 - **Still open:** MINOR 1 (the line's deaths) is left for the next cycle, as its disposition allows: a MINOR does not block a PASS. Next: the blocker, RN1 to RN4 on AC, then `FIX R4` and review R5.
 
+The blocker cleared 2026-10-13T11:52-05:00 on AC power, energy saver off, each acceptance through `node tools/evidence.mjs <ID> amend`, with this session's start recorder in the page:
+- RN1: the art tests 6 of 6, flash PASS, perf 60 fps with 100% of 3605 intervals at 20 ms or less (build/evidence/RN1.amend.2.txt).
+- RN2: 14 of 14, flash PASS, perf 60 fps, 100% (build/evidence/RN2.amend.2.txt).
+- RN3: 4 of 4, flash PASS, perf 60 fps, 100% (build/evidence/RN3.amend.3.txt).
+  - Its first run (RN3.amend.2.txt, exit 1) measured 13 fps, with frame gaps of a second, and never reached the gauntlet's busy window. It ran on the same build that measured 60 fps for RN1 and RN2 minutes before, and its machine line read AC, saver off, 60 Hz and nothing heavy.
+  - A page that is not visible gets about one frame a second, so the headed window was most likely covered for most of that minute. Nothing changed before the retry.
+- RN4: 7 of 7, flash PASS, perf 60 fps, 100% (build/evidence/RN4.amend.3.txt).
+
+Round R4 closed 2026-10-13T11:53-05:00: 3 fixed (MAJOR 1, MAJOR 2, MINOR 2), 0 rebutted, 0 superseded, every one by the producer's amendment and no applier. MINOR 1 stays open and is carried; NOTE 1 to 3 needed no action. The blocker is cleared. The product is unchanged since the review (src/ outside src/probe, rooms, music and replays as at c9f589c). The next step is review R5, the last round cycle 1 can have.
+

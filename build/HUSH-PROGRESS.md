@@ -61,6 +61,8 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - The cap hook denies a shell call that names a product folder next to a copy, even one that copies out of it. A scratch script that only reads the repo and writes under the scratchpad builds mutants and witness subsets (producer, review R3 FIX).
 - A run that only ever takes the happy path cannot test what a scene does on a retry. Each branch a player can reach needs a run that reaches it: the calibration's repeat runs only when a first attempt is rejected, so the probe now leaves one untapped (producer, review R4 FIX).
 - The laptop's power is part of the review's environment. A review on battery is BLOCKED by the perf probe, and a long session drains it. The owner plugs it in before a review or a VERIFY (producer, review R4).
+- A probe that records the page must record what the page does, in every form it takes. AudioBufferSourceNode declares its own `start`, so wrapping AudioScheduledSourceNode's missed every noise voice. Two runs started on one context time share one origin. A take misses the starts whose layer is still being read. The first product run is the recorder's own control: read its per-run counts before trusting a PASS or a FAIL (producer, review R4 FIX).
+- The headed perf probe also wants its window seen. A window that is covered for most of the minute gets frames a second apart and reads as 13 fps. Re-run it before suspecting the product (producer, review R4 FIX).
 
 ## Rounds
 
@@ -72,6 +74,7 @@ FIX R2: 2026-10-12T19:19:25-05:00 | fixed=9 rebutted=0 superseded=0
 HUSH-REVIEW-R3: FAIL (head=81a66ae934912449e125d07e883c5f4bc6a5cc83 digest=4537d7d29782e4447e95b22dbc0a9888f1747a9f9d134077ec24bc56d5d66d36 blockers=0 majors=2 minors=6)
 FIX R3: 2026-10-13T01:21:03-05:00 | fixed=8 rebutted=0 superseded=0
 HUSH-REVIEW-R4: BLOCKED (head=c9f589cf1d1544a0e09a4ab49324d9eac879e6d2 digest=c958db45b706ce99a38b80ced9444606f5de7029d68cb5d932d483043530c989 blockers=0 majors=2 minors=2)
+FIX R4: 2026-10-13T11:53:12-05:00 | fixed=3 rebutted=0 superseded=0
 
 ## Checkpoint
 
