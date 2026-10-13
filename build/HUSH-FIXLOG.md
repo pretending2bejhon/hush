@@ -202,3 +202,48 @@ Round R2 closed 2026-10-12T19:19-05:00: 9 fixed, 0 rebutted, 0 superseded, every
   - npm test with the new checks, whose parts ran one by one above.
 - The next step is review R3, in a fresh producer session: this session holds one hush-review commit, and a review takes about two active hours.
 
+## Review R3 (cycle 1): HUSH-REVIEW-R3: FAIL, head 81a66ae, digest 4537d7d2
+
+Opened 2026-10-12T22:52-05:00 by the producer (Opus standing in for Fable). Findings: 8 (0 BLOCKER, 2 MAJOR, 6 MINOR), against R2's 9 (0 BLOCKER, 5 MAJOR, 4 MINOR). The count dropped, so the round goes on to FIX with no escalation.
+- No R2 finding survives. The reviewer re-ran R2's four browser mutants and each one now fails. The product matches every Action.
+- MAJOR 1 and 2 are R2's class one step further out: the `scene` check reads where each image and Graphics sits, never what it draws. They do not re-open R2-MAJOR1 or R2-MAJOR3, whose mutants (the chunks unscrolled, the glimpse kept down) are caught. These are new paths: an empty bake, a list left undrawn or drawn at an offset.
+- Every finding is a gap in a PROTECTED verifier, so each one is the producer's amendment. No product file changes and no applier is planned: the reviewer saw the product draw what section 10.6 says on HEAD (its screenshots beside each mutant).
+
+DISPOSITION: R3-MAJOR1 | the play scene's check reads where its images and Graphics sit, never what they draw | 2026-10-12T22:52:00-05:00 | to fix by amendment (verifier)
+- The check `scene` reads what the play scene draws, in every room.
+  - The Graphics: from the room's first frame, the probe records each frame of the play scene for 2 s (src/probe/api.ts). Each record holds the sim's state, the first chunk's x (which carries the camera), and the full command buffer of each Graphics at depths 6, 7 and 8.
+  - tools/probe-lib.mjs replays the reference over the same frames, from the witness's own states on the oracle: beatShapes with the levels carried frame to frame through a reference limiter begun every frame, the ring, the creature with the one interpolation that gives the recorded camera, and moteShapes.
+  - Each list is encoded as the calls drawShapes makes (section 10.6), in Phaser 4.2.1's command encoding. The recorded buffers must equal those within 1e-4 px.
+  - The bakes: in the half-way read, the probe reads the pixels of every baked texture (each chunk and band, and the fog and the vignette) at points tools/probe-lib.mjs chooses, each at least 1 px from every shape's edge. Each pixel must equal the bake's reference shapes composited at that point over transparent, within 3 levels a channel.
+- Controls: the reviewer's four mutants must fail it (the beat entities undrawn, a blank chunk, the gauntlet's chunks drawn from column 0, the creature drawn 40 px down), and so must MINOR 3's two. The predicates are controlled in Node by the same faults in synthetic records (tests/tools/probe-lib.test.mjs).
+DISPOSITION: R3-MAJOR2 | the ending's check reads where the glimpse and the Graphics sit, never what they show | 2026-10-12T22:52:00-05:00 | to fix by amendment (verifier)
+- With every ending read, the probe returns the Graphics' command buffer as well.
+  - During the rise it must equal ceilingShapes(ceilingY), with ceilingY = -120 + 840 e and e read from the glimpse's y, 720 (1 - e).
+  - Once the card is up it must equal cardShapes(b), b being the beat of the bar heard at the read, or the beat before within 20 ms after a beat line.
+- The glimpse texture's pixels are read once, as for the bakes, against glimpseShapes().
+- Controls: the reviewer's two mutants (the card undrawn, a blank glimpse) must fail; in Node, synthetic reads with the same faults.
+DISPOSITION: R3-MINOR1 | CL1's stale-pair rule is never reached by its test | 2026-10-12T22:52:00-05:00 | to fix by amendment (test)
+- The scenario 'stale pairs after a resume' starts its device's clock at 2000 ms, so its stale stamps are positive and reach the stale rule. Control: CLOCK_STALE 5000 in the reference.
+DISPOSITION: R3-MINOR2 | FX1's test never asks for a sum exactly at the limit | 2026-10-12T22:52:00-05:00 | to fix by amendment (test)
+- A request of exactly 25,600 px in a fresh frame must come back under 0.1, and one of 25,599 px must pass. Control: `>` for `>=` in the reference.
+DISPOSITION: R3-MINOR3 | the play scene's use of the limiter is untested | 2026-10-12T22:52:00-05:00 | to fix by amendment (verifier), with MAJOR 1
+- MAJOR 1's frame record replays the levels through the reference limiter frame by frame. A frame not begun, or levels not kept, then differs from the replay. Room 2's stones sit exactly on the limit, so the reference holds their changes.
+- Controls: the reviewer's two mutants.
+DISPOSITION: R3-MINOR4 | the engine's mix values (section 8.4) are unpinned | 2026-10-12T22:52:00-05:00 | to fix by amendment (verifier)
+- Under ?probe, the probe records the audio graph as the page builds it: it wraps AudioNode.prototype.connect before the first key.
+- The av probe walks back from the context's destination and wants section 8.4's chain:
+  - the analyser (fftSize 2048, smoothing 0);
+  - the master gain (0.8) into it;
+  - the compressor (-10, 6, 4, 0.005, 0.12) into the master;
+  - the ten gates and one more input (the calibration orbit) into the compressor.
+- The control page builds the same graph. Control: the control page with ?av=master-low (the master at 0.4).
+DISPOSITION: R3-MINOR5 | no test presses Escape | 2026-10-12T22:52:00-05:00 | to fix by amendment (verifier)
+- The calibration check presses Escape before its first key and wants no audio started and the scene waiting with no attempt.
+- The tapped run also presses Escape three times in each attempt, at a click or ring plus 200 ms, logged apart from its taps. A scene that takes Escape as a tap then gives values off the taps' own (MINOR 6's spread makes the shift show).
+- Control: the control page with ?calib=escape.
+DISPOSITION: R3-MINOR6 | section 12's count-in tap window is untested | 2026-10-12T22:52:00-05:00 | to fix by amendment (verifier)
+- The tapper also taps the count-in (clicks and rings 0 to 3). It spreads its taps over the intended offset ± 19 ms in a fixed pattern, so that taps a scene wrongly admits move the median by more than the 0.5 ms the check allows. tapLogValues already drops the count-in taps, as section 12 does.
+- Control: the control page with ?calib=nowindow.
+DISPOSITION: R3-NOTE1 | the run's view has no reference | 2026-10-12T22:52:00-05:00 | no action (MAJOR 1's fit reads the creature within one step)
+DISPOSITION: R3-NOTE2 | three equivalent mutations | 2026-10-12T22:52:00-05:00 | no action
+
