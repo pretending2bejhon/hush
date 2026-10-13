@@ -1,0 +1,31 @@
+HUSH-EVIDENCE v1
+id: R5-mutation-engine-all-sine
+phase: review
+command: node mut.mjs run H4c
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T13:10:57-05:00
+time-end: 2026-10-13T13:12:10-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+mutant H4c: every note played as a sine, its own sound dropped
+  src/audio/engine.ts: "S.superdough({ ...note.value, orbit: note.layer }" -> "S.superdough({ ...note.value, s: 'sine', orbit: note.layer }"
+ src/audio/engine.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier build: exit 0 in 1 s
+
+--- tier av: exit 1 in 71 s
+av: 2169 voices scheduled for 2140 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.186 ms p-p, 0 resyncs; 68.6 s
+av: silence peak 0.00e+0; windows rms 0.1990 0.2099 0.2068 0.2082 0.2039 0.2098 0.2056 0.2107 0.2064 0.2422
+av: solos rms 0.1893 0.0729 0.0000 0.0652 0.0001 0.0352 0.0010 0.0225 0.0000 0.0741; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 7 other(s), 7 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: starts 2158 voice start(s) of 4301 recorded: 2158 on their layer's onsets (+0.00 to +0.00 ms), 0 late-shifted, 0 unable to sound, 0 off; 1909 of 1909 onsets started
+av: layer 3 soloed: no signal (rms 7.22e-6)
+av: layer 5 soloed: no signal (rms 9.91e-5)
+av: layer 7 soloed: no signal (rms 9.55e-4)
+av: layer 9 soloed: no signal (rms 7.00e-6)
+av: FAIL
+restored: clean
+VERDICT H4c: KILLED by av
+--- end ---

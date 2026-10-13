@@ -1,0 +1,333 @@
+HUSH-EVIDENCE v1
+id: R5-mutations-areas
+phase: review
+command: node mut-batch.mjs A2 A3 A4 A5 A5b A6 A7 A8 A9 A9b A10 A11 A12 A13
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T12:46:53-05:00
+time-end: 2026-10-13T12:48:21-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+mutant A2: section 2: a sixteenth of 181 beat-ticks
+  src/sim/constants.ts: "TICKS_PER_SIXTEENTH: 180," -> "TICKS_PER_SIXTEENTH: 181,"
+ src/sim/constants.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 5 s
+ FAIL  tests/sim/beat.test.mjs > SIM1 constants and beat functions > has the oracle constants, bits and spike boxes
+AssertionError: expected { SUB: 256, TILE: 4096, …(33) } to deeply equal { SUB: 256, TILE: 4096, …(33) }
+ FAIL  tests/sim/beat.test.mjs > SIM1 constants and beat functions > turns entities on and off as the oracle does, at rest while their layer is not back
+AssertionError: expected true to be false // Object.is equality
+ FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 2 with its layers back, and with none back (rest states)
+AssertionError: expected { step: 2932, field: 'y', …(3) } to be null
+ FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 4 with its layers back, and with none back (rest states)
+AssertionError: expected { step: 1749, field: 'vx', …(3) } to be null
+ FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 5 with its layers back, and with none back (rest states)
+AssertionError: expected { step: 2880, field: 'x', …(3) } to be null
+ FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 8 with its layers back, and with none back (rest states)
+AssertionError: expected { step: 1595, field: 'x', …(3) } to be null
+ FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees on the clear, the pending layer and the next room, without stopping at the clear
+AssertionError: expected { step: 2070, field: 'y', …(3) } to be null
+ FAIL  tests/sim/oracle-wave.test.mjs > SIM5 wave and portals against the oracle > agrees in room 7 through its wave portal
+AssertionError: expected { step: 1652, field: 'vx', …(3) } to be null
+ FAIL  tests/sim/oracle-wave.test.mjs > SIM5 wave and portals against the oracle > agrees in room 9 through its wave portal
+AssertionError: expected { step: 1246, field: 'x', …(3) } to be null
+ FAIL  tests/sim/progression.test.mjs > X7 progression: a layer returns on the bar line > room 1: layer 1 back on the bar line, its hazards at rest until then
+ FAIL  tests/sim/progression.test.mjs > X7 progression: a layer returns on the bar line > room 6: layer 6 back on the bar line, its hazards at rest until then
+ FAIL  tests/sim/progression.test.mjs > X7 progression: a layer returns on the bar line > room 7: layer 7 back on the bar line, its hazards at rest until then
+ FAIL  tests/sim/progression.test.mjs > X7 progression: a layer returns on the bar line > room 8: layer 8 back on the bar line, its hazards at rest until then
+AssertionError: expected true to be false // Object.is equality
+ FAIL  tests/sim/progression.test.mjs > X7 progression: a layer returns on the bar line > room 9: layer 9 back on the bar line, its hazards at rest until then
+AssertionError: expected false to be true // Object.is equality
+--- tier replay: exit 0 in 0 s
+replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 11 witness(es)
+restored: clean
+VERDICT A2: KILLED by unit
+
+mutant A3: section 3: KeyS as UP
+  src/input/keys.ts: "ArrowDown: 8, KeyS: 8," -> "ArrowDown: 8, KeyS: 4,"
+ src/input/keys.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 6 s
+     × maps the codes of section 3 15ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  1 failed | 134 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/input/keys.test.mjs > IN1 keys > maps the codes of section 3
+AssertionError: expected { ArrowLeft: 1, KeyA: 1, …(12) } to deeply equal { ArrowLeft: 1, KeyA: 1, …(12) }
+restored: clean
+VERDICT A3: KILLED by unit
+
+mutant A4: section 4: DASH_COOLDOWN 47
+  src/sim/constants.ts: "DASH_COOLDOWN: 48," -> "DASH_COOLDOWN: 47,"
+ src/sim/constants.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 7 s
+     × agrees in an open room on dashes in every direction 15ms
+     × agrees in 03-dash 3ms
+     × agrees in room 2 with its layers back, and with none back (rest states) 25ms
+     × agrees in room 4 with its layers back, and with none back (rest states) 7ms
+     × agrees in room 5 with its layers back, and with none back (rest states) 1ms
+     × agrees in room 8 with its layers back, and with none back (rest states) 2ms
+     × has the oracle constants, bits and spike boxes 14ms
+ Test Files  3 failed | 22 passed (25)
+      Tests  7 failed | 128 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/sim/beat.test.mjs > SIM1 constants and beat functions > has the oracle constants, bits and spike boxes
+AssertionError: expected { SUB: 256, TILE: 4096, …(33) } to deeply equal { SUB: 256, TILE: 4096, …(33) }
+ FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 2 with its layers back, and with none back (rest states)
+AssertionError: expected { step: 138, …(4) } to be null
+ FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 4 with its layers back, and with none back (rest states)
+AssertionError: expected { step: 175, …(4) } to be null
+ FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 5 with its layers back, and with none back (rest states)
+AssertionError: expected { step: +0, …(4) } to be null
+ FAIL  tests/sim/oracle-beat.test.mjs > SIM4 beat entities and progression against the oracle > agrees in room 8 with its layers back, and with none back (rest states)
+AssertionError: expected { step: +0, …(4) } to be null
+ FAIL  tests/sim/oracle-dash.test.mjs > SIM3 dash against the oracle > agrees in an open room on dashes in every direction
+AssertionError: expected { step: 53, …(4) } to be null
+ FAIL  tests/sim/oracle-dash.test.mjs > SIM3 dash against the oracle > agrees in 03-dash
+AssertionError: expected { step: +0, …(4) } to be null
+--- tier replay: exit 1 in 0 s
+replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: FAIL, 2 witness(es) short
+restored: clean
+VERDICT A4: KILLED by unit, replay
+
+mutant A5: section 5: one floor tile of 09-gates opened
+  rooms/09-gates.txt: "########......a..bbbb...W...........##..........B...bbbb..a..bbbb..a............" -> "#######.......a..bbbb...W...........##..........B...bbbb..a..bbbb..a............"
+ rooms/09-gates.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier content: exit 1 in 0 s
+spec-content: FAIL, 1 file(s)
+--- tier unit: exit 0 in 5 s
+ Test Files  25 passed (25)
+      Tests  135 passed (135)
+--- tier replay: exit 0 in 0 s
+replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 11 witness(es)
+restored: clean
+VERDICT A5: KILLED by content
+
+mutant A5b: section 5: a beat binding of 09-gates, the spikes on layer 7 instead of 8
+  rooms/09-gates.txt: "entity b spike up layer 8 period 2 phase 0 on 3 rest off" -> "entity b spike up layer 7 period 2 phase 0 on 3 rest off"
+ rooms/09-gates.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier content: exit 1 in 0 s
+spec-content: FAIL, 1 file(s)
+--- tier unit: exit 0 in 6 s
+ Test Files  25 passed (25)
+      Tests  135 passed (135)
+--- tier replay: exit 0 in 0 s
+replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 11 witness(es)
+restored: clean
+VERDICT A5b: KILLED by content
+
+mutant A6: section 6: the wave corridor one row taller below
+  src/rooms/gauntlet.ts: "if (r < centre - 2 || r > centre + 2)" -> "if (r < centre - 2 || r > centre + 3)"
+ src/rooms/gauntlet.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 6 s
+     × agrees in mid-run, into and out of the wave bars and to the finish 214ms
+     × compiles the world in file order and refuses a gap 150ms
+     × parses the program and generates the oracle grid, byte for byte 4ms
+ Test Files  2 failed | 23 passed (25)
+      Tests  3 failed | 132 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles the world in file order and refuses a gap
+AssertionError: expected { rooms: [ { …(9) }, …(9) ], …(1) } to deeply equal { rooms: [ { …(9) }, …(9) ], …(1) }
+ FAIL  tests/rooms/compile.test.mjs > RM2 gauntlet generator > parses the program and generates the oracle grid, byte for byte
+AssertionError: expected { W: 544, H: 18, …(2) } to deeply equal { W: 544, H: 18, …(2) }
+ FAIL  tests/sim/oracle-gauntlet.test.mjs > SIM6 gauntlet against the oracle > agrees in mid-run, into and out of the wave bars and to the finish
+AssertionError: expected { step: 125, field: 'x', …(3) } to be null
+--- tier replay: exit 0 in 0 s
+replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 11 witness(es)
+restored: clean
+VERDICT A6: KILLED by unit
+
+mutant A7: section 7: one arp degree 11 -> 10
+  music/area1.strudel: "arp: n(\"0 2 4 7 9 7 4 2 0 2 4 7 11 9 7 4\")" -> "arp: n(\"0 2 4 7 9 7 4 2 0 2 4 7 10 9 7 4\")"
+ music/area1.strudel | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier content: exit 1 in 0 s
+spec-content: FAIL, 1 file(s)
+--- tier unit: exit 1 in 6 s
+     × follows the arp with the wave corridor 45ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  1 failed | 134 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/rooms/gauntlet-pattern.test.mjs > the gauntlet is built from the pattern > follows the arp with the wave corridor
+AssertionError: expected [ 'C4', 'Eb4', 'G4', 'C5', …(12) ] to deeply equal [ 'C4', 'Eb4', 'G4', 'C5', …(12) ]
+restored: clean
+VERDICT A7: KILLED by content, unit
+
+mutant A8: section 8: a muted label (_name) captured as a layer
+  src/audio/track.ts: "if (!key.startsWith('_') && !names.includes(key)) {" -> "if (!names.includes(key)) {"
+ src/audio/track.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 6 s
+     × numbers $ labels, mutes _ labels, and ignores the tempo call 11ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  1 failed | 134 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/audio/track.test.mjs > AU1 track layers > numbers $ labels, mutes _ labels, and ignores the tempo call
+AssertionError: expected [ '$1', '_quiet', 'hat', '$2' ] to deeply equal [ '$1', 'hat', '$2' ]
+restored: clean
+VERDICT A8: KILLED by unit
+
+mutant A9: section 9: the clock line jump tolerance 8 ms
+  src/clock/output-clock.ts: "const CLOCK_JUMP = 0.004;" -> "const CLOCK_JUMP = 0.008;"
+ src/clock/output-clock.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 7 s
+     × agrees: a glitch moves the line down 6 ms 28ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  1 failed | 134 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/clock/output-clock.test.mjs > CL1 device-clock line against the reference port > agrees: a glitch moves the line down 6 ms
+AssertionError: expected [ 585, -1.1999999999999993, true, +0 ] to deeply equal [ 585, -1.206, true, 1 ]
+restored: clean
+VERDICT A9: KILLED by unit
+
+mutant A9b: section 9.2: stepOf rounds instead of flooring
+  src/game/run.ts: "return Math.floor((audibleSec(clock, eventTimeStampMs) - origin - inputLagSec(avOffset, inputBias)) * 240);" -> "return Math.round((audibleSec(clock, eventTimeStampMs) - origin - inputLagSec(avOffset, inputBias)) * 240);"
+ src/game/run.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 6 s
+     × stamps an input event with the step heard at its time less inputLagSec(avOffset, inputBias) 33ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  1 failed | 134 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/game/run.test.mjs > GAME1 the run follows its calibration (review R2, MAJOR 4) > stamps an input event with the step heard at its time less inputLagSec(avOffset, inputBias)
+AssertionError: avOffset 0 inputBias 0 at 0.5 s: expected 130 to be 129 // Object.is equality
+restored: clean
+VERDICT A9b: KILLED by unit
+
+mutant A10: section 10.4: the mid band at factor 0.62
+  src/render/depth-art.ts: "{ factor: 0.6, color: COLOR.MID," -> "{ factor: 0.62, color: COLOR.MID,"
+ src/render/depth-art.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 5 s
+     × draws the four bands of every room 14ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  1 failed | 134 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/render/depth-art.test.mjs > RN4 depth > draws the four bands of every room
+AssertionError: 01-wake band 2: expected { factor: 0.62, w: 909, h: 288 } to deeply equal { factor: 0.6, w: 896, h: 288 }
+restored: clean
+VERDICT A10: KILLED by unit
+
+mutant A11: section 11: LUM_STEP 0.15
+  src/fx/flash-limiter.ts: "export const LUM_STEP = 0.1;" -> "export const LUM_STEP = 0.15;"
+ src/fx/flash-limiter.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 6 s
+     × has the limit of section 11 12ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  1 failed | 134 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/fx/flash-limiter.test.mjs > FX1 flash limiter > has the limit of section 11
+AssertionError: expected 0.15 to be 0.1 // Object.is equality
+restored: clean
+VERDICT A11: KILLED by unit
+
+mutant A12: section 12: inputBias from pass A
+  src/input/calibrate.ts: "return { avOffset: medianA - medianV, inputBias: medianV };" -> "return { avOffset: medianA - medianV, inputBias: medianA };"
+ src/input/calibrate.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 7 s
+     × returns avOffset and inputBias within 5 ms of the injected values 9ms
+     × takes 0 for a rejected pass 2ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  2 failed | 133 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/input/calibrate.test.ts > calibration (X8) > returns avOffset and inputBias within 5 ms of the injected values
+AssertionError: expected 80.44050732627511 to be less than or equal to 5
+ FAIL  tests/input/calibrate.test.ts > calibration (X8) > takes 0 for a rejected pass
+AssertionError: expected +0 to be close to 29.87163996975869, received difference is 29.87163996975869, but expected 5e-7
+restored: clean
+VERDICT A12: KILLED by unit
+
+mutant A13: section 13: the rise over 3 bars
+  src/render/ending-art.ts: "export const RISE_S = 16 * BEAT_S;" -> "export const RISE_S = 12 * BEAT_S;"
+ src/render/ending-art.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 5 s
+     × rises over four bars 7ms
+     × draws each frame of the ending: the rise, then the card on the music's beat 2ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  2 failed | 133 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/render/ending-art.test.mjs > END1 ending art > rises over four bars
+AssertionError: expected 5.142857142857142 to be close to 6.857142857142857, received difference is 1.7142857142857144, but expected 5e-10
+ FAIL  tests/render/ending-art.test.mjs > END1 ending art > draws each frame of the ending: the rise, then the card on the music's beat
+AssertionError: 65 65.0173 glimpseY: expected 0.010661693245310744 to be less than 0.000001
+restored: clean
+VERDICT A13: KILLED by unit
+
+==== summary
+VERDICT A2: KILLED by unit
+VERDICT A3: KILLED by unit
+VERDICT A4: KILLED by unit, replay
+VERDICT A5: KILLED by content
+VERDICT A5b: KILLED by content
+VERDICT A6: KILLED by unit
+VERDICT A7: KILLED by content, unit
+VERDICT A8: KILLED by unit
+VERDICT A9: KILLED by unit
+VERDICT A9b: KILLED by unit
+VERDICT A10: KILLED by unit
+VERDICT A11: KILLED by unit
+VERDICT A12: KILLED by unit
+VERDICT A13: KILLED by unit
+--- end ---

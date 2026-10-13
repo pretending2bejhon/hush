@@ -1,0 +1,23 @@
+HUSH-EVIDENCE v1
+id: R5-mutation-main-frame-late50
+phase: review
+command: node mut.mjs run H8
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T12:57:53-05:00
+time-end: 2026-10-13T13:00:53-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+mutant H8: the sim driven 50 ms behind the heard time
+  src/main.ts: "run.frame(performance.now())" -> "run.frame(performance.now() - 50)"
+ src/main.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier build: exit 0 in 1 s
+
+--- tier play: exit 0 in 178 s
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: PASS (console,play,text,network,storage,unlock,scene,keys)
+restored: clean
+VERDICT H8: SURVIVED build, play
+--- end ---

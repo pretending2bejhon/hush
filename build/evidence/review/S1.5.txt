@@ -1,0 +1,33 @@
+HUSH-EVIDENCE v1
+id: S1
+phase: review
+command: npm run smoke
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T12:00:10-05:00
+time-end: 2026-10-13T12:00:16-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+
+> hush@0.0.0 smoke
+> vite build && node tools/probe-smoke.mjs
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-DVAN02ji.js  2,099.21 kB │ gzip: 595.67 kB
+
+[32m✓ built in 623ms[39m
+smoke: page: ok: GET /hush/ 200
+smoke: build-meta: ok: hush-build bd16d9550e4a
+smoke: boot: ok: scenes ["calibration"]
+smoke: canvas: ok: not blank (1220 by 686)
+smoke: text: ok: title, link and notice only; no text object
+smoke: requests: ok: every request answered below 400
+smoke: console: ok: zero console and page errors
+smoke: PASS (/hush/)
+--- end ---

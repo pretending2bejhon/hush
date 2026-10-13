@@ -1,0 +1,17 @@
+HUSH-EVIDENCE v1
+id: R5-playtest-dom-bare
+phase: review
+command: node playtest-dom.mjs bare
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T13:28:20-05:00
+time-end: 2026-10-13T13:29:16-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+bare 900x1200: probe false; boot ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] canvas [0,329,900,506] over 0 output {"hidden":true,"text":"","inside":false}; after a key ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] over 0; errors 0
+bare 800x450: probe false; boot ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] canvas [30,0,740,416] over 0 output {"hidden":true,"text":"","inside":false}; after a key ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] over 0; errors 0
+bare 1280x720: probe false; boot ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] canvas [30,0,1220,686] over 0 output {"hidden":true,"text":"","inside":false}; after a key ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] over 0; at 52 s ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] over 0 output {"hidden":true,"text":"","inside":false}; errors 0
+playtest 1280x720: probe false; boot ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] canvas [30,0,1220,686] over 0 output {"hidden":true,"text":"","inside":false}; after a key ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] over 0; at 52 s ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"] over 0 output {"hidden":true,"text":"","inside":false}; errors 0
+PLAYTEST-DOM: PASS
+--- end ---

@@ -1,0 +1,45 @@
+HUSH-EVIDENCE v1
+id: R5-mutations-areas-browser
+phase: review
+command: node mut-batch.mjs A8b A10b
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T13:44:23-05:00
+time-end: 2026-10-13T13:48:34-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+mutant A8b: section 8.4: the master gain 0.6
+  src/audio/engine.ts: "const master = new GainNode(context, { gain: 0.8 });" -> "const master = new GainNode(context, { gain: 0.6 });"
+ src/audio/engine.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier build: exit 0 in 1 s
+
+--- tier av: exit 1 in 71 s
+av: 2169 voices scheduled for 2142 onsets, 0 errors, 0 dropped, 3 shifted; clock 0.182 ms p-p, 0 resyncs; 68.6 s
+av: silence peak 0.00e+0; windows rms 0.3124 0.3081 0.3074 0.3017 0.3059 0.2967 0.3019 0.2946 0.2999 0.2916
+av: solos rms 0.2821 0.0489 0.0111 0.0368 0.0067 0.0216 0.0050 0.0116 0.0124 0.0812; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 5 other(s), 5 silent by construction; master gain 0.6000000238418579; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: starts 2317 voice start(s) of 4460 recorded: 2317 on their layer's onsets (+0.00 to +0.00 ms), 0 late-shifted, 0 unable to sound, 0 off; 1907 of 1907 onsets started
+av: the analyser is fed by GainNode at gain 0.6000000238418579, want the master gain at 0.8
+av: FAIL
+restored: clean
+VERDICT A8b: KILLED by av
+
+mutant A10b: section 10.6: the four bands at reversed depths
+  src/render/play-scene.ts: ".setScale(ZOOM).setDepth(b);" -> ".setScale(ZOOM).setDepth(3 - b);"
+ src/render/play-scene.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier build: exit 0 in 1 s
+
+--- tier play: exit 1 in 177 s
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: scene: FAIL: room 01-wake at step 818: band-01-3 at depth 0, want 3; room 01-wake at step 818: band-01-2 at depth 1, want 2; room 01-wake at step 818: band-01-1 at depth 2, want 1
+play: chrome headless: FAIL (console,play,text,network,storage,unlock,scene,keys)
+restored: clean
+VERDICT A10b: KILLED by play
+
+==== summary
+VERDICT A8b: KILLED by av
+VERDICT A10b: KILLED by play
+--- end ---

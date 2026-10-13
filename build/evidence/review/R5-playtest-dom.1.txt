@@ -1,0 +1,23 @@
+HUSH-EVIDENCE v1
+id: R5-playtest-dom
+phase: review
+command: node playtest-dom.mjs ending
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T13:25:22-05:00
+time-end: 2026-10-13T13:26:39-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 1
+--- output ---
+probe&playtest 800x450: 107 reads (46 in the ending); text objects 0; over the canvas 0; canvas [30,0,740,416]; first line at 6109 ms (card at 6857 ms); last texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later","run 0:59 · deaths 0"], output {"hidden":false,"text":"run 0:59 · deaths 0","inside":false}; errors 0
+probe&playtest 900x1200: 107 reads (46 in the ending); text objects 0; over the canvas 0; canvas [0,329,900,506]; first line at 6109 ms (card at 6857 ms); last texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later","run 0:59 · deaths 0"], output {"hidden":false,"text":"run 0:59 · deaths 0","inside":false}; errors 0
+probe 1280x720: 107 reads (46 in the ending); text objects 0; over the canvas 0; canvas [30,0,1220,686]; first line at none (card at 6857 ms); last texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], output {"hidden":true,"text":"","inside":false}; errors 0
+probe&playtest 1280x720: 107 reads (46 in the ending); text objects 0; over the canvas 0; canvas [30,0,1220,686]; first line at 6104 ms (card at 6857 ms); last texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later","run 0:59 · deaths 0"], output {"hidden":false,"text":"run 0:59 · deaths 0","inside":false}; errors 0
+PLAYTEST-DOM: FAIL
+probe&playtest 800x450: the run line 6109 ms into the ending, before the card
+probe&playtest 800x450: the run line 6374 ms into the ending, before the card
+probe&playtest 900x1200: the run line 6109 ms into the ending, before the card
+probe&playtest 900x1200: the run line 6374 ms into the ending, before the card
+probe&playtest 1280x720: the run line 6104 ms into the ending, before the card
+probe&playtest 1280x720: the run line 6371 ms into the ending, before the card
+--- end ---

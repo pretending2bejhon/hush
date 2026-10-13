@@ -1,0 +1,24 @@
+HUSH-EVIDENCE v1
+id: R5-x3-margin
+phase: review
+command: node --no-warnings x3-margin.mjs 1 300
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T13:52:11-05:00
+time-end: 2026-10-13T13:52:51-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+01-wake: 0 of 300 seeds under 18/20 (0.0%); clears per seed 20:300
+02-heartbeat: 0 of 300 seeds under 18/20 (0.0%); clears per seed 20:300
+03-dash: 0 of 300 seeds under 18/20 (0.0%); clears per seed 20:300
+04-thorns: 2 of 300 seeds under 18/20 (0.7%); clears per seed 17:2 18:27 19:94 20:177
+05-doors: 0 of 300 seeds under 18/20 (0.0%); clears per seed 19:5 20:295
+06-wave: 0 of 300 seeds under 18/20 (0.0%); clears per seed 20:300
+07-current: 0 of 300 seeds under 18/20 (0.0%); clears per seed 20:300
+08-steps: 0 of 300 seeds under 18/20 (0.0%); clears per seed 19:1 20:299
+09-gates: 1 of 300 seeds under 18/20 (0.3%); clears per seed 16:1 18:3 19:39 20:257
+10-crown: 3 of 300 seeds under 18/20 (1.0%); clears per seed 16:1 17:2 18:13 19:76 20:208
+11-gauntlet: 0 of 300 seeds under 18/20 (0.0%); clears per seed 20:300
+seeds 1 to 300: 6 of 300 would fail X3 on at least one witness (2.0%)
+--- end ---

@@ -1,0 +1,33 @@
+HUSH-EVIDENCE v1
+id: R5-av-head
+phase: review
+command: npm run probe:av -- --headed
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T12:36:45-05:00
+time-end: 2026-10-13T12:37:57-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+
+> hush@0.0.0 probe:av
+> vite build && node tools/probe-av.mjs --headed
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-DVAN02ji.js  2,099.21 kB │ gzip: 595.67 kB
+
+[32m✓ built in 717ms[39m
+cannot use window: not in browser?
+🌀 @strudel/core loaded 🌀
+av: 2171 voices scheduled for 2140 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.131 ms p-p, 0 resyncs; 68.6 s
+av: silence peak 0.00e+0; windows rms 0.4162 0.4095 0.4098 0.4032 0.4072 0.3968 0.4024 0.3944 0.4004 0.3927
+av: solos rms 0.3747 0.0640 0.0144 0.0491 0.0087 0.0288 0.0066 0.0155 0.0160 0.0891; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 5 other(s), 5 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: starts 2322 voice start(s) of 4467 recorded: 2322 on their layer's onsets (+0.00 to +0.00 ms), 0 late-shifted, 0 unable to sound, 0 off; 1909 of 1909 onsets started
+av: PASS
+--- end ---

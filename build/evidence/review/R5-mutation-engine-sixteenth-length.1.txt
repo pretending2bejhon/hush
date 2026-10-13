@@ -1,0 +1,27 @@
+HUSH-EVIDENCE v1
+id: R5-mutation-engine-sixteenth-length
+phase: review
+command: node mut.mjs run H4d
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T13:12:34-05:00
+time-end: 2026-10-13T13:13:46-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+mutant H4d: every note held one sixteenth, whatever its length
+  src/audio/engine.ts: "note.time, note.duration, CPS, note.cycle" -> "note.time, SIXTEENTH, CPS, note.cycle"
+ src/audio/engine.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier build: exit 0 in 1 s
+
+--- tier av: exit 0 in 71 s
+av: 2163 voices scheduled for 2140 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.167 ms p-p, 0 resyncs; 68.6 s
+av: silence peak 0.00e+0; windows rms 0.4154 0.4105 0.4075 0.4029 0.4078 0.3951 0.3982 0.3935 0.3979 0.3963
+av: solos rms 0.3744 0.0103 0.0147 0.0491 0.0087 0.0288 0.0066 0.0155 0.0165 0.0707; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 3 other(s), 3 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: starts 2314 voice start(s) of 4455 recorded: 2314 on their layer's onsets (+0.00 to +0.00 ms), 0 late-shifted, 0 unable to sound, 0 off; 1909 of 1909 onsets started
+av: PASS
+restored: clean
+VERDICT H4d: SURVIVED build, av
+--- end ---

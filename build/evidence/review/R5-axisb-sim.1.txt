@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: R5-axisb-sim
+phase: review
+command: node --no-warnings axisb-sim.mjs 3172391253 239750151 3667707333 678327013 1040817978
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T13:20:58-05:00
+time-end: 2026-10-13T13:21:20-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+determinism 01-wake: run twice 6001f0f9 6001f0f9 identical (witness 6001f0f9, equal); oracle equal at every step
+determinism 02-heartbeat: run twice 04febedf 04febedf identical (witness 04febedf, equal); oracle equal at every step
+determinism 03-dash: run twice 593d0787 593d0787 identical (witness 593d0787, equal); oracle equal at every step
+determinism 04-thorns: run twice 123057cb 123057cb identical (witness 123057cb, equal); oracle equal at every step
+determinism 05-doors: run twice d181a484 d181a484 identical (witness d181a484, equal); oracle equal at every step
+determinism 06-wave: run twice f3496b90 f3496b90 identical (witness f3496b90, equal); oracle equal at every step
+determinism 07-current: run twice 1c7b52e9 1c7b52e9 identical (witness 1c7b52e9, equal); oracle equal at every step
+determinism 08-steps: run twice e6a8f7ba e6a8f7ba identical (witness e6a8f7ba, equal); oracle equal at every step
+determinism 09-gates: run twice 9498a96d 9498a96d identical (witness 9498a96d, equal); oracle equal at every step
+determinism 10-crown: run twice 5b909a19 5b909a19 identical (witness 5b909a19, equal); oracle equal at every step
+determinism 11-gauntlet: run twice b3715ef7 b3715ef7 identical (witness b3715ef7, equal); oracle equal at every step
+determinism: 32448 steps compared with the oracle
+layers 01-wake: cleared on the tick of step 1617; layer 1 back on the tick of step 2058 = nextBarStep (bar 5, 4.29 beats after the clear); 1 change(s), exactly bit 1: true
+layers 02-heartbeat: cleared on the tick of step 1683; layer 2 back on the tick of step 2058 = nextBarStep (bar 5, 3.65 beats after the clear); 1 change(s), exactly bit 2: true
+layers 03-dash: cleared on the tick of step 1587; layer 3 back on the tick of step 2058 = nextBarStep (bar 5, 4.58 beats after the clear); 1 change(s), exactly bit 3: true
+layers 04-thorns: cleared on the tick of step 1407; layer 4 back on the tick of step 1646 = nextBarStep (bar 4, 2.32 beats after the clear); 1 change(s), exactly bit 4: true
+layers 05-doors: cleared on the tick of step 2221; layer 5 back on the tick of step 2469 = nextBarStep (bar 6, 2.41 beats after the clear); 1 change(s), exactly bit 5: true
+layers 06-wave: cleared on the tick of step 1919; layer 6 back on the tick of step 2058 = nextBarStep (bar 5, 1.35 beats after the clear); 1 change(s), exactly bit 6: true
+layers 07-current: cleared on the tick of step 1942; layer 7 back on the tick of step 2058 = nextBarStep (bar 5, 1.13 beats after the clear); 1 change(s), exactly bit 7: true
+layers 08-steps: cleared on the tick of step 1493; layer 8 back on the tick of step 1646 = nextBarStep (bar 4, 1.49 beats after the clear); 1 change(s), exactly bit 8: true
+layers 09-gates: cleared on the tick of step 1904; layer 9 back on the tick of step 2058 = nextBarStep (bar 5, 1.50 beats after the clear); 1 change(s), exactly bit 9: true
+layers 10-crown: cleared on the tick of step 2387; layer 10 back on the tick of step 2880 = nextBarStep (bar 7, 4.79 beats after the clear); 1 change(s), exactly bit 10: true
+layers 11-gauntlet: cleared at step 14277, the run finished, layer changes 0
+wave: 1111 runs (each witness, and 20 jittered runs on each of 5 seeds); base to wave 501 times, every one over a W cell; wave to base 501 over a B cell, 0 by a respawn; 0 otherwise. Rooms with W cells: 6, 7, 9, 10, 11; the first is room 6; the wave was entered in rooms 6, 7, 9, 10, 11
+AXIS-B SIM: PASS
+--- end ---

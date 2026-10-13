@@ -1,0 +1,23 @@
+HUSH-EVIDENCE v1
+id: R5-mutation-ending-card-late80
+phase: review
+command: node mut.mjs run H10
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T13:41:04-05:00
+time-end: 2026-10-13T13:43:58-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+mutant H10: the ending reads its heard time 80 ms late (the card 80 ms behind the beat)
+  src/render/ending-scene.ts: "const heard = audibleSec(clock, performance.now());" -> "const heard = audibleSec(clock, performance.now() - 80);"
+ src/render/ending-scene.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier build: exit 0 in 1 s
+
+--- tier ending: exit 0 in 173 s
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: PASS (console,play,text,scene)
+restored: clean
+VERDICT H10: SURVIVED build, ending
+--- end ---

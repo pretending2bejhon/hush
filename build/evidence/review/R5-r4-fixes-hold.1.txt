@@ -1,0 +1,64 @@
+HUSH-EVIDENCE v1
+id: R5-r4-fixes-hold
+phase: review
+command: node mut-batch.mjs R4c R4a R4b
+cwd: <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\r5
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T13:53:12-05:00
+time-end: 2026-10-13T13:58:58-05:00
+head: bd16d9550e4a4c07da9cc5c5286e72e53e099f3a
+exit: 0
+--- output ---
+mutant R4c: R4 MINOR 2: the run uncapped
+  src/game/run.ts: "for (let n = stepsDue(sim.step, targetStep(heard, origin, display)); n > 0; n--) {" -> "for (let n = Math.max(targetStep(heard, origin, display) - sim.step, 0); n > 0; n--) {"
+ src/game/run.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier unit: exit 1 in 5 s
+     × ticks exactly MAX_STEPS_PER_FRAME steps in a frame heard 100 steps past the sim, and as many in the next 37ms
+ Test Files  1 failed | 24 passed (25)
+      Tests  1 failed | 134 passed (135)
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  tests/game/run.test.mjs > GAME1 the run catches up at most 24 steps a frame (review R4, MINOR 2) > ticks exactly MAX_STEPS_PER_FRAME steps in a frame heard 100 steps past the sim, and as many in the next
+AssertionError: expected 220 to be 144 // Object.is equality
+restored: clean
+VERDICT R4c: KILLED by unit
+
+mutant R4a: R4 MAJOR 1 (a): every note handed over 0.1 s late
+  src/audio/engine.ts: "note.time, note.duration, CPS, note.cycle" -> "note.time + 0.1, note.duration, CPS, note.cycle"
+ src/audio/engine.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier build: exit 0 in 1 s
+
+--- tier av: exit 1 in 71 s
+av: 2160 voices scheduled for 2140 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.182 ms p-p, 0 resyncs; 68.6 s
+av: silence peak 0.00e+0; windows rms 0.4133 0.4133 0.4072 0.4077 0.4077 0.4008 0.4007 0.3982 0.4077 0.3984
+av: solos rms 0.4009 0.0671 0.0146 0.0497 0.0091 0.0289 0.0067 0.0134 0.0164 0.0724; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 3 other(s), 3 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: starts 2317 voice start(s) of 4452 recorded: 0 on their layer's onsets (n/a to n/a ms), 0 late-shifted, 0 unable to sound, 2317 off; 0 of 1907 onsets started
+av: starts: 2317 of 2317 voice start(s) off their layer's onsets (want -1 to +6 ms), the first in room 1: layer 1 at +100.0 ms from its nearest onset
+av: starts: 1907 of 1907 onset(s) without a voice start of their layer, the first: layer 1 0.429 s into room 1
+av: FAIL
+restored: clean
+VERDICT R4a: KILLED by av
+
+mutant R4b: R4 MAJOR 2: a pass keeps its first (rejected) result
+  src/render/calibration-scene.ts: "this.results[a.pass] = result;" -> "this.results[a.pass] ??= result;"
+ src/render/calibration-scene.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+--- tier build: exit 0 in 1 s
+
+--- tier flashcal: exit 1 in 266 s
+flash: calibration up 43.6 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2608 frames, 2170 analyser samples); click starts 48 of 48 on their marks
+flash: tapped calibration up 22.1 s: values 5.6 34.5 (the taps' own 5.6 34.5; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5); click starts 24 of 24 on their marks
+flash: retried calibration up 43.5 s: values 0.0 0.0 (the taps' own 5.5 34.5; A1 and B1 untapped, A2 and B2 tapped as above; marks 5.5 34.5); click starts 48 of 48 on their marks
+flash: 11764 frames over 196.4 s, median 15.83 ms; general max 9658 px, red max 0 px (limit 25600)
+flash: retried calibration values 0.0 0.0, the taps' own 5.5 34.5 (want equal within 0.5 ms)
+flash: FAIL
+restored: clean
+VERDICT R4b: KILLED by flashcal
+
+==== summary
+VERDICT R4c: KILLED by unit
+VERDICT R4a: KILLED by av
+VERDICT R4b: KILLED by flashcal
+--- end ---
