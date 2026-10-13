@@ -306,3 +306,35 @@ MAJOR 1, MAJOR 2 and MINOR 3 fixed 2026-10-13T01:05-05:00 in `3c6bf58` (hush-spe
 
 Round R3 closed 2026-10-13T01:21-05:00: 8 fixed, 0 rebutted, 0 superseded, every one by the producer's amendment and no applier. NOTE 1 and NOTE 2 needed no action. The product is unchanged since the review (src/ outside src/probe, rooms, music and replays as at 81a66ae). Standing is GREEN on the amendment (build/evidence/R3-scene-standing.amend.1.txt). The next step is review R4.
 
+## Review R4 (cycle 1): HUSH-REVIEW-R4: BLOCKED, head c9f589c, digest c958db45
+
+Opened 2026-10-13T03:20-05:00 by the producer (Opus standing in for Fable).
+- **The count.** Findings: 4 (0 BLOCKER, 2 MAJOR, 2 MINOR) and 3 NOTEs, against R3's 8 (0 BLOCKER, 2 MAJOR, 6 MINOR). The count dropped, and no R3 finding survives: the reviewer saw R3's fixes hold, frame for frame and pixel for pixel. No escalation.
+- **The verdict.** The round is BLOCKED, not FAIL. The headed perf probe inside RN1 to RN4's acceptances refused to measure on battery: the laptop was unplugged for the whole review. On its findings the round would be a FAIL.
+- **The plan.** It is the fourth round of cycle 1, and the cycle's hard cap is 5. So review R5 is the last round this cycle can have, and it can end the cycle only as a PASS after a FIX round. Every finding is therefore dispositioned and fixed before R5, as a FAIL round's would be, and the blocker is cleared with evidence. Then `FIX R4` is recorded and R5 runs.
+- **The routing.** Every finding is a gap in a PROTECTED verifier, so each one is the producer's amendment. The product matches every Action again, so no applier is planned.
+
+DISPOSITION: R4-BLOCKED | RN1 to RN4's acceptances refused by the perf probe on battery (`perf: power line battery`) | 2026-10-13T03:20:00-05:00 | to clear with evidence, on AC power
+- Run `npm run accept:rn1` to `accept:rn4` on AC with energy saver off, each through `node tools/evidence.mjs <ID> amend -- <cmd>`. The art tests and the flash probe passed in the review (build/evidence/review/RN1.4.txt, RN2.5.txt, RN3.4.txt, RN4.4.txt), so these four runs clear it. The laptop must be plugged in: the owner's hands.
+DISPOSITION: R4-MAJOR1 | nothing checks when a sound plays: the track's notes and the calibration's clicks can be handed to superdough off their times | 2026-10-13T03:20:00-05:00 | to fix by amendment (verifier), design settled here
+- **The recorder.** Under `?probe`, before the first key, src/probe/api.ts wraps `AudioScheduledSourceNode.prototype.start`, as it already wraps `connect`. It keeps every call it passes on: the node's type, its `when` (the context time when 0 or absent) and the context time at the call. `__hush.starts()` takes them.
+- **The voice starts.** A voice start is an OscillatorNode or AudioBufferSourceNode started ahead of the call (when > the time at the call). These are left out: superdough's ConstantSourceNodes (its timers and DC offsets, helpers.mjs webAudioTimeout and modulators.mjs), and every node started at once (an FM modulator's `osc.start()`, the reverb's player).
+- **The av probe.** The onset times of every layer are computed for each segment of its run, as countOnsets counts them, from the segment's origin and the gauntlet's mapping. Every voice start must fall within [t - 1 ms, t + 6 ms] of an onset t of its segment; the 6 ms allows the transport's 5 ms late shift. Every onset more than 0.3 s inside its segment must have a voice start there.
+- **The calibration check.** In the untouched run, every pass-A attempt must start a voice within 1 ms of t0 + i x BEAT for each click i from 0 to 23. The transport runs no track before the hand-over, so those starts are the clicks'. Starts are matched by time, never through the analyser's click count (the reviewer's NOTE 1).
+- **Controls.** On the control page: `?av=late`, every note handed over 0.1 s late, which must fail the av probe on the starts alone; and `?calib=clicklate`, every click 0.1 s late, which must fail the calibration check. The clean page passes both. The reviewer's two product mutants (engine.ts:64 `note.time + 0.1`, :172 `time + 0.1`) must fail. In Node, the predicates are controlled with synthetic starts.
+DISPOSITION: R4-MAJOR2 | the calibration's repeated attempt never runs under a test | 2026-10-13T03:20:00-05:00 | to fix by amendment (verifier)
+- **The run.** The flash probe's `--calibration` mode gains a third run, on a page of its own: the retry. The tapper leaves pass A's and pass B's first attempts untapped (Escape still pressed in them), so both are rejected, and taps the second ones as the tapped run does.
+- **What it must see.** The scene left after four attempts: 39.4 s or more after the key, and at most 50 s. The values in use must equal, within 0.5 ms, those section 12 gives from the last attempt of each pass (tapLogValues), and lie within 15 ms of 5.5 and 34.5. A run at room 1 must follow the hand-over.
+- **Control.** The control page with `?calib=first`, a scene that keeps a pass's first result, must fail on its values.
+DISPOSITION: R4-MINOR1 | the ?playtest line's deaths are only ever read as 0 | 2026-10-13T03:20:00-05:00 | to fix by amendment (verifier) if time allows before R5; a MINOR does not block a PASS
+- A death cannot come from the gauntlet's witness shifted after a respawn. Its run starts on a bar line, a bar is 411 3/7 steps, and the start's phase within its step changes from bar to bar.
+- So the death comes from a fixture witness the producer computes on the oracle: tests/fixtures/playtest/11-gauntlet-death.json. It gives no input until the creature dies at the gauntlet's first obstacle. After the respawn it gives the gauntlet witness's changes shifted to the new run's start, choosing the respawn whose start has the first run's phase. The oracle must show it clearing with deaths 1.
+- The `?playtest` text check plays the gauntlet with it and wants `deaths 1` on the line.
+- If it is left open at a cycle-ending PASS, it is carried into the next cycle.
+DISPOSITION: R4-MINOR2 | the run's 24-step cap is pinned only on driver.ts's own function | 2026-10-13T03:20:00-05:00 | to fix by amendment (test)
+- tests/game/run.test.mjs gains a case: one frame whose heard time stands 100 steps past the sim ticks exactly MAX_STEPS_PER_FRAME (24) steps, and the next frame ticks 24 more.
+- Its control is a reference run without the cap, a planted fault in tests/controls/product-tests.test.mjs, which must fail.
+DISPOSITION: R4-NOTE1 | the headless click count depends on where a click falls in the render chunk | 2026-10-13T03:20:00-05:00 | no action; MAJOR 1 times starts, never counts
+DISPOSITION: R4-NOTE2 | the page's sanctioned texts | 2026-10-13T03:20:00-05:00 | no action
+DISPOSITION: R4-NOTE3 | the perf numbers on battery | 2026-10-13T03:20:00-05:00 | no action; X4 is measured on AC at VERIFY
+
