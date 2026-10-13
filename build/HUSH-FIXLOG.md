@@ -427,3 +427,18 @@ Opened 2026-10-13T14:05-05:00 by the producer (Opus standing in for Fable).
 
 RESOLVED: HUSH-PHASE3-ESCALATE: R5-cycle1-round-cap | 2026-10-13T14:04:52-05:00 | cc8dfdfd | 2026-10-13T14:35:14-05:00 | "A, go on with FIX R5" | next: producer
 
+Dispositions, 2026-10-13T14:40-05:00, on the owner's A: cycle 1 gets one more round, R6. It ends the cycle if it is a PASS after this FIX round; a FAIL escalates again. Every finding is a gap in a PROTECTED verifier, so each one is the producer's amendment, with no product file changed and no applier. The designs are the proposal above, with these settled details:
+
+DISPOSITION: R5-MAJOR1 | the calibration's rings and count-in fills are never timed | 2026-10-13T14:40:00-05:00 | to fix by amendment (verifier)
+- As proposed: a frame log of the scene `calibration`, each frame bracketed between Phaser's prestep and poststep. Ring i and fill i are held to their windows, and frameTimes[i] to the bracket of the first frame that shows ring i, in every attempt of all three runs.
+DISPOSITION: R5-MAJOR2 | the sim's step and the ending's card are held to the heard music only within 80 to 100 ms | 2026-10-13T14:40:00-05:00 | to fix by amendment (verifier)
+- The play scene's frame log gains, per frame, the heard time and the origin, read by a PRE_STEP listener that runs after the driver's. The log also carries the calibration in use.
+- tools/scene-check.mjs `stepTimingProblems` wants each frame's step to be section 9.1's, max(prev, min(targetStep(heard, origin, displaySec(avOffset)), prev + 24)), within one step. A frame whose heard time could not be read (the context not running, the line not valid) and a new run's first frame are not judged.
+- An ending log (`endingLogStart`, `endingLogTake`) records every frame of the scene `ending`: the heard time at prestep and at poststep, the origin, the glimpse's y and the Graphics' buffer.
+- `endingTimingProblems` judges every card frame whose bracket holds no beat line: it must draw cardShapes(beatOfBar) of that bracket.
+DISPOSITION: R5-MINOR1 | the notes' level and length are unchecked | 2026-10-13T14:40:00-05:00 | carried to the next cycle (a MINOR does not block a PASS)
+DISPOSITION: R5-MINOR2 | the line's deaths are only ever read as 0 (R4-MINOR1) | 2026-10-13T14:40:00-05:00 | carried to the next cycle, as in R4
+DISPOSITION: R5-NOTE1 | X3's margin | 2026-10-13T14:40:00-05:00 | no action
+DISPOSITION: R5-NOTE2 | X5 and X10 never run over the real calibration scene | 2026-10-13T14:40:00-05:00 | to fix with MAJOR 1 if time allows, else carried
+DISPOSITION: R5-NOTE3 | the page's sanctioned texts | 2026-10-13T14:40:00-05:00 | no action
+
