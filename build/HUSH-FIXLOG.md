@@ -404,3 +404,24 @@ The blocker cleared 2026-10-13T11:52-05:00 on AC power, energy saver off, each a
 
 Round R4 closed 2026-10-13T11:53-05:00: 3 fixed (MAJOR 1, MAJOR 2, MINOR 2), 0 rebutted, 0 superseded, every one by the producer's amendment and no applier. MINOR 1 stays open and is carried; NOTE 1 to 3 needed no action. The blocker is cleared. The product is unchanged since the review (src/ outside src/probe, rooms, music and replays as at c9f589c). The next step is review R5, the last round cycle 1 can have.
 
+## Review R5 (cycle 1): HUSH-REVIEW-R5: FAIL, head bd16d95, digest 3fce9ef0
+
+Opened 2026-10-13T14:05-05:00 by the producer (Opus standing in for Fable).
+- **The count.** Findings: 4 (0 BLOCKER, 2 MAJOR, 2 MINOR) and 3 NOTEs. The last FAIL round, R3, had 8, and R4 (BLOCKED) had 4 on its own, so the count has not grown.
+- **What held.** No R4 finding survives except MINOR 2, which is R4's MINOR 1, carried by its disposition. The reviewer re-ran R4's three mutants and each one now fails.
+- **The product.** It is unchanged since R3 and matches every Action. All 23 acceptances pass, and so do standing, npm test, the verifiers (269 of 269), the headed av probe and the headed Edge playthrough. Every Axis B check passes.
+- **The cap.** R5 is cycle 1's fifth round, the caps' hard limit, and it is a FAIL. The cycle cannot end, and it cannot have a sixth round, so the round escalates before any disposition (build/HUSH-PROGRESS.md, `R5-cycle1-round-cap`).
+- **The proposal.** Both MAJORs are gaps in PROTECTED verifiers: R4's class seen from the picture side. Each has a fix that changes no product file. Nothing below is dispositioned until the owner's word resolves the escalation. The producer's proposed routing, if the loop goes on:
+  - R5-MAJOR1, the calibration's pictures, untimed (verifier amendment).
+    - Under ?probe, src/probe/api.ts logs every frame of the scene `calibration`. Each record holds performance.now() and the heard time at Phaser's prestep and at its poststep, so the scene's own frameMs lies between them. It also holds whether a Graphics carries the ring (the ARC of radius 50 at 640, 360) and whether the key shape is filled (its FILL_PATH), both read from the command buffers, and the live attempt.
+    - tools/calibration-check.mjs holds every attempt of all three runs to section 12. In pass B, a frame shows the ring if and only if d_i <= frameMs < d_i + SIXTEENTH for some i, and frameTimes[i] lies in the bracket of the first frame that shows ring i. In pass A, the key shape is filled if and only if t0 + i * BEAT <= heard < t0 + i * BEAT + SIXTEENTH for some i below COUNT_IN. A frame whose bracket straddles a window's edge is not judged.
+    - Controls: the reviewer's three product mutants (frameTimes 100 ms late, the ring drawn 100 ms late, the fills 100 ms late), each failing. On the control page, `?calib=ringlate`, `?calib=filllate` and `?calib=frametime`. In Node, synthetic frame logs.
+  - R5-MAJOR2, the sim's step and the ending's card held only within 80 to 100 ms (verifier amendment).
+    - The play scene's frame log gains, per frame, performance.now() and the heard time read by a PRE_STEP listener added after main.ts's, so it reads just after the driver has run. It also gains the calibration in use.
+    - tools/scene-check.mjs holds each frame's step to targetStep(heard, origin, displaySec(avOffset)) of section 9.1, within one step. The exception is a frame the 24-step cap stopped short.
+    - The ending's frames log the heard time at prestep and poststep beside each read of the card. The card's lit dot must be beatOfBar's at both ends of the bracket; a bracket that holds a beat line is not judged.
+    - Controls: the reviewer's two product mutants (`run.frame(performance.now() - 50)` and the card's heard time 80 ms late) must fail. The control page gains `?drive=late` and `?ending=cardlate`, and the predicates are controlled in Node.
+  - R5-MINOR1, the notes' level and length: carried, unless time allows a Node test of engine.ts's `play` with @strudel/web and the audio nodes faked, recording superdough's arguments against the transport's notes.
+  - R5-MINOR2 (R4-MINOR1), the line's deaths: as dispositioned in R4, a fixture witness that dies once at the gauntlet's first obstacle and then clears, with the check wanting `deaths 1`.
+  - NOTE 1 (X3's margin, about 2% of digests) and NOTE 3 need no action. NOTE 2 (X5 and X10 never run over the real calibration scene) is cheap to close: the flash probe's three calibration pages collect page errors and read storage, as probe-play's do.
+
