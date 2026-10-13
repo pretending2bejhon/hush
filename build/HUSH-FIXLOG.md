@@ -425,3 +425,5 @@ Opened 2026-10-13T14:05-05:00 by the producer (Opus standing in for Fable).
   - R5-MINOR2 (R4-MINOR1), the line's deaths: as dispositioned in R4, a fixture witness that dies once at the gauntlet's first obstacle and then clears, with the check wanting `deaths 1`.
   - NOTE 1 (X3's margin, about 2% of digests) and NOTE 3 need no action. NOTE 2 (X5 and X10 never run over the real calibration scene) is cheap to close: the flash probe's three calibration pages collect page errors and read storage, as probe-play's do.
 
+RESOLVED: HUSH-PHASE3-ESCALATE: R5-cycle1-round-cap | 2026-10-13T14:04:52-05:00 | cc8dfdfd | 2026-10-13T14:35:14-05:00 | "A, go on with FIX R5" | next: producer
+
