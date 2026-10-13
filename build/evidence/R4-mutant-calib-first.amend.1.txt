@@ -1,0 +1,18 @@
+HUSH-EVIDENCE v1
+id: R4-mutant-calib-first
+phase: amend
+command: node tools/probe-flash.mjs --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\mut-calib-first\dist --calibration
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T03:19:33-05:00
+time-end: 2026-10-13T03:24:05-05:00
+head: fc32706e5f836a6579a9b4e3eac6b04b03dde8be
+exit: 1
+--- output ---
+flash: calibration up 44.1 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2222 frames, 2178 analyser samples)
+flash: tapped calibration up 22.1 s: values 4.6 35.4 (the taps' own 4.6 35.4; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5)
+flash: retried calibration up 43.6 s: values 0.0 0.0 (the taps' own 5.4 34.7; A1 and B1 untapped, A2 and B2 tapped as above; marks 5.5 34.5)
+flash: 9581 frames over 198.0 s, median 16.96 ms; general max 7165 px, red max 0 px (limit 25600)
+flash: retried calibration values 0.0 0.0, the taps' own 5.4 34.7 (want equal within 0.5 ms)
+flash: FAIL
+--- end ---

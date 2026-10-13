@@ -108,6 +108,8 @@ const cases = [
   // Review R3 (MINOR 1 and 2): the clock line's stale-pair rule at 5000 ms, and the limiter's edge at `>`.
   ['tests/clock/output-clock.test.mjs', { HUSH_CLOCK_MODULE: 'tests/fixtures/control-page/clock.js' }, () => ({ HUSH_CLOCK_MODULE: clockMutant('const CLOCK_STALE = 500;', 'const CLOCK_STALE = 5000;') }), 'stale'],
   ['tests/fx/flash-limiter.test.mjs', { HUSH_FX_MODULE: `${REF}/flash-limiter.mjs` }, () => ({ HUSH_FX_MODULE: refMutant('flash-limiter.mjs', 'sum + area >= FLASH_AREA_LIMIT', 'sum + area > FLASH_AREA_LIMIT') }), 'edge'],
+  // Review R4 (MINOR 2): a run that catches up any number of steps in one frame.
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('stepsDue(sim.step, targetStep(heard, origin, displaySec(avOffset)))', 'Math.max(targetStep(heard, origin, displaySec(avOffset)) - sim.step, 0)') }), 'cap'],
 ];
 
 describe('product tests: green on the reference, red on one planted fault', () => {

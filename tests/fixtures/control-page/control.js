@@ -14,12 +14,13 @@
 //   ?av=master-off|synth-throw|layer-off|master-low  the av probe's planted faults (X7; master-low, the mix of section 8.4)
 //   ?unlock=late|early|none  the playthrough's unlock check (X7's clear-time half): a cleared room's layer
 //                 returns a bar late, a bar early, or never
-//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow  the calibration scene's planted faults
+//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow|first  the calibration scene's planted faults
 //                 (the flash probe's --calibration check): the first key leaves at once (the shortcut that stood in
 //                 for the passes), a rejected pass is not repeated, pass A plays no click, pass B draws no ring, the
 //                 count-in never fills the key, pass A's tap offsets have their sign flipped (the tapped run),
 //                 the count-in is 3 beats, Escape is a key like any other (it starts the audio and taps; review R3,
-//                 MINOR 5), taps during the count-in are counted (review R3, MINOR 6)
+//                 MINOR 5), taps during the count-in are counted (review R3, MINOR 6), a pass keeps its first result
+//                 instead of its last (the retried run; review R4, MAJOR 2)
 //   ?ending=none|never|always|early|late|mid  the ending's planted faults (the playthrough's text check): the
 //                 run never hands over to the scene `ending`; no run line under ?playtest; the run line without
 //                 ?playtest; the run line at once, before the card; the run line from the step at the card
@@ -232,7 +233,8 @@ class Calibration extends Phaser.Scene {
       offsets = a.taps.map((t) => ({ t, f: nearest(drawn, t) })).filter((x) => x.f !== null).map((x) => x.t - x.f);
     }
     const result = judgePass(offsets);
-    this.results[a.pass] = result;
+    if (calibFault === 'first') this.results[a.pass] ??= result;
+    else this.results[a.pass] = result;
     this.attempt = null;
     this.drawKey(false);
     this.ringShape.clear();

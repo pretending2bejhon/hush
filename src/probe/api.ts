@@ -461,8 +461,10 @@ export function createProbe(inspect: Inspect) {
     // it sees go into its record (tapLog; review R2, MINOR 3): a tap's time stamp and its heard time are read just
     // before the keydown is dispatched, through the same clock line the scene's listener reads inside that dispatch.
     // Review R3: it taps the count-in too, spreads the taps that count by tapSpread (MINOR 6), and presses Escape
-    // ESCAPE_MS after clicks and rings ESCAPE_AT of every attempt, logged as escapes (MINOR 5).
-    tapCalibration(aMs: number, bMs: number): boolean {
+    // ESCAPE_MS after clicks and rings ESCAPE_AT of every attempt, logged as escapes (MINOR 5). Review R4 (MAJOR 2): with
+    // `untapFirst`, the first attempt of each pass gets no tap at all (its Escapes still), so that both are rejected
+    // and the scene's repeats are the attempts it judges.
+    tapCalibration(aMs: number, bMs: number, untapFirst = false): boolean {
       const g = inspect.game();
       const scene = g ? (g.scene.getScene('calibration') as unknown as { attempt?: ProbeCalibrationAttempt | null } | null) : null;
       if (!g || !scene) return false;
@@ -473,6 +475,8 @@ export function createProbe(inspect: Inspect) {
       const armed = new Set<string>();
       let current: ProbeCalibrationAttempt | null = null;
       let attempt = 0;
+      const passSeen: Record<string, number> = { A: 0, B: 0 };
+      let firstOfPass = false;
       const plan: { tag: string; code: string; i: number; aOff: number; bOff: number }[] = [];
       for (let i = 0; i < CAL_CLICKS; i++) plan.push({ tag: `${i}`, code: 'KeyQ', i, aOff: aMs + tapSpread(i), bOff: bMs + tapSpreadB(i) });
       for (const i of ESCAPE_AT) plan.push({ tag: `e${i}`, code: 'Escape', i, aOff: ESCAPE_MS, bOff: ESCAPE_MS });
@@ -502,11 +506,17 @@ export function createProbe(inspect: Inspect) {
           current = a;
           attempt += 1;
           tapAttempts.push(a);
+          passSeen[a.pass] = (passSeen[a.pass] ?? 0) + 1;
+          firstOfPass = passSeen[a.pass] === 1;
         }
         for (const p of plan) {
           if (!a || !c) break;
           const key = `${attempt}:${p.tag}`;
           if (armed.has(key)) continue;
+          if (untapFirst && firstOfPass && p.code !== 'Escape') {
+            armed.add(key);
+            continue;
+          }
           let ms: number | null = null;
           if (a.pass === 'A' && typeof a.t0 === 'number') ms = (a.t0 + p.i * CAL_BEAT + p.aOff / 1000 - c.offset) * 1000;
           else if (a.pass === 'B' && a.frameTimes && typeof a.frameTimes[p.i] === 'number') ms = (a.frameTimes[p.i] as number) + p.bOff;

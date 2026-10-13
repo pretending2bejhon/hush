@@ -6,7 +6,8 @@
 // through engine.gauntlet(gBeat / 4).
 // Review R2: the calibration the run is given moves the sim's target by displaySec(avOffset) and an input event's
 // step by inputLagSec(avOffset, inputBias) (section 9; MAJOR 4), and the run steps the creature's track after every
-// tick, as RN2's trackStep over the sim's state (section 10.6; MINOR 2).
+// tick, as RN2's trackStep over the sim's state (section 10.6; MINOR 2). Review R4 (MINOR 2): a frame far behind the
+// heard time ticks at most 24 steps (section 9.1), the cap pinned in the run itself, not only in driver.ts.
 // HUSH_RUN_MODULE points the test at another run module (the controls: the reference passes, a broken copy fails).
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -167,6 +168,23 @@ describe('GAME1 the run follows its calibration (review R2, MAJOR 4)', () => {
         expect(h.run.stepOf(ms), `avOffset ${av} inputBias ${bias} at ${sec} s`).toBe(Math.floor((ms / 1000 + 0.0375 - h.run.origin - D.inputLagSec(av, bias)) * 240));
       }
     }
+  });
+});
+
+describe('GAME1 the run catches up at most 24 steps a frame (review R4, MINOR 2)', () => {
+  it('ticks exactly MAX_STEPS_PER_FRAME steps in a frame heard 100 steps past the sim, and as many in the next', () => {
+    const h = harness();
+    h.run.startRoom(1);
+    h.advance(120);
+    expect(h.run.sim.step).toBe(120);
+    // After a stall: one step past the heard time would be step 220.
+    const ms = (h.run.origin + (120 + 100 - 0.5) / 240) * 1000;
+    h.run.frame(ms);
+    expect(h.run.sim.step).toBe(120 + D.MAX_STEPS_PER_FRAME);
+    h.run.frame(ms);
+    expect(h.run.sim.step).toBe(120 + 2 * D.MAX_STEPS_PER_FRAME);
+    for (let i = 0; i < 4; i++) h.run.frame(ms);
+    expect(h.run.sim.step).toBe(220);
   });
 });
 

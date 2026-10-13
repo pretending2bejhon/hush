@@ -17,6 +17,10 @@
 // its first key and wants no audio started (MINOR 5). The tapper also taps every count-in click and ring, presses
 // Escape three times in each attempt and spreads its counted taps (src/probe/api.ts), so a scene that admits a
 // count-in tap (MINOR 6) or takes Escape as a tap gives values off the taps' own; and its log must show that it did.
+// Review R4 (MAJOR 2): and what a retried calibration must give. The tapper leaves the first attempt of each pass
+// untapped (its Escapes still pressed), so both are rejected and the scene runs A1, A2, B1 and B2. It is left after
+// those four attempts (RETRY_SECONDS), and its values must be the taps' own, which section 12 takes from the last
+// attempt of each pass, so a scene that keeps a pass's first result cannot pass.
 import { calibrate, judgePass } from '../tests/fixtures/calibration/reference.mjs';
 import { luminance } from './flash-analyzer.mjs';
 
@@ -32,6 +36,7 @@ export const TAP_B_MID = 9.5;
 export const TAP_EXACT_MS = 0.5;
 export const TAP_STRAY_MS = 15;
 export const TAPPED_SECONDS = Object.freeze([19, 30]);
+export const RETRY_SECONDS = Object.freeze([MIN_SECONDS, 50]);
 // What the tapper must have done in each of the tapped run's two attempts (review R3, MINOR 5 and 6).
 export const TAPPER_WANTS = Object.freeze({ countIn: 4, escapes: 3 });
 const COUNT_IN = 4;
@@ -113,11 +118,22 @@ export function judgeCalibration({ seconds, samples, trace, values, escape }) {
 }
 
 // What the tapper did in attempt k of its log (review R3, MINOR 5 and 6): its taps before the count-in's end, which a
-// scene must not count, and its Escapes.
+// scene must not count, all its taps, and its Escapes.
 function tapperDid(log, k) {
   const a = log.attempts[k];
   const before = (t) => (a.pass === 'A' ? t.h < a.t0 + (COUNT_IN - 0.5) * BEAT_S : t.t < a.p0 + (COUNT_IN - 0.5) * BEAT_S * 1000);
-  return { countIn: log.taps.filter((t) => t.attempt === k && before(t)).length, escapes: (log.escapes || []).filter((t) => t.attempt === k).length };
+  const mine = log.taps.filter((t) => t.attempt === k);
+  return { countIn: mine.filter(before).length, taps: mine.length, escapes: (log.escapes || []).filter((t) => t.attempt === k).length };
+}
+
+// For each attempt of a log, whether it is the first of its pass.
+function firstOfPass(log) {
+  const seen = new Set();
+  return log.attempts.map((a) => {
+    const first = !seen.has(a.pass);
+    seen.add(a.pass);
+    return first;
+  });
 }
 
 // The nearest value of xs to v (ties to the earlier), skipping holes; null when there is none (section 12).
@@ -154,33 +170,43 @@ export function tapLogValues(log) {
 }
 
 // The verdict on one tapped calibration: seconds the scene stayed up after the first key, the values in use once
-// it was left, the tapper's log, and the run read twice after the hand-over ({ scenes, room, from, to }).
-export function judgeTapped({ seconds, values, log, handover }) {
+// it was left, the tapper's log, and the run read twice after the hand-over ({ scenes, room, from, to }). With `retry`
+// (review R4, MAJOR 2) the tapper left the first attempt of each pass untapped: those two must be rejected, the scene
+// must run each pass's repeat, and the repeats are the attempts whose taps must count.
+export function judgeTapped({ seconds, values, log, handover, retry = false }) {
+  const name = retry ? 'retried calibration' : 'tapped calibration';
   const marks = { avOffset: TAP_A_MS - TAP_B_MS - TAP_B_MID, inputBias: TAP_B_MS + TAP_B_MID };
   const problems = [];
-  const [lo, hi] = TAPPED_SECONDS;
-  if (!(seconds >= lo && seconds <= hi)) problems.push(`tapped calibration left after ${seconds.toFixed(1)} s (want ${lo} to ${hi} s: both passes accepted at their first attempt)`);
+  const [lo, hi] = retry ? RETRY_SECONDS : TAPPED_SECONDS;
+  if (!(seconds >= lo && seconds <= hi)) problems.push(`${name} left after ${seconds.toFixed(1)} s (want ${lo} to ${hi} s: ${retry ? 'each pass repeated after an untapped first attempt' : 'both passes accepted at their first attempt'})`);
   const fmt = (v) => (v && Number.isFinite(v.avOffset) && Number.isFinite(v.inputBias) ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none');
   let own = null;
-  if (!log || !log.attempts || !log.attempts.length) problems.push('tapped calibration: the tapper logged no attempt');
+  if (!log || !log.attempts || !log.attempts.length) problems.push(`${name}: the tapper logged no attempt`);
   else {
     const r = tapLogValues(log);
     own = r.values;
-    const first = (p) => r.passes[p][0];
-    if (!first('A') || !first('A').accepted || !first('B') || !first('B').accepted) {
-      problems.push(`tapped calibration: the taps strayed, the first attempts judge ${['A', 'B'].map((p) => (first(p) ? `${p} MAD ${first(p).mad.toFixed(1)} on ${first(p).taps} taps` : `${p} none`)).join(', ')}`);
+    if (retry && ['A', 'B'].some((p) => r.passes[p].length !== 2 || r.passes[p][0].accepted)) {
+      problems.push(`${name}: the scene ran ${log.attempts.map((a) => a.pass).join(', ')} with the first attempts ${['A', 'B'].map((p) => `${p} ${r.passes[p][0] ? (r.passes[p][0].accepted ? 'accepted' : 'rejected') : 'missing'}`).join(', ')} (want A1 and B1 rejected untapped, then A2 and B2)`);
+    }
+    const judged = (p) => (retry ? r.passes[p][1] : r.passes[p][0]);
+    const which = retry ? 'repeated' : 'first';
+    if (!judged('A') || !judged('A').accepted || !judged('B') || !judged('B').accepted) {
+      problems.push(`${name}: the taps strayed, the ${which} attempts judge ${['A', 'B'].map((p) => (judged(p) ? `${p} MAD ${judged(p).mad.toFixed(1)} on ${judged(p).taps} taps` : `${p} none`)).join(', ')}`);
     } else if (!(Math.abs(own.avOffset - marks.avOffset) <= TAP_STRAY_MS && Math.abs(own.inputBias - marks.inputBias) <= TAP_STRAY_MS)) {
-      problems.push(`tapped calibration: the taps strayed from their marks, they give ${fmt(own)} (want within ${TAP_STRAY_MS} ms of ${marks.avOffset} ${marks.inputBias})`);
+      problems.push(`${name}: the taps strayed from their marks, they give ${fmt(own)} (want within ${TAP_STRAY_MS} ms of ${marks.avOffset} ${marks.inputBias})`);
     }
     const off = (k) => (values && Number.isFinite(values[k]) ? Math.abs(values[k] - own[k]) : Infinity);
-    if (!(off('avOffset') <= TAP_EXACT_MS && off('inputBias') <= TAP_EXACT_MS)) problems.push(`tapped calibration values ${fmt(values)}, the taps' own ${fmt(own)} (want equal within ${TAP_EXACT_MS} ms)`);
+    if (!(off('avOffset') <= TAP_EXACT_MS && off('inputBias') <= TAP_EXACT_MS)) problems.push(`${name} values ${fmt(values)}, the taps' own ${fmt(own)} (want equal within ${TAP_EXACT_MS} ms)`);
     const did = log.attempts.map((_, k) => tapperDid(log, k));
-    if (!did.every((d) => d.countIn >= TAPPER_WANTS.countIn && d.escapes >= TAPPER_WANTS.escapes)) {
-      problems.push(`tapped calibration: the tapper landed ${did.map((d) => `${d.countIn} count-in taps and ${d.escapes} Escapes`).join(', ')} (want ${TAPPER_WANTS.countIn} and ${TAPPER_WANTS.escapes} in every attempt)`);
+    const untapped = firstOfPass(log).map((first) => retry && first);
+    if (!did.every((d, k) => (untapped[k] ? d.taps === 0 : d.countIn >= TAPPER_WANTS.countIn) && d.escapes >= TAPPER_WANTS.escapes)) {
+      const show = (d) => (retry ? `${d.taps} taps (${d.countIn} in the count-in) and ${d.escapes} Escapes` : `${d.countIn} count-in taps and ${d.escapes} Escapes`);
+      const want = retry ? `no tap in each pass's first attempt, ${TAPPER_WANTS.countIn} count-in taps in the others and ${TAPPER_WANTS.escapes} Escapes in every attempt` : `${TAPPER_WANTS.countIn} and ${TAPPER_WANTS.escapes} in every attempt`;
+      problems.push(`${name}: the tapper landed ${did.map(show).join(', ')} (want ${want})`);
     }
   }
   if (!handover || !handover.scenes.includes('play') || handover.room !== 1 || !(handover.to > handover.from)) {
-    problems.push(`tapped calibration: no run at room 1 after the hand-over (${handover ? `scenes ${JSON.stringify(handover.scenes)}, room ${handover.room}, step ${handover.from} then ${handover.to}` : 'not read'})`);
+    problems.push(`${name}: no run at room 1 after the hand-over (${handover ? `scenes ${JSON.stringify(handover.scenes)}, room ${handover.room}, step ${handover.from} then ${handover.to}` : 'not read'})`);
   }
   return { seconds: Math.round(seconds * 10) / 10, values, own, marks, problems };
 }

@@ -5,7 +5,8 @@
 // reason, and so must (review R1, MAJOR 2) pass A's tap offsets with their sign flipped (the tapped run) and a
 // count-in of 3 beats (the untouched run's fills). Review R2: the tapped run is judged against the values its logged
 // taps give, and its hand-over must start a run at room 1. Review R3: a scene that takes Escape as a key (MINOR 5)
-// and one that counts taps during the count-in (MINOR 6) must each fail.
+// and one that counts taps during the count-in (MINOR 6) must each fail. Review R4 (MAJOR 2): the retried run must pass,
+// and a scene that keeps a pass's first result instead of its last must fail it.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -32,11 +33,22 @@ describe('flash probe --calibration (section 12)', () => {
     const r = flash('');
     expect(r.out).toMatch(new RegExp(`flash: calibration up \\d+(\\.\\d)? s: clicks ${IN_RANGE}, count-in fills [7-9], rings ${IN_RANGE}, values 0 0, Escape ignored`));
     expect(r.out).toMatch(/flash: tapped calibration up (19|2\d|30)(\.\d)? s: values ([0-9]|10)\.\d (29|3\d)\.\d \(the taps' own ([0-9]|10)\.\d (29|3\d)\.\d;/);
+    // Review R4 (MAJOR 2): each pass's first attempt untapped and rejected, the repeats tapped.
+    expect(r.out).toMatch(/flash: retried calibration up (39|4\d|50)(\.\d)? s: values ([0-9]|10)\.\d (29|3\d)\.\d \(the taps' own ([0-9]|10)\.\d (29|3\d)\.\d;/);
     expect(r.out).not.toMatch(/no run at room 1/);
     expect(r.out).not.toMatch(/the tapper landed/);
     expect(r.out).toMatch(/flash: PASS/);
     expect(r.code).toBe(0);
-  }, 180000);
+  }, 240000);
+
+  it('fails a scene that keeps a pass\'s first result instead of its last (review R4, MAJOR 2)', () => {
+    const r = flash('calib=first');
+    expect(r.out).toMatch(/flash: retried calibration values 0\.0 0\.0, the taps' own ([0-9]|10)\.\d (29|3\d)\.\d \(want equal within 0\.5 ms\)/);
+    expect(r.out).not.toMatch(/flash: tapped calibration (values|left after)/);
+    expect(r.out).not.toMatch(/flash: calibration (left after|clicks|fills|rings|values)/);
+    expect(r.out).toMatch(/flash: FAIL/);
+    expect(r.code).toBe(1);
+  }, 240000);
 
   it('fails a tapped run whose pass A offsets have their sign flipped', () => {
     const r = flash('calib=flip');
@@ -45,7 +57,7 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).not.toMatch(/flash: calibration (left after|clicks|fills|rings|values)/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
-  }, 180000);
+  }, 240000);
 
   it('fails a count-in of three beats', () => {
     const r = flash('calib=count3');
@@ -54,7 +66,7 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).not.toMatch(/flash: tapped calibration (values|left after)/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
-  }, 180000);
+  }, 240000);
 
   it('fails a scene the first key leaves at once', () => {
     const r = flash('calib=skip');
@@ -62,7 +74,7 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).toMatch(/flash: calibration clicks 0 \(want 44 to 52\)/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
-  }, 180000);
+  }, 240000);
 
   it('fails a scene that does not repeat a rejected pass', () => {
     const r = flash('calib=norepeat');
@@ -71,7 +83,7 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).toMatch(/flash: calibration rings 2[2-6] \(want 44 to 52\)/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
-  }, 180000);
+  }, 240000);
 
   it('fails pass A without its clicks', () => {
     const r = flash('calib=silent');
@@ -80,7 +92,7 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).not.toMatch(/flash: calibration rings/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
-  }, 180000);
+  }, 240000);
 
   it('fails pass B without its rings', () => {
     const r = flash('calib=noring');
@@ -89,7 +101,7 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).not.toMatch(/flash: calibration clicks/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
-  }, 180000);
+  }, 240000);
 
   it('fails a scene that takes Escape as a key (review R3, MINOR 5)', () => {
     const r = flash('calib=escape');
@@ -97,7 +109,7 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).toMatch(/flash: tapped calibration values -?\d+\.\d -?\d+\.\d, the taps' own ([0-9]|10)\.\d (29|3\d)\.\d \(want equal within 0\.5 ms\)/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
-  }, 180000);
+  }, 240000);
 
   it('fails a scene that counts taps during the count-in (review R3, MINOR 6)', () => {
     const r = flash('calib=nowindow');
@@ -106,7 +118,7 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).not.toMatch(/the tapper landed/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
-  }, 180000);
+  }, 240000);
 
   it('fails pass A without its count-in', () => {
     const r = flash('calib=nofill');
@@ -115,5 +127,5 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).not.toMatch(/flash: calibration clicks/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
-  }, 180000);
+  }, 240000);
 });

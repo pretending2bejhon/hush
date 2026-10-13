@@ -12,7 +12,9 @@
 // of each pass, and (review R2) the values in use must be the ones its logged taps give through section 12, those
 // taps near their marks, and a run at room 1 must be running after the hand-over. Review R3: Escape pressed before the
 // first key starts nothing, and the tapper also taps the count-in, presses Escape in every attempt and spreads its
-// taps, so a scene that counts either is judged off its taps' own values. A run that streamed fewer than 30
+// taps, so a scene that counts either is judged off its taps' own values. Review R4 (MAJOR 2): then, on a third page,
+// a retried calibration: the tapper leaves each pass's first attempt untapped, so the scene must repeat both passes,
+// be left after four attempts and use the repeats' values. A run that streamed fewer than 30
 // frames a second (median), or whose playthrough did not clear every room, cannot pass: what was not seen was
 // not measured.
 // Exit 0 PASS, 1 FAIL, 2 usage, a missing dist or a page that never boots.
@@ -56,14 +58,15 @@ async function runCalibration(page) {
 
 // The tapped calibration, on a page of its own: one key starts the audio, then the probe's tapper (src/probe/api.ts
 // tapCalibration) presses TAP_A_MS after each click of pass A and TAP_B_MS after each ring of pass B; the values in
-// use are read once the scene `calibration` is gone.
-async function runTapped(browser, url, query) {
+// use are read once the scene `calibration` is gone. With `retry` (review R4, MAJOR 2) the tapper leaves the first
+// attempt of each pass untapped, so the scene must repeat both passes and judge the repeats.
+async function runTapped(browser, url, query, retry = false) {
   const { page } = await openPage(browser);
   await openGame(page, url, { query });
   const t0 = Date.now();
   await page.keyboard.press('KeyQ');
   await page.waitForFunction(() => { const a = window.__hush.audio(); return Boolean(a && a.state === 'running'); }, null, { timeout: 10000 });
-  const armed = await page.evaluate(([a, b]) => window.__hush.tapCalibration(a, b), [TAP_A_MS, TAP_B_MS]);
+  const armed = await page.evaluate(([a, b, r]) => window.__hush.tapCalibration(a, b, r), [TAP_A_MS, TAP_B_MS, retry]);
   if (!armed) return { seconds: 0, values: null, problems: ['the probe could not reach the scene calibration to tap it'] };
   let left = 0;
   while (!left) {
@@ -79,7 +82,7 @@ async function runTapped(browser, url, query) {
   await sleep(600);
   const b = await read();
   await page.close();
-  return judgeTapped({ seconds: (left - t0) / 1000, values, log, handover: { scenes: b.scenes, room: b.room, from: a.step, to: b.step } });
+  return judgeTapped({ seconds: (left - t0) / 1000, values, log, handover: { scenes: b.scenes, room: b.room, from: a.step, to: b.step }, retry });
 }
 
 async function main(argv) {
@@ -94,6 +97,7 @@ async function main(argv) {
   let result = null;
   let calib = null;
   let tapped = null;
+  let retried = null;
   const frameErrors = [];
   const centre = [];
   try {
@@ -153,7 +157,10 @@ async function main(argv) {
     await cdp.send('Page.stopScreencast');
     await chain;
     result = analyzer ? analyzer.result() : null;
-    if (o.calibration) tapped = await runTapped(browser, srv.url, o.query);
+    if (o.calibration) {
+      tapped = await runTapped(browser, srv.url, o.query);
+      retried = await runTapped(browser, srv.url, o.query, true);
+    }
   } finally {
     await browser.close();
     await srv.close();
@@ -172,6 +179,7 @@ async function main(argv) {
   if (failedRooms.length) problems.push(`rooms not covered: ${failedRooms.map((r) => `${r.stem} (${r.why})`).join(', ')}`);
   if (calib) problems.push(...calib.problems);
   if (tapped) problems.push(...tapped.problems);
+  if (retried) problems.push(...retried.problems);
   const pass = problems.length === 0;
   if (calib) {
     process.stdout.write(`flash: calibration up ${calib.seconds} s: clicks ${calib.clicks}, count-in fills ${calib.fills}, rings ${calib.rings}, values ${calib.values ? `${calib.values.avOffset} ${calib.values.inputBias}` : 'none'}, Escape ${calib.escape ? 'ignored' : 'not ignored'} (${calib.frames} frames, ${calib.samples} analyser samples)\n`);
@@ -181,12 +189,17 @@ async function main(argv) {
     const own = tapped.own;
     process.stdout.write(`flash: tapped calibration up ${tapped.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (the taps' own ${own ? `${own.avOffset.toFixed(1)} ${own.inputBias.toFixed(1)}`: 'none'}; taps ${TAP_A_MS - 19} to ${TAP_A_MS + 19} ms after each click and ${TAP_B_MS} to ${TAP_B_MS + 19} ms after each ring, the count-in's too, and Escape 3 times an attempt; marks ${tapped.marks.avOffset} ${tapped.marks.inputBias})\n`);
   }
+  if (retried) {
+    const v = retried.values;
+    const own = retried.own;
+    process.stdout.write(`flash: retried calibration up ${retried.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (the taps' own ${own ? `${own.avOffset.toFixed(1)} ${own.inputBias.toFixed(1)}`: 'none'}; A1 and B1 untapped, A2 and B2 tapped as above; marks ${retried.marks.avOffset} ${retried.marks.inputBias})\n`);
+  }
   if (result) {
     process.stdout.write(`flash: ${result.frames} frames over ${result.seconds.toFixed(1)} s, median ${result.medianFrameMs} ms; general max ${result.maxGeneralArea} px, red max ${result.maxRedArea} px (limit ${result.areaLimit})\n`);
   }
   for (const p of problems) process.stdout.write(`flash: ${p}\n`);
   process.stdout.write(`flash: ${pass ? 'PASS' : 'FAIL'}\n`);
-  if (o.json) emitJson({ kind: 'flash', head: headSha(), digest: await verdictDigest(), query: o.query, pass, problems, result, calibration: calib, tapped, rooms });
+  if (o.json) emitJson({ kind: 'flash', head: headSha(), digest: await verdictDigest(), query: o.query, pass, problems, result, calibration: calib, tapped, retried, rooms });
   return pass ? 0 : 1;
 }
 

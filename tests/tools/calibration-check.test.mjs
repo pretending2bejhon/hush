@@ -124,6 +124,41 @@ describe('calibration check (section 12)', () => {
     expect(judgeTapped({ seconds: 21.6, values: own, log: tapLog(TAP_A_MS, TAP_B_MS, { escapes: false }), handover: running }).problems.join(' | ')).toMatch(/the tapper landed 4 count-in taps and 0 Escapes/);
   });
 
+  // Review R4 (MAJOR 2): a retried run's log, A1, A2, B1, B2: the first attempt of each pass untapped (its three Escapes
+  // only), the repeats tapped as tapLog's two attempts.
+  function retryLog(aMs = TAP_A_MS, bMs = TAP_B_MS) {
+    const one = tapLog(aMs, bMs);
+    const t0 = 0.5;
+    const p0 = 20000;
+    const frameTimes = Array.from({ length: 24 }, (_, i) => p0 + i * BEAT_S * 1000 + 5);
+    const moved = (k) => (k === 0 ? 1 : 3);
+    return {
+      taps: one.taps.map((t) => ({ ...t, attempt: moved(t.attempt) })),
+      escapes: [
+        ...[6, 10, 14].flatMap((i) => [{ attempt: 0, t: 0, h: t0 + i * BEAT_S + 0.2 }, { attempt: 2, t: frameTimes[i] + 200, h: 0 }]),
+        ...one.escapes.map((t) => ({ ...t, attempt: moved(t.attempt) })),
+      ],
+      attempts: [{ pass: 'A', t0, p0: null, frameTimes: null }, one.attempts[0], { pass: 'B', t0: null, p0, frameTimes }, one.attempts[1]],
+    };
+  }
+
+  it('passes a retried run judged by its repeats, and fails a scene that keeps the first result or never repeats (review R4, MAJOR 2)', () => {
+    const own = tapLogValues(retryLog()).values;
+    expect(own.avOffset).toBeCloseTo(TAP_A_MS - TAP_B_MS, 6);
+    expect(judgeTapped({ seconds: 42.6, values: own, log: retryLog(), handover: running, retry: true }).problems).toEqual([]);
+    // A scene that keeps each pass's first (rejected) result: 0 and 0.
+    expect(judgeTapped({ seconds: 42.6, values: { avOffset: 0, inputBias: 0 }, log: retryLog(), handover: running, retry: true }).problems.join(' | ')).toMatch(/retried calibration values 0\.0 0\.0, the taps' own 15\.0 25\.0 \(want equal within 0\.5 ms\)/);
+    // A scene that never repeats a rejected pass: two attempts and out.
+    const once = { ...retryLog(), attempts: retryLog().attempts.filter((_, k) => k === 0 || k === 2) };
+    expect(judgeTapped({ seconds: 21.6, values: { avOffset: 0, inputBias: 0 }, log: once, handover: running, retry: true }).problems.join(' | ')).toMatch(/retried calibration left after 21\.6 s \(want 39\.4 to 50 s.*the scene ran A, B with the first attempts A rejected, B rejected/);
+    // A tapper that tapped the first attempts: nothing was retried.
+    expect(judgeTapped({ seconds: 21.6, values: tapLogValues(tapLog()).values, log: tapLog(), handover: running, retry: true }).problems.join(' | ')).toMatch(/the first attempts A accepted, B accepted \(want A1 and B1 rejected untapped/);
+    // A tap that landed in a first attempt.
+    const stray = retryLog();
+    stray.taps.push({ attempt: 0, t: 0, h: 0.5 + 6 * BEAT_S + 0.04 });
+    expect(judgeTapped({ seconds: 42.6, values: tapLogValues(stray).values, log: stray, handover: running, retry: true }).problems.join(' | ')).toMatch(/the tapper landed 1 taps \(0 in the count-in\) and 3 Escapes/);
+  });
+
   it('wants a run at room 1 running after the tapped hand-over (review R2, MAJOR 4)', () => {
     const own = tapLogValues(tapLog()).values;
     const bad = [
