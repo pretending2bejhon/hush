@@ -1,0 +1,23 @@
+HUSH-EVIDENCE v1
+id: R4-mutation-run-no-step-cap
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut run-no-step-cap unit,tsc,lint
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:21:03-05:00
+time-end: 2026-10-13T02:21:12-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+=== mutant run-no-step-cap in src/game/run.ts
+-      for (let n = stepsDue(sim.step, targetStep(heard, origin, display)); n > 0; n--) {
++      for (let n = stepsDue(sim.step, targetStep(heard, origin, display)) * 0 + Math.max(targetStep(heard, origin, display) - sim.step, 0); n > 0; n--) {
+--- run-no-step-cap: suite unit: exit 0
+ Test Files  25 passed (25)
+      Tests  134 passed (134)
+--- run-no-step-cap: suite tsc: exit 0
+
+--- run-no-step-cap: suite lint: exit 0
+
+=== verdict run-no-step-cap: SURVIVED every suite run (unit,tsc,lint; 9 s; clone clean)
+--- end ---

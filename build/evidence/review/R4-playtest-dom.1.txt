@@ -1,0 +1,16 @@
+HUSH-EVIDENCE v1
+id: R4-playtest-dom
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/playtest-dom.mjs <repo> <repo>/dist
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:23:36-05:00
+time-end: 2026-10-13T02:26:11-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+A bare page: probe API absent; texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"]; output#playtest {"hidden":true,"text":"","over":false}; errors 0
+B ?probe: ending seen; card read 10505 ms into it (texts changed); extra texts at the card []; errors 0
+C ?probe&playtest: ending seen; card read 6817 ms into it (texts changed); extra texts at the card ["run 0:59 · deaths 0"]; errors 0
+dom: PASS (36 reads at 1280x720, 800x450, 900x1200)
+--- end ---

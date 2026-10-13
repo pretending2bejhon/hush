@@ -1,0 +1,36 @@
+HUSH-EVIDENCE v1
+id: R4-axisb-sim
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/axisb-sim.mjs <repo> 3388312015,487933088,3768208052,2468665834,3363432146
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:22:32-05:00
+time-end: 2026-10-13T02:22:38-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+determinism 01-wake: clear at step 1618, checksums 6001f0f9 6001f0f9 (witness 6001f0f9), saves identical
+determinism 02-heartbeat: clear at step 1684, checksums 04febedf 04febedf (witness 04febedf), saves identical
+determinism 03-dash: clear at step 1588, checksums 593d0787 593d0787 (witness 593d0787), saves identical
+determinism 04-thorns: clear at step 1408, checksums 123057cb 123057cb (witness 123057cb), saves identical
+determinism 05-doors: clear at step 2222, checksums d181a484 d181a484 (witness d181a484), saves identical
+determinism 06-wave: clear at step 1920, checksums f3496b90 f3496b90 (witness f3496b90), saves identical
+determinism 07-current: clear at step 1943, checksums 1c7b52e9 1c7b52e9 (witness 1c7b52e9), saves identical
+determinism 08-steps: clear at step 1494, checksums e6a8f7ba e6a8f7ba (witness e6a8f7ba), saves identical
+determinism 09-gates: clear at step 1905, checksums 9498a96d 9498a96d (witness 9498a96d), saves identical
+determinism 10-crown: clear at step 2388, checksums 5b909a19 5b909a19 (witness 5b909a19), saves identical
+determinism 11-gauntlet: clear at step 14278, checksums b3715ef7 b3715ef7 (witness b3715ef7), saves identical
+determinism: 32448 steps compared with the oracle field for field
+layers room 1: cleared by the tick of step 1617; layer 1 back on the tick of step 2058 (nextBarStep 2058, bar 5, 4.28 beats after the clear, on the bar line: true); 1 layer change(s) in 6418 steps
+layers room 2: cleared by the tick of step 1683; layer 2 back on the tick of step 2058 (nextBarStep 2058, bar 5, 3.64 beats after the clear, on the bar line: true); 1 layer change(s) in 6484 steps
+layers room 3: cleared by the tick of step 1587; layer 3 back on the tick of step 2058 (nextBarStep 2058, bar 5, 4.57 beats after the clear, on the bar line: true); 1 layer change(s) in 6388 steps
+layers room 4: cleared by the tick of step 1407; layer 4 back on the tick of step 1646 (nextBarStep 1646, bar 4, 2.32 beats after the clear, on the bar line: true); 1 layer change(s) in 6208 steps
+layers room 5: cleared by the tick of step 2221; layer 5 back on the tick of step 2469 (nextBarStep 2469, bar 6, 2.41 beats after the clear, on the bar line: true); 1 layer change(s) in 7022 steps
+layers room 6: cleared by the tick of step 1919; layer 6 back on the tick of step 2058 (nextBarStep 2058, bar 5, 1.34 beats after the clear, on the bar line: true); 1 layer change(s) in 6720 steps
+layers room 7: cleared by the tick of step 1942; layer 7 back on the tick of step 2058 (nextBarStep 2058, bar 5, 1.12 beats after the clear, on the bar line: true); 1 layer change(s) in 6743 steps
+layers room 8: cleared by the tick of step 1493; layer 8 back on the tick of step 1646 (nextBarStep 1646, bar 4, 1.48 beats after the clear, on the bar line: true); 1 layer change(s) in 6294 steps
+layers room 9: cleared by the tick of step 1904; layer 9 back on the tick of step 2058 (nextBarStep 2058, bar 5, 1.49 beats after the clear, on the bar line: true); 1 layer change(s) in 6705 steps
+layers room 10: cleared by the tick of step 2387; layer 10 back on the tick of step 2880 (nextBarStep 2880, bar 7, 4.79 beats after the clear, on the bar line: true); 1 layer change(s) in 7188 steps
+wave: 510 form changes over 561 runs (each witness and 10 jittered runs per seed 3388312015, 487933088, 3768208052, 2468665834, 3363432146); W cells in rooms 6, 7, 9, 10, 11; the first is room 6
+axisb: PASS
+--- end ---

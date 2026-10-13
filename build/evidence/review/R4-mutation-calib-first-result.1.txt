@@ -1,0 +1,35 @@
+HUSH-EVIDENCE v1
+id: R4-mutation-calib-first-result
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut calib-first-result unit,build,smoke,flash
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:05:21-05:00
+time-end: 2026-10-13T02:09:15-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+=== mutant calib-first-result in src/render/calibration-scene.ts
+-    this.results[a.pass] = result;
++    this.results[a.pass] ??= result;
+--- calib-first-result: suite unit: exit 0
+ Test Files  25 passed (25)
+      Tests  134 passed (134)
+--- calib-first-result: suite build: exit 0
+
+--- calib-first-result: suite smoke: exit 0
+smoke: page: ok: GET /hush/ 200
+smoke: build-meta: ok: hush-build c9f589cf1d15
+smoke: boot: ok: scenes ["calibration"]
+smoke: canvas: ok: not blank (1220 by 686)
+smoke: text: ok: title, link and notice only; no text object
+smoke: requests: ok: every request answered below 400
+smoke: console: ok: zero console and page errors
+smoke: PASS (/hush/)
+--- calib-first-result: suite flash: exit 0
+flash: calibration up 44 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2620 frames, 2178 analyser samples)
+flash: tapped calibration up 22.1 s: values 6.6 35.5 (the taps' own 6.6 35.5; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5)
+flash: 11773 frames over 196.7 s, median 16.42 ms; general max 9697 px, red max 0 px (limit 25600)
+flash: PASS
+=== verdict calib-first-result: SURVIVED every suite run (unit,build,smoke,flash; 234 s; clone clean)
+--- end ---

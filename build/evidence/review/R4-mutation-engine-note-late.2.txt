@@ -1,0 +1,30 @@
+HUSH-EVIDENCE v1
+id: R4-mutation-engine-note-late
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut engine-note-late build,av,playtest
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T01:50:11-05:00
+time-end: 2026-10-13T01:54:17-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+=== mutant engine-note-late in src/audio/engine.ts
+-      Promise.resolve(S.superdough({ ...note.value, orbit: note.layer }, note.time, note.duration, CPS, note.cycle)).catch(() => transport?.voiceError());
++      Promise.resolve(S.superdough({ ...note.value, orbit: note.layer }, note.time + 0.1, note.duration, CPS, note.cycle)).catch(() => transport?.voiceError());
+--- engine-note-late: suite build: exit 0
+
+--- engine-note-late: suite av: exit 0
+av: 2160 voices scheduled for 2137 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.293 ms p-p, 0 resyncs; 68.7 s
+av: silence peak 0.00e+0; windows rms 0.4128 0.4128 0.4079 0.4081 0.4067 0.3999 0.3996 0.4047 0.4082 0.3891
+av: solos rms 0.3974 0.0611 0.0159 0.0499 0.0084 0.0289 0.0066 0.0160 0.0170 0.0962; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 6 other(s), 6 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: PASS
+--- engine-note-late: suite playtest: exit 0
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: chrome headless: text: ok: title, link and notice only, and once the card is up "run 0:59 · deaths 0"; nothing over the canvas; no text object
+play: chrome headless: scene: ok: 11 rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, 34480 bake pixels as their shapes; every frame of every run replayed, 758 drawn command for command as the reference (42 while the limiter held a change, 50 with a layer's ring); the glimpse risen to y 0 by the card, 62 reads of the ceiling and 27 of the card on the beat as the reference, 235 glimpse pixels (89 ending reads)
+play: chrome headless: PASS (console,play,text,scene)
+=== verdict engine-note-late: SURVIVED every suite run (build,av,playtest; 246 s; clone clean)
+--- end ---

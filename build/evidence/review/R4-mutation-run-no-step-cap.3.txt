@@ -1,0 +1,29 @@
+HUSH-EVIDENCE v1
+id: R4-mutation-run-no-step-cap
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut run-no-step-cap build,play
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:57:33-05:00
+time-end: 2026-10-13T03:00:36-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+=== mutant run-no-step-cap in src/game/run.ts
+-      for (let n = stepsDue(sim.step, targetStep(heard, origin, display)); n > 0; n--) {
++      for (let n = stepsDue(sim.step, targetStep(heard, origin, display)) * 0 + Math.max(targetStep(heard, origin, display) - sim.step, 0); n > 0; n--) {
+--- run-no-step-cap: suite build: exit 0
+
+--- run-no-step-cap: suite play: exit 0
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+play: chrome headless: network: ok: 3 requests, all to the page's origin
+play: chrome headless: storage: ok: nothing stored
+play: chrome headless: unlock: ok: 10 rooms cleared, each layer's gate closed until its bar line and open after it; the gauntlet's track mapped from its run's bar at its entry and its respawn (72 reads)
+play: chrome headless: scene: ok: 11 rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, 34480 bake pixels as their shapes; every frame of every run replayed, 772 drawn command for command as the reference (40 while the limiter held a change, 64 with a layer's ring); the glimpse risen to y 0 by the card, 62 reads of the ceiling and 27 of the card on the beat as the reference, 235 glimpse pixels (89 ending reads)
+play: chrome headless: keys: ok: after the hand-over (100, -60) a run at room 1; real keys reached the sim on the steps stepOf names, every state read while they were pressed and after equal to their replay
+play: chrome headless: visibility: ok: hidden: audio suspended, sim frozen; visible: both run on
+play: chrome headless: PASS (console,play,text,network,storage,unlock,scene,keys,visibility)
+=== verdict run-no-step-cap: SURVIVED every suite run (build,play; 183 s; clone clean)
+--- end ---

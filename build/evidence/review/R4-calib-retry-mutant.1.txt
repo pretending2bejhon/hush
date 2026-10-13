@@ -1,0 +1,15 @@
+HUSH-EVIDENCE v1
+id: R4-calib-retry-mutant
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/calib-retry.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut/dist calib-first-result
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:10:56-05:00
+time-end: 2026-10-13T02:11:20-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+calib-first-result: scene left after 22.3 s; attempts seen by the tapper AB; 39 extra presses in A1
+calib-first-result: per attempt (the tapper's own taps judged as section 12): A1 median 40.1 MAD 9.2 on 20 accepted; B1 median 34.5 MAD 4.5 on 20 accepted
+calib-first-result: values in use 2.5 34.5; section 12 on the last attempt of each pass (the tapper's taps only) 5.6 34.5
+--- end ---

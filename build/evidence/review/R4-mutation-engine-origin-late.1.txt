@@ -1,0 +1,32 @@
+HUSH-EVIDENCE v1
+id: R4-mutation-engine-origin-late
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut engine-origin-late unit,build,play
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:16:59-05:00
+time-end: 2026-10-13T02:20:22-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+=== mutant engine-origin-late in src/audio/engine.ts
+-      transport.restart(origin, gauntletStartBar);
++      transport.restart(origin + 0.1, gauntletStartBar);
+--- engine-origin-late: suite unit: exit 0
+ Test Files  25 passed (25)
+      Tests  134 passed (134)
+--- engine-origin-late: suite build: exit 0
+
+--- engine-origin-late: suite play: exit 1
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+play: chrome headless: network: ok: 3 requests, all to the page's origin
+play: chrome headless: storage: ok: nothing stored
+play: chrome headless: unlock: ok: 10 rooms cleared, each layer's gate closed until its bar line and open after it; the gauntlet's track mapped from its run's bar at its entry and its respawn (71 reads)
+play: chrome headless: scene: FAIL: ending: the card differs at entry 210 of 312: [8,7,15265012,0.3,1,5,707.5], want [8,7,15265012,1,1,5,707.5] (beat 2 of the bar); ending: the card differs at entry 2 of 312: [7,15265012,1,1,5,587.5], want [7,15265012,0.3,1,5,587.5] (beat 3 of the bar)
+play: chrome headless: keys: FAIL: keys: the sim stood at step 63 when ArrowRight went down, where the heard time less the display offset names step 42 (want at most 42, and no more than 24 behind); keys: the sim stood at step 147 when ArrowRight came up, where the heard time less the display offset names step 123 (want at most 123, and no more than 24 behind)
+play: chrome headless: visibility: ok: hidden: audio suspended, sim frozen; visible: both run on
+play: chrome headless: FAIL (console,play,text,network,storage,unlock,scene,keys,visibility)
+=== verdict engine-origin-late: KILLED by play (unit,build,play; 203 s; clone clean)
+--- end ---

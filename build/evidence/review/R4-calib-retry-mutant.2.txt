@@ -1,0 +1,15 @@
+HUSH-EVIDENCE v1
+id: R4-calib-retry-mutant
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/calib-retry2.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut/dist calib-first-result
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:12:34-05:00
+time-end: 2026-10-13T02:13:09-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+calib-first-result: key shape at rest 65 commands; the tapper started at the 5th fill, 12.34 s after the key (A2's count-in); scene left after 33.2 s
+calib-first-result: attempts the tapper saw AB: A1 median 40.0 MAD 9.0 on 20 accepted; B1 median 35.2 MAD 4.0 on 20 accepted
+calib-first-result: values in use -35.2 35.2; section 12 on the last attempt of each pass 4.9 35.2 (A1 had no tap, so it was rejected)
+--- end ---

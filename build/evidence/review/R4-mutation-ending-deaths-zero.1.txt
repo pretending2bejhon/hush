@@ -1,0 +1,27 @@
+HUSH-EVIDENCE v1
+id: R4-mutation-ending-deaths-zero
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut ending-deaths-zero unit,build,playtest
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:13:44-05:00
+time-end: 2026-10-13T02:16:44-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+=== mutant ending-deaths-zero in src/render/ending-scene.ts
+-    const n = this.run.sim ? this.run.sim.status().deaths : 0;
++    const n = 0;
+--- ending-deaths-zero: suite unit: exit 0
+ Test Files  25 passed (25)
+      Tests  134 passed (134)
+--- ending-deaths-zero: suite build: exit 0
+
+--- ending-deaths-zero: suite playtest: exit 0
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: chrome headless: text: ok: title, link and notice only, and once the card is up "run 0:59 · deaths 0"; nothing over the canvas; no text object
+play: chrome headless: scene: ok: 11 rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, 34480 bake pixels as their shapes; every frame of every run replayed, 759 drawn command for command as the reference (38 while the limiter held a change, 51 with a layer's ring); the glimpse risen to y 0 by the card, 62 reads of the ceiling and 28 of the card on the beat as the reference, 235 glimpse pixels (90 ending reads)
+play: chrome headless: PASS (console,play,text,scene)
+=== verdict ending-deaths-zero: SURVIVED every suite run (unit,build,playtest; 181 s; clone clean)
+--- end ---

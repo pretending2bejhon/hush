@@ -1,0 +1,15 @@
+HUSH-EVIDENCE v1
+id: R4-calib-retry-head
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/calib-retry.mjs <repo> <repo>/dist HEAD
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:10:20-05:00
+time-end: 2026-10-13T02:10:56-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+HEAD: scene left after 33.5 s; attempts seen by the tapper AAB; 38 extra presses in A1
+HEAD: per attempt (the tapper's own taps judged as section 12): A1 median 40.0 MAD 10.0 on 20 accepted, A2 median 40.1 MAD 10.0 on 20 accepted; B1 median 34.5 MAD 4.5 on 20 accepted
+HEAD: values in use 5.6 34.5; section 12 on the last attempt of each pass (the tapper's taps only) 5.6 34.5
+--- end ---

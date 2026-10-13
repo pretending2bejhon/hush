@@ -1,0 +1,19 @@
+HUSH-EVIDENCE v1
+id: R4-av-head
+phase: review
+command: node tools/probe-av.mjs --headed
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T02:30:51-05:00
+time-end: 2026-10-13T02:32:02-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+cannot use window: not in browser?
+🌀 @strudel/core loaded 🌀
+av: 2162 voices scheduled for 2144 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.17 ms p-p, 0 resyncs; 68.9 s
+av: silence peak 0.00e+0; windows rms 0.4150 0.4083 0.4095 0.4021 0.4018 0.3939 0.3998 0.3908 0.3972 0.3854
+av: solos rms 0.3742 0.0593 0.0148 0.0491 0.0082 0.0288 0.0066 0.0155 0.0162 0.0809; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 1 other(s), 1 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: PASS
+--- end ---

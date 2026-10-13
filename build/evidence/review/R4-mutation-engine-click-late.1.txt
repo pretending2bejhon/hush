@@ -1,0 +1,36 @@
+HUSH-EVIDENCE v1
+id: R4-mutation-engine-click-late
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mutate.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ca2e7315-2780-4059-bee6-9155d9751f5a/scratchpad/r4/mut engine-click-late unit,build,smoke,flash
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T01:54:26-05:00
+time-end: 2026-10-13T01:58:21-05:00
+head: c9f589cf1d1544a0e09a4ab49324d9eac879e6d2
+exit: 0
+--- output ---
+=== mutant engine-click-late in src/audio/engine.ts
+-        Promise.resolve(S.superdough({ s: 'sbd', decay: 0.08, gain: 0.8, orbit: CLICK_ORBIT }, time, SIXTEENTH, CPS, 0)).catch(() => transport?.voiceError());
++        Promise.resolve(S.superdough({ s: 'sbd', decay: 0.08, gain: 0.8, orbit: CLICK_ORBIT }, time + 0.05, SIXTEENTH, CPS, 0)).catch(() => transport?.voiceError());
+--- engine-click-late: suite unit: exit 0
+ Test Files  25 passed (25)
+      Tests  134 passed (134)
+--- engine-click-late: suite build: exit 0
+
+--- engine-click-late: suite smoke: exit 0
+smoke: page: ok: GET /hush/ 200
+smoke: build-meta: ok: hush-build c9f589cf1d15
+smoke: boot: ok: scenes ["calibration"]
+smoke: canvas: ok: not blank (1220 by 686)
+smoke: text: ok: title, link and notice only; no text object
+smoke: requests: ok: every request answered below 400
+smoke: console: ok: zero console and page errors
+smoke: PASS (/hush/)
+--- engine-click-late: suite flash: exit 1
+flash: calibration up 43.9 s: clicks 42, count-in fills 8, rings 48, values 0 0, Escape ignored (2618 frames, 2178 analyser samples)
+flash: tapped calibration up 22.1 s: values 6.2 35.0 (the taps' own 6.2 35.0; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5)
+flash: 11766 frames over 196.6 s, median 16.4 ms; general max 9600 px, red max 0 px (limit 25600)
+flash: calibration clicks 42 (want 44 to 52)
+flash: FAIL
+=== verdict engine-click-late: KILLED by flash (unit,build,smoke,flash; 235 s; clone clean)
+--- end ---

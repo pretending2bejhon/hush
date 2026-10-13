@@ -69,6 +69,7 @@ HUSH-REVIEW-R2: FAIL (head=2f2b8a264dd2a0f7b32a3405befd501d19b51b1c digest=eeca3
 FIX R2: 2026-10-12T19:19:25-05:00 | fixed=9 rebutted=0 superseded=0
 HUSH-REVIEW-R3: FAIL (head=81a66ae934912449e125d07e883c5f4bc6a5cc83 digest=4537d7d29782e4447e95b22dbc0a9888f1747a9f9d134077ec24bc56d5d66d36 blockers=0 majors=2 minors=6)
 FIX R3: 2026-10-13T01:21:03-05:00 | fixed=8 rebutted=0 superseded=0
+HUSH-REVIEW-R4: BLOCKED (head=c9f589cf1d1544a0e09a4ab49324d9eac879e6d2 digest=c958db45b706ce99a38b80ced9444606f5de7029d68cb5d932d483043530c989 blockers=0 majors=2 minors=2)
 
 ## Checkpoint
 
