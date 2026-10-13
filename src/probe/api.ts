@@ -86,6 +86,61 @@ export interface TapLog {
   attempts: { pass: 'A' | 'B'; t0: number | null; p0: number | null; frameTimes: (number | null)[] | null }[];
 }
 
+// The audio graph as the page builds it (review R3, MINOR 4), for the av probe to hold to section 8.4. Under ?probe
+// only, installProbe wraps AudioNode.prototype.connect and disconnect before the first key, and every edge that ends
+// at an AudioDestinationNode, an AnalyserNode, a DynamicsCompressorNode or a ChannelMergerNode, or starts at a
+// DynamicsCompressorNode or a ChannelMergerNode, is kept here by its destination: the speakers' chain and superdough's
+// own output (a merger into a gain into the speakers, which every patched orbit leaves unfed), nothing of a voice. The
+// wrappers change nothing they pass on.
+const graphInputs = new Map<AudioNode, Set<AudioNode>>();
+let graphRecording = false;
+
+function recordAudioGraph(): void {
+  if (graphRecording || typeof AudioNode === 'undefined') return;
+  graphRecording = true;
+  const proto = AudioNode.prototype as unknown as { connect: (...args: unknown[]) => unknown; disconnect: (...args: unknown[]) => unknown };
+  const connect = proto.connect;
+  const disconnect = proto.disconnect;
+  const kept = (src: AudioNode, dst: AudioNode): boolean =>
+    dst instanceof AudioDestinationNode || dst instanceof AnalyserNode || dst instanceof DynamicsCompressorNode || dst instanceof ChannelMergerNode ||
+    src instanceof DynamicsCompressorNode || src instanceof ChannelMergerNode;
+  proto.connect = function (this: AudioNode, ...args: unknown[]): unknown {
+    const dst = args[0];
+    if (dst instanceof AudioNode && kept(this, dst)) {
+      let ins = graphInputs.get(dst);
+      if (!ins) graphInputs.set(dst, (ins = new Set()));
+      ins.add(this);
+    }
+    return connect.apply(this, args);
+  };
+  proto.disconnect = function (this: AudioNode, ...args: unknown[]): unknown {
+    const dst = args[0];
+    if (dst instanceof AudioNode) graphInputs.get(dst)?.delete(this);
+    else if (args.length === 0 || typeof dst === 'number') for (const ins of graphInputs.values()) ins.delete(this);
+    return disconnect.apply(this, args);
+  };
+}
+
+// One node of that graph as plain data: its kind and the parameters section 8.4 fixes.
+export interface GraphNode {
+  type: string;
+  gain?: number;
+  fftSize?: number;
+  smoothing?: number;
+  threshold?: number;
+  knee?: number;
+  ratio?: number;
+  attack?: number;
+  release?: number;
+}
+
+function graphNode(n: AudioNode): GraphNode {
+  if (n instanceof AnalyserNode) return { type: 'AnalyserNode', fftSize: n.fftSize, smoothing: n.smoothingTimeConstant };
+  if (n instanceof GainNode) return { type: 'GainNode', gain: n.gain.value };
+  if (n instanceof DynamicsCompressorNode) return { type: 'DynamicsCompressorNode', threshold: n.threshold.value, knee: n.knee.value, ratio: n.ratio.value, attack: n.attack.value, release: n.release.value };
+  return { type: n.constructor.name };
+}
+
 function countText(list: ProbeGameObject[]): number {
   let n = 0;
   for (const o of list) {
@@ -378,6 +433,40 @@ export function createProbe(inspect: Inspect) {
       const g = inspect.layerGain(layer);
       return g ? g.gain.value : null;
     },
+    // The speakers' chain as built (review R3, MINOR 4), walked back from the destination of the master analyser's
+    // context: whether the master analyser feeds the speakers, every other input of the speakers and whether it is
+    // silent by construction (a gain of 0, as superdough's timers are, or a gain fed only by mergers that nothing
+    // feeds, as superdough's own output is once every orbit is patched into its gate); then, while a level has
+    // exactly one input, that input and its own inputs, and which layer gates feed the compressor. Null before the
+    // audio starts.
+    audioGraph(): { analyserAtSpeakers: boolean; others: (GraphNode & { silent: boolean })[]; analyser: GraphNode | null; master: GraphNode | null; compressor: GraphNode | null; compressorInputs: number; gatesIn: boolean[] } | null {
+      const a = inspect.analyser();
+      if (!a) return null;
+      const ins = (n: AudioNode): AudioNode[] => Array.from(graphInputs.get(n) ?? []);
+      const d = ins(a.context.destination);
+      const silent = (n: AudioNode): boolean => n instanceof GainNode && (n.gain.value === 0 || (ins(n).length > 0 && ins(n).every((m) => m instanceof ChannelMergerNode && ins(m).length === 0)));
+      const analyser = d.includes(a) ? a : null;
+      const m = analyser ? ins(analyser) : [];
+      const master = m.length === 1 ? (m[0] ?? null) : null;
+      const c = master ? ins(master) : [];
+      const compressor = c.length === 1 ? (c[0] ?? null) : null;
+      const ci = compressor ? ins(compressor) : [];
+      const gatesIn: boolean[] = [];
+      const layers = inspect.audio()?.layerGains.length ?? 0;
+      for (let k = 1; k <= layers; k++) {
+        const g = inspect.layerGain(k);
+        gatesIn.push(Boolean(g && ci.includes(g)));
+      }
+      return {
+        analyserAtSpeakers: analyser !== null,
+        others: d.filter((n) => n !== a).map((n) => ({ ...graphNode(n), silent: silent(n) })),
+        analyser: analyser ? graphNode(analyser) : null,
+        master: master ? graphNode(master) : null,
+        compressor: compressor ? graphNode(compressor) : null,
+        compressorInputs: ci.length,
+        gatesIn,
+      };
+    },
     // The master analyser and the device clock, sampled in the page every `ms` milliseconds.
     meterStart(ms = 20): void {
       if (meterTimer) window.clearInterval(meterTimer);
@@ -422,6 +511,7 @@ export type HushProbe = ReturnType<typeof createProbe>;
 
 export function installProbe(inspect: Inspect, search: string = window.location.search): boolean {
   if (!new URLSearchParams(search).has('probe')) return false;
+  recordAudioGraph();
   (window as unknown as { __hush: HushProbe }).__hush = createProbe(inspect);
   return true;
 }

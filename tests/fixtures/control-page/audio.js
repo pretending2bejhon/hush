@@ -3,7 +3,8 @@
 // gate gain (0 until the layer is back), then one compressor, the master gain, the analyser and the speakers;
 // the calibration click plays on orbit 11, straight into the compressor (section 8.3).
 // Variants for the av probe's controls: master-off (the master never reaches the analyser), synth-throw
-// (the synth registration throws), layer-off (one later layer's gate is never connected).
+// (the synth registration throws), layer-off (one later layer's gate is never connected), master-low (the master gain at
+// 0.4 instead of 0.8; review R3, MINOR 4).
 import * as S from '@strudel/web';
 import { createOutputClock } from './clock.js';
 
@@ -127,7 +128,7 @@ export function createEngine(trackText, variant = '') {
         return orbit;
       };
       const compressor = new DynamicsCompressorNode(ctx, { threshold: -10, knee: 6, ratio: 4, attack: 0.005, release: 0.12 });
-      const master = new GainNode(ctx, { gain: 0.8 });
+      const master = new GainNode(ctx, { gain: variant === 'master-low' ? 0.4 : 0.8 });
       analyser = new AnalyserNode(ctx, { fftSize: 2048, smoothingTimeConstant: 0 });
       compressor.connect(master);
       if (variant !== 'master-off') master.connect(analyser);

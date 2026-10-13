@@ -9,14 +9,15 @@
 //      others for half a bar (silence); held until the run has lasted 60 s;
 //   5. the counters: scheduled voices at or above the track's onsets for the time elapsed in every segment
 //      (all layers are scheduled from the start, muted or not), zero voice errors, zero late-dropped notes;
-//   6. the device clock: valid, and the peak-to-peak of its offset after it became valid under the bound.
+//   6. the device clock: valid, and the peak-to-peak of its offset after it became valid under the bound;
+//   7. the mix (review R3, MINOR 4): the speakers' chain as the page built it, held to section 8.4's values.
 //   node tools/probe-av.mjs --headed [--dist dist] [--replays replays] [--track music/area1.strudel]
 //        [--gauntlet-room 11] [--query <q>] [--json]
 // Exit 0 PASS, 1 FAIL, 2 usage or a page that never boots.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { bootGame, emitJson, headSha, launch, loadWitnesses, openPage, parseOptions, REPO, requireDist, serveDir, verdictDigest } from './probe-lib.mjs';
+import { audioGraphProblems, bootGame, emitJson, headSha, launch, loadWitnesses, openPage, parseOptions, REPO, requireDist, serveDir, verdictDigest } from './probe-lib.mjs';
 import { compileTrack } from './strudel-node.mjs';
 
 // Measured on the control page's synths through the same graph [VL]: the quietest solo (a square at gain .1,
@@ -64,6 +65,7 @@ async function main(argv) {
   let audioEnd = null;
   let started = 0;
   let deaths = 0;
+  let graph = null;
   try {
     const { page } = await openPage(browser);
     const take = async () => { samples.push(...await page.evaluate(() => window.__hush.meterTake())); };
@@ -122,6 +124,8 @@ async function main(argv) {
       checks.solos.push({ layer, soloSignalOk: on.length > 10 && rms >= SIGNAL_RMS, soloSilenceOk: off.length > 5 && peak <= SILENCE_PEAK, rms, peak });
     }
     for (let j = 1; j <= N; j++) await page.evaluate((l) => window.__hush.setLayerGain(l, 1), j);
+    // Review R3 (MINOR 4): the speakers' chain as built, held to section 8.4's values.
+    graph = await page.evaluate(() => window.__hush.audioGraph());
     while (Date.now() - started < MIN_SECONDS * 1000 + 500) { await take(); await sleep(250); }
     await take();
     const fin = await page.evaluate(() => window.__hush.sim());
@@ -166,11 +170,14 @@ async function main(argv) {
   else if (!(doc.clockJitterMs <= CLOCK_JITTER_BOUND_MS)) problems.push(`device clock offset moved ${doc.clockJitterMs} ms peak to peak (bound ${CLOCK_JITTER_BOUND_MS})`);
   if (deaths) problems.push(`${deaths} death(s) in the witness rooms`);
   if (doc.durationSec < MIN_SECONDS) problems.push(`ran ${doc.durationSec} s, under ${MIN_SECONDS}`);
+  doc.graph = graph;
+  problems.push(...audioGraphProblems(graph, N));
   doc.problems = problems;
   doc.pass = problems.length === 0;
   process.stdout.write(`av: ${doc.scheduledVoices} voices scheduled for ${doc.expectedVoices} onsets, ${doc.voiceErrors} errors, ${doc.lateDropped} dropped, ${doc.lateShifted} shifted; clock ${doc.clockJitterMs} ms p-p, ${resyncs} resyncs; ${doc.durationSec} s\n`);
   process.stdout.write(`av: silence peak ${checks.silence.peak.toExponential(2)}; windows rms ${checks.windows.map((w) => w.rms.toFixed(4)).join(' ')}\n`);
   process.stdout.write(`av: solos rms ${checks.solos.map((l) => l.rms.toFixed(4)).join(' ')}; muted peaks ${checks.solos.map((l) => l.peak.toExponential(1)).join(' ')}\n`);
+  process.stdout.write(`av: mix ${graph ? `speakers <- ${graph.analyserAtSpeakers ? 'AnalyserNode' : 'no analyser'} and ${graph.others.length} other(s), ${graph.others.filter((n) => n.silent).length} silent by construction; master gain ${graph.master ? graph.master.gain : 'none'}; compressor ${graph.compressor ? `${graph.compressor.threshold} ${graph.compressor.knee} ${graph.compressor.ratio} ${graph.compressor.attack} ${graph.compressor.release}` : 'none'}; ${graph.gatesIn.filter(Boolean).length} of ${graph.gatesIn.length} gates in, ${graph.compressorInputs} inputs` : 'not read'}\n`);
   for (const p of problems) process.stdout.write(`av: ${p}\n`);
   process.stdout.write(`av: ${doc.pass ? 'PASS' : 'FAIL'}\n`);
   if (o.json) emitJson(doc);

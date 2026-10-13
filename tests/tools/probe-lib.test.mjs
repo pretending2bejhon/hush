@@ -9,7 +9,7 @@ import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { compileWorld, createSim, FIELDS } from '../fixtures/oracle/index.mjs';
 import { bakeChunks, cameraPx, depthBands, riseAt } from '../fixtures/reference/art.mjs';
-import { CAMERA_SLACK_PX, endingLayoutProblems, gauntletMapProblems, keyReplayProblems, playLayoutProblems, REPO } from '../../tools/probe-lib.mjs';
+import { audioGraphProblems, CAMERA_SLACK_PX, endingLayoutProblems, gauntletMapProblems, keyReplayProblems, playLayoutProblems, REPO } from '../../tools/probe-lib.mjs';
 import { loadRoomFiles } from '../../tools/replay.mjs';
 
 describe('the unlock check\'s gauntlet half', () => {
@@ -182,5 +182,41 @@ describe('the key check (review R2, MAJOR 5)', () => {
     expect(judgeKeys(run(before, 420, holds), events.map((e) => ({ ...e, step: e.step + 30 })))).toMatch(/the sim stood at step \d+ when ArrowRight went down, where the heard time less the display offset names step \d+/);
     expect(judgeKeys(run(before, 420, holds), events.filter((e) => e.code === 'KeyQ'))).toMatch(/no game key reached the page/);
     expect(keyReplayProblems({ world, before: null, reads: [], events, origin: 0, avOffset: 100, inputBias: -60 }).join('')).toMatch(/could not be read/);
+  });
+});
+
+// Review R3 (MINOR 4): the speakers' chain as the page built it (src/probe/api.ts audioGraph), against section 8.4.
+// The parameters come back as float32.
+describe('the av probe\'s mix check (review R3, MINOR 4)', () => {
+  const f32 = (v) => Math.fround(v);
+  const good = () => ({
+    analyserAtSpeakers: true,
+    // superdough's own output (unfed) and two of its timers (gain 0).
+    others: [{ type: 'GainNode', gain: 1, silent: true }, { type: 'GainNode', gain: 0, silent: true }, { type: 'GainNode', gain: 0, silent: true }],
+    analyser: { type: 'AnalyserNode', fftSize: 2048, smoothing: 0 },
+    master: { type: 'GainNode', gain: f32(0.8) },
+    compressor: { type: 'DynamicsCompressorNode', threshold: -10, knee: 6, ratio: 4, attack: f32(0.005), release: f32(0.12) },
+    compressorInputs: 11,
+    gatesIn: Array(10).fill(true),
+  });
+  const judge = (edit) => { const g = good(); edit(g); return audioGraphProblems(g, 10).join(' | '); };
+
+  it('passes the graph of section 8.4, with or without the calibration orbit', () => {
+    expect(audioGraphProblems(good(), 10)).toEqual([]);
+    expect(judge((g) => { g.compressorInputs = 10; })).toBe('');
+  });
+
+  it('names every departure from it', () => {
+    expect(audioGraphProblems(null, 10)).toEqual(['the audio graph could not be read']);
+    expect(judge((g) => { g.master.gain = f32(0.4); })).toMatch(/the analyser is fed by GainNode at gain 0\.4\d*, want the master gain at 0\.8/);
+    expect(judge((g) => { g.compressor.ratio = 8; })).toMatch(/the master gain is fed by DynamicsCompressorNode threshold -10, knee 6, ratio 8/);
+    expect(judge((g) => { g.compressor.attack = f32(0.003); })).toMatch(/want the compressor of section 8\.4/);
+    expect(judge((g) => { g.compressor = null; })).toMatch(/the master gain is fed by no single node/);
+    expect(judge((g) => { g.others.push({ type: 'GainNode', gain: 1, silent: false }); })).toMatch(/the speakers have 1 input\(s\) besides the analyser that are not silent by construction \(GainNode at gain 1\): something bypasses the analyser/);
+    expect(judge((g) => { g.analyserAtSpeakers = false; })).toMatch(/the master analyser does not feed the speakers/);
+    expect(judge((g) => { g.analyser.fftSize = 1024; })).toMatch(/the analyser has fftSize 1024/);
+    expect(judge((g) => { g.gatesIn[2] = false; })).toMatch(/the compressor's inputs miss layer gate\(s\) 3/);
+    expect(judge((g) => { g.gatesIn = g.gatesIn.slice(0, 9); })).toMatch(/\(9 of 10 read\)/);
+    expect(judge((g) => { g.compressorInputs = 12; })).toMatch(/the compressor has 12 inputs/);
   });
 });

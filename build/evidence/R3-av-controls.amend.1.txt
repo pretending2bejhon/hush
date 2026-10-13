@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R3-av-controls
+phase: amend
+command: npx vitest run tests/controls/av-probe.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T23:29:01-05:00
+time-end: 2026-10-12T23:34:16-05:00
+head: 2e40fab34e647c0f5ec9e44eaeabbdd75b02bb75
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  23:29:02
+   Duration  314.22s (tests 100%)
+
+--- end ---

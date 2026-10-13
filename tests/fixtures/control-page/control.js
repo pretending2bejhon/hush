@@ -11,7 +11,7 @@
 //   ?fetch=<url>  one request to that URL (X10)                ?store=local|session|cookie|idb (X10)
 //   ?text         a Phaser Text object (D8)                    ?domtext a DOM text over the canvas (D16)
 //   ?novis        no suspension when the page is hidden (D4)
-//   ?av=master-off|synth-throw|layer-off  the av probe's planted faults (X7)
+//   ?av=master-off|synth-throw|layer-off|master-low  the av probe's planted faults (X7; master-low, the mix of section 8.4)
 //   ?unlock=late|early|none  the playthrough's unlock check (X7's clear-time half): a cleared room's layer
 //                 returns a bar late, a bar early, or never
 //   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow  the calibration scene's planted faults

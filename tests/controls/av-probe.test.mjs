@@ -1,6 +1,7 @@
 // PF-CONTROLS for the av probe (X7): headed Chrome on this laptop's real audio device (unmuted). The clean
 // control page must pass; with the master output disconnected, with a synth registration that throws, and
-// with one later layer's gate disconnected while the earlier layers play, it must fail, each for its reason.
+// with one later layer's gate disconnected while the earlier layers play, it must fail, each for its reason; and
+// (review R3, MINOR 4) with the master gain at 0.4, whose signal stays above the floors, on the mix check alone.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -24,6 +25,8 @@ describe('av probe (X7)', () => {
   it('passes the clean control page', () => {
     const r = av('');
     expect(r.out).toMatch(/av: \d+ voices scheduled for \d+ onsets, 0 errors, 0 dropped/);
+    // Review R3 (MINOR 4): the speakers' chain of section 8.4, read as the page built it.
+    expect(r.out).toMatch(/av: mix speakers <- AnalyserNode and (\d+) other\(s\), \1 silent by construction; master gain 0\.8\d*; compressor -10 6 4 0\.00\d+ 0\.1\d+; 4 of 4 gates in, [45] inputs/);
     expect(r.out).toMatch(/av: PASS/);
     expect(r.code).toBe(0);
   }, 180000);
@@ -38,6 +41,14 @@ describe('av probe (X7)', () => {
   it('fails with a synth registration that throws', () => {
     const r = av('av=synth-throw');
     expect(r.out).toMatch(/av: \d+ voice errors/);
+    expect(r.out).toMatch(/av: FAIL/);
+    expect(r.code).toBe(1);
+  }, 180000);
+
+  it('fails with the master gain at half its value (review R3, MINOR 4)', () => {
+    const r = av('av=master-low');
+    expect(r.out).toMatch(/av: the analyser is fed by GainNode at gain 0\.4\d*, want the master gain at 0\.8/);
+    expect(r.out).not.toMatch(/av: no master signal/);
     expect(r.out).toMatch(/av: FAIL/);
     expect(r.code).toBe(1);
   }, 180000);

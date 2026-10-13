@@ -192,6 +192,36 @@ export function gauntletMapProblems(reads) {
   return problems;
 }
 
+// The av probe's mix check (review R3, MINOR 4): the speakers' chain as the page built it (src/probe/api.ts
+// audioGraph), held to section 8.4. The master analyser (fftSize 2048, smoothing 0) feeds the speakers, and nothing
+// else that could sound does: every other input of the speakers is silent by construction (superdough's timers, at
+// gain 0, and its own output, which no patched orbit feeds). The analyser has one input, the master gain (0.8), and
+// the master one, the compressor (threshold -10, knee 6, ratio 4, attack 0.005, release 0.12). Every layer gate is an
+// input of the compressor, besides at most one more (the calibration orbit). The parameters are read back as float32,
+// hence MIX_TOLERANCE.
+export const MIX = Object.freeze({ fftSize: 2048, smoothing: 0, gain: 0.8, threshold: -10, knee: 6, ratio: 4, attack: 0.005, release: 0.12 });
+export const MIX_TOLERANCE = 1e-5;
+
+export function audioGraphProblems(graph, layers) {
+  if (!graph) return ['the audio graph could not be read'];
+  const problems = [];
+  const near = (v, want) => Number.isFinite(v) && Math.abs(v - want) <= MIX_TOLERANCE;
+  if (!graph.analyserAtSpeakers) problems.push('the master analyser does not feed the speakers');
+  const loud = graph.others.filter((n) => !n.silent);
+  if (loud.length) problems.push(`the speakers have ${loud.length} input(s) besides the analyser that are not silent by construction (${loud.map((n) => `${n.type}${n.gain !== undefined ? ` at gain ${n.gain}` : ''}`).join(', ')}): something bypasses the analyser`);
+  const a = graph.analyser;
+  if (a && (a.fftSize !== MIX.fftSize || !near(a.smoothing, MIX.smoothing))) problems.push(`the analyser has fftSize ${a.fftSize} and smoothing ${a.smoothing}, want ${MIX.fftSize} and ${MIX.smoothing}`);
+  const m = graph.master;
+  if (!m || m.type !== 'GainNode' || !near(m.gain, MIX.gain)) problems.push(`the analyser is fed by ${m ? `${m.type}${m.gain !== undefined ? ` at gain ${m.gain}` : ''}` : 'no single node'}, want the master gain at ${MIX.gain}`);
+  const c = graph.compressor;
+  const keys = ['threshold', 'knee', 'ratio', 'attack', 'release'];
+  if (!c || c.type !== 'DynamicsCompressorNode' || !keys.every((k) => near(c[k], MIX[k]))) problems.push(`the master gain is fed by ${c ? `${c.type} ${keys.map((k) => `${k} ${c[k]}`).join(', ')}` : 'no single node'}, want the compressor of section 8.4`);
+  const out = graph.gatesIn.map((g, i) => (g ? 0 : i + 1)).filter(Boolean);
+  if (graph.gatesIn.length !== layers || out.length) problems.push(`the compressor's inputs miss layer gate(s) ${out.join(', ') || `(${graph.gatesIn.length} of ${layers} read)`}`);
+  else if (graph.compressorInputs > layers + 1) problems.push(`the compressor has ${graph.compressorInputs} inputs, want the ${layers} layer gates and at most the calibration orbit`);
+  return problems;
+}
+
 // The playthrough's scene check (review R2, MAJOR 1): one read of the play scene's display list (src/probe/api.ts
 // layout) with the sim's state, taken between two frames in room `number`. Section 10.6 places the room's baked
 // images: chunk i of bakeChunks(room) at depth 5, at x col0 x 40 less the camera; band b of depthBands(room) at depth
