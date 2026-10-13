@@ -442,3 +442,27 @@ DISPOSITION: R5-NOTE1 | X3's margin | 2026-10-13T14:40:00-05:00 | no action
 DISPOSITION: R5-NOTE2 | X5 and X10 never run over the real calibration scene | 2026-10-13T14:40:00-05:00 | to fix with MAJOR 1 if time allows, else carried
 DISPOSITION: R5-NOTE3 | the page's sanctioned texts | 2026-10-13T14:40:00-05:00 | no action
 
+MAJOR 2 fixed 2026-10-13T15:22-05:00 in the commit `hush-spec: amend the scene check, review R5 ...` after `0c71236`, by the producer (Opus standing in for Fable). No product file changes and no applier.
+- **How it landed:**
+  - src/probe/api.ts installs a PRE_STEP hook with the POST_STEP one (hookFrames). Its listener runs after main.ts's driver, so it reads the heard time and the origin the frame's step was made for. Every light record becomes [sim, room, step, heard, origin], and frameLogTake carries the avOffset in use.
+  - `endingLogStart` and `endingLogTake` log every frame of the scene `ending`: the heard time at prestep and poststep, the origin, the glimpse's y, and the Graphics' buffers once the card is up.
+  - tools/scene-check.mjs judges both (`stepTimingProblems`, `endingTimingProblems`). tools/probe-play.mjs's `scene` check runs them and wants at least 300 timed frames and 30 judged card frames.
+- **On the product:** END1's acceptance passes. 8510 frames sit on the step the heard time gives, the farthest 1 step off, and 187 card frames on the beat heard while drawn (build/evidence/END1.amend.7.txt).
+- **The reviewer's mutants fail, on these checks alone:**
+  - the sim 50 ms late: 8 to 12 steps behind the music from room 1's first frames (build/evidence/R5-mutant-frame-late50.amend.1.txt);
+  - the card 80 ms late: frames 8 and 25 ms into beat 3 draw beat 2 (build/evidence/R5-mutant-card-late80.amend.1.txt).
+- **Controls in Node:** tests/tools/scene-check.test.mjs, 15 of 15. A sim 50 ms or 10 ms behind fails, and so do the calibration's offset ignored, a jump past the cap, a card 80 ms or 20 ms late and too few judged frames; a stalled run catching up 24 steps a frame passes. The verifier suite passes 273 of 273 (build/evidence/R5-verifiers.amend.1.txt).
+- **Not run this session, for VERIFY:** npm test's e2e, whose `scene` check is END1's, run above.
+
+State at 2026-10-13T15:25-05:00, the end of this producer session (one hush-review commit, and 4h51m of its 6 active hours):
+- **Fixed:** MAJOR 2. **Open:** MAJOR 1, the calibration's pictures, with its design settled in its disposition above. The MINORs are carried. There is no `FIX R5` line yet.
+- **The next producer starts at re-entry row 8:**
+  1. It finishes FIX R5 with MAJOR 1, and NOTE 2 if time allows.
+  2. It records `FIX R5`.
+  3. It runs R6, the round the owner granted. A PASS ends cycle 1; a FAIL escalates again.
+- **Notes for MAJOR 1:**
+  - Phaser's step emits PRE_STEP, updates every scene, then emits POST_STEP. So a frame bracketed by the probe's prestep and poststep reads holds the frameMs the calibration scene read at the top of its update. hookFrames already installs both listeners.
+  - The ring is the ARC of radius 50 at (640, 360). The filled key shape is section 12's fillRoundedRect, a FILL_PATH. Read both from the command buffers as drawn (drawnOf).
+  - The control page's Calibration scene draws the same shapes, so `?calib=ringlate`, `?calib=filllate` and `?calib=frametime` are a line each in control.js.
+  - Each browser control of the calibration takes about two minutes. The twelve existing ones fit in four calls under the 10-minute limit; R4-calibration-controls.amend.6 to .9 show the grouping.
+

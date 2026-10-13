@@ -10,7 +10,8 @@ import * as ART from '../fixtures/reference/art.mjs';
 import { createFlashLimiter } from '../fixtures/reference/flash-limiter.mjs';
 import { REPO } from '../../tools/probe-lib.mjs';
 import { readWitness, loadRoomFiles } from '../../tools/replay.mjs';
-import { bakeProbe, CMD, composite, encodeShapes, endingDrawnProblems, frameLogProblems, pixelProblems, replayRun, roomBakes } from '../../tools/scene-check.mjs';
+import { bakeProbe, CMD, composite, encodeShapes, endingDrawnProblems, endingTimingProblems, frameLogProblems, pixelProblems, replayRun, roomBakes, stepTimingProblems } from '../../tools/scene-check.mjs';
+import * as DRIVER from '../fixtures/reference/driver.mjs';
 
 const world = compileWorld(loadRoomFiles(path.join(REPO, 'rooms')));
 
@@ -170,5 +171,82 @@ describe('endingDrawnProblems: the ceiling through the rise, the card on the bea
     expect(at((r) => (r.layout[0].y > 0 ? { ...r, drawn: [{ depth: 1, buffer: encodeShapes(ART.ceilingShapes(0)) }] } : r))).toMatch(/the ceiling with the glimpse at y [\d.]+ differs at entry/);
     expect(at((r) => ({ ...r, drawn: [] }))).toMatch(/a read without the glimpse and one Graphics at depth 1/);
     expect(endingDrawnProblems(endingReads([])).problems.join('')).toMatch(/no read of the card/);
+  });
+});
+
+describe('the frames\' time (review R5, MAJOR 2)', () => {
+  // A run's light records [sim, room, step, heard, origin] as the driver of section 9.1 gives them: the heard time from
+  // 0.3 s past the origin by frameMs a frame (one frame `stallMs` longer at index `stallAt`), the step the driver's for the
+  // heard time less `lagMs` (a sim behind the music), at most 24 steps a frame.
+  function lights({ frames = 120, frameMs = 16.7, lagMs = 0, avOffset = 0, origin = 5, sim = 1, room = 1, stallAt = -1, stallMs = 0 } = {}) {
+    const out = [];
+    let step = 0;
+    let heard = origin + 0.3;
+    for (let i = 0; i < frames; i++) {
+      heard += (frameMs + (i === stallAt ? stallMs : 0)) / 1000;
+      const target = DRIVER.targetStep(heard - lagMs / 1000, origin, DRIVER.displaySec(avOffset));
+      step = Math.max(step, Math.min(target, step + DRIVER.MAX_STEPS_PER_FRAME));
+      out.push([sim, room, step, heard, origin]);
+    }
+    return out;
+  }
+
+  it('passes frames on the driver\'s step and fails a sim 50 ms behind the music (the reviewer\'s mutant)', () => {
+    const ok = stepTimingProblems(lights());
+    expect(ok.problems).toEqual([]);
+    expect(ok.judged).toBe(119);
+    const late = stepTimingProblems(lights({ lagMs: 50 }), { label: 'room 01-wake' });
+    expect(late.problems.join(' | ')).toMatch(/room 01-wake: a frame in room 1 at step \d+, where the heard time gives step \d+ \(section 9\.1: 1[12] steps behind the music\)/);
+    expect(late.worst).toBeGreaterThanOrEqual(11);
+    // One step (4 ms) is the slack between the driver's read and the probe's; 10 ms is not.
+    expect(stepTimingProblems(lights({ lagMs: 4 })).problems).toEqual([]);
+    expect(stepTimingProblems(lights({ lagMs: 10 })).problems.length).toBeGreaterThan(0);
+  });
+
+  it('reads the step through the calibration in use', () => {
+    const shifted = lights({ avOffset: -100 });
+    expect(stepTimingProblems(shifted, { avOffset: -100 }).problems).toEqual([]);
+    expect(stepTimingProblems(shifted, { avOffset: 0 }).problems.join(' | ')).toMatch(/steps ahead of it/);
+  });
+
+  it('lets a stalled run catch up 24 steps a frame, and skips unread times and each run\'s first frame', () => {
+    const stalled = lights({ stallAt: 40, stallMs: 300 });
+    expect(stalled[41][2] - stalled[40][2]).toBe(24);
+    expect(stepTimingProblems(stalled).problems).toEqual([]);
+    // A sim that jumps the whole stall in one frame, past the cap.
+    const jumped = stalled.map((r, i) => (i === 41 ? [r[0], r[1], r[2] + 30, r[3], r[4]] : r));
+    expect(stepTimingProblems(jumped).problems.join(' | ')).toMatch(/steps ahead of it/);
+    const unread = lights().map((r, i) => (i % 3 === 0 ? [r[0], r[1], r[2], null, r[4]] : r));
+    expect(stepTimingProblems(unread).problems).toEqual([]);
+    expect(stepTimingProblems(unread).judged).toBe(80);
+    const two = [...lights(), ...lights({ sim: 2, origin: 9 })];
+    expect(stepTimingProblems(two).problems).toEqual([]);
+    expect(stepTimingProblems(two).judged).toBe(238);
+  });
+
+  // Card frames as the ending draws them: the heard time from 20 s by frameMs a frame, bracketed by its prestep and its
+  // poststep 1 ms apart, the card drawn on the beat the scene heard between them, less `lagMs`.
+  function cardFrames({ frames = 150, frameMs = 16.7, lagMs = 0, origin = 3 } = {}) {
+    const out = [];
+    for (let i = 0; i < frames; i++) {
+      const pre = 20 + (i * frameMs) / 1000;
+      const seen = pre + 0.0005 - lagMs / 1000;
+      out.push({ pre, post: pre + 0.001, origin, y: 0, graphics: [{ depth: 1, buffer: encodeShapes(ART.cardShapes(ART.beatOfBar(seen, origin))) }] });
+    }
+    return out;
+  }
+
+  it('holds the card to the beat heard while it was drawn, and fails a card 80 ms late (the reviewer\'s mutant)', () => {
+    const ok = endingTimingProblems(cardFrames());
+    expect(ok.problems).toEqual([]);
+    expect(ok.judged).toBeGreaterThan(140);
+    expect(endingTimingProblems(cardFrames({ lagMs: 80 })).problems.join(' | ')).toMatch(/ending: a card frame heard \d+ ms into beat \d of its bar draws beat \d/);
+    expect(endingTimingProblems(cardFrames({ lagMs: 20 })).problems.length).toBeGreaterThan(0);
+    // A frame whose bracket holds a beat line is not judged; neither is a frame of the rise.
+    const wide = cardFrames().map((f) => ({ ...f, post: f.pre + 0.5 }));
+    expect(endingTimingProblems(wide).judged).toBe(0);
+    expect(endingTimingProblems(cardFrames().map((f) => ({ ...f, y: 5 }))).problems.join(' | ')).toMatch(/ending: 0 card frames judged against the heard beat, want at least 30/);
+    expect(endingTimingProblems([{ ...cardFrames()[0], graphics: [] }]).problems.join(' | ')).toMatch(/a card frame without one Graphics at depth 1/);
+    expect(endingTimingProblems(null).problems.join(' | ')).toMatch(/0 card frames judged/);
   });
 });

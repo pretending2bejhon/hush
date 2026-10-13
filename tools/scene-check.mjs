@@ -8,8 +8,12 @@
 // - bakeProbe and pixelProblems: the pixels of a baked texture at points a pixel or more from every edge, against the
 //   bake's reference shapes composited there over transparent, as a DynamicTexture stores them (premultiplied).
 // - endingDrawnProblems: the ending's Graphics through the rise and at the card, read beside the glimpse's place.
+// - stepTimingProblems and endingTimingProblems (review R5, MAJOR 2): when the frames are drawn. Each play-scene frame's
+//   step against the heard time the driver ran on (section 9.1), and each card frame's lit dot against the beat heard
+//   while the scene drew it (section 13).
 import { createSim, FIELDS } from '../tests/fixtures/oracle/index.mjs';
 import * as ART from '../tests/fixtures/reference/art.mjs';
+import { displaySec, MAX_STEPS_PER_FRAME, targetStep } from '../tests/fixtures/reference/driver.mjs';
 import { createFlashLimiter } from '../tests/fixtures/reference/flash-limiter.mjs';
 import { canonicalLayers } from './replay.mjs';
 
@@ -476,4 +480,63 @@ export function endingDrawnProblems(reads, { label = 'ending' } = {}) {
   if (!problems.length && !rise) problems.push(`${label}: no read in the rise`);
   if (!problems.length && !card) problems.push(`${label}: no read of the card`);
   return { problems, rise, card };
+}
+
+// ------------------------------------------------------------------ the frames' time (review R5, MAJOR 2)
+
+// The steps a frame's sim may stand from the driver's for the probe's heard time: the probe reads it microseconds after the
+// driver, so a step line can fall between the two reads.
+export const STEP_SLACK = 1;
+export const MIN_CARD_FRAMES = 30;
+
+// The play scene's frames held to the heard time. The probe reads the heard time and the run's origin in a PRE_STEP
+// listener that runs after the driver's (src/probe/api.ts), so the step a frame records must be the driver's for that time,
+// section 9.1: max(prev, min(targetStep(heard, origin, displaySec(avOffset)), prev + MAX_STEPS_PER_FRAME)), prev the step of
+// the frame before, within STEP_SLACK. A frame whose heard time could not be read (the context not running, the clock line
+// not valid) and the first frame of each run are not judged. Light records are [sim, room, step, heard, origin]. Returns
+// { problems, judged, worst }: worst is the largest distance, in steps, positive when the sim stood behind.
+export function stepTimingProblems(light, { avOffset = 0, label = 'run' } = {}) {
+  const problems = [];
+  let judged = 0;
+  let worst = 0;
+  const display = displaySec(avOffset ?? 0);
+  for (let i = 1; i < (light || []).length; i++) {
+    const [sim, room, step, heard, origin] = light[i];
+    const prev = light[i - 1];
+    if (prev[0] !== sim || typeof heard !== 'number' || typeof origin !== 'number') continue;
+    const want = Math.max(prev[2], Math.min(targetStep(heard, origin, display), prev[2] + MAX_STEPS_PER_FRAME));
+    const d = want - step;
+    judged += 1;
+    if (Math.abs(d) > Math.abs(worst)) worst = d;
+    if (Math.abs(d) > STEP_SLACK && problems.length < 3) {
+      problems.push(`${label}: a frame in room ${room} at step ${step}, where the heard time gives step ${want} (section 9.1: ${d > 0 ? `${d} steps behind the music` : `${-d} steps ahead of it`})`);
+    }
+  }
+  return { problems, judged, worst };
+}
+
+// The ending's card held to the heard beat. The probe logs every frame of the scene `ending` with the heard time at prestep
+// and at poststep, between which the scene read its own (src/probe/api.ts endingLog). Once the card is up (the glimpse at
+// y 0), a frame whose two times fall in one beat of the bar must draw exactly cardShapes(beatOfBar) of that beat; a frame
+// whose bracket holds a beat line is not judged. Returns { problems, judged }.
+export function endingTimingProblems(frames, { label = 'ending' } = {}) {
+  const problems = [];
+  let judged = 0;
+  for (const f of frames || []) {
+    if (problems.length >= 3) break;
+    if (f.y !== 0 || typeof f.pre !== 'number' || typeof f.post !== 'number' || typeof f.origin !== 'number') continue;
+    const b = ART.beatOfBar(f.pre, f.origin);
+    if (ART.beatOfBar(f.post, f.origin) !== b) continue;
+    const g = (f.graphics || []).filter((d) => d.depth === 1);
+    if (g.length !== 1) { problems.push(`${label}: a card frame without one Graphics at depth 1`); break; }
+    judged += 1;
+    const d = bufferDifference(g[0].buffer, encodeShapes(ART.cardShapes(b)));
+    if (d) {
+      const drawn = [0, 1, 2, 3].find((k) => !bufferDifference(g[0].buffer, encodeShapes(ART.cardShapes(k))));
+      const into = ((f.pre - f.origin) / ART.BEAT_S) % 1;
+      problems.push(`${label}: a card frame heard ${Math.round(into * ART.BEAT_S * 1000)} ms into beat ${b} of its bar draws ${drawn === undefined ? 'no card' : `beat ${drawn}`} (${d})`);
+    }
+  }
+  if (!problems.length && judged < MIN_CARD_FRAMES) problems.push(`${label}: ${judged} card frames judged against the heard beat, want at least ${MIN_CARD_FRAMES}`);
+  return { problems, judged };
 }

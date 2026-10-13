@@ -102,17 +102,33 @@ export interface FullFrame {
   graphics: DrawnGraphics[];
 }
 
+// Review R5 (MAJOR 2): every light record also carries the heard time and the run's origin, read by a PRE_STEP listener
+// that runs after the driver's, so the step it records is the one the driver gave for that time: [sim, room, step, heard,
+// origin], heard null while the context is not running or the clock line not valid. The log carries the avOffset in use.
 export interface FrameLog {
-  light: number[][];
+  light: (number | null)[][];
   full: FullFrame[];
   dropped: number;
+  avOffset: number | null;
+}
+
+// Review R5 (MAJOR 2): one frame of the scene `ending`: the heard time at Phaser's prestep and at its poststep (the scene's
+// own read lies between them), the run's origin, the glimpse's y and every Graphics' buffer as drawn.
+export interface EndingFrame {
+  pre: number | null;
+  post: number | null;
+  origin: number | null;
+  y: number | null;
+  graphics: DrawnGraphics[];
 }
 
 const FRAME_FULL_EVERY = 4;
 const FRAME_FULL_PER_BAKE = 48;
 const FRAME_LIGHT_MAX = 200000;
 const FRAME_FULL_MAX = 2000;
-// Phaser 4.2.1's Core.Events.POST_STEP.
+const ENDING_MAX = 4000;
+// Phaser 4.2.1's Core.Events.PRE_STEP and POST_STEP.
+const PRE_STEP = 'prestep';
 const POST_STEP = 'poststep';
 
 const rounded = (v: unknown): number | boolean | null => {
@@ -309,7 +325,7 @@ export function createProbe(inspect: Inspect) {
   const tapTaps: TapLog['taps'] = [];
   const tapEscapes: TapLog['escapes'] = [];
   const tapAttempts: ProbeCalibrationAttempt[] = [];
-  const frameLight: number[][] = [];
+  const frameLight: (number | null)[][] = [];
   const frameFull: FullFrame[] = [];
   let frameLogOn = false;
   let frameHooked = false;
@@ -319,9 +335,39 @@ export function createProbe(inspect: Inspect) {
   let frameBake = '';
   let sinceBake = 0;
   let fullSinceBake = 0;
+  let preHeard: number | null = null;
+  let preOrigin: number | null = null;
+  const endingFrames: EndingFrame[] = [];
+  let endingLogOn = false;
+
+  // The heard time now, through the clock line, while the context runs and the line is valid; null otherwise.
+  function heardNow(): number | null {
+    const c = inspect.clock();
+    const a = inspect.audio();
+    return c && c.valid && a && a.state === 'running' ? performance.now() / 1000 + c.offset : null;
+  }
+
+  // Review R5 (MAJOR 2): every frame's prestep, after the driver's listener (main.ts installs it before installProbe runs).
+  function onPreStep(): void {
+    if (!frameLogOn && !endingLogOn) return;
+    preHeard = heardNow();
+    const a = inspect.audio();
+    preOrigin = a ? a.origin : null;
+  }
+
+  // Review R5 (MAJOR 2): one frame of the scene `ending`, after its update drew it.
+  function logEnding(): void {
+    const g = inspect.game();
+    if (!g || !g.scene.getScenes(true).some((s) => s.sys.settings.key === 'ending')) return;
+    const scene = g.scene.getScene('ending');
+    if (!scene || endingFrames.length >= ENDING_MAX) return;
+    const glimpse = scene.children.list.find((o) => o.type === 'Image' && o.texture && o.texture.key === 'glimpse');
+    endingFrames.push({ pre: preHeard, post: heardNow(), origin: preOrigin, y: glimpse ? (glimpse.y ?? 0) : null, graphics: drawnOf(scene.children.list) });
+  }
 
   // One frame of the play scene, after every scene's update (review R3, MAJOR 1 and MINOR 3).
   function onPostStep(): void {
+    if (endingLogOn) logEnding();
     if (!frameLogOn) return;
     const g = inspect.game();
     if (!g || !g.scene.getScenes(true).some((s) => s.sys.settings.key === 'play')) return;
@@ -343,7 +389,7 @@ export function createProbe(inspect: Inspect) {
       frameDropped += 1;
       return;
     }
-    frameLight.push([frameSims, room, sim.step]);
+    frameLight.push([frameSims, room, sim.step, preHeard, preOrigin]);
     if (sinceBake % FRAME_FULL_EVERY === 0 && fullSinceBake < FRAME_FULL_PER_BAKE && frameFull.length < FRAME_FULL_MAX) {
       const run = (scene as unknown as { run?: ProbeRun }).run;
       const view = run && typeof run.view === 'function' ? run.view() : null;
@@ -362,6 +408,15 @@ export function createProbe(inspect: Inspect) {
       fullSinceBake += 1;
     }
     sinceBake += 1;
+  }
+
+  // The frame hooks, installed once: the prestep listener after the driver's, the poststep one after every scene's update.
+  function hookFrames(): void {
+    const g = inspect.game();
+    if (!g || frameHooked) return;
+    frameHooked = true;
+    g.events.on(PRE_STEP, onPreStep);
+    g.events.on(POST_STEP, onPostStep);
   }
 
   // Runs in the capture phase on window after the game's own key listeners, inside the same dispatch, so the clock
@@ -489,15 +544,22 @@ export function createProbe(inspect: Inspect) {
       frameSims = 0;
       frameBake = '';
       frameLogOn = true;
-      const g = inspect.game();
-      if (g && !frameHooked) {
-        frameHooked = true;
-        g.events.on(POST_STEP, onPostStep);
-      }
+      hookFrames();
     },
     frameLogTake(): FrameLog {
       frameLogOn = false;
-      return { light: frameLight.splice(0, frameLight.length), full: frameFull.splice(0, frameFull.length), dropped: frameDropped };
+      const cal = inspect.calibration();
+      return { light: frameLight.splice(0, frameLight.length), full: frameFull.splice(0, frameFull.length), dropped: frameDropped, avOffset: cal ? cal.avOffset : null };
+    },
+    // Review R5 (MAJOR 2): logs every frame of the scene `ending` from now on, until endingLogTake.
+    endingLogStart(): void {
+      endingFrames.length = 0;
+      endingLogOn = true;
+      hookFrames();
+    },
+    endingLogTake(): EndingFrame[] {
+      endingLogOn = false;
+      return endingFrames.splice(0, endingFrames.length);
     },
     // The pixels of the texture `key` at the given pixels (x right, y down from the top left), as stored: a baked
     // DynamicTexture holds premultiplied bytes (review R3, MAJOR 1 and 2). Null for a missing texture or one that is not

@@ -43,7 +43,10 @@ import { compileWorld } from '../tests/fixtures/oracle/index.mjs';
 import { FIELDS } from '../tests/fixtures/oracle/sim.mjs';
 import { bootGame, emitJson, endingLayoutProblems, extraTexts, gauntletMapProblems, keyReplayProblems, launch, loadWitnesses, openPage, originViolations, parseOptions, playLayoutProblems, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
 import { loadRoomFiles } from './replay.mjs';
-import { endingDrawnProblems, frameLogProblems, glimpseBake, pixelProblems, roomBakes } from './scene-check.mjs';
+import { endingDrawnProblems, endingTimingProblems, frameLogProblems, glimpseBake, pixelProblems, roomBakes, stepTimingProblems } from './scene-check.mjs';
+
+// Review R5 (MAJOR 2): the fewest play-scene frames the scene check must hold to the heard time over a playthrough.
+const MIN_TIMED_FRAMES = 300;
 
 const ALL = ['console', 'play', 'text', 'network', 'storage', 'unlock'];
 const OPTIONAL = ['visibility', 'scene', 'keys'];
@@ -327,7 +330,7 @@ async function main(argv) {
     // The scene check reads each room once, half-way to the step its witness clears it on, the layout and the sim in
     // one page read.
     const world = want.includes('scene') || want.includes('keys') ? compileWorld(loadRoomFiles(path.resolve(REPO, o.rooms))) : null;
-    const scene = { sampled: new Set(), problems: [], endingReads: want.includes('scene') ? [] : null, logs: [], frames: 0, held: 0, rings: 0, pixels: 0, fixedRead: false };
+    const scene = { sampled: new Set(), problems: [], endingReads: want.includes('scene') ? [] : null, logs: [], frames: 0, held: 0, rings: 0, pixels: 0, fixedRead: false, timed: 0, worst: 0 };
     const glimpse = want.includes('scene') ? glimpseBake() : null;
     const onPoll = want.includes('scene') ? async (w, s, clearStep) => {
       if (scene.sampled.has(w.room) || clearStep === null || s.step < clearStep / 2 || s.status.room !== w.room) return;
@@ -370,7 +373,11 @@ async function main(argv) {
       },
     });
     const last = rooms.length ? rooms[rooms.length - 1] : null;
+    // Review R5 (MAJOR 2): every frame of the ending is logged with the heard time around it, so the card is judged on the
+    // beat heard while the scene drew it.
+    if (want.includes('scene')) await page.evaluate(() => window.__hush.endingLogStart());
     const ending = await watchEnding(page, { playtest, layouts: scene.endingReads, glimpse });
+    const endingLog = want.includes('scene') ? await page.evaluate(() => window.__hush.endingLogTake()) : null;
     if (want.includes('scene') && witnesses.length) {
       scene.logs.push({ w: witnesses[witnesses.length - 1], log: await page.evaluate(() => window.__hush.frameLogTake()) });
       for (const { w, log } of scene.logs) {
@@ -379,7 +386,13 @@ async function main(argv) {
         scene.held += r.held;
         scene.rings += r.rings;
         scene.problems.push(...r.problems);
+        // Review R5 (MAJOR 2): every frame's step against the heard time the driver ran on.
+        const t = stepTimingProblems(log ? log.light : [], { avOffset: log ? log.avOffset : 0, label: `room ${w.stem}` });
+        scene.timed += t.judged;
+        if (Math.abs(t.worst) > Math.abs(scene.worst)) scene.worst = t.worst;
+        scene.problems.push(...t.problems);
       }
+      if (scene.timed < MIN_TIMED_FRAMES) scene.problems.push(`${scene.timed} frames timed against the heard music, want at least ${MIN_TIMED_FRAMES}`);
     }
     process.stdout.write(`play: ${label}: ending ${ending.started ? `seen, texts read ${ending.ms} ms into it` : 'never started'}\n`);
     if (want.includes('visibility')) {
@@ -390,14 +403,15 @@ async function main(argv) {
       const unread = witnesses.filter((w) => !scene.sampled.has(w.room)).map((w) => w.stem);
       if (unread.length) scene.problems.push(`no layout read in ${unread.join(', ')}`);
       const drawn = ending.started ? endingDrawnProblems(scene.endingReads) : { problems: [], rise: 0, card: 0 };
+      const cardTimed = ending.started ? endingTimingProblems(endingLog) : { problems: [], judged: 0 };
       const endingSide = ending.started
-        ? [...endingLayoutProblems(scene.endingReads), ...drawn.problems, ...pixelProblems(glimpse, ending.glimpsePixels, 'ending')]
+        ? [...endingLayoutProblems(scene.endingReads), ...drawn.problems, ...cardTimed.problems, ...pixelProblems(glimpse, ending.glimpsePixels, 'ending')]
         : ['the ending never started, so its layout was not read'];
       // The rooms' first problems and the ending's, so that neither hides the other.
       const shown = [...scene.problems.slice(0, 3), ...endingSide.slice(0, 2)];
       checks.scene = {
         ok: scene.problems.length + endingSide.length === 0,
-        detail: shown.join('; ') || `${scene.sampled.size} rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, ${scene.pixels} bake pixels as their shapes; every frame of every run replayed, ${scene.frames} drawn command for command as the reference (${scene.held} while the limiter held a change, ${scene.rings} with a layer's ring); the glimpse risen to y 0 by the card, ${drawn.rise} reads of the ceiling and ${drawn.card} of the card on the beat as the reference, ${glimpse.probe.length} glimpse pixels (${scene.endingReads.length} ending reads)`,
+        detail: shown.join('; ') || `${scene.sampled.size} rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, ${scene.pixels} bake pixels as their shapes; every frame of every run replayed, ${scene.frames} drawn command for command as the reference (${scene.held} while the limiter held a change, ${scene.rings} with a layer's ring); ${scene.timed} frames on the step the heard time gives (the farthest ${scene.worst} step(s) off); the glimpse risen to y 0 by the card, ${drawn.rise} reads of the ceiling and ${drawn.card} of the card on the beat as the reference, ${cardTimed.judged} card frames on the beat heard while drawn, ${glimpse.probe.length} glimpse pixels (${scene.endingReads.length} ending reads)`,
       };
     }
     if (want.includes('keys')) {

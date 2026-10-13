@@ -1,0 +1,29 @@
+HUSH-EVIDENCE v1
+id: R5-mutant-frame-late50
+phase: amend
+command: node tools/probe-play.mjs --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\95d5d167-b43c-4c9c-b2a4-e90801cc293a\scratchpad\mut\frame-late50\dist --query playtest --check console,play,text,scene
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T14:43:28-05:00
+time-end: 2026-10-13T14:46:21-05:00
+head: 0c71236f2ccbdca8dd3315a2d4479ecfe967bc75
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 03-dash done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 05-doors done
+play: chrome headless: room 06-wave done
+play: chrome headless: room 07-current done
+play: chrome headless: room 08-steps done
+play: chrome headless: room 09-gates done
+play: chrome headless: room 10-crown done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 10170 ms into it
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: chrome headless: text: ok: title, link and notice only, and once the card is up "run 0:59 · deaths 0"; nothing over the canvas; no text object
+play: chrome headless: scene: FAIL: room 01-wake: a frame in room 1 at step 0, where the heard time gives step 8 (section 9.1: 8 steps behind the music); room 01-wake: a frame in room 1 at step 0, where the heard time gives step 12 (section 9.1: 12 steps behind the music); room 01-wake: a frame in room 1 at step 4, where the heard time gives step 16 (section 9.1: 12 steps behind the music)
+play: chrome headless: FAIL (console,play,text,scene)
+--- end ---
