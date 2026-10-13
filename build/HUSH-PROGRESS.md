@@ -53,6 +53,9 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - A check that compares only the state a run settles into cannot see a uniform shift in time where nothing moves on the beat: room 1 ends in the same state whether every key came 10 steps late or not. Compare states read while something moves. And when a fault makes the input late, it can hide behind the "next tick" rule: also hold the sim's own step to where the calibration puts it (producer, review R2, the key check).
 - A browser mutant built in a scratch copy needs the working tree's src/probe, or the probe fails for the wrong reason (exit 2, a missing API). The cap hook's detach ban matches the word "detached" anywhere in a shell call, an evidence name included (producer, review R2).
 - Review R3 found the class a third time. R2's `scene` check read where each image and Graphics sits, not what it draws, so an empty bake or an undrawn list passed. A check of a picture reads the picture itself: each Graphics' own command buffer and each baked texture's pixels, against the reference for that frame's state (producer, review R3).
+- superdough connects nodes of its own to the speakers: its timers' zero gains and its own output, which no patched orbit feeds. So "the analyser is the speakers' only input" fails a correct page. The rule that holds is that every other input is silent by construction (producer, review R3, MINOR 4).
+- An evidence run piped into PowerShell's `Select-Object -First` is killed when the pipe closes, and writes no record (exit 255). Filter the whole output with `Select-String`, or read the file afterwards (producer, review R3).
+- A synthetic tap can be placed on a ring only once the frame that drew it is seen, about one frame late. A tap pattern for pass B must start at 25 ms or more, or its early taps land a frame late and shift the values (producer, review R3, MINOR 6).
 
 ## Rounds
 

@@ -226,7 +226,7 @@ DISPOSITION: R3-MINOR1 | CL1's stale-pair rule is never reached by its test | 20
 - The scenario 'stale pairs after a resume' starts its device's clock at 2000 ms, so its stale stamps are positive and reach the stale rule. Control: CLOCK_STALE 5000 in the reference.
 DISPOSITION: R3-MINOR2 | FX1's test never asks for a sum exactly at the limit | 2026-10-12T22:44:00-05:00 | to fix by amendment (test)
 - A request of exactly 25,600 px in a fresh frame must come back under 0.1, and one of 25,599 px must pass. Control: `>` for `>=` in the reference.
-- MINOR 1 and MINOR 2 fixed 2026-10-12T22:50-05:00 in the commit `hush-spec: amend CL1 FX1 ...` after `b94a366`.
+- MINOR 1 and MINOR 2 fixed 2026-10-12T22:47-05:00 in the commit `hush-spec: amend CL1 FX1 ...` after `b94a366`.
   - On the product: CL1's test passes 11 of 11 (build/evidence/CL1.amend.1.txt) and FX1's 4 of 4 (build/evidence/FX1.amend.1.txt).
   - Controls: each case is green on its reference and red on its fault, with the clock's and the limiter's earlier cases (build/evidence/R3-product-controls.amend.1.txt, 7 of 7).
   - The spec: FX1's acceptance (4 tests), section 11's edge, section 15's row and section 1.6.
@@ -241,7 +241,7 @@ DISPOSITION: R3-MINOR4 | the engine's mix values (section 8.4) are unpinned | 20
   - the compressor (-10, 6, 4, 0.005, 0.12) into the master;
   - the ten gates and one more input (the calibration orbit) into the compressor.
 - The control page builds the same graph. Control: the control page with ?av=master-low (the master at 0.4).
-- Fixed 2026-10-12T23:36-05:00 in the commit `hush-spec: amend the av probe ...` after `2e40fab`.
+- Fixed 2026-10-12T23:43-05:00 in the commit `hush-spec: amend the av probe ...` after `2e40fab`.
   - The first product run (build/evidence/R3-av-product.amend.1.txt, exit 1) found the speakers fed by the analyser and six GainNodes. They are superdough's: its timers' zero gains (helpers.mjs webAudioTimeout) and its own output, a merger into a gain (superdoughoutput.mjs), which every patched orbit leaves unfed. So the rule is now "every other input of the speakers is silent by construction", read from the recorded edges into and out of the mergers. The walk starts at the master analyser among the speakers' inputs.
   - On the product: `npm run probe:av -- --headed` passes. The speakers take the analyser and 6 other inputs, all silent by construction; the master gain is 0.8, the compressor -10 6 4 0.005 0.12, and 10 of 10 gates feed it (build/evidence/R3-av-product.amend.2.txt).
   - Controls: the control page passes with the same chain. ?av=master-low fails on the mix alone, and the three earlier faults keep their verdicts (build/evidence/R3-av-controls.amend.1.txt, 5 of 5). In Node, tests/tools/probe-lib.test.mjs passes 13 of 13, with a halved master, a compressor off by one value, a missing gate, a sounding bypass, an analyser not at the speakers and an unreadable graph each failing.
@@ -253,11 +253,30 @@ DISPOSITION: R3-MINOR5 | no test presses Escape | 2026-10-12T22:44:00-05:00 | to
 DISPOSITION: R3-MINOR6 | section 12's count-in tap window is untested | 2026-10-12T22:44:00-05:00 | to fix by amendment (verifier)
 - The tapper also taps the count-in (clicks and rings 0 to 3). It spreads its taps over the intended offset ± 19 ms in a fixed pattern, so that taps a scene wrongly admits move the median by more than the 0.5 ms the check allows. tapLogValues already drops the count-in taps, as section 12 does.
 - Control: the control page with ?calib=nowindow.
-- MINOR 5 and MINOR 6 fixed 2026-10-12T23:21-05:00 in the commit `hush-spec: amend CAL2 ...` after `8d952df`.
+- MINOR 5 and MINOR 6 fixed 2026-10-12T23:20-05:00 in the commit `hush-spec: amend CAL2 ...` after `8d952df`.
   - The spread as landed: pass A's taps 21 to 59 ms after the clicks (40 at the median). Pass B's are 25 to 44 ms after the rings (34.5 at the median), because a ring's tap is placed only once the frame that drew it is seen. A first control run with pass B spread around 25 ms landed its early taps a frame late: the control page judged by its own taps (8.9 32.4, the taps' own 8.9 32.4), outside the control's old range (build/evidence/R3-calibration-controls.amend.1.txt, 3 of 4). So the marks are now the medians, 5.5 and 34.5.
   - The tapper's log must show 4 count-in taps and 3 Escapes in every attempt, so the check never passes a scene it did not test.
   - On the product: CAL2's acceptance passes, `values 0 0, Escape ignored`, tapped `values 5.6 34.5 (the taps' own 5.6 34.5 ...)`, `flash: PASS` (build/evidence/CAL2.amend.4.txt; .3 was the run before the pass B change).
   - Controls: the control page passes untouched and tapped. ?calib=escape fails on the audio started by Escape and on its values; ?calib=nowindow fails on its values alone; the eight earlier faults keep their verdicts (build/evidence/R3-calibration-controls.amend.2.txt and .3.txt, 10 of 10). In Node, tests/tools/calibration-check.test.mjs passes 10 of 10, and the verifier suite 245 of 245 (build/evidence/R3-verifiers.amend.1.txt).
 DISPOSITION: R3-NOTE1 | the run's view has no reference | 2026-10-12T22:44:00-05:00 | no action (MAJOR 1's fit reads the creature within one step)
 DISPOSITION: R3-NOTE2 | three equivalent mutations | 2026-10-12T22:44:00-05:00 | no action
+
+State at 2026-10-12T23:46-05:00, the end of this producer session. Five of the eight findings are fixed: MINOR 1, 2, 4, 5 and 6, each in its own amendment commit with standing GREEN (8d952df, 2e40fab, 6a6a0ed); the digest is now 4bcf57c4.
+- MAJOR 1, MAJOR 2 and MINOR 3 remain, as their dispositions above say. There is no FIX R3 line yet, so the next producer starts at re-entry row 8: it finishes FIX R3, then runs review R4.
+- This session stopped with 4h25m of its 6 active hours used. The content check needs about three hours with its controls, which could not be finished and verified inside the cap.
+- Notes for that work, read this session from Phaser 4.2.1's source (node_modules/phaser/src):
+  - A Graphics' commandBuffer holds numbers, plus one boolean for an arc's direction:
+    - FILL_STYLE 7 (c, a), FILL_RECT 3 (x, y, w, h), FILL_TRIANGLE 10 (six numbers);
+    - LINE_STYLE 6 (lw, c, a), BEGIN_PATH 1, MOVE_TO 5 (x, y), LINE_TO 4 (x, y), FILL_PATH 8, STROKE_PATH 9;
+    - ARC 0 (x, y, r, start, end, anticlockwise, overshoot), CLOSE_PATH 2.
+  - How each drawShapes call encodes:
+    - fillPoints and strokePoints with closeShape true close with a LINE_TO back to the first point, not CLOSE_PATH.
+    - fillEllipse(x, y, w, h) is fillPoints of 32 points, x + (w/2) cos(TAU i / 32) and y + (h/2) sin(TAU i / 32), closed.
+    - strokeCircle is BEGIN_PATH, ARC x y r 0 TAU false 0, STROKE_PATH.
+    - strokeRect draws four two-point paths with the current line width lw: x down, x + w down, and the top and bottom from x - lw/2 to x + w + lw/2.
+  - A Graphics made by add.graphics() has no default styles, so clear() leaves an empty buffer. The reference's lists can therefore be encoded in Node into the exact buffer drawShapes must leave, with no browser.
+  - DynamicTexture.snapshotPixel(x, y, cb) is synchronous on WebGL. It reads one pixel of the texture's framebuffer at (x, height - y - 1), so y counts from the top, and returns the bytes as stored (premultiplied alpha). A full-texture snapshot instead goes through a PNG and un-premultiplies.
+  - The play scene's frame needs the run's view (prevX, x, alpha) to recompute the creature and the ring, and Inspect does not carry it. The witness's own states give prevX and x. alpha can be fitted (the one that reproduces the recorded camera and creature), or Inspect can gain view(), with an applier for src/main.ts.
+  - The beat entities and the dust need no view. The camera is in the first chunk's x, and the levels can be replayed from the room's first frame, since the scene resets them to [] on its bake.
+  - superdough adds inputs of its own to the speakers (MINOR 4's notes above).
 
