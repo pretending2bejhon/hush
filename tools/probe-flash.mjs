@@ -16,7 +16,10 @@
 // a retried calibration: the tapper leaves each pass's first attempt untapped, so the scene must repeat both passes,
 // be left after four attempts and use the repeats' values. Review R4 (MAJOR 1): in all three runs, every click of every
 // pass-A attempt must start within 1 ms of its mark, read from the starts the page records (clickStartProblems), the
-// untouched run's attempts watched without a tap. A run that streamed fewer than 30
+// untouched run's attempts watched without a tap. Review R5 (MAJOR 1): in all three runs, every frame of the scene is
+// logged between Phaser's prestep and poststep, and pass A's count-in fills, pass B's rings and its frameTimes must show
+// in their windows (calibFrameProblems). Review R5 (NOTE 2): each calibration page, once its scene is left, must have
+// logged no console or page error, asked no other origin and stored nothing (X5 and X10). A run that streamed fewer than 30
 // frames a second (median), or whose playthrough did not clear every room, cannot pass: what was not seen was
 // not measured.
 // Exit 0 PASS, 1 FAIL, 2 usage, a missing dist or a page that never boots.
@@ -25,12 +28,28 @@ import path from 'node:path';
 import { centreSum, judgeCalibration, judgeTapped, TAP_A_MS, TAP_B_MS } from './calibration-check.mjs';
 import { createFlashAnalyzer } from './flash-analyzer.mjs';
 import { decodePng } from './png.mjs';
-import { bootGame, emitJson, headSha, launch, loadWitnesses, openGame, openPage, parseOptions, playthrough, REPO, requireDist, serveDir, verdictDigest } from './probe-lib.mjs';
+import { bootGame, emitJson, headSha, launch, loadWitnesses, openGame, openPage, originViolations, parseOptions, playthrough, REPO, requireDist, serveDir, storageReport, verdictDigest } from './probe-lib.mjs';
 
 export const MAX_MEDIAN_FRAME_MS = 34;
 export const CALIBRATION_TIMEOUT_MS = 120000;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// Review R5 (MAJOR 1): how many of a run's frames were held to their windows.
+const timedLine = (r) => `frames ${r.timed} timed (${r.timedFills} filled, ${r.timedRings} with the ring)`;
+
+// Review R5 (NOTE 2): X5 and X10 over the real calibration scene. Each calibration page, read once its scene is left, must
+// have logged no console or page error, asked no origin but its own and stored nothing (probe-lib storageReport), as the
+// playthrough's page must.
+async function pageProblems(name, page, context, log, origin) {
+  const problems = [];
+  const errors = [...log.pageErrors, ...log.consoleErrors];
+  if (errors.length) problems.push(`${name} page: ${errors.length} console or page error(s): ${errors.slice(0, 2).join(' | ')}`);
+  const away = originViolations(log.requests, [origin]);
+  if (away.length) problems.push(`${name} page: requests to other origins: ${away.join(', ')}`);
+  const storage = await storageReport(page, context);
+  if (!storage.clean) problems.push(`${name} page: something was stored: ${JSON.stringify(storage)}`);
+  return problems;
+}
 
 // The untouched calibration: Escape first, which must start nothing (review R3, MINOR 5), then one key the game
 // ignores starts the audio; the analyser is sampled until the scene `calibration` is gone. Returns the wall-clock
@@ -57,9 +76,11 @@ async function runCalibration(page) {
   const values = await page.evaluate(() => window.__hush.calibration());
   const starts = (await page.evaluate(() => window.__hush.starts())).starts;
   const attempts = (await page.evaluate(() => window.__hush.tapLog())).attempts;
+  // Review R5 (MAJOR 1): every frame of the scene, logged from watchCalibration on.
+  const frames = await page.evaluate(() => window.__hush.calibLogTake());
   // A scene that never hands over is left by the probe, so the rooms are still measured.
   if (stuck) await page.evaluate(() => window.__hush.skipCalibration(0, 0));
-  return { t0, left, stuck, samples, values, esc, starts, attempts };
+  return { t0, left, stuck, samples, values, esc, starts, attempts, frames };
 }
 
 // The tapped calibration, on a page of its own: one key starts the audio, then the probe's tapper (src/probe/api.ts
@@ -67,7 +88,7 @@ async function runCalibration(page) {
 // use are read once the scene `calibration` is gone. With `retry` (review R4, MAJOR 2) the tapper leaves the first
 // attempt of each pass untapped, so the scene must repeat both passes and judge the repeats.
 async function runTapped(browser, url, query, retry = false) {
-  const { page } = await openPage(browser);
+  const { context, page, log } = await openPage(browser);
   await openGame(page, url, { query });
   const t0 = Date.now();
   await page.keyboard.press('KeyQ');
@@ -81,16 +102,21 @@ async function runTapped(browser, url, query, retry = false) {
     else await sleep(50);
   }
   const values = await page.evaluate(() => window.__hush.calibration());
-  const log = await page.evaluate(() => window.__hush.tapLog());
+  const tapLog = await page.evaluate(() => window.__hush.tapLog());
   // Review R4 (MAJOR 1): every start, the clicks among them, since the page opened.
   const starts = (await page.evaluate(() => window.__hush.starts())).starts;
+  // Review R5 (MAJOR 1): every frame of the scene, logged from tapCalibration on.
+  const frames = await page.evaluate(() => window.__hush.calibLogTake());
   // Review R2 (MAJOR 4): the hand-over starts a run at room 1, which must be running.
   const read = () => page.evaluate(() => { const s = window.__hush.sim(); return { scenes: window.__hush.scenes(), room: s ? s.status.room : null, step: s ? s.step : null }; });
   const a = await read();
   await sleep(600);
   const b = await read();
+  const pp = await pageProblems(retry ? 'retried calibration' : 'tapped calibration', page, context, log, new URL(url).origin);
   await page.close();
-  return judgeTapped({ seconds: (left - t0) / 1000, values, log, handover: { scenes: b.scenes, room: b.room, from: a.step, to: b.step }, retry, starts });
+  const verdict = judgeTapped({ seconds: (left - t0) / 1000, values, log: tapLog, handover: { scenes: b.scenes, room: b.room, from: a.step, to: b.step }, retry, starts, frames });
+  verdict.problems.push(...pp);
+  return verdict;
 }
 
 async function main(argv) {
@@ -109,7 +135,7 @@ async function main(argv) {
   const frameErrors = [];
   const centre = [];
   try {
-    const { context, page } = await openPage(browser);
+    const { context, page, log } = await openPage(browser);
     try {
       if (o.calibration) await openGame(page, srv.url, { query: o.query });
       else await bootGame(page, srv.url, { query: o.query });
@@ -155,8 +181,9 @@ async function main(argv) {
       const c = await runCalibration(page);
       await chain;
       const trace = centre.filter((p) => p.t >= c.t0 && p.t <= c.left);
-      calib = judgeCalibration({ seconds: (c.left - c.t0) / 1000, samples: c.samples, trace, values: c.values, escape: c.esc, starts: c.starts, attempts: c.attempts });
+      calib = judgeCalibration({ seconds: (c.left - c.t0) / 1000, samples: c.samples, trace, values: c.values, escape: c.esc, starts: c.starts, attempts: c.attempts, frames: c.frames });
       if (c.stuck) calib.problems.unshift(`the calibration scene was still up after ${CALIBRATION_TIMEOUT_MS / 1000} s`);
+      calib.problems.push(...(await pageProblems('calibration', page, context, log, srv.origin)));
     }
     rooms = await playthrough(page, witnesses);
     await page.waitForTimeout(o.tailSeconds * 1000);
@@ -190,17 +217,17 @@ async function main(argv) {
   if (retried) problems.push(...retried.problems);
   const pass = problems.length === 0;
   if (calib) {
-    process.stdout.write(`flash: calibration up ${calib.seconds} s: clicks ${calib.clicks}, count-in fills ${calib.fills}, rings ${calib.rings}, values ${calib.values ? `${calib.values.avOffset} ${calib.values.inputBias}` : 'none'}, Escape ${calib.escape ? 'ignored' : 'not ignored'} (${calib.frames} frames, ${calib.samples} analyser samples); click starts ${calib.clickStarts} of ${calib.clickMarks} on their marks\n`);
+    process.stdout.write(`flash: calibration up ${calib.seconds} s: clicks ${calib.clicks}, count-in fills ${calib.fills}, rings ${calib.rings}, values ${calib.values ? `${calib.values.avOffset} ${calib.values.inputBias}` : 'none'}, Escape ${calib.escape ? 'ignored' : 'not ignored'} (${calib.frames} frames, ${calib.samples} analyser samples); click starts ${calib.clickStarts} of ${calib.clickMarks} on their marks; ${timedLine(calib)}\n`);
   }
   if (tapped) {
     const v = tapped.values;
     const own = tapped.own;
-    process.stdout.write(`flash: tapped calibration up ${tapped.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (the taps' own ${own ? `${own.avOffset.toFixed(1)} ${own.inputBias.toFixed(1)}`: 'none'}; taps ${TAP_A_MS - 19} to ${TAP_A_MS + 19} ms after each click and ${TAP_B_MS} to ${TAP_B_MS + 19} ms after each ring, the count-in's too, and Escape 3 times an attempt; marks ${tapped.marks.avOffset} ${tapped.marks.inputBias}); click starts ${tapped.clickStarts} of ${tapped.clickMarks} on their marks\n`);
+    process.stdout.write(`flash: tapped calibration up ${tapped.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (the taps' own ${own ? `${own.avOffset.toFixed(1)} ${own.inputBias.toFixed(1)}`: 'none'}; taps ${TAP_A_MS - 19} to ${TAP_A_MS + 19} ms after each click and ${TAP_B_MS} to ${TAP_B_MS + 19} ms after each ring, the count-in's too, and Escape 3 times an attempt; marks ${tapped.marks.avOffset} ${tapped.marks.inputBias}); click starts ${tapped.clickStarts} of ${tapped.clickMarks} on their marks; ${timedLine(tapped)}\n`);
   }
   if (retried) {
     const v = retried.values;
     const own = retried.own;
-    process.stdout.write(`flash: retried calibration up ${retried.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (the taps' own ${own ? `${own.avOffset.toFixed(1)} ${own.inputBias.toFixed(1)}`: 'none'}; A1 and B1 untapped, A2 and B2 tapped as above; marks ${retried.marks.avOffset} ${retried.marks.inputBias}); click starts ${retried.clickStarts} of ${retried.clickMarks} on their marks\n`);
+    process.stdout.write(`flash: retried calibration up ${retried.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (the taps' own ${own ? `${own.avOffset.toFixed(1)} ${own.inputBias.toFixed(1)}`: 'none'}; A1 and B1 untapped, A2 and B2 tapped as above; marks ${retried.marks.avOffset} ${retried.marks.inputBias}); click starts ${retried.clickStarts} of ${retried.clickMarks} on their marks; ${timedLine(retried)}\n`);
   }
   if (result) {
     process.stdout.write(`flash: ${result.frames} frames over ${result.seconds.toFixed(1)} s, median ${result.medianFrameMs} ms; general max ${result.maxGeneralArea} px, red max ${result.maxRedArea} px (limit ${result.areaLimit})\n`);

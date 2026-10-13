@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R5-calibration-controls
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/controls/calibration-probe.test.mjs -t "after their windows|after their clicks|after the frames that drew"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T17:04:46-05:00
+time-end: 2026-10-13T17:10:57-05:00
+head: ab131acf29613c041c1e3d6088648a21e70c525e
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed | 13 skipped (16)
+   Start at  17:04:47
+   Duration  369.99s (tests 100%)
+
+--- end ---

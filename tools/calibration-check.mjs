@@ -23,9 +23,14 @@
 // attempt of each pass, so a scene that keeps a pass's first result cannot pass.
 // Review R4 (MAJOR 1): and every click of pass A, in each of the three runs, must start on the mark the scene judges taps
 // by (clickStartProblems), read from the starts the page records, so a click that sounds off its mark cannot pass.
+// Review R5 (MAJOR 1): and every picture, in each of the three runs, must show when section 12 says, held to the same
+// marks (calibFrameProblems): each frame of the scene is logged between Phaser's prestep and poststep, so the scene's own
+// frameMs and heard time lie in a known bracket, and pass A's count-in fills, pass B's rings and frameTimes are held to
+// their windows, so a picture shown off the time the scene judges taps by cannot pass.
 import { calibrate, judgePass } from '../tests/fixtures/calibration/reference.mjs';
 import { luminance } from './flash-analyzer.mjs';
 import { isVoiceStart } from './probe-lib.mjs';
+import { bufferDifference, CMD, encodeShapes } from './scene-check.mjs';
 
 export const BEAT_S = 60 / 140;
 export const MIN_SECONDS = 39.4;
@@ -128,11 +133,218 @@ export function clickStartProblems(starts, attempts, name) {
   return { problems, clicks: on, marks: passA.length * CLICKS };
 }
 
+// Review R5 (MAJOR 1): when each picture shows. The probe logs every frame of the scene `calibration` (src/probe/api.ts
+// calibLogTake): performance.now() and the heard time at Phaser's prestep and at its poststep, between which the scene read
+// its frameMs and its heard time (no timer runs inside the frame, so both ends use the clock line the scene used), the
+// attempt live at each end, and each Graphics as drawn. A frame is drawn for the attempt live at its poststep; an
+// attempt's last frame and the frames between attempts are drawn for none. Every Graphics that shows must hold one of
+// section 12's pictures as Phaser 4.2.1 encodes them (CALIB_DRAW), or nothing, and the key shape must show in every frame.
+// Then, in every attempt of the record:
+// - pass A: the key is filled if and only if t0 + i x BEAT <= heard < t0 + i x BEAT + SIXTEENTH for some i below
+//   COUNT_IN, and no ring shows;
+// - pass B: the ring shows if and only if d_i <= frameMs < d_i + SIXTEENTH for some i, the key stays plain, and each
+//   frameTimes[i] lies in its window and in the bracket of the first frame that drew ring i (absent when none did);
+// - for no attempt: the key plain and no ring.
+// A frame whose bracket holds a window's edge, or whose heard time could not be read at either end (the scene then decides
+// nothing), is not judged. Each attempt must have CALIB_MIN_FRAMES frames judged, pass A's CALIB_MIN_FILL_FRAMES of them
+// filled and pass B's CALIB_MIN_RING_FRAMES with the ring, so the check never passes an attempt it did not watch.
+const SIXTEENTH_S = BEAT_S / 4;
+export const CALIB_MIN_FRAMES = 200;
+export const CALIB_MIN_FILL_FRAMES = 8;
+export const CALIB_MIN_RING_FRAMES = 48;
+const CAL_COLOUR = 0x7fd6ff;
+const KEY_BOX = Object.freeze({ x: 600, y: 320, w: 80, h: 80, r: 14 });
+const PI_2 = Math.PI / 2;
+
+// Graphics.fillRoundedRect(x, y, w, h, r) of Phaser 4.2.1 (src/gameobjects/graphics/Graphics.js) with one positive radius:
+// one path from the top edge round the four corners, each corner an ARC, filled.
+function fillRoundedRect({ x, y, w, h, r }) {
+  const arc = (cx, cy, a0, a1) => [CMD.ARC, cx, cy, r, a0, a1, false, 0];
+  return [CMD.BEGIN_PATH, CMD.MOVE_TO, x + r, y, CMD.LINE_TO, x + w - r, y, ...arc(x + w - r, y + r, -PI_2, 0),
+    CMD.LINE_TO, x + w, y + h - r, ...arc(x + w - r, y + h - r, 0, PI_2), CMD.LINE_TO, x + r, y + h, ...arc(x + r, y + h - r, PI_2, Math.PI),
+    CMD.LINE_TO, x, y + r, ...arc(x + r, y + r, -Math.PI, -PI_2), CMD.FILL_PATH];
+}
+
+// Graphics.strokeRoundedRect: the same outline with a MOVE_TO after every LINE_TO and the radius at most half the shorter
+// side, stroked.
+function strokeRoundedRect({ x, y, w, h, r: radius }) {
+  const r = Math.min(radius, Math.min(w, h) / 2);
+  const arc = (cx, cy, a0, a1) => [CMD.ARC, cx, cy, r, a0, a1, false, 0];
+  const side = (px, py) => [CMD.LINE_TO, px, py, CMD.MOVE_TO, px, py];
+  return [CMD.BEGIN_PATH, CMD.MOVE_TO, x + r, y, ...side(x + w - r, y), ...arc(x + w - r, y + r, -PI_2, 0),
+    ...side(x + w, y + h - r), ...arc(x + w - r, y + h - r, 0, PI_2), ...side(x + r, y + h), ...arc(x + r, y + h - r, PI_2, Math.PI),
+    ...side(x, y + r), ...arc(x + r, y + r, -Math.PI, -PI_2), CMD.STROKE_PATH];
+}
+
+// Section 12's pictures as a Graphics cleared with no default style holds them: the key shape plain (its 3 px stroke at
+// alpha 0.8) or filled (the fill at alpha 0.6 under the stroke), and the ring (a 3 px stroke at alpha 1, strokeCircle).
+export const CALIB_DRAW = Object.freeze({
+  keyPlain: Object.freeze([CMD.LINE_STYLE, 3, CAL_COLOUR, 0.8, ...strokeRoundedRect(KEY_BOX)]),
+  keyFilled: Object.freeze([CMD.FILL_STYLE, CAL_COLOUR, 0.6, ...fillRoundedRect(KEY_BOX), CMD.LINE_STYLE, 3, CAL_COLOUR, 0.8, ...strokeRoundedRect(KEY_BOX)]),
+  ring: Object.freeze(encodeShapes([{ k: 'ring', x: 640, y: 360, r: 50, lw: 3, c: CAL_COLOUR, a: 1 }])),
+});
+
+// What one logged Graphics shows: 'hidden', 'empty', one of CALIB_DRAW's names, or a phrase naming what it shows instead.
+function drawnKind(e) {
+  if (!e || !Array.isArray(e.buffer)) return 'a Graphics whose commands could not be read';
+  if (e.visible === false || !(e.alpha > 0)) return 'hidden';
+  if (!e.buffer.length) return 'empty';
+  const k = Object.keys(CALIB_DRAW).find((n) => !bufferDifference(e.buffer, CALIB_DRAW[n]));
+  if (!k) return `a Graphics drawing what section 12 does not draw (${e.buffer.length} entries)`;
+  if (e.alpha !== 1) return `the ${k === 'ring' ? 'ring' : 'key shape'} at alpha ${e.alpha}`;
+  return k;
+}
+
+// What a frame shows, from its Graphics: the key shape's state (keyPlain or keyFilled), how many key shapes and rings,
+// and anything else that shows. Frames share a few Graphics, so each set is classified once.
+function framePictures(graphics) {
+  const kinds = graphics.map(drawnKind);
+  const seen = new Map();
+  return (f) => {
+    const id = (f.g || []).join(',');
+    let s = seen.get(id);
+    if (!s) {
+      s = { key: null, keys: 0, rings: 0, odd: null };
+      for (const n of f.g || []) {
+        const k = kinds[n];
+        if (k === 'hidden' || k === 'empty') continue;
+        if (k === 'keyPlain' || k === 'keyFilled') { s.keys += 1; s.key = k; }
+        else if (k === 'ring') s.rings += 1;
+        else if (!s.odd) s.odd = k === undefined ? `a Graphics the log does not hold (${n})` : k;
+      }
+      seen.set(id, s);
+    }
+    return s;
+  };
+}
+
+// The window of section 12 holding a time: pass A's count-in fill i (heard seconds from t0), pass B's ring i (performance
+// ms from p0); -1 for none.
+function fillWindow(t0, h) {
+  for (let i = 0; i < COUNT_IN; i++) if (h >= t0 + i * BEAT_S && h < t0 + i * BEAT_S + SIXTEENTH_S) return i;
+  return -1;
+}
+function ringWindow(p0, ms) {
+  for (let i = 0; i < CLICKS; i++) if (ms >= p0 + i * BEAT_S * 1000 && ms < p0 + (i * BEAT_S + SIXTEENTH_S) * 1000) return i;
+  return -1;
+}
+// The nearest mark of an attempt to a time, as [i, offset in ms].
+function nearestMark(h, t0, n, scale) {
+  const i = Math.max(0, Math.min(n - 1, Math.round((h - t0) / (BEAT_S * scale))));
+  return [i, ((h - t0) / scale - i * BEAT_S) * 1000];
+}
+const signed = (v) => `${v >= 0 ? '+' : ''}${v.toFixed(1)} ms`;
+
+// Each kind of problem is said once, at its first frame, with the count of the frames that repeat it.
+export const CALIB_FRAME_PROBLEMS_MAX = 8;
+
+export function calibFrameProblems(log, attempts, name) {
+  const problems = [];
+  const out = { problems, judged: 0, fills: 0, rings: 0 };
+  const seen = new Map();
+  const note = (kind, s) => {
+    const p = seen.get(kind);
+    if (p) p.n += 1;
+    else seen.set(kind, { s, n: 1 });
+  };
+  const finish = () => {
+    for (const { s, n } of seen.values()) {
+      if (problems.length >= CALIB_FRAME_PROBLEMS_MAX) break;
+      problems.push(`${name} frames: ${s}${n > 1 ? ` (and ${n - 1} more like it)` : ''}`);
+    }
+    return out;
+  };
+  if (!log || !Array.isArray(log.frames) || !log.frames.length || !Array.isArray(log.graphics)) {
+    problems.push(`${name} frames: the probe logged no frame of the scene calibration`);
+    return out;
+  }
+  const list = Array.isArray(attempts) ? attempts : [];
+  if (!list.length) {
+    note('attempts', 'no attempt to hold the frames to');
+    return finish();
+  }
+  if (log.dropped) note('dropped', `the log dropped ${log.dropped} frames`);
+  const counts = {};
+  const labels = list.map((a) => `${a.pass}${(counts[a.pass] = (counts[a.pass] || 0) + 1)}`);
+  const pictures = framePictures(log.graphics);
+  const per = list.map(() => ({ judged: 0, fills: 0, rings: 0 }));
+  const readable = (f) => typeof f.hPre === 'number' && typeof f.hPost === 'number' && typeof f.pre === 'number' && typeof f.post === 'number';
+  for (const f of log.frames) {
+    if (!readable(f)) continue;
+    const s = pictures(f);
+    if (s.odd) { note('odd', `a frame shows ${s.odd}`); continue; }
+    if (s.keys !== 1) { note('keys', `a frame shows ${s.keys} key shapes (want the key shape in every frame, section 12)`); continue; }
+    const k = typeof f.aPost === 'number' ? f.aPost : -1;
+    const a = k >= 0 ? list[k] : null;
+    if (k >= 0 && !a) { note('record', `a frame names attempt ${k}, which the record lacks`); continue; }
+    const filled = s.key === 'keyFilled';
+    const ring = s.rings > 0;
+    if (!a) {
+      out.judged += 1;
+      if (filled || ring) note('none', `a frame drawn for no attempt shows ${filled ? 'the key filled' : 'the ring'} (want the key plain and no ring between attempts and on an attempt's last frame)`);
+      continue;
+    }
+    const label = labels[k];
+    if (a.pass === 'A') {
+      if (typeof a.t0 !== 'number') { note(`${label} t0`, `${label} has no t0`); continue; }
+      const w = fillWindow(a.t0, f.hPre);
+      if (w !== fillWindow(a.t0, f.hPost)) continue;
+      out.judged += 1;
+      per[k].judged += 1;
+      if (filled) { out.fills += 1; per[k].fills += 1; }
+      if (filled !== (w >= 0)) {
+        const [i, off] = nearestMark(f.hPre, a.t0, COUNT_IN, 1);
+        if (w >= 0) note(`${label} plain`, `${label}: a frame heard ${signed(off)} from count-in click ${i} shows the key plain (want it filled for a sixteenth from each count-in click)`);
+        else note(`${label} filled`, `${label}: a frame heard ${signed(off)} from count-in click ${i} shows the key filled (want it filled only for a sixteenth from each count-in click)`);
+      }
+      if (ring) note(`${label} ring`, `${label}: a frame shows the ring (want no ring in pass A)`);
+    } else {
+      if (typeof a.p0 !== 'number') { note(`${label} p0`, `${label} has no p0`); continue; }
+      const w = ringWindow(a.p0, f.pre);
+      if (w !== ringWindow(a.p0, f.post)) continue;
+      out.judged += 1;
+      per[k].judged += 1;
+      if (ring) { out.rings += 1; per[k].rings += 1; }
+      if (ring !== (w >= 0)) {
+        const [i, off] = nearestMark(f.pre / 1000, a.p0 / 1000, CLICKS, 1);
+        if (w >= 0) note(`${label} no ring`, `${label}: a frame ${signed(off)} from ring ${i}'s due time shows no ring (want the ring for a sixteenth from each due time)`);
+        else note(`${label} ring`, `${label}: a frame ${signed(off)} from ring ${i}'s due time shows the ring (want it only for a sixteenth from each due time)`);
+      }
+      if (s.rings > 1) note(`${label} rings`, `${label}: a frame shows ${s.rings} rings`);
+      if (filled) note(`${label} filled`, `${label}: a frame shows the key filled (want it plain in pass B)`);
+    }
+  }
+  // frameTimes: each the frameMs of the first frame that drew its ring, inside its window.
+  list.forEach((a, k) => {
+    if (a.pass !== 'B' || typeof a.p0 !== 'number') return;
+    const times = Array.isArray(a.frameTimes) ? a.frameTimes : [];
+    for (let i = 0; i < CLICKS; i++) {
+      const d = a.p0 + i * BEAT_S * 1000;
+      const end = d + SIXTEENTH_S * 1000;
+      const first = log.frames.find((f) => f.aPost === k && readable(f) && f.post >= d && f.pre < end && pictures(f).rings > 0);
+      const t = typeof times[i] === 'number' ? times[i] : null;
+      if (!first) {
+        if (t !== null) note(`${labels[k]} undrawn`, `${labels[k]}: frameTimes[${i}] is ${signed(t - d)} from its due time, but no frame drew ring ${i}`);
+      } else if (t === null || t < first.pre || t > first.post || t < d || t >= end) {
+        note(`${labels[k]} frameTimes`, `${labels[k]}: frameTimes[${i}] is ${t === null ? 'missing' : `${signed(t - d)} from its due time`}, but the first frame that drew ring ${i} ran ${signed(first.pre - d)} to ${signed(first.post - d)} from it (want that frame's frameMs)`);
+      }
+    }
+  });
+  list.forEach((a, k) => {
+    const p = per[k];
+    if (p.judged < CALIB_MIN_FRAMES) note(`${labels[k]} few`, `${labels[k]}: ${p.judged} frames judged (want at least ${CALIB_MIN_FRAMES})`);
+    else if (a.pass === 'A' && p.fills < CALIB_MIN_FILL_FRAMES) note(`${labels[k]} few`, `${labels[k]}: ${p.fills} frames judged with the key filled (want at least ${CALIB_MIN_FILL_FRAMES})`);
+    else if (a.pass === 'B' && p.rings < CALIB_MIN_RING_FRAMES) note(`${labels[k]} few`, `${labels[k]}: ${p.rings} frames judged with the ring (want at least ${CALIB_MIN_RING_FRAMES})`);
+  });
+  return finish();
+}
+
 // The verdict on one untouched calibration: seconds the scene stayed up after the first key, the analyser
 // samples and the centre trace taken while it was up, the values in use once it was left, (review R3, MINOR 5)
 // what the page showed after Escape was pressed before the first key ({ started, scenes }: whether the audio ran),
-// and (review R4, MAJOR 1) the starts the page recorded and the attempts the probe watched.
-export function judgeCalibration({ seconds, samples, trace, values, escape, starts, attempts }) {
+// (review R4, MAJOR 1) the starts the page recorded and the attempts the probe watched, and (review R5, MAJOR 1) the
+// scene's frame log.
+export function judgeCalibration({ seconds, samples, trace, values, escape, starts, attempts, frames }) {
   const clicks = countClicks(samples);
   const { fills, rings, peaks, rest } = countPulses(trace);
   const problems = [];
@@ -149,7 +361,9 @@ export function judgeCalibration({ seconds, samples, trace, values, escape, star
   if (!values || values.avOffset !== 0 || values.inputBias !== 0) problems.push(`calibration values ${JSON.stringify(values)} (want avOffset 0 and inputBias 0 after an untouched run)`);
   const cs = clickStartProblems(starts, attempts, 'calibration');
   problems.push(...cs.problems);
-  return { seconds: Math.round(seconds * 10) / 10, clicks, fills, rings, values, escape: escape ? !escape.started : null, frames: trace.length, samples: samples.length, rest, peaks: peaks.slice(0, 80), clickStarts: cs.clicks, clickMarks: cs.marks, problems };
+  const cf = calibFrameProblems(frames, attempts, 'calibration');
+  problems.push(...cf.problems);
+  return { seconds: Math.round(seconds * 10) / 10, clicks, fills, rings, values, escape: escape ? !escape.started : null, frames: trace.length, samples: samples.length, rest, peaks: peaks.slice(0, 80), clickStarts: cs.clicks, clickMarks: cs.marks, timed: cf.judged, timedFills: cf.fills, timedRings: cf.rings, problems };
 }
 
 // What the tapper did in attempt k of its log (review R3, MINOR 5 and 6): its taps before the count-in's end, which a
@@ -208,8 +422,9 @@ export function tapLogValues(log) {
 // it was left, the tapper's log, and the run read twice after the hand-over ({ scenes, room, from, to }). With `retry`
 // (review R4, MAJOR 2) the tapper left the first attempt of each pass untapped: those two must be rejected, the scene
 // must run each pass's repeat, and the repeats are the attempts whose taps must count. And (review R4, MAJOR 1) the
-// starts the page recorded: every pass-A attempt of the log must have its clicks on their marks.
-export function judgeTapped({ seconds, values, log, handover, retry = false, starts }) {
+// starts the page recorded: every pass-A attempt of the log must have its clicks on their marks; and (review R5, MAJOR 1)
+// the scene's frame log: every attempt of the log must show its pictures in their windows.
+export function judgeTapped({ seconds, values, log, handover, retry = false, starts, frames }) {
   const name = retry ? 'retried calibration' : 'tapped calibration';
   const marks = { avOffset: TAP_A_MS - TAP_B_MS - TAP_B_MID, inputBias: TAP_B_MS + TAP_B_MID };
   const problems = [];
@@ -246,5 +461,7 @@ export function judgeTapped({ seconds, values, log, handover, retry = false, sta
   }
   const cs = clickStartProblems(starts, log && log.attempts, name);
   problems.push(...cs.problems);
-  return { seconds: Math.round(seconds * 10) / 10, values, own, marks, clickStarts: cs.clicks, clickMarks: cs.marks, problems };
+  const cf = calibFrameProblems(frames, log && log.attempts, name);
+  problems.push(...cf.problems);
+  return { seconds: Math.round(seconds * 10) / 10, values, own, marks, clickStarts: cs.clicks, clickMarks: cs.marks, timed: cf.judged, timedFills: cf.fills, timedRings: cf.rings, problems };
 }

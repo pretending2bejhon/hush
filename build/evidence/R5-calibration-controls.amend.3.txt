@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R5-calibration-controls
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/controls/calibration-probe.test.mjs -t "keeps a pass|sign flipped|three beats|leaves at once"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T16:32:55-05:00
+time-end: 2026-10-13T16:39:28-05:00
+head: ab131acf29613c041c1e3d6088648a21e70c525e
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed | 11 skipped (15)
+   Start at  16:32:56
+   Duration  391.96s (tests 100%)
+
+--- end ---

@@ -16,14 +16,17 @@
 //                 other's gate: review R4, MAJOR 1)
 //   ?unlock=late|early|none  the playthrough's unlock check (X7's clear-time half): a cleared room's layer
 //                 returns a bar late, a bar early, or never
-//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow|first|clicklate  the calibration scene's planted faults
+//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow|first|clicklate|ringlate|filllate|frametime
+//                 the calibration scene's planted faults
 //                 (the flash probe's --calibration check): the first key leaves at once (the shortcut that stood in
 //                 for the passes), a rejected pass is not repeated, pass A plays no click, pass B draws no ring, the
 //                 count-in never fills the key, pass A's tap offsets have their sign flipped (the tapped run),
 //                 the count-in is 3 beats, Escape is a key like any other (it starts the audio and taps; review R3,
 //                 MINOR 5), taps during the count-in are counted (review R3, MINOR 6), a pass keeps its first result
 //                 instead of its last (the retried run; review R4, MAJOR 2), every click is handed over 0.1 s after
-//                 its mark (review R4, MAJOR 1)
+//                 its mark (review R4, MAJOR 1), and (review R5, MAJOR 1) every ring drawn 0.1 s after its window while
+//                 frameTimes keep the window, every count-in fill 0.1 s after its click, every frameTime 0.1 s after the
+//                 frame that drew its ring
 //   ?ending=none|never|always|early|late|mid  the ending's planted faults (the playthrough's text check): the
 //                 run never hands over to the scene `ending`; no run line under ?playtest; the run line without
 //                 ?playtest; the run line at once, before the card; the run line from the step at the card
@@ -205,7 +208,7 @@ class Calibration extends Phaser.Scene {
         a.sent += 1;
       }
       for (let i = 0; i < COUNT_IN; i++) {
-        const t = a.t0 + i * BEAT;
+        const t = a.t0 + i * BEAT + (calibFault === 'filllate' ? 0.1 : 0);
         if (heard >= t && heard < t + SIXTEENTH) fill = true;
       }
       ended = heard >= a.t0 + 23 * BEAT + TAIL;
@@ -213,9 +216,10 @@ class Calibration extends Phaser.Scene {
       for (let i = 0; i < CLICKS; i++) {
         const d = a.p0 + i * BEAT * 1000;
         if (frameMs >= d && frameMs < d + SIXTEENTH * 1000) {
-          ring = true;
-          if (a.frameTimes[i] === undefined) a.frameTimes[i] = frameMs;
+          if (calibFault !== 'ringlate') ring = true;
+          if (a.frameTimes[i] === undefined) a.frameTimes[i] = frameMs + (calibFault === 'frametime' ? 100 : 0);
         }
+        if (calibFault === 'ringlate' && frameMs >= d + 100 && frameMs < d + 100 + SIXTEENTH * 1000) ring = true;
       }
       ended = frameMs >= a.p0 + (23 * BEAT + TAIL) * 1000;
     }

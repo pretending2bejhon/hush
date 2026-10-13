@@ -8,7 +8,10 @@
 // and one that counts taps during the count-in (MINOR 6) must each fail. Review R4 (MAJOR 2): the retried run must pass,
 // and a scene that keeps a pass's first result instead of its last must fail it. Review R4 (MAJOR 1): every click of the
 // clean page starts on its mark in all three runs, and a scene whose clicks are handed over 0.1 s late must fail on
-// their starts.
+// their starts. Review R5 (MAJOR 1): every frame of the clean page shows its pictures in their windows in all three runs,
+// and a scene whose rings show 0.1 s late, whose count-in fills show 0.1 s late, or whose frameTimes sit 0.1 s after the
+// frames that drew their rings must each fail on its frames alone. Review R5 (NOTE 2): calibration pages that log a
+// console error, ask another origin and store something must each fail on X5 and X10.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -43,8 +46,66 @@ describe('flash probe --calibration (section 12)', () => {
     expect(r.out).toMatch(/flash: calibration up .*; click starts 48 of 48 on their marks/);
     expect(r.out).toMatch(/flash: tapped calibration up .*; click starts 24 of 24 on their marks/);
     expect(r.out).toMatch(/flash: retried calibration up .*; click starts 48 of 48 on their marks/);
+    // Review R5 (MAJOR 1): every frame of every attempt held to its windows, in all three runs.
+    expect(r.out).toMatch(/flash: calibration up .*; frames \d{4} timed \(\d+ filled, \d+ with the ring\)/);
+    expect(r.out).toMatch(/flash: tapped calibration up .*; frames \d{3,4} timed \(\d+ filled, \d+ with the ring\)/);
+    expect(r.out).toMatch(/flash: retried calibration up .*; frames \d{4} timed \(\d+ filled, \d+ with the ring\)/);
+    expect(r.out).not.toMatch(/calibration frames:/);
+    // Review R5 (NOTE 2): no error, no other origin and nothing stored on any of the three pages.
+    expect(r.out).not.toMatch(/calibration page:/);
     expect(r.out).toMatch(/flash: PASS/);
     expect(r.code).toBe(0);
+  }, 240000);
+
+  // Review R5 (MAJOR 1): the reviewer's three product mutants, planted on the control page. Each fails on its frames, in all
+  // three runs, and on nothing else: the values are still the taps' own, the clicks on their marks, the pulses counted.
+  const ONLY_FRAMES = /flash: (tapped |retried )?calibration (left after|clicks|fills|rings|values|click starts)/;
+
+  it('fails a scene whose rings show 0.1 s after their windows while frameTimes keep them (review R5, MAJOR 1)', () => {
+    const r = flash('calib=ringlate');
+    expect(r.out).toMatch(/flash: calibration frames: B1: a frame \+\d+\.\d ms from ring 0's due time shows no ring \(want the ring for a sixteenth/);
+    expect(r.out).toMatch(/flash: calibration frames: B1: a frame \+1\d\d\.\d ms from ring 0's due time shows the ring \(want it only for a sixteenth/);
+    expect(r.out).toMatch(/flash: tapped calibration frames: B1: a frame/);
+    expect(r.out).toMatch(/flash: retried calibration frames: B1: a frame/);
+    expect(r.out).not.toMatch(/calibration frames: A\d/);
+    expect(r.out).not.toMatch(ONLY_FRAMES);
+    expect(r.out).toMatch(/flash: FAIL/);
+    expect(r.code).toBe(1);
+  }, 240000);
+
+  it('fails a scene whose count-in fills show 0.1 s after their clicks (review R5, MAJOR 1)', () => {
+    const r = flash('calib=filllate');
+    expect(r.out).toMatch(/flash: calibration frames: A1: a frame heard \+\d+\.\d ms from count-in click 0 shows the key plain \(want it filled/);
+    expect(r.out).toMatch(/flash: calibration frames: A1: a frame heard \+1\d\d\.\d ms from count-in click 0 shows the key filled \(want it filled only/);
+    expect(r.out).toMatch(/flash: tapped calibration frames: A1: a frame heard/);
+    expect(r.out).toMatch(/flash: retried calibration frames: A1: a frame heard/);
+    expect(r.out).not.toMatch(/calibration frames: B\d/);
+    expect(r.out).not.toMatch(ONLY_FRAMES);
+    expect(r.out).toMatch(/flash: FAIL/);
+    expect(r.code).toBe(1);
+  }, 240000);
+
+  it('fails calibration pages that log an error, ask another origin and store something (review R5, NOTE 2)', () => {
+    const r = flash('store=session&cerr&fetch=http://127.0.0.2:9/x');
+    for (const name of ['calibration', 'tapped calibration', 'retried calibration']) {
+      expect(r.out).toMatch(new RegExp(`flash: ${name} page: \\d+ console or page error\\(s\\): .*control page: planted console error`));
+      expect(r.out).toMatch(new RegExp(`flash: ${name} page: requests to other origins: http://127\\.0\\.0\\.2:9`));
+      expect(r.out).toMatch(new RegExp(`flash: ${name} page: something was stored: .*"sessionStorage":1`));
+    }
+    expect(r.out).not.toMatch(/calibration frames:/);
+    expect(r.out).toMatch(/flash: FAIL/);
+    expect(r.code).toBe(1);
+  }, 240000);
+
+  it('fails a scene whose frameTimes sit 0.1 s after the frames that drew their rings (review R5, MAJOR 1)', () => {
+    const r = flash('calib=frametime');
+    expect(r.out).toMatch(/flash: calibration frames: B1: frameTimes\[0\] is \+1\d\d\.\d ms from its due time, but the first frame that drew ring 0 ran [+-]\d+\.\d ms to [+-]\d+\.\d ms from it/);
+    expect(r.out).toMatch(/flash: tapped calibration frames: B1: frameTimes\[0\]/);
+    expect(r.out).toMatch(/flash: retried calibration frames: B1: frameTimes\[0\]/);
+    expect(r.out).not.toMatch(/shows (no ring|the ring|the key)/);
+    expect(r.out).not.toMatch(ONLY_FRAMES);
+    expect(r.out).toMatch(/flash: FAIL/);
+    expect(r.code).toBe(1);
   }, 240000);
 
   it('fails a scene whose clicks are handed over 0.1 s after their marks (review R4, MAJOR 1)', () => {

@@ -3,7 +3,7 @@
 // installProbe(inspect) unconditionally and never reads ?probe itself. Everything the API returns is plain
 // data, so a probe can read it through page.evaluate. It reads the game through the Inspect view and acts
 // only through Inspect.control and the layer gain nodes (the solo test of X7).
-import type { Inspect, ProbeCalibrationAttempt, ProbeGameObject, ProbeInputSource, ProbeRun, ProbeSim, ProbeSimStatus } from './inspect.ts';
+import type { Inspect, ProbeCalibrationAttempt, ProbeGameObject, ProbeInputSource, ProbeRun, ProbeScene, ProbeSim, ProbeSimStatus } from './inspect.ts';
 
 export const PROBE_VERSION = 1;
 const TEXT_TYPES = new Set(['Text', 'BitmapText', 'DynamicBitmapText']);
@@ -122,11 +122,43 @@ export interface EndingFrame {
   graphics: DrawnGraphics[];
 }
 
+// Review R5 (MAJOR 1): one frame of the scene `calibration`, bracketed between Phaser's prestep and poststep, between
+// which the scene read its own frameMs and heard time (section 12): performance.now() at both ends, the heard time at both
+// ends through the same clock line (null while the context is not running or the line not valid, when the scene decides
+// nothing), the attempt live at each end (its index in tapLog().attempts, -1 for none: an attempt's first frame has none
+// at its prestep, its last none at its poststep), and every Graphics of the scene as drawn, each an index into the log's
+// table of distinct Graphics.
+export interface CalibrationFrame {
+  pre: number;
+  post: number;
+  hPre: number | null;
+  hPost: number | null;
+  aPre: number;
+  aPost: number;
+  g: number[];
+}
+
+// One Graphics of the scene `calibration` as a frame drew it: its depth, whether it shows (visible, alpha) and its
+// command buffer (review R5, MAJOR 1).
+export interface CalibrationGraphics {
+  depth: number;
+  visible: boolean;
+  alpha: number;
+  buffer: DrawnBuffer;
+}
+
+export interface CalibrationLog {
+  frames: CalibrationFrame[];
+  graphics: CalibrationGraphics[];
+  dropped: number;
+}
+
 const FRAME_FULL_EVERY = 4;
 const FRAME_FULL_PER_BAKE = 48;
 const FRAME_LIGHT_MAX = 200000;
 const FRAME_FULL_MAX = 2000;
 const ENDING_MAX = 4000;
+const CALIB_MAX = 12000;
 // Phaser 4.2.1's Core.Events.PRE_STEP and POST_STEP.
 const PRE_STEP = 'prestep';
 const POST_STEP = 'poststep';
@@ -339,20 +371,91 @@ export function createProbe(inspect: Inspect) {
   let preOrigin: number | null = null;
   const endingFrames: EndingFrame[] = [];
   let endingLogOn = false;
+  const calibFrames: CalibrationFrame[] = [];
+  const calibGraphics: CalibrationGraphics[] = [];
+  const calibGraphicsIds = new Map<string, number>();
+  let calibLogOn = false;
+  let calibDropped = 0;
+  let preMs = 0;
+  let preAttempt: ProbeCalibrationAttempt | null = null;
 
-  // The heard time now, through the clock line, while the context runs and the line is valid; null otherwise.
-  function heardNow(): number | null {
+  // The heard time at performance time `ms`, through the clock line, while the context runs and the line is valid; null
+  // otherwise.
+  function heardAt(ms: number): number | null {
     const c = inspect.clock();
     const a = inspect.audio();
-    return c && c.valid && a && a.state === 'running' ? performance.now() / 1000 + c.offset : null;
+    return c && c.valid && a && a.state === 'running' ? ms / 1000 + c.offset : null;
+  }
+
+  function heardNow(): number | null {
+    return heardAt(performance.now());
+  }
+
+  // The scene `calibration` while it is up, null otherwise.
+  function calibrationScene(): (ProbeScene & { attempt?: ProbeCalibrationAttempt | null }) | null {
+    const g = inspect.game();
+    if (!g || !g.scene.getScenes(true).some((s) => s.sys.settings.key === 'calibration')) return null;
+    return g.scene.getScene('calibration') as unknown as (ProbeScene & { attempt?: ProbeCalibrationAttempt | null }) | null;
+  }
+
+  // An attempt's index in the tapper's record, which the tapper, the watcher and the calibration's frame log share: the
+  // attempt is added the first time any of them sees it, so every index names one attempt in the scene's order.
+  function noteAttempt(a: ProbeCalibrationAttempt): number {
+    let k = tapAttempts.indexOf(a);
+    if (k < 0) {
+      tapAttempts.push(a);
+      k = tapAttempts.length - 1;
+    }
+    return k;
   }
 
   // Review R5 (MAJOR 2): every frame's prestep, after the driver's listener (main.ts installs it before installProbe runs).
+  // Review R5 (MAJOR 1): and, for the calibration's frame log, the performance time and the attempt live before the scene's
+  // update, which reads its frameMs after this.
   function onPreStep(): void {
-    if (!frameLogOn && !endingLogOn) return;
-    preHeard = heardNow();
+    if (!frameLogOn && !endingLogOn && !calibLogOn) return;
+    preMs = performance.now();
+    preHeard = heardAt(preMs);
     const a = inspect.audio();
     preOrigin = a ? a.origin : null;
+    if (calibLogOn) preAttempt = calibrationScene()?.attempt ?? null;
+  }
+
+  // Review R5 (MAJOR 1): one frame of the scene `calibration`, after its update drew it.
+  function logCalibration(): void {
+    const post = performance.now();
+    const scene = calibrationScene();
+    if (!scene) return;
+    if (calibFrames.length >= CALIB_MAX) {
+      calibDropped += 1;
+      return;
+    }
+    const ids: number[] = [];
+    for (const o of scene.children.list) {
+      if (o.type !== 'Graphics' || !Array.isArray(o.commandBuffer)) continue;
+      const entry: CalibrationGraphics = { depth: o.depth ?? 0, visible: o.visible ?? true, alpha: o.alpha ?? 1, buffer: o.commandBuffer.map(rounded) };
+      const key = JSON.stringify(entry);
+      let id = calibGraphicsIds.get(key);
+      if (id === undefined) {
+        id = calibGraphics.length;
+        calibGraphics.push(entry);
+        calibGraphicsIds.set(key, id);
+      }
+      ids.push(id);
+    }
+    const live = scene.attempt ?? null;
+    calibFrames.push({ pre: preMs, post, hPre: preHeard, hPost: heardAt(post), aPre: preAttempt ? noteAttempt(preAttempt) : -1, aPost: live ? noteAttempt(live) : -1, g: ids });
+  }
+
+  // Starts the calibration's frame log afresh, with the tapper's record (watchCalibration and tapCalibration).
+  function calibLogStart(): void {
+    calibFrames.length = 0;
+    calibGraphics.length = 0;
+    calibGraphicsIds.clear();
+    calibDropped = 0;
+    preAttempt = null;
+    calibLogOn = true;
+    hookFrames();
   }
 
   // Review R5 (MAJOR 2): one frame of the scene `ending`, after its update drew it.
@@ -367,6 +470,7 @@ export function createProbe(inspect: Inspect) {
 
   // One frame of the play scene, after every scene's update (review R3, MAJOR 1 and MINOR 3).
   function onPostStep(): void {
+    if (calibLogOn) logCalibration();
     if (endingLogOn) logEnding();
     if (!frameLogOn) return;
     const g = inspect.game();
@@ -605,7 +709,8 @@ export function createProbe(inspect: Inspect) {
     },
     // Watches the calibration without touching it (review R4, MAJOR 1): every attempt the scene runs goes into the
     // tapper's record (tapLog().attempts), with no tap and no Escape, so that the untouched run's clicks can be held to
-    // the marks of its attempts. Returns false without the scene.
+    // the marks of its attempts. Review R5 (MAJOR 1): it also starts the calibration's frame log (calibLogTake). Returns
+    // false without the scene.
     watchCalibration(): boolean {
       const g = inspect.game();
       const scene = g ? (g.scene.getScene('calibration') as unknown as { attempt?: ProbeCalibrationAttempt | null } | null) : null;
@@ -613,6 +718,7 @@ export function createProbe(inspect: Inspect) {
       tapTaps.length = 0;
       tapEscapes.length = 0;
       tapAttempts.length = 0;
+      calibLogStart();
       const begun = performance.now();
       let current: ProbeCalibrationAttempt | null = null;
       const up = (): boolean => g.scene.getScenes(true).some((s) => s.sys.settings.key === 'calibration');
@@ -620,12 +726,20 @@ export function createProbe(inspect: Inspect) {
         const a = scene.attempt ?? null;
         if (a && a !== current) {
           current = a;
-          tapAttempts.push(a);
+          noteAttempt(a);
         }
         if (up() && performance.now() - begun < TAP_GIVE_UP_MS) window.requestAnimationFrame(frame);
       };
       window.requestAnimationFrame(frame);
       return true;
+    },
+    // Review R5 (MAJOR 1): the calibration's frame log since watchCalibration or tapCalibration, every frame of the scene
+    // `calibration` between Phaser's prestep and poststep (CalibrationFrame), its attempts indexing tapLog().attempts.
+    calibLogTake(): CalibrationLog {
+      calibLogOn = false;
+      const graphics = calibGraphics.splice(0, calibGraphics.length);
+      calibGraphicsIds.clear();
+      return { frames: calibFrames.splice(0, calibFrames.length), graphics, dropped: calibDropped };
     },
     // The tapper's record of the last tapped calibration (review R2, MINOR 3).
     tapLog(): TapLog {
@@ -658,7 +772,7 @@ export function createProbe(inspect: Inspect) {
     // Review R3: it taps the count-in too, spreads the taps that count by tapSpread (MINOR 6), and presses Escape
     // ESCAPE_MS after clicks and rings ESCAPE_AT of every attempt, logged as escapes (MINOR 5). Review R4 (MAJOR 2): with
     // `untapFirst`, the first attempt of each pass gets no tap at all (its Escapes still), so that both are rejected
-    // and the scene's repeats are the attempts it judges.
+    // and the scene's repeats are the attempts it judges. Review R5 (MAJOR 1): it also starts the calibration's frame log.
     tapCalibration(aMs: number, bMs: number, untapFirst = false): boolean {
       const g = inspect.game();
       const scene = g ? (g.scene.getScene('calibration') as unknown as { attempt?: ProbeCalibrationAttempt | null } | null) : null;
@@ -666,6 +780,7 @@ export function createProbe(inspect: Inspect) {
       tapTaps.length = 0;
       tapEscapes.length = 0;
       tapAttempts.length = 0;
+      calibLogStart();
       const begun = performance.now();
       const armed = new Set<string>();
       let current: ProbeCalibrationAttempt | null = null;
@@ -700,7 +815,7 @@ export function createProbe(inspect: Inspect) {
         if (a && a !== current) {
           current = a;
           attempt += 1;
-          tapAttempts.push(a);
+          noteAttempt(a);
           passSeen[a.pass] = (passSeen[a.pass] ?? 0) + 1;
           firstOfPass = passSeen[a.pass] === 1;
         }

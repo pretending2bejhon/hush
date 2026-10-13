@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: R5-mutant-calib-ringlate
+phase: amend
+command: node tools/probe-flash.mjs --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c\scratchpad\mut\calib-ringlate\dist --calibration
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T16:12:00-05:00
+time-end: 2026-10-13T16:16:28-05:00
+head: ab131acf29613c041c1e3d6088648a21e70c525e
+exit: 1
+--- output ---
+flash: calibration up 43.9 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2619 frames, 2179 analyser samples); click starts 48 of 48 on their marks; frames 2567 timed (50 filled, 309 with the ring)
+flash: tapped calibration up 22.2 s: values 5.6 34.5 (the taps' own 5.6 34.5; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5); click starts 24 of 24 on their marks; frames 1282 timed (26 filled, 156 with the ring)
+flash: retried calibration up 43.5 s: values 5.5 34.5 (the taps' own 5.5 34.5; A1 and B1 untapped, A2 and B2 tapped as above; marks 5.5 34.5); click starts 48 of 48 on their marks; frames 2562 timed (52 filled, 306 with the ring)
+flash: 11772 frames over 196.9 s, median 15.93 ms; general max 9746 px, red max 0 px (limit 25600)
+flash: calibration frames: B1: a frame +16.5 ms from ring 0's due time shows no ring (want the ring for a sixteenth from each due time) (and 143 more like it)
+flash: calibration frames: B1: a frame +116.5 ms from ring 0's due time shows the ring (want it only for a sixteenth from each due time) (and 143 more like it)
+flash: calibration frames: B2: a frame +16.5 ms from ring 0's due time shows no ring (want the ring for a sixteenth from each due time) (and 143 more like it)
+flash: calibration frames: B2: a frame +116.5 ms from ring 0's due time shows the ring (want it only for a sixteenth from each due time) (and 143 more like it)
+flash: calibration frames: B1: frameTimes[0] is +16.5 ms from its due time, but no frame drew ring 0 (and 13 more like it)
+flash: calibration frames: B1: frameTimes[1] is +4.5 ms from its due time, but the first frame that drew ring 1 ran +104.5 ms to +104.7 ms from it (want that frame's frameMs) (and 9 more like it)
+flash: calibration frames: B2: frameTimes[0] is +16.6 ms from its due time, but the first frame that drew ring 0 ran +99.9 ms to +100.0 ms from it (want that frame's frameMs) (and 10 more like it)
+flash: calibration frames: B2: frameTimes[2] is +9.4 ms from its due time, but no frame drew ring 2 (and 12 more like it)
+flash: tapped calibration frames: B1: a frame +0.1 ms from ring 0's due time shows no ring (want the ring for a sixteenth from each due time) (and 142 more like it)
+flash: tapped calibration frames: B1: a frame +116.6 ms from ring 0's due time shows the ring (want it only for a sixteenth from each due time) (and 143 more like it)
+flash: tapped calibration frames: B1: frameTimes[0] is +0.2 ms from its due time, but the first frame that drew ring 0 ran +99.9 ms to +100.2 ms from it (want that frame's frameMs) (and 12 more like it)
+flash: tapped calibration frames: B1: frameTimes[2] is +9.6 ms from its due time, but no frame drew ring 2 (and 10 more like it)
+flash: retried calibration frames: B1: a frame +16.7 ms from ring 0's due time shows no ring (want the ring for a sixteenth from each due time) (and 141 more like it)
+flash: retried calibration frames: B1: a frame +116.6 ms from ring 0's due time shows the ring (want it only for a sixteenth from each due time) (and 142 more like it)
+flash: retried calibration frames: B2: a frame +0.1 ms from ring 0's due time shows no ring (want the ring for a sixteenth from each due time) (and 143 more like it)
+flash: retried calibration frames: B2: a frame +116.7 ms from ring 0's due time shows the ring (want it only for a sixteenth from each due time) (and 142 more like it)
+flash: retried calibration frames: B1: frameTimes[0] is +0.0 ms from its due time, but no frame drew ring 0 (and 12 more like it)
+flash: retried calibration frames: B1: frameTimes[1] is +4.8 ms from its due time, but the first frame that drew ring 1 ran +104.7 ms to +104.9 ms from it (want that frame's frameMs) (and 10 more like it)
+flash: retried calibration frames: B2: frameTimes[0] is +0.2 ms from its due time, but the first frame that drew ring 0 ran +100.0 ms to +100.0 ms from it (want that frame's frameMs) (and 10 more like it)
+flash: retried calibration frames: B2: frameTimes[2] is +9.8 ms from its due time, but no frame drew ring 2 (and 12 more like it)
+flash: FAIL
+--- end ---
