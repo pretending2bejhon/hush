@@ -63,7 +63,10 @@ describe('flash probe --calibration (section 12)', () => {
     const r = flash('calib=count3');
     // Six fills, or five when the screencast misses one pulse (review R2: a run at 43 frames a second saw 5).
     expect(r.out).toMatch(/flash: calibration fills [56] \(want 7 to 9\)/);
-    expect(r.out).not.toMatch(/flash: tapped calibration (values|left after)/);
+    // Review R4: a scene whose count-in is 3 beats also admits the tapper's tap on click 3 (review R3, MINOR 6), which may
+    // move the tapped or retried values off the taps' own by more than 0.5 ms: a second catch of the same fault. What
+    // would be another fault, a run that never hands over in time, must not show.
+    expect(r.out).not.toMatch(/flash: (tapped|retried) calibration left after/);
     expect(r.out).toMatch(/flash: FAIL/);
     expect(r.code).toBe(1);
   }, 240000);

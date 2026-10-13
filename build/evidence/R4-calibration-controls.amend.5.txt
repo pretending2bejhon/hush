@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R4-calibration-controls
+phase: amend
+command: npx vitest run tests/controls/calibration-probe.test.mjs -t "Escape as a key|during the count-in|without its count-in"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T03:47:48-05:00
+time-end: 2026-10-13T03:54:08-05:00
+head: d68cf9a73f1fef1d822f212afc74029120568883
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed | 8 skipped (11)
+   Start at  03:47:50
+   Duration  378.04s (tests 100%)
+
+--- end ---

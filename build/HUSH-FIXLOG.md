@@ -363,3 +363,8 @@ State at 2026-10-13T03:50-05:00, the end of this producer session (one hush-revi
   - An FM modulator starts with `osc.start()` at once (helpers.mjs:404), and a released node that was never started gets `start(currentTime + 5)` (helpers.mjs:641).
   - tools/probe-av.mjs countOnsets already walks the onsets per segment. Its time `origin + (b + whole.begin - cycle) x BAR` is the one to hold the starts to.
 
+The nine regression controls, 2026-10-13T04:20-05:00: the control page's calibration controls now pass 11 of 11.
+- The records are build/evidence/R4-calibration-controls.amend.1.txt to .5.txt. Each part is under the 10-minute call, and every run now takes a retried run as well.
+- The count-in-of-3 control failed once on a negative assertion of its own (.2). Its tapped values came out 0.8 ms off the taps' own, because a 3-beat count-in admits the tapper's tap on click 3 (review R3, MINOR 6). That is a second catch of the same fault. It had passed in R3 only because that run's shift stayed within 0.5 ms.
+- So the control now forbids only a run that never hands over in time, and it passes (.3; tests/controls/calibration-probe.test.mjs, committed with this note).
+

@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R4-calibration-controls
+phase: amend
+command: npx vitest run tests/controls/calibration-probe.test.mjs -t "count-in of three"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T03:39:35-05:00
+time-end: 2026-10-13T03:41:50-05:00
+head: d68cf9a73f1fef1d822f212afc74029120568883
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  1 passed | 10 skipped (11)
+   Start at  03:39:37
+   Duration  132.16s (tests 99%, import 1%)
+
+--- end ---
