@@ -56,6 +56,9 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - superdough connects nodes of its own to the speakers: its timers' zero gains and its own output, which no patched orbit feeds. So "the analyser is the speakers' only input" fails a correct page. The rule that holds is that every other input is silent by construction (producer, review R3, MINOR 4).
 - An evidence run piped into PowerShell's `Select-Object -First` is killed when the pipe closes, and writes no record (exit 255). Filter the whole output with `Select-String`, or read the file afterwards (producer, review R3).
 - A synthetic tap can be placed on a ring only once the frame that drew it is seen, about one frame late. A tap pattern for pass B must start at 25 ms or more, or its early taps land a frame late and shift the values (producer, review R3, MINOR 6).
+- A picture is checked in the renderer's own terms. A Graphics' command buffer, encoded in Node from the reference lists, is equal to the frame drawn, and a DynamicTexture's stored pixels are premultiplied composites of its shapes. The judge replays every frame, not only the frames it compares, because the limiter's levels carry from frame to frame (producer, review R3 FIX).
+- Heavy judging inside a timed probe moves the probe's own clock. Judging the gauntlet's frame log before watching the ending made the text guard see the ending 0.5 s late. Collect during the run, and judge once every timed read is done (producer, review R3 FIX).
+- The cap hook denies a shell call that names a product folder next to a copy, even one that copies out of it. A scratch script that only reads the repo and writes under the scratchpad builds mutants and witness subsets (producer, review R3 FIX).
 
 ## Rounds
 
@@ -65,6 +68,7 @@ FIX R1: 2026-10-12T15:32:21-05:00 | fixed=9 rebutted=0 superseded=0
 HUSH-REVIEW-R2: FAIL (head=2f2b8a264dd2a0f7b32a3405befd501d19b51b1c digest=eeca3e10f750b308ac7576c8a4694c1f3545a48dc8ab87925fc15fbe85872638 blockers=0 majors=5 minors=4)
 FIX R2: 2026-10-12T19:19:25-05:00 | fixed=9 rebutted=0 superseded=0
 HUSH-REVIEW-R3: FAIL (head=81a66ae934912449e125d07e883c5f4bc6a5cc83 digest=4537d7d29782e4447e95b22dbc0a9888f1747a9f9d134077ec24bc56d5d66d36 blockers=0 majors=2 minors=6)
+FIX R3: 2026-10-13T01:21:03-05:00 | fixed=8 rebutted=0 superseded=0
 
 ## Checkpoint
 

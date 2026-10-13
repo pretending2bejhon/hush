@@ -280,3 +280,29 @@ State at 2026-10-12T23:46-05:00, the end of this producer session. Five of the e
   - The beat entities and the dust need no view. The camera is in the first chunk's x, and the levels can be replayed from the room's first frame, since the scene resets them to [] on its bake.
   - superdough adds inputs of its own to the speakers (MINOR 4's notes above).
 
+MAJOR 1, MAJOR 2 and MINOR 3 fixed 2026-10-13T01:05-05:00 in `3c6bf58` (hush-spec: amend the scene check ...), by the next producer (Opus standing in for Fable). Still no product file changes and no applier.
+- How it landed, against the dispositions above:
+  - The run's view is read, not fitted. The play scene keeps its run in its field `run`, which section 10.6 now pins, as section 12 pins the calibration scene's `attempt`. The probe reads `run.view()` at Phaser's `poststep`, so it gets the view the frame drew from. A fit from the camera could not work in a room the camera never scrolls.
+  - The frames. src/probe/api.ts logs every frame from the run's bake: a light record (sim, room, step) every frame, and a full one (state, view, first chunk's x, each Graphics' buffer) every 4th frame, up to 48 a bake. tools/scene-check.mjs replays every frame in order: the oracle run, the reference track, playFrame with the levels carried and the limiter begun every frame. It compares every full frame within 1e-3. A cleared room is followed until its layer is back and its ring has been drawn for 300 ms, so the ring is judged too.
+  - The bakes. The pixels are read through DynamicTexture.snapshotPixel at points a pixel or more from every edge: one a cell for chunks, a 40 px grid and one inside each shape for bands, the fog's strips and the vignette's cells. They are judged against a premultiplied composite of the reference shapes, within 3 levels. The translucent fog and vignette match too.
+  - The ending. The ceiling is judged by the glimpse's y in the same read. The card is judged by the heard time at the read, with 0.1 s of slack after a beat line. The glimpse's pixels are read once the card is up.
+- On the product, every room of the full run:
+  - accept:ending passes `PASS (console,play,text,scene)`: 11 rooms, 34,480 bake pixels, 758 frames compared command for command (40 while the limiter held a change, 50 with a layer's ring), 62 ceiling and 28 card reads, and 235 glimpse pixels (build/evidence/END1.amend.6.txt).
+  - Attempt .5 failed on its text check alone: it read the run line 6356 ms into the ending, where 6457 is the guard. That run judged the gauntlet's log before it watched the ending, so it saw the ending about 0.5 s late. All judging now waits until the ending has been watched, and nothing else changed.
+  - npm test passes with all eight checks together (build/evidence/R3-npm-test.amend.1.txt): 771 frames, 63 with a ring; unlock and keys ok.
+  - GAME1's acceptance passes on the new probe, with tsc and eslint clean (build/evidence/GAME1.amend.5.txt).
+- Controls:
+  - In Node, tests/tools/scene-check.test.mjs passes 11 of 11. It pins every shape kind's encoding. A log drawn as the reference passes. Each of these fails: the beat entities undrawn, the creature 40 px down, the camera elsewhere, levels not kept (room 2), a limiter never begun again (room 4), a live state off the replay, a restart, an empty log, too few full frames, a blank or foreign bake, an unreadable texture, an undrawn card, a card off the beat, a ceiling elsewhere and a missing Graphics. The verifier suite passes 258 of 258 (build/evidence/R3-verifiers.amend.3.txt).
+  - In the browser, eleven pages were built from the working tree with one planted fault each (rooms 1, 2, 4 and the gauntlet, then the ending), and each fails `scene` for its own fault (build/evidence/R3-mutant-*.amend.2.txt; .1 is the same verdict before the judging moved after the ending). They are:
+    - the reviewer's four: the beat entities undrawn, a blank chunk, the gauntlet's chunks from column 0 (chunks 1 to 3), and the creature 40 px down;
+    - MINOR 3's two: no beginFrame, caught in room 4 once room 2 has filled the limiter; and the levels not kept, caught on room 2's stones;
+    - MAJOR 2's two: the card undrawn and a blank glimpse;
+    - three more: the ring undrawn, a band baked empty and the fog baked empty.
+  - The control page's probes keep their verdicts, 26 of 26 (build/evidence/R3-page-controls.amend.1.txt and .2.txt; one file runs over the 10-minute call, so it ran in two parts by test name).
+- After the commit the digest is c958db45. X3's seed rolls to 3378043717, and all 11 witnesses pass on it at 20 of 20, 04-thorns included (checked this session, not recorded).
+- Not run this session, for VERIFY:
+  - the headed perf, flash and av probes: the frame log starts only when the scene check calls frameLogStart, so those runs are as before;
+  - probe:console's headed Edge pass.
+
+Round R3 closed 2026-10-13T01:21-05:00: 8 fixed, 0 rebutted, 0 superseded, every one by the producer's amendment and no applier. NOTE 1 and NOTE 2 needed no action. The product is unchanged since the review (src/ outside src/probe, rooms, music and replays as at 81a66ae). Standing is GREEN on the amendment (build/evidence/R3-scene-standing.amend.1.txt). The next step is review R4.
+
