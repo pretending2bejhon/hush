@@ -64,6 +64,7 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - A probe that records the page must record what the page does, in every form it takes. AudioBufferSourceNode declares its own `start`, so wrapping AudioScheduledSourceNode's missed every noise voice. Two runs started on one context time share one origin. A take misses the starts whose layer is still being read. The first product run is the recorder's own control: read its per-run counts before trusting a PASS or a FAIL (producer, review R4 FIX).
 - The headed perf probe also wants its window seen. A window that is covered for most of the minute gets frames a second apart and reads as 13 fps. Re-run it before suspecting the product (producer, review R4 FIX).
 - Reviews R4 and R5 found one class from its two sides: a binding to the beat that the checks hold by what plays or shows, never by when. R4 timed the sounds; R5 found the calibration's rings and fills, the sim's step and the ending's card untimed against the heard time. A check that judges what a frame shows must also hold when it shows it, against the clock its binding names (producer, review R5).
+- A picture's time is held by bracketing its frame. Phaser runs PRE_STEP, every scene's update and POST_STEP inside one animation-frame callback, where no timer runs, so performance.now() and the clock line read at the two events bracket the scene's own frameMs and heard time. Judging only the frames whose bracket holds no window edge makes the check exact, with no tolerance to tune (producer, review R5 FIX).
 
 ## Rounds
 
@@ -77,6 +78,7 @@ FIX R3: 2026-10-13T01:21:03-05:00 | fixed=8 rebutted=0 superseded=0
 HUSH-REVIEW-R4: BLOCKED (head=c9f589cf1d1544a0e09a4ab49324d9eac879e6d2 digest=c958db45b706ce99a38b80ced9444606f5de7029d68cb5d932d483043530c989 blockers=0 majors=2 minors=2)
 FIX R4: 2026-10-13T11:53:12-05:00 | fixed=3 rebutted=0 superseded=0
 HUSH-REVIEW-R5: FAIL (head=bd16d9550e4a4c07da9cc5c5286e72e53e099f3a digest=3fce9ef0e9f6e11c0e6a369d29a9300a81df073d9b6b2eba1e6844f43c431059 blockers=0 majors=2 minors=2)
+FIX R5: 2026-10-13T17:36:33-05:00 | fixed=2 rebutted=0 superseded=0
 
 ## Checkpoint
 
