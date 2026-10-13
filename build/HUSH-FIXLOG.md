@@ -248,6 +248,11 @@ DISPOSITION: R3-MINOR5 | no test presses Escape | 2026-10-12T22:44:00-05:00 | to
 DISPOSITION: R3-MINOR6 | section 12's count-in tap window is untested | 2026-10-12T22:44:00-05:00 | to fix by amendment (verifier)
 - The tapper also taps the count-in (clicks and rings 0 to 3). It spreads its taps over the intended offset ± 19 ms in a fixed pattern, so that taps a scene wrongly admits move the median by more than the 0.5 ms the check allows. tapLogValues already drops the count-in taps, as section 12 does.
 - Control: the control page with ?calib=nowindow.
+- MINOR 5 and MINOR 6 fixed 2026-10-12T23:21-05:00 in the commit `hush-spec: amend CAL2 ...` after `8d952df`.
+  - The spread as landed: pass A's taps 21 to 59 ms after the clicks (40 at the median). Pass B's are 25 to 44 ms after the rings (34.5 at the median), because a ring's tap is placed only once the frame that drew it is seen. A first control run with pass B spread around 25 ms landed its early taps a frame late: the control page judged by its own taps (8.9 32.4, the taps' own 8.9 32.4), outside the control's old range (build/evidence/R3-calibration-controls.amend.1.txt, 3 of 4). So the marks are now the medians, 5.5 and 34.5.
+  - The tapper's log must show 4 count-in taps and 3 Escapes in every attempt, so the check never passes a scene it did not test.
+  - On the product: CAL2's acceptance passes, `values 0 0, Escape ignored`, tapped `values 5.6 34.5 (the taps' own 5.6 34.5 ...)`, `flash: PASS` (build/evidence/CAL2.amend.4.txt; .3 was the run before the pass B change).
+  - Controls: the control page passes untouched and tapped. ?calib=escape fails on the audio started by Escape and on its values; ?calib=nowindow fails on its values alone; the eight earlier faults keep their verdicts (build/evidence/R3-calibration-controls.amend.2.txt and .3.txt, 10 of 10). In Node, tests/tools/calibration-check.test.mjs passes 10 of 10, and the verifier suite 245 of 245 (build/evidence/R3-verifiers.amend.1.txt).
 DISPOSITION: R3-NOTE1 | the run's view has no reference | 2026-10-12T22:44:00-05:00 | no action (MAJOR 1's fit reads the creature within one step)
 DISPOSITION: R3-NOTE2 | three equivalent mutations | 2026-10-12T22:44:00-05:00 | no action
 

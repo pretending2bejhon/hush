@@ -13,6 +13,10 @@
 // (tapLogValues, through tests/fixtures/calibration/reference.mjs): equal within TAP_EXACT_MS. A run whose taps
 // strayed more than TAP_STRAY_MS from their marks is refused, so a page whose timers ran late cannot fail a correct
 // scene, nor pass one by luck. And (MAJOR 4) once the scene is left, a run at room 1 must be running.
+// Review R3: Escape is never a key of the calibration (sections 3, 8.2 and 12). The untouched run presses it before
+// its first key and wants no audio started (MINOR 5). The tapper also taps every count-in click and ring, presses
+// Escape three times in each attempt and spreads its counted taps (src/probe/api.ts), so a scene that admits a
+// count-in tap (MINOR 6) or takes Escape as a tap gives values off the taps' own; and its log must show that it did.
 import { calibrate, judgePass } from '../tests/fixtures/calibration/reference.mjs';
 import { luminance } from './flash-analyzer.mjs';
 
@@ -21,9 +25,15 @@ export const MIN_SECONDS = 39.4;
 export const WANT = Object.freeze({ clicks: [44, 52], fills: [7, 9], rings: [44, 52] });
 export const TAP_A_MS = 40;
 export const TAP_B_MS = 25;
+// Review R3 (MINOR 6): the tapper spreads pass A's taps evenly around TAP_A_MS and pass B's from TAP_B_MS to
+// TAP_B_MS + 19 (src/probe/api.ts), so the marks the taps' values are held to are the medians, TAP_A_MS and
+// TAP_B_MS + TAP_B_MID.
+export const TAP_B_MID = 9.5;
 export const TAP_EXACT_MS = 0.5;
 export const TAP_STRAY_MS = 15;
 export const TAPPED_SECONDS = Object.freeze([19, 30]);
+// What the tapper must have done in each of the tapped run's two attempts (review R3, MINOR 5 and 6).
+export const TAPPER_WANTS = Object.freeze({ countIn: 4, escapes: 3 });
 const COUNT_IN = 4;
 const CLICKS = 24;
 // A click starts when the analyser's peak reaches CLICK_ON from below CLICK_OFF.
@@ -82,11 +92,14 @@ export function countPulses(trace) {
 }
 
 // The verdict on one untouched calibration: seconds the scene stayed up after the first key, the analyser
-// samples and the centre trace taken while it was up, and the values in use once it was left.
-export function judgeCalibration({ seconds, samples, trace, values }) {
+// samples and the centre trace taken while it was up, the values in use once it was left, and (review R3, MINOR 5)
+// what the page showed after Escape was pressed before the first key ({ started, scenes }: whether the audio ran).
+export function judgeCalibration({ seconds, samples, trace, values, escape }) {
   const clicks = countClicks(samples);
   const { fills, rings, peaks, rest } = countPulses(trace);
   const problems = [];
+  if (!escape) problems.push('calibration: Escape was not pressed before the first key');
+  else if (escape.started || !escape.scenes.includes('calibration')) problems.push(`calibration: Escape started the audio or left the scene (audio ${escape.started ? 'started' : 'not started'}, scenes ${JSON.stringify(escape.scenes)}; want the scene waiting for its first key)`);
   if (!(seconds >= MIN_SECONDS)) problems.push(`calibration left after ${seconds.toFixed(1)} s (want at least ${MIN_SECONDS} s: two attempts of each pass, 23 beats apiece)`);
   const range = (name, n) => {
     const [lo, hi] = WANT[name];
@@ -96,7 +109,15 @@ export function judgeCalibration({ seconds, samples, trace, values }) {
   range('fills', fills);
   range('rings', rings);
   if (!values || values.avOffset !== 0 || values.inputBias !== 0) problems.push(`calibration values ${JSON.stringify(values)} (want avOffset 0 and inputBias 0 after an untouched run)`);
-  return { seconds: Math.round(seconds * 10) / 10, clicks, fills, rings, values, frames: trace.length, samples: samples.length, rest, peaks: peaks.slice(0, 80), problems };
+  return { seconds: Math.round(seconds * 10) / 10, clicks, fills, rings, values, escape: escape ? !escape.started : null, frames: trace.length, samples: samples.length, rest, peaks: peaks.slice(0, 80), problems };
+}
+
+// What the tapper did in attempt k of its log (review R3, MINOR 5 and 6): its taps before the count-in's end, which a
+// scene must not count, and its Escapes.
+function tapperDid(log, k) {
+  const a = log.attempts[k];
+  const before = (t) => (a.pass === 'A' ? t.h < a.t0 + (COUNT_IN - 0.5) * BEAT_S : t.t < a.p0 + (COUNT_IN - 0.5) * BEAT_S * 1000);
+  return { countIn: log.taps.filter((t) => t.attempt === k && before(t)).length, escapes: (log.escapes || []).filter((t) => t.attempt === k).length };
 }
 
 // The nearest value of xs to v (ties to the earlier), skipping holes; null when there is none (section 12).
@@ -135,7 +156,7 @@ export function tapLogValues(log) {
 // The verdict on one tapped calibration: seconds the scene stayed up after the first key, the values in use once
 // it was left, the tapper's log, and the run read twice after the hand-over ({ scenes, room, from, to }).
 export function judgeTapped({ seconds, values, log, handover }) {
-  const marks = { avOffset: TAP_A_MS - TAP_B_MS, inputBias: TAP_B_MS };
+  const marks = { avOffset: TAP_A_MS - TAP_B_MS - TAP_B_MID, inputBias: TAP_B_MS + TAP_B_MID };
   const problems = [];
   const [lo, hi] = TAPPED_SECONDS;
   if (!(seconds >= lo && seconds <= hi)) problems.push(`tapped calibration left after ${seconds.toFixed(1)} s (want ${lo} to ${hi} s: both passes accepted at their first attempt)`);
@@ -153,6 +174,10 @@ export function judgeTapped({ seconds, values, log, handover }) {
     }
     const off = (k) => (values && Number.isFinite(values[k]) ? Math.abs(values[k] - own[k]) : Infinity);
     if (!(off('avOffset') <= TAP_EXACT_MS && off('inputBias') <= TAP_EXACT_MS)) problems.push(`tapped calibration values ${fmt(values)}, the taps' own ${fmt(own)} (want equal within ${TAP_EXACT_MS} ms)`);
+    const did = log.attempts.map((_, k) => tapperDid(log, k));
+    if (!did.every((d) => d.countIn >= TAPPER_WANTS.countIn && d.escapes >= TAPPER_WANTS.escapes)) {
+      problems.push(`tapped calibration: the tapper landed ${did.map((d) => `${d.countIn} count-in taps and ${d.escapes} Escapes`).join(', ')} (want ${TAPPER_WANTS.countIn} and ${TAPPER_WANTS.escapes} in every attempt)`);
+    }
   }
   if (!handover || !handover.scenes.includes('play') || handover.room !== 1 || !(handover.to > handover.from)) {
     problems.push(`tapped calibration: no run at room 1 after the hand-over (${handover ? `scenes ${JSON.stringify(handover.scenes)}, room ${handover.room}, step ${handover.from} then ${handover.to}` : 'not read'})`);

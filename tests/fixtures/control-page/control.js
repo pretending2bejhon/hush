@@ -14,11 +14,12 @@
 //   ?av=master-off|synth-throw|layer-off  the av probe's planted faults (X7)
 //   ?unlock=late|early|none  the playthrough's unlock check (X7's clear-time half): a cleared room's layer
 //                 returns a bar late, a bar early, or never
-//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3  the calibration scene's planted faults (the flash
-//                 probe's --calibration check): the first key leaves at once (the shortcut that stood in for the
-//                 passes), a rejected pass is not repeated, pass A plays no click, pass B draws no ring, the
+//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow  the calibration scene's planted faults
+//                 (the flash probe's --calibration check): the first key leaves at once (the shortcut that stood in
+//                 for the passes), a rejected pass is not repeated, pass A plays no click, pass B draws no ring, the
 //                 count-in never fills the key, pass A's tap offsets have their sign flipped (the tapped run),
-//                 the count-in is 3 beats
+//                 the count-in is 3 beats, Escape is a key like any other (it starts the audio and taps; review R3,
+//                 MINOR 5), taps during the count-in are counted (review R3, MINOR 6)
 //   ?ending=none|never|always|early|late|mid  the ending's planted faults (the playthrough's text check): the
 //                 run never hands over to the scene `ending`; no run line under ?playtest; the run line without
 //                 ?playtest; the run line at once, before the card; the run line from the step at the card
@@ -138,7 +139,7 @@ class Calibration extends Phaser.Scene {
     this.results = { A: null, B: null };
     this.tries = { A: 0, B: 0 };
     const onKey = (e) => {
-      if (e.code === 'Escape' || e.repeat) return;
+      if ((e.code === 'Escape' && calibFault !== 'escape') || e.repeat) return;
       if (!this.keyed) {
         this.keyed = true;
         engine.start().then(() => {
@@ -152,8 +153,8 @@ class Calibration extends Phaser.Scene {
       if (a.pass === 'A') {
         const c = engine.clock();
         const h = c ? audibleSec(c, e.timeStamp) : -Infinity;
-        if (h >= a.t0 + (COUNT_IN - 0.5) * BEAT) a.taps.push(h);
-      } else if (e.timeStamp >= a.p0 + (COUNT_IN - 0.5) * BEAT * 1000) a.taps.push(e.timeStamp);
+        if (calibFault === 'nowindow' || h >= a.t0 + (COUNT_IN - 0.5) * BEAT) a.taps.push(h);
+      } else if (calibFault === 'nowindow' || e.timeStamp >= a.p0 + (COUNT_IN - 0.5) * BEAT * 1000) a.taps.push(e.timeStamp);
     };
     window.addEventListener('keydown', onKey, true);
     this.events.once('shutdown', () => {
@@ -388,7 +389,7 @@ if (!params.has('novis')) {
 }
 
 function firstKey(e) {
-  if (e.code === 'Escape') return;
+  if (e.code === 'Escape' && calibFault !== 'escape') return;
   window.removeEventListener('keydown', firstKey, true);
   engine.start();
 }

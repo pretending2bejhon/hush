@@ -16,6 +16,15 @@ const CAL_CLICKS = 24;
 const TAP_ARM_MS = 40;
 const TAP_SPIN_MS = 6;
 const TAP_GIVE_UP_MS = 90000;
+// Review R3 (MINOR 6): the count-in is tapped too (clicks and rings 0 to COUNT_IN - 1), and the taps that count
+// spread in a fixed pattern, so that a tap a scene wrongly admits moves the median: pass A's over aMs - 19 to aMs + 19
+// (every odd ms once over taps COUNT_IN to CLICKS - 1), pass B's over bMs to bMs + 19 (every ms and a half), never
+// sooner than bMs, because a ring's tap is placed only once the frame that drew it is seen. Review R3 (MINOR 5):
+// Escape is pressed ESCAPE_MS after clicks and rings ESCAPE_AT of every attempt, and logged apart from the taps.
+const tapSpread = (i: number): number => (i < CAL_COUNT_IN ? 0 : (((i - CAL_COUNT_IN) * 7) % 20) * 2 - 19);
+const tapSpreadB = (i: number): number => (tapSpread(i) + 19) / 2;
+const ESCAPE_AT = [6, 10, 14];
+const ESCAPE_MS = 200;
 
 export interface MeterSample {
   t: number;
@@ -69,10 +78,11 @@ export interface KeyRecord {
 }
 
 // The tapper's own record of a tapped calibration (review R2, MINOR 3): every tap it landed, with its time stamp,
-// its heard time through the clock line and the attempt that was up when it landed (-1 for none); and every attempt
-// it saw, with the marks the scene judged it against.
+// its heard time through the clock line and the attempt that was up when it landed (-1 for none); every Escape it
+// pressed, in the same form (review R3, MINOR 5); and every attempt it saw, with the marks the scene judged it against.
 export interface TapLog {
   taps: { attempt: number; t: number; h: number }[];
+  escapes: { attempt: number; t: number; h: number }[];
   attempts: { pass: 'A' | 'B'; t0: number | null; p0: number | null; frameTimes: (number | null)[] | null }[];
 }
 
@@ -95,6 +105,7 @@ export function createProbe(inspect: Inspect) {
   const keyLog: KeyRecord[] = [];
   let keyLogOn = false;
   const tapTaps: TapLog['taps'] = [];
+  const tapEscapes: TapLog['escapes'] = [];
   const tapAttempts: ProbeCalibrationAttempt[] = [];
 
   // Runs in the capture phase on window after the game's own key listeners, inside the same dispatch, so the clock
@@ -214,6 +225,7 @@ export function createProbe(inspect: Inspect) {
     tapLog(): TapLog {
       return {
         taps: tapTaps.map((t) => ({ ...t })),
+        escapes: tapEscapes.map((t) => ({ ...t })),
         attempts: tapAttempts.map((a) => ({
           pass: a.pass,
           t0: typeof a.t0 === 'number' ? a.t0 : null,
@@ -232,34 +244,40 @@ export function createProbe(inspect: Inspect) {
       return inspect.calibration();
     },
     // Taps the calibration as a steady player would (review R1, MAJOR 2): a keydown the game ignores (KeyQ), aMs
-    // after each click of pass A from COUNT_IN on, timed in heard time through the device-clock line, and bMs after
-    // each ring of pass B from COUNT_IN on, timed from the frame that first drew it. It reads the scene's attempt
-    // (ProbeCalibrationAttempt) every animation frame until the scene is gone. Returns false without the scene.
-    // Every tap it lands and every attempt it sees go into its record (tapLog; review R2, MINOR 3): a tap's time
-    // stamp and its heard time are read just before the keydown is dispatched, through the same clock line the
-    // scene's listener reads inside that dispatch.
+    // after each click of pass A, timed in heard time through the device-clock line, and bMs after each ring of pass
+    // B, timed from the frame that first drew it. It reads the scene's attempt (ProbeCalibrationAttempt) every
+    // animation frame until the scene is gone. Returns false without the scene. Every tap it lands and every attempt
+    // it sees go into its record (tapLog; review R2, MINOR 3): a tap's time stamp and its heard time are read just
+    // before the keydown is dispatched, through the same clock line the scene's listener reads inside that dispatch.
+    // Review R3: it taps the count-in too, spreads the taps that count by tapSpread (MINOR 6), and presses Escape
+    // ESCAPE_MS after clicks and rings ESCAPE_AT of every attempt, logged as escapes (MINOR 5).
     tapCalibration(aMs: number, bMs: number): boolean {
       const g = inspect.game();
       const scene = g ? (g.scene.getScene('calibration') as unknown as { attempt?: ProbeCalibrationAttempt | null } | null) : null;
       if (!g || !scene) return false;
       tapTaps.length = 0;
+      tapEscapes.length = 0;
       tapAttempts.length = 0;
       const begun = performance.now();
       const armed = new Set<string>();
       let current: ProbeCalibrationAttempt | null = null;
       let attempt = 0;
-      const press = (): void => {
-        const down = new KeyboardEvent('keydown', { code: 'KeyQ', key: 'q' });
+      const plan: { tag: string; code: string; i: number; aOff: number; bOff: number }[] = [];
+      for (let i = 0; i < CAL_CLICKS; i++) plan.push({ tag: `${i}`, code: 'KeyQ', i, aOff: aMs + tapSpread(i), bOff: bMs + tapSpreadB(i) });
+      for (const i of ESCAPE_AT) plan.push({ tag: `e${i}`, code: 'Escape', i, aOff: ESCAPE_MS, bOff: ESCAPE_MS });
+      const press = (code: string): void => {
+        const key = code === 'Escape' ? 'Escape' : 'q';
+        const down = new KeyboardEvent('keydown', { code, key });
         const c = inspect.clock();
         const live = scene.attempt ?? null;
-        tapTaps.push({ attempt: live ? tapAttempts.indexOf(live) : -1, t: down.timeStamp, h: down.timeStamp / 1000 + (c ? c.offset : 0) });
+        (code === 'Escape' ? tapEscapes : tapTaps).push({ attempt: live ? tapAttempts.indexOf(live) : -1, t: down.timeStamp, h: down.timeStamp / 1000 + (c ? c.offset : 0) });
         window.dispatchEvent(down);
-        window.dispatchEvent(new KeyboardEvent('keyup', { code: 'KeyQ', key: 'q' }));
+        window.dispatchEvent(new KeyboardEvent('keyup', { code, key }));
       };
-      const pressAt = (ms: number): void => {
+      const pressAt = (ms: number, code: string): void => {
         const fire = (): void => {
           while (performance.now() < ms) { /* the last few ms, so the event's timeStamp is the moment */ }
-          press();
+          press(code);
         };
         const wait = ms - performance.now() - TAP_SPIN_MS;
         if (wait > 0) window.setTimeout(fire, wait);
@@ -274,15 +292,16 @@ export function createProbe(inspect: Inspect) {
           attempt += 1;
           tapAttempts.push(a);
         }
-        for (let i = CAL_COUNT_IN; a && c && i < CAL_CLICKS; i++) {
-          const key = `${attempt}:${i}`;
+        for (const p of plan) {
+          if (!a || !c) break;
+          const key = `${attempt}:${p.tag}`;
           if (armed.has(key)) continue;
           let ms: number | null = null;
-          if (a.pass === 'A' && typeof a.t0 === 'number') ms = (a.t0 + i * CAL_BEAT + aMs / 1000 - c.offset) * 1000;
-          else if (a.pass === 'B' && a.frameTimes && typeof a.frameTimes[i] === 'number') ms = (a.frameTimes[i] as number) + bMs;
+          if (a.pass === 'A' && typeof a.t0 === 'number') ms = (a.t0 + p.i * CAL_BEAT + p.aOff / 1000 - c.offset) * 1000;
+          else if (a.pass === 'B' && a.frameTimes && typeof a.frameTimes[p.i] === 'number') ms = (a.frameTimes[p.i] as number) + p.bOff;
           if (ms === null || ms - performance.now() > TAP_ARM_MS) continue;
           armed.add(key);
-          pressAt(ms);
+          pressAt(ms, p.code);
         }
         if (up() && performance.now() - begun < TAP_GIVE_UP_MS) window.requestAnimationFrame(frame);
       };

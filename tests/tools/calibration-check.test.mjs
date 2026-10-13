@@ -26,6 +26,9 @@ function pulseTrace({ fills = 8, rings = 48, rest = 286, fill = 1256, ring = 358
   return trace;
 }
 
+// What the page showed after Escape before the first key (review R3, MINOR 5): nothing started.
+const ESC = { started: false, scenes: ['calibration'] };
+
 describe('calibration check (section 12)', () => {
   it('counts each click once, with hysteresis', () => {
     expect(countClicks(clickSamples(48))).toBe(48);
@@ -46,34 +49,37 @@ describe('calibration check (section 12)', () => {
   });
 
   it('passes an untouched run and names every gap', () => {
-    const ok = judgeCalibration({ seconds: 42.3, samples: clickSamples(48), trace: pulseTrace(), values: { avOffset: 0, inputBias: 0 } });
+    const ok = judgeCalibration({ seconds: 42.3, samples: clickSamples(48), trace: pulseTrace(), values: { avOffset: 0, inputBias: 0 }, escape: ESC });
     expect(ok.problems).toEqual([]);
-    const bad = judgeCalibration({ seconds: 0.4, samples: [], trace: pulseTrace({ fills: 0, rings: 0 }), values: { avOffset: 12, inputBias: 0 } });
+    const bad = judgeCalibration({ seconds: 0.4, samples: [], trace: pulseTrace({ fills: 0, rings: 0 }), values: { avOffset: 12, inputBias: 0 }, escape: ESC });
     expect(bad.problems.join(' | ')).toMatch(/left after 0\.4 s/);
     expect(bad.problems.join(' | ')).toMatch(/clicks 0 \(want 44 to 52\)/);
     expect(bad.problems.join(' | ')).toMatch(/fills 0 \(want 7 to 9\)/);
     expect(bad.problems.join(' | ')).toMatch(/rings 0 \(want 44 to 52\)/);
     expect(bad.problems.join(' | ')).toMatch(/values/);
-    expect(judgeCalibration({ seconds: MIN_SECONDS - 0.1, samples: clickSamples(48), trace: pulseTrace(), values: { avOffset: 0, inputBias: 0 } }).problems).toHaveLength(1);
-    expect(judgeCalibration({ seconds: 42, samples: clickSamples(48), trace: pulseTrace(), values: null }).problems).toHaveLength(1);
+    expect(judgeCalibration({ seconds: MIN_SECONDS - 0.1, samples: clickSamples(48), trace: pulseTrace(), values: { avOffset: 0, inputBias: 0 }, escape: ESC }).problems).toHaveLength(1);
+    expect(judgeCalibration({ seconds: 42, samples: clickSamples(48), trace: pulseTrace(), values: null, escape: ESC }).problems).toHaveLength(1);
   });
 
   it('wants a count-in of 4 fills per pass A attempt: 6 or 10 fills cannot pass (review R1, MAJOR 2)', () => {
     for (const [fills, n] of [[6, 1], [7, 0], [9, 0], [10, 1]]) {
-      expect(judgeCalibration({ seconds: 42.3, samples: clickSamples(48), trace: pulseTrace({ fills }), values: { avOffset: 0, inputBias: 0 } }).problems).toHaveLength(n);
+      expect(judgeCalibration({ seconds: 42.3, samples: clickSamples(48), trace: pulseTrace({ fills }), values: { avOffset: 0, inputBias: 0 }, escape: ESC }).problems).toHaveLength(n);
     }
   });
 
   // Review R2 (MINOR 3 and MAJOR 4): a tapper's log of one attempt of each pass, pass A's taps aMs after clicks 4 to
   // 23 in heard time, pass B's bMs after rings 4 to 23 drawn 5 ms after they were due; `extra` taps are appended.
-  function tapLog(aMs = TAP_A_MS, bMs = TAP_B_MS, { jitterB = 0, extra = [] } = {}) {
+  // Review R3 (MINOR 5 and 6): the count-in's clicks and rings 0 to 3 are tapped too, and three Escapes are logged in
+  // each attempt, unless `countIn` or `escapes` is false.
+  function tapLog(aMs = TAP_A_MS, bMs = TAP_B_MS, { jitterB = 0, extra = [], countIn = true, escapes = true } = {}) {
     const t0 = 10;
     const p0 = 30000;
     const frameTimes = Array.from({ length: 24 }, (_, i) => p0 + i * BEAT_S * 1000 + 5);
     const taps = [];
-    for (let i = 4; i < 24; i++) taps.push({ attempt: 0, t: 0, h: t0 + i * BEAT_S + aMs / 1000 });
-    for (let i = 4; i < 24; i++) taps.push({ attempt: 1, t: frameTimes[i] + bMs + (i % 2 ? jitterB : -jitterB), h: 0 });
-    return { taps: [...taps, ...extra], attempts: [{ pass: 'A', t0, p0: null, frameTimes: null }, { pass: 'B', t0: null, p0, frameTimes }] };
+    for (let i = countIn ? 0 : 4; i < 24; i++) taps.push({ attempt: 0, t: 0, h: t0 + i * BEAT_S + aMs / 1000 });
+    for (let i = countIn ? 0 : 4; i < 24; i++) taps.push({ attempt: 1, t: frameTimes[i] + bMs + (i % 2 ? jitterB : -jitterB), h: 0 });
+    const esc = escapes ? [6, 10, 14].flatMap((i) => [{ attempt: 0, t: 0, h: t0 + i * BEAT_S + 0.2 }, { attempt: 1, t: frameTimes[i] + 200, h: 0 }]) : [];
+    return { taps: [...taps, ...extra], escapes: esc, attempts: [{ pass: 'A', t0, p0: null, frameTimes: null }, { pass: 'B', t0: null, p0, frameTimes }] };
   }
   const running = { scenes: ['play'], room: 1, from: 120, to: 264 };
 
@@ -99,6 +105,23 @@ describe('calibration check (section 12)', () => {
     expect(judgeTapped({ seconds: 21.6, values: own, log: tapLog(TAP_A_MS, TAP_B_MS, { jitterB: 60 }), handover: running }).problems.join(' | ')).toMatch(/the taps strayed, the first attempts judge A MAD 0\.0 on 20 taps, B MAD 60\.0 on 20 taps/);
     expect(judgeTapped({ seconds: 21.6, values: own, log: { taps: [], attempts: [] }, handover: running }).problems.join(' | ')).toMatch(/the tapper logged no attempt/);
     expect(judgeTapped({ seconds: 43.1, values: own, log: tapLog(), handover: running }).problems.join(' | ')).toMatch(/left after 43\.1 s/);
+  });
+
+  it('wants Escape pressed before the first key to start nothing (review R3, MINOR 5)', () => {
+    const run = (escape) => judgeCalibration({ seconds: 42.3, samples: clickSamples(48), trace: pulseTrace(), values: { avOffset: 0, inputBias: 0 }, escape }).problems.join(' | ');
+    expect(run(ESC)).toBe('');
+    expect(run({ started: true, scenes: ['calibration'] })).toMatch(/Escape started the audio or left the scene \(audio started/);
+    expect(run({ started: false, scenes: ['play'] })).toMatch(/Escape started the audio or left the scene/);
+    expect(run(undefined)).toMatch(/Escape was not pressed before the first key/);
+  });
+
+  it('ignores the count-in taps and the Escapes when it recomputes the values, and wants the tapper to have landed them (review R3, MINOR 5 and 6)', () => {
+    const plain = tapLogValues(tapLog(TAP_A_MS, TAP_B_MS, { countIn: false, escapes: false })).values;
+    expect(tapLogValues(tapLog()).values).toEqual(plain);
+    const own = tapLogValues(tapLog()).values;
+    expect(judgeTapped({ seconds: 21.6, values: own, log: tapLog(), handover: running }).problems).toEqual([]);
+    expect(judgeTapped({ seconds: 21.6, values: own, log: tapLog(TAP_A_MS, TAP_B_MS, { countIn: false }), handover: running }).problems.join(' | ')).toMatch(/the tapper landed 0 count-in taps and 3 Escapes, 0 count-in taps and 3 Escapes \(want 4 and 3 in every attempt\)/);
+    expect(judgeTapped({ seconds: 21.6, values: own, log: tapLog(TAP_A_MS, TAP_B_MS, { escapes: false }), handover: running }).problems.join(' | ')).toMatch(/the tapper landed 4 count-in taps and 0 Escapes/);
   });
 
   it('wants a run at room 1 running after the tapped hand-over (review R2, MAJOR 4)', () => {

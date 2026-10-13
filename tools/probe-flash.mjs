@@ -10,7 +10,9 @@
 // screencast, then the values 0 and 0. Then, on a page of its own, a tapped calibration (review R1, MAJOR 2):
 // the probe's tapper presses at known offsets after each click and each ring, the scene is left after one attempt
 // of each pass, and (review R2) the values in use must be the ones its logged taps give through section 12, those
-// taps near their marks, and a run at room 1 must be running after the hand-over. A run that streamed fewer than 30
+// taps near their marks, and a run at room 1 must be running after the hand-over. Review R3: Escape pressed before the
+// first key starts nothing, and the tapper also taps the count-in, presses Escape in every attempt and spreads its
+// taps, so a scene that counts either is judged off its taps' own values. A run that streamed fewer than 30
 // frames a second (median), or whose playthrough did not clear every room, cannot pass: what was not seen was
 // not measured.
 // Exit 0 PASS, 1 FAIL, 2 usage, a missing dist or a page that never boots.
@@ -26,9 +28,13 @@ export const CALIBRATION_TIMEOUT_MS = 120000;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-// The untouched calibration: one key the game ignores starts the audio; the analyser is sampled until the
-// scene `calibration` is gone. Returns the wall-clock window it was up and what the page showed.
+// The untouched calibration: Escape first, which must start nothing (review R3, MINOR 5), then one key the game
+// ignores starts the audio; the analyser is sampled until the scene `calibration` is gone. Returns the wall-clock
+// window it was up and what the page showed.
 async function runCalibration(page) {
+  await page.keyboard.press('Escape');
+  await sleep(1500);
+  const esc = await page.evaluate(() => { const a = window.__hush.audio(); return { started: Boolean(a && a.state !== 'none'), scenes: window.__hush.scenes() }; });
   const t0 = Date.now();
   await page.keyboard.press('KeyQ');
   await page.waitForFunction(() => { const a = window.__hush.audio(); return Boolean(a && a.state === 'running'); }, null, { timeout: 10000 });
@@ -45,7 +51,7 @@ async function runCalibration(page) {
   const values = await page.evaluate(() => window.__hush.calibration());
   // A scene that never hands over is left by the probe, so the rooms are still measured.
   if (stuck) await page.evaluate(() => window.__hush.skipCalibration(0, 0));
-  return { t0, left, stuck, samples, values };
+  return { t0, left, stuck, samples, values, esc };
 }
 
 // The tapped calibration, on a page of its own: one key starts the audio, then the probe's tapper (src/probe/api.ts
@@ -137,7 +143,7 @@ async function main(argv) {
       const c = await runCalibration(page);
       await chain;
       const trace = centre.filter((p) => p.t >= c.t0 && p.t <= c.left);
-      calib = judgeCalibration({ seconds: (c.left - c.t0) / 1000, samples: c.samples, trace, values: c.values });
+      calib = judgeCalibration({ seconds: (c.left - c.t0) / 1000, samples: c.samples, trace, values: c.values, escape: c.esc });
       if (c.stuck) calib.problems.unshift(`the calibration scene was still up after ${CALIBRATION_TIMEOUT_MS / 1000} s`);
     }
     rooms = await playthrough(page, witnesses);
@@ -168,12 +174,12 @@ async function main(argv) {
   if (tapped) problems.push(...tapped.problems);
   const pass = problems.length === 0;
   if (calib) {
-    process.stdout.write(`flash: calibration up ${calib.seconds} s: clicks ${calib.clicks}, count-in fills ${calib.fills}, rings ${calib.rings}, values ${calib.values ? `${calib.values.avOffset} ${calib.values.inputBias}` : 'none'} (${calib.frames} frames, ${calib.samples} analyser samples)\n`);
+    process.stdout.write(`flash: calibration up ${calib.seconds} s: clicks ${calib.clicks}, count-in fills ${calib.fills}, rings ${calib.rings}, values ${calib.values ? `${calib.values.avOffset} ${calib.values.inputBias}` : 'none'}, Escape ${calib.escape ? 'ignored' : 'not ignored'} (${calib.frames} frames, ${calib.samples} analyser samples)\n`);
   }
   if (tapped) {
     const v = tapped.values;
     const own = tapped.own;
-    process.stdout.write(`flash: tapped calibration up ${tapped.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (the taps' own ${own ? `${own.avOffset.toFixed(1)} ${own.inputBias.toFixed(1)}` : 'none'}; taps ${TAP_A_MS} and ${TAP_B_MS} ms after each click and ring, marks ${TAP_A_MS - TAP_B_MS} ${TAP_B_MS})\n`);
+    process.stdout.write(`flash: tapped calibration up ${tapped.seconds} s: values ${v ? `${v.avOffset.toFixed(1)} ${v.inputBias.toFixed(1)}` : 'none'} (the taps' own ${own ? `${own.avOffset.toFixed(1)} ${own.inputBias.toFixed(1)}`: 'none'}; taps ${TAP_A_MS - 19} to ${TAP_A_MS + 19} ms after each click and ${TAP_B_MS} to ${TAP_B_MS + 19} ms after each ring, the count-in's too, and Escape 3 times an attempt; marks ${tapped.marks.avOffset} ${tapped.marks.inputBias})\n`);
   }
   if (result) {
     process.stdout.write(`flash: ${result.frames} frames over ${result.seconds.toFixed(1)} s, median ${result.medianFrameMs} ms; general max ${result.maxGeneralArea} px, red max ${result.maxRedArea} px (limit ${result.areaLimit})\n`);

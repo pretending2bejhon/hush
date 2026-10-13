@@ -1,0 +1,50 @@
+HUSH-EVIDENCE v1
+id: R3-calibration-controls
+phase: amend
+command: npx vitest run tests/controls/calibration-probe.test.mjs -t "untouched calibration and its tapped|sign flipped|takes Escape|counts taps during"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-12T22:56:27-05:00
+time-end: 2026-10-12T23:01:32-05:00
+head: 8d952dfb3e1224190cd058f354f942edcbd8a5fb
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/calibration-probe.test.mjs (10 tests | 1 failed | 6 skipped) 302691ms
+   ❯ flash probe --calibration (section 12) (10)
+     × passes the control page's untouched calibration and its tapped one 76550ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/calibration-probe.test.mjs > flash probe --calibration (section 12) > passes the control page's untouched calibration and its tapped one
+AssertionError: expected 'flash: calibration up 43.9 s: clicks …' to match /flash: tapped calibration up (19|2\d|…/
+
+- Expected:
+/flash: tapped calibration up (19|2\d|30)(\.\d)? s: values (1\d|20)\.\d (2\d|30)\.\d \(the taps' own (1\d|20)\.\d (2\d|30)\.\d;/
+
++ Received:
+"flash: calibration up 43.9 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2621 frames, 2183 analyser samples)
+flash: tapped calibration up 22 s: values 8.9 32.4 (the taps' own 8.9 32.4; taps 40 and 25 ms, spread ±19, after each click and ring, the count-in's too, and Escape 3 times an attempt; marks 15 25)
+flash: 3091 frames over 51.9 s, median 16.73 ms; general max 0 px, red max 0 px (limit 25600)
+flash: PASS
+"
+
+ ❯ tests/controls/calibration-probe.test.mjs:34:19
+     32|     const r = flash('');
+     33|     expect(r.out).toMatch(new RegExp(`flash: calibration up \\d+(\\.\\…
+     34|     expect(r.out).toMatch(/flash: tapped calibration up (19|2\d|30)(\.…
+       |                   ^
+     35|     expect(r.out).not.toMatch(/no run at room 1/);
+     36|     expect(r.out).not.toMatch(/the tapper landed/);
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed | 6 skipped (10)
+   Start at  22:56:28
+   Duration  303.27s (tests 100%)
+
+--- end ---
