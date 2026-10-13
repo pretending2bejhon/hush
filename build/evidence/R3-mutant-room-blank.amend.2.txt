@@ -1,0 +1,19 @@
+HUSH-EVIDENCE v1
+id: R3-mutant-room-blank
+phase: amend
+command: node tools/probe-play.mjs --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\mut-room-blank\dist --replays <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\rep-sub --check scene
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T00:43:53-05:00
+time-end: 2026-10-13T00:45:34-05:00
+head: 326bb5e13a81d959e4da256c407e957fe0be08dd
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 10199 ms into it
+play: chrome headless: scene: FAIL: room 01-wake: 344 of 1296 pixels of room-01-0 differ from its reference shapes ((20, 20) [0,0,0,0] want [22,27,40,255], (20, 60) [0,0,0,0] want [22,27,40,255], (20, 100) [0,0,0,0] want [22,27,40,255]); room 02-heartbeat: 273 of 1440 pixels of room-02-0 differ from its reference shapes ((20, 20) [0,0,0,0] want [22,27,40,255], (20, 60) [0,0,0,0] want [22,27,40,255], (20, 100) [0,0,0,0] want [22,27,40,255]); room 04-thorns: 769 of 1296 pixels of room-04-0 differ from its reference shapes ((20, 20) [0,0,0,0] want [22,27,40,255], (20, 60) [0,0,0,0] want [22,27,40,255], (20, 100) [0,0,0,0] want [22,27,40,255])
+play: chrome headless: FAIL (scene)
+--- end ---

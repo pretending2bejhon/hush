@@ -1,0 +1,19 @@
+HUSH-EVIDENCE v1
+id: R3-mutant-glimpse-blank
+phase: amend
+command: node tools/probe-play.mjs --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\mut-glimpse-blank\dist --replays <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\rep-sub --check scene
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T00:54:02-05:00
+time-end: 2026-10-13T00:55:44-05:00
+head: 326bb5e13a81d959e4da256c407e957fe0be08dd
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 10177 ms into it
+play: chrome headless: scene: FAIL: ending: 27 of 235 pixels of glimpse differ from its reference shapes ((800, 544) [0,0,0,0] want [43,58,85,255], (288, 608) [0,0,0,0] want [43,58,85,255], (800, 608) [0,0,0,0] want [60,70,88,255])
+play: chrome headless: FAIL (scene)
+--- end ---

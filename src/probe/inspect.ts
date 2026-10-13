@@ -63,8 +63,8 @@ export interface ProbeInputSource {
 
 // The parts of a Phaser.Game the probe walks to count text objects and read the active scene keys, and (review
 // R2, MAJOR 1 and 3) to read a scene's layout: where each image and Graphics sits, at what scale and depth, its
-// texture and size, and how many commands a Graphics holds. Every layout field is optional: a game object that
-// lacks one reads as its default.
+// texture and size, and how many commands a Graphics holds (review R3: and the commands themselves). Every layout
+// field is optional: a game object that lacks one reads as its default.
 export interface ProbeGameObject {
   type: string;
   list?: ProbeGameObject[];
@@ -85,9 +85,30 @@ export interface ProbeScene {
   sys: { settings: { key: string } };
   children: { list: ProbeGameObject[] };
 }
+// Review R3 (MAJOR 1 and 2): what the scenes draw is read, not only where it sits. The game's step events let the probe
+// read each frame once every scene's update has drawn it (Phaser's `poststep`), and its textures let it read the pixels
+// of a baked DynamicTexture (snapshotPixel, synchronous on WebGL, the bytes as stored).
+export interface ProbeTexture {
+  key: string;
+  snapshotPixel?(x: number, y: number, callback: (c: { r: number; g: number; b: number; a: number }) => void): unknown;
+}
 export interface ProbeGame {
   canvas: HTMLCanvasElement;
   scene: { getScenes(active: boolean): ProbeScene[]; getScene(key: string): ProbeScene | null };
+  events: { on(event: string, fn: () => void): unknown; off(event: string, fn: () => void): unknown };
+  textures: { exists(key: string): boolean; get(key: string): ProbeTexture };
+}
+// The run the play scene draws from, which the scene keeps in its field `run` (HUSH-SPEC section 10.6): the probe reads
+// its view, the creature's two positions and the heard time's alpha between them, as the frame's playFrame read it.
+export interface ProbeRunView {
+  prevX: number;
+  prevY: number;
+  x: number;
+  y: number;
+  alpha: number;
+}
+export interface ProbeRun {
+  view(): ProbeRunView | null;
 }
 
 // The calibration scene's current attempt (HUSH-SPEC section 12, review R1 MAJOR 2), which the probe's tapper reads

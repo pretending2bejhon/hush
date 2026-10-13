@@ -1,0 +1,19 @@
+HUSH-EVIDENCE v1
+id: R3-mutant-gauntlet-chunk0
+phase: amend
+command: node tools/probe-play.mjs --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\mut-gauntlet-chunk0\dist --replays <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\rep-sub --check scene
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T00:45:34-05:00
+time-end: 2026-10-13T00:47:14-05:00
+head: 326bb5e13a81d959e4da256c407e957fe0be08dd
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 10154 ms into it
+play: chrome headless: scene: FAIL: room 11-gauntlet: 46 of 2304 pixels of room-11-1 differ from its reference shapes ((20, 591) [0,0,0,0] want [74,85,110,255], (180, 591) [0,0,0,0] want [74,85,110,255], (220, 591) [0,0,0,0] want [74,85,110,255]); room 11-gauntlet: 1005 of 2304 pixels of room-11-2 differ from its reference shapes ((81, 100) [0,0,0,0] want [127,214,255,255], (81, 140) [0,0,0,0] want [127,214,255,255], (81, 180) [0,0,0,0] want [127,214,255,255]); room 11-gauntlet: 62 of 2304 pixels of room-11-3 differ from its reference shapes ((20, 100) [0,0,0,0] want [22,27,40,255], (20, 140) [0,0,0,0] want [22,27,40,255], (20, 180) [0,0,0,0] want [22,27,40,255])
+play: chrome headless: FAIL (scene)
+--- end ---

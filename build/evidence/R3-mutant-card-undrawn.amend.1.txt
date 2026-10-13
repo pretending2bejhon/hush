@@ -1,0 +1,19 @@
+HUSH-EVIDENCE v1
+id: R3-mutant-card-undrawn
+phase: amend
+command: node tools/probe-play.mjs --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\mut-card-undrawn\dist --replays <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\rep-sub --check scene
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T00:24:38-05:00
+time-end: 2026-10-13T00:26:19-05:00
+head: 326bb5e13a81d959e4da256c407e957fe0be08dd
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 10262 ms into it
+play: chrome headless: scene: FAIL: ending: the card holds 0 entries, want 312 (beat 2 of the bar); ending: the card holds 0 entries, want 312 (beat 3 or 2 of the bar)
+play: chrome headless: FAIL (scene)
+--- end ---

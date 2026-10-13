@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R3-page-controls
+phase: amend
+command: npx vitest run tests/controls/page-probes.test.mjs -t "smoke probe|supply probe|live probe|passes every check|passes the \\?playtest"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T01:10:31-05:00
+time-end: 2026-10-13T01:13:04-05:00
+head: 326bb5e13a81d959e4da256c407e957fe0be08dd
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed | 20 skipped (26)
+   Start at  01:10:32
+   Duration  150.96s (tests 100%)
+
+--- end ---

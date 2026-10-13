@@ -27,7 +27,11 @@
 //   scene    (only when named; review R2, MAJOR 1 and 3) once in every room, half-way through its witness, the play
 //            scene's baked images and Graphics where section 10.6 puts them, at the camera of the sim's creature
 //            (tools/probe-lib.mjs playLayoutProblems); and through the ending, the glimpse rising to rest at y 0 by
-//            the card (endingLayoutProblems)
+//            the card (endingLayoutProblems). Review R3 (MAJOR 1 and 2, MINOR 3): and what they draw
+//            (tools/scene-check.mjs). Every frame of every room's run is replayed on the reference, its full frames
+//            compared command for command (the beat entities through the limiter, the ring, the creature, the dust,
+//            the camera); half-way, every bake's pixels against its shapes; through the ending, the ceiling and the
+//            card on the music's beat, and the glimpse's pixels
 //   keys     (only when named; review R2, MAJOR 4 and 5) on a page of its own: the hand-over skipCalibration(KEYS_AV_MS,
 //            KEYS_BIAS_MS) starts a run at room 1, then real keys pressed through the browser must reach the sim on
 //            the steps stepOf names for them (keyReplayProblems)
@@ -39,6 +43,7 @@ import { compileWorld } from '../tests/fixtures/oracle/index.mjs';
 import { FIELDS } from '../tests/fixtures/oracle/sim.mjs';
 import { bootGame, emitJson, endingLayoutProblems, extraTexts, gauntletMapProblems, keyReplayProblems, launch, loadWitnesses, openPage, originViolations, parseOptions, playLayoutProblems, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
 import { loadRoomFiles } from './replay.mjs';
+import { endingDrawnProblems, frameLogProblems, glimpseBake, pixelProblems, roomBakes } from './scene-check.mjs';
 
 const ALL = ['console', 'play', 'text', 'network', 'storage', 'unlock'];
 const OPTIONAL = ['visibility', 'scene', 'keys'];
@@ -146,12 +151,45 @@ async function visibilityProblems(page) {
   return problems;
 }
 
+// The scene check follows a cleared room until its layer is back (section 4.5: on the first bar line at least a beat
+// after the clear, at most 5 beats) and the layer's ring has been drawn for RING_SEEN_MS, so that the frame log holds it.
+const LAYER_ROOMS = 10;
+const LAYER_WAIT_MS = 4000;
+const RING_SEEN_MS = 300;
+const LAYERS = FIELDS.indexOf('layers');
+async function layerBack(page, layer) {
+  const begun = Date.now();
+  while (Date.now() - begun < LAYER_WAIT_MS) {
+    const s = await page.evaluate(() => window.__hush.sim());
+    if (s && (s.state[LAYERS] & (1 << layer))) {
+      await sleep(RING_SEEN_MS);
+      return;
+    }
+    await sleep(25);
+  }
+}
+
+// A bake's points read through the probe, a few hundred a page call so that frames go on between them; null when the
+// texture could not be read.
+const PIXEL_BATCH = 400;
+async function readBake(page, bake) {
+  const out = [];
+  for (let i = 0; i < bake.probe.length; i += PIXEL_BATCH) {
+    const points = bake.probe.slice(i, i + PIXEL_BATCH).map((p) => [p.x, p.y]);
+    const got = await page.evaluate(([key, pts]) => window.__hush.texturePixels(key, pts), [bake.key, points]);
+    if (!Array.isArray(got)) return null;
+    out.push(...got);
+  }
+  return out;
+}
+
 // Waits for the scene `ending`, then reads the page texts every 100 ms through the rise until the card is up.
 // Returns whether it started, the first text beyond the link and notice seen in the first half of the rise,
 // the last read, and the sim when the ending was seen and at the last read. With `layouts`, every read also takes
 // the ending's display list (the scene check, review R2), marked early while the rise is surely in its first half
-// and final at the last read.
-async function watchEnding(page, { playtest, layouts = null }) {
+// and final at the last read, and (review R3) its Graphics' commands with the heard time; once the card is up the
+// glimpse bake's pixels are read at `glimpse`'s points.
+async function watchEnding(page, { playtest, layouts = null, glimpse = null }) {
   const texts = () => page.evaluate(() => window.__hush.pageTexts());
   const sim = () => page.evaluate(() => window.__hush.sim());
   const begun = Date.now();
@@ -166,17 +204,23 @@ async function watchEnding(page, { playtest, layouts = null }) {
   let early = null;
   let final;
   for (;;) {
-    const read = await page.evaluate((withLayout) => ({ texts: window.__hush.pageTexts(), layout: withLayout ? window.__hush.layout('ending') : null }), Boolean(layouts));
+    const read = await page.evaluate((withLayout) => ({
+      texts: window.__hush.pageTexts(),
+      layout: withLayout ? window.__hush.layout('ending') : null,
+      drawn: withLayout ? window.__hush.drawn('ending') : null,
+      heard: withLayout ? window.__hush.heard() : null,
+    }), Boolean(layouts));
     final = read.texts;
     const now = Date.now();
     const extra = extraTexts(final);
     if (extra.length && !early && now - seen < RISE_MS - SKEW_MS) early = { ms: now - seen, texts: extra };
     const last = now >= hard || (now >= soft && (!playtest || extra.length));
-    if (layouts) layouts.push({ layout: read.layout, early: now - seen < RISE_MS / 2 - SKEW_MS, final: last });
+    if (layouts) layouts.push({ layout: read.layout, drawn: read.drawn, heard: read.heard, early: now - seen < RISE_MS / 2 - SKEW_MS, final: last });
     if (last) break;
     await sleep(100);
   }
-  return { started: true, early, final, atStart, atEnd: await sim(), ms: Date.now() - seen };
+  const glimpsePixels = glimpse ? await readBake(page, glimpse) : null;
+  return { started: true, early, final, atStart, atEnd: await sim(), ms: Date.now() - seen, glimpsePixels };
 }
 
 // The key check (review R2, MAJOR 4 and 5), on a page of its own: the probe's hand-over with a calibration, a run at
@@ -283,7 +327,8 @@ async function main(argv) {
     // The scene check reads each room once, half-way to the step its witness clears it on, the layout and the sim in
     // one page read.
     const world = want.includes('scene') || want.includes('keys') ? compileWorld(loadRoomFiles(path.resolve(REPO, o.rooms))) : null;
-    const scene = { sampled: new Set(), problems: [], endingReads: want.includes('scene') ? [] : null };
+    const scene = { sampled: new Set(), problems: [], endingReads: want.includes('scene') ? [] : null, logs: [], frames: 0, held: 0, rings: 0, pixels: 0, fixedRead: false };
+    const glimpse = want.includes('scene') ? glimpseBake() : null;
     const onPoll = want.includes('scene') ? async (w, s, clearStep) => {
       if (scene.sampled.has(w.room) || clearStep === null || s.step < clearStep / 2 || s.status.room !== w.room) return;
       const r = await page.evaluate(() => ({ layout: window.__hush.layout('play'), sim: window.__hush.sim() }));
@@ -291,9 +336,17 @@ async function main(argv) {
       scene.sampled.add(w.room);
       const room = w.room === 11 ? world.gauntlet : world.rooms[w.room - 1];
       scene.problems.push(...playLayoutProblems(r.layout, { room, number: w.room, state: r.sim.state, label: `room ${w.stem} at step ${r.sim.step}` }));
+      // Review R3 (MAJOR 1): the room's bakes read pixel by pixel (and the fog and the vignette once).
+      for (const bake of roomBakes(room, w.room, { fixed: !scene.fixedRead })) {
+        const pixels = await readBake(page, bake);
+        scene.pixels += bake.probe.length;
+        scene.problems.push(...pixelProblems(bake, pixels, `room ${w.stem}`));
+      }
+      scene.fixedRead = true;
     } : null;
     const rooms = await playthrough(page, witnesses, {
       onPoll,
+      frameLog: want.includes('scene'),
       onRoom: async (w, phase, info) => {
         if (phase !== 'end') return;
         objectCounts.push(await page.evaluate(() => window.__hush.textObjects()));
@@ -306,11 +359,28 @@ async function main(argv) {
             unlock.problems.push(...gauntletMapProblems(reads));
           }
         }
+        // Review R3 (MAJOR 1, MINOR 3): every frame the run drew, from its bake to now, is taken before the next run starts
+        // (the last room's once the ending is watched, so that its timing is untouched) and judged after the ending. A room
+        // that returns a layer is first followed until that layer is back and its ring has been drawn a while.
+        if (want.includes('scene') && w !== witnesses[witnesses.length - 1]) {
+          if (info.ok && w.room <= LAYER_ROOMS) await layerBack(page, w.room);
+          scene.logs.push({ w, log: await page.evaluate(() => window.__hush.frameLogTake()) });
+        }
         process.stdout.write(`play: ${label}: room ${w.stem} done\n`);
       },
     });
     const last = rooms.length ? rooms[rooms.length - 1] : null;
-    const ending = await watchEnding(page, { playtest, layouts: scene.endingReads });
+    const ending = await watchEnding(page, { playtest, layouts: scene.endingReads, glimpse });
+    if (want.includes('scene') && witnesses.length) {
+      scene.logs.push({ w: witnesses[witnesses.length - 1], log: await page.evaluate(() => window.__hush.frameLogTake()) });
+      for (const { w, log } of scene.logs) {
+        const r = frameLogProblems({ world, room: w.room, changes: w.witness.changes, log, label: `room ${w.stem}` });
+        scene.frames += r.compared;
+        scene.held += r.held;
+        scene.rings += r.rings;
+        scene.problems.push(...r.problems);
+      }
+    }
     process.stdout.write(`play: ${label}: ending ${ending.started ? `seen, texts read ${ending.ms} ms into it` : 'never started'}\n`);
     if (want.includes('visibility')) {
       const vp = await visibilityProblems(page);
@@ -319,10 +389,16 @@ async function main(argv) {
     if (want.includes('scene')) {
       const unread = witnesses.filter((w) => !scene.sampled.has(w.room)).map((w) => w.stem);
       if (unread.length) scene.problems.push(`no layout read in ${unread.join(', ')}`);
-      const endingSide = ending.started ? endingLayoutProblems(scene.endingReads) : ['the ending never started, so its layout was not read'];
+      const drawn = ending.started ? endingDrawnProblems(scene.endingReads) : { problems: [], rise: 0, card: 0 };
+      const endingSide = ending.started
+        ? [...endingLayoutProblems(scene.endingReads), ...drawn.problems, ...pixelProblems(glimpse, ending.glimpsePixels, 'ending')]
+        : ['the ending never started, so its layout was not read'];
       // The rooms' first problems and the ending's, so that neither hides the other.
       const shown = [...scene.problems.slice(0, 3), ...endingSide.slice(0, 2)];
-      checks.scene = { ok: scene.problems.length + endingSide.length === 0, detail: shown.join('; ') || `${scene.sampled.size} rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera; the glimpse risen to y 0 by the card (${scene.endingReads.length} ending reads)` };
+      checks.scene = {
+        ok: scene.problems.length + endingSide.length === 0,
+        detail: shown.join('; ') || `${scene.sampled.size} rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, ${scene.pixels} bake pixels as their shapes; every frame of every run replayed, ${scene.frames} drawn command for command as the reference (${scene.held} while the limiter held a change, ${scene.rings} with a layer's ring); the glimpse risen to y 0 by the card, ${drawn.rise} reads of the ceiling and ${drawn.card} of the card on the beat as the reference, ${glimpse.probe.length} glimpse pixels (${scene.endingReads.length} ending reads)`,
+      };
     }
     if (want.includes('keys')) {
       const kp = await keysProblems(browser, srv.url, { query: o.query, world });

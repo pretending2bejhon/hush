@@ -3,7 +3,7 @@
 // installProbe(inspect) unconditionally and never reads ?probe itself. Everything the API returns is plain
 // data, so a probe can read it through page.evaluate. It reads the game through the Inspect view and acts
 // only through Inspect.control and the layer gain nodes (the solo test of X7).
-import type { Inspect, ProbeCalibrationAttempt, ProbeGameObject, ProbeInputSource, ProbeSimStatus } from './inspect.ts';
+import type { Inspect, ProbeCalibrationAttempt, ProbeGameObject, ProbeInputSource, ProbeRun, ProbeSim, ProbeSimStatus } from './inspect.ts';
 
 export const PROBE_VERSION = 1;
 const TEXT_TYPES = new Set(['Text', 'BitmapText', 'DynamicBitmapText']);
@@ -75,6 +75,56 @@ export interface KeyRecord {
   t: number;
   offset: number | null;
   step: number | null;
+}
+
+// A Graphics' command buffer as drawn (review R3, MAJOR 1 and 2): Phaser 4.2.1's numbers, each rounded to 1e-4, and the
+// one boolean an arc carries.
+export type DrawnBuffer = (number | boolean | null)[];
+
+export interface DrawnGraphics {
+  depth: number;
+  buffer: DrawnBuffer;
+}
+
+// The play scene's frames (review R3, MAJOR 1 and MINOR 3), read at the game's `poststep`, once every scene's update has
+// drawn the frame and before the next one ticks the sim. Every frame gives a light record [sim, room, step], `sim`
+// counting the sim objects seen since frameLogStart (1 for the first). Every FRAME_FULL_EVERY-th frame from a bake (a
+// new sim or a new room), up to FRAME_FULL_PER_BAKE of them, also gives a full one: the sim's state, the run's view as
+// the frame read it, the x of the room's first chunk (the camera), and every Graphics' buffer.
+export interface FullFrame {
+  index: number;
+  sim: number;
+  room: number;
+  step: number;
+  state: number[];
+  view: number[] | null;
+  x0: number | null;
+  graphics: DrawnGraphics[];
+}
+
+export interface FrameLog {
+  light: number[][];
+  full: FullFrame[];
+  dropped: number;
+}
+
+const FRAME_FULL_EVERY = 4;
+const FRAME_FULL_PER_BAKE = 48;
+const FRAME_LIGHT_MAX = 200000;
+const FRAME_FULL_MAX = 2000;
+// Phaser 4.2.1's Core.Events.POST_STEP.
+const POST_STEP = 'poststep';
+
+const rounded = (v: unknown): number | boolean | null => {
+  if (typeof v === 'boolean') return v;
+  if (typeof v !== 'number' || !Number.isFinite(v)) return null;
+  return Math.round(v * 1e4) / 1e4;
+};
+
+function drawnOf(list: ProbeGameObject[]): DrawnGraphics[] {
+  const out: DrawnGraphics[] = [];
+  for (const o of list) if (o.type === 'Graphics' && Array.isArray(o.commandBuffer)) out.push({ depth: o.depth ?? 0, buffer: o.commandBuffer.map(rounded) });
+  return out;
 }
 
 // The tapper's own record of a tapped calibration (review R2, MINOR 3): every tap it landed, with its time stamp,
@@ -162,6 +212,60 @@ export function createProbe(inspect: Inspect) {
   const tapTaps: TapLog['taps'] = [];
   const tapEscapes: TapLog['escapes'] = [];
   const tapAttempts: ProbeCalibrationAttempt[] = [];
+  const frameLight: number[][] = [];
+  const frameFull: FullFrame[] = [];
+  let frameLogOn = false;
+  let frameHooked = false;
+  let frameDropped = 0;
+  let frameSim: ProbeSim | null = null;
+  let frameSims = 0;
+  let frameBake = '';
+  let sinceBake = 0;
+  let fullSinceBake = 0;
+
+  // One frame of the play scene, after every scene's update (review R3, MAJOR 1 and MINOR 3).
+  function onPostStep(): void {
+    if (!frameLogOn) return;
+    const g = inspect.game();
+    if (!g || !g.scene.getScenes(true).some((s) => s.sys.settings.key === 'play')) return;
+    const scene = g.scene.getScene('play');
+    const sim = inspect.sim();
+    if (!scene || !sim) return;
+    if (sim !== frameSim) {
+      frameSim = sim;
+      frameSims += 1;
+    }
+    const room = sim.status().room;
+    const bake = `${frameSims}:${room}`;
+    if (bake !== frameBake) {
+      frameBake = bake;
+      sinceBake = 0;
+      fullSinceBake = 0;
+    }
+    if (frameLight.length >= FRAME_LIGHT_MAX) {
+      frameDropped += 1;
+      return;
+    }
+    frameLight.push([frameSims, room, sim.step]);
+    if (sinceBake % FRAME_FULL_EVERY === 0 && fullSinceBake < FRAME_FULL_PER_BAKE && frameFull.length < FRAME_FULL_MAX) {
+      const run = (scene as unknown as { run?: ProbeRun }).run;
+      const view = run && typeof run.view === 'function' ? run.view() : null;
+      const first = new RegExp(`^room-${String(room).padStart(2, '0')}-0$`);
+      const chunk = scene.children.list.find((o) => o.type === 'Image' && o.texture && first.test(o.texture.key));
+      frameFull.push({
+        index: frameLight.length - 1,
+        sim: frameSims,
+        room,
+        step: sim.step,
+        state: Array.from(sim.save()),
+        view: view ? [view.prevX, view.prevY, view.x, view.y, view.alpha] : null,
+        x0: chunk ? (chunk.x ?? 0) : null,
+        graphics: drawnOf(scene.children.list),
+      });
+      fullSinceBake += 1;
+    }
+    sinceBake += 1;
+  }
 
   // Runs in the capture phase on window after the game's own key listeners, inside the same dispatch, so the clock
   // line's offset it reads is the one the game's stepOf read.
@@ -263,6 +367,58 @@ export function createProbe(inspect: Inspect) {
         h: o.frame ? o.frame.height : null,
         commands: Array.isArray(o.commandBuffer) ? o.commandBuffer.length : null,
       }));
+    },
+    // Every Graphics of the scene `key` with its depth and its command buffer as its last update drew it (review R3,
+    // MAJOR 1 and 2); null without the scene.
+    drawn(key: string): DrawnGraphics[] | null {
+      const g = inspect.game();
+      const scene = g ? g.scene.getScene(key) : null;
+      return scene ? drawnOf(scene.children.list) : null;
+    },
+    // The heard time now, through the device-clock line (section 9.1's audibleSec), and the run's origin: the ending's
+    // card is read against the beat they give (review R3, MAJOR 2). Null before the audio starts.
+    heard(): { heard: number; origin: number } | null {
+      const c = inspect.clock();
+      const a = inspect.audio();
+      return c && a ? { heard: performance.now() / 1000 + c.offset, origin: a.origin } : null;
+    },
+    // Starts the play scene's frame log afresh (review R3, MAJOR 1 and MINOR 3): every frame from the next one on, until
+    // frameLogTake. A probe calls it in the same page call as play(), so the first frame logged is the new run's bake.
+    frameLogStart(): void {
+      frameLight.length = 0;
+      frameFull.length = 0;
+      frameDropped = 0;
+      frameSim = null;
+      frameSims = 0;
+      frameBake = '';
+      frameLogOn = true;
+      const g = inspect.game();
+      if (g && !frameHooked) {
+        frameHooked = true;
+        g.events.on(POST_STEP, onPostStep);
+      }
+    },
+    frameLogTake(): FrameLog {
+      frameLogOn = false;
+      return { light: frameLight.splice(0, frameLight.length), full: frameFull.splice(0, frameFull.length), dropped: frameDropped };
+    },
+    // The pixels of the texture `key` at the given pixels (x right, y down from the top left), as stored: a baked
+    // DynamicTexture holds premultiplied bytes (review R3, MAJOR 1 and 2). Null for a missing texture or one that is not
+    // a DynamicTexture.
+    texturePixels(key: string, points: [number, number][]): number[][] | null {
+      const g = inspect.game();
+      if (!g || !g.textures.exists(key)) return null;
+      const t = g.textures.get(key);
+      if (!t || typeof t.snapshotPixel !== 'function') return null;
+      const out: number[][] = [];
+      for (const [x, y] of points) {
+        let px: number[] = [-1, -1, -1, -1];
+        t.snapshotPixel(x, y, (c) => {
+          px = [c.r, c.g, c.b, c.a];
+        });
+        out.push(px);
+      }
+      return out;
     },
     // Records every keydown and keyup from now on (review R2, MAJOR 5), for a probe to replay the keys on the steps
     // the game must give them.

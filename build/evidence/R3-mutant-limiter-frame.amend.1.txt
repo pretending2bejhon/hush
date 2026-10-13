@@ -1,0 +1,19 @@
+HUSH-EVIDENCE v1
+id: R3-mutant-limiter-frame
+phase: amend
+command: node tools/probe-play.mjs --dist <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\mut-limiter-frame\dist --replays <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ca2e7315-2780-4059-bee6-9155d9751f5a\scratchpad\r3fix\rep-sub --check scene
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T00:21:13-05:00
+time-end: 2026-10-13T00:22:54-05:00
+head: 326bb5e13a81d959e4da256c407e957fe0be08dd
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 10147 ms into it
+play: chrome headless: scene: FAIL: room 04-thorns at step 63: the beat entities and ring (depth 6) differs at entry 2 of 72: [7,8378111,0,10,445,640], want [7,8378111,0.25,3,445,637.5]; room 04-thorns at step 111: the beat entities and ring (depth 6) differs at entry 50 of 138: [2.5,7,8378111,0.592,10,765,640], want [2.5,7,8378111,1,10,765,640]; room 04-thorns at step 159: the beat entities and ring (depth 6) differs at entry 50 of 72: [2.5,7,8378111,0.448,10,765,640], want [2.5,7,8378111,0.25,3,765,637.5]
+play: chrome headless: FAIL (scene)
+--- end ---

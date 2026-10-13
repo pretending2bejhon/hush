@@ -145,14 +145,19 @@ const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 // then the live run from the room's entrance until it clears, dies or times out. clearStep is the step on
 // which the in-page replay cleared the room (null when it did not): its sim's step after the clearing tick, so
 // that tick ran at step clearStep - 1. onRoom(w, 'end', { ok, clearStep }) runs before the next room starts;
-// onPoll(w, s, clearStep), when given, runs after every read of the sim while the room is still being played.
-export async function playthrough(page, witnesses, { onRoom = null, onPoll = null, timeoutPad = 15 } = {}) {
+// onPoll(w, s, clearStep), when given, runs after every read of the sim while the room is still being played. With
+// frameLog, the play scene's frame log (src/probe/api.ts) starts afresh in the same page call as each play(), so its
+// first frame is that run's bake (the scene check, review R3).
+export async function playthrough(page, witnesses, { onRoom = null, onPoll = null, timeoutPad = 15, frameLog = false } = {}) {
   const results = [];
   for (const w of witnesses) {
     const { changes, end, checksum } = w.witness;
     const inPage = await page.evaluate(([room, ch, e, layers]) => window.__hush.replay(room, ch, e, layers), [w.room, changes, end, canonicalLayers(w.room)]);
     if (onRoom) await onRoom(w, 'start');
-    await page.evaluate(([room, ch]) => window.__hush.play(room, ch), [w.room, changes]);
+    await page.evaluate(([room, ch, log]) => {
+      if (log) window.__hush.frameLogStart();
+      window.__hush.play(room, ch);
+    }, [w.room, changes, frameLog]);
     const started = Date.now();
     const limit = (end / 240 + timeoutPad) * 1000;
     let outcome = null;
@@ -223,7 +228,8 @@ export function audioGraphProblems(graph, layers) {
 }
 
 // The playthrough's scene check (review R2, MAJOR 1): one read of the play scene's display list (src/probe/api.ts
-// layout) with the sim's state, taken between two frames in room `number`. Section 10.6 places the room's baked
+// layout) with the sim's state, taken between two frames in room `number`. (Review R3: where things sit; what they draw
+// is tools/scene-check.mjs.) Section 10.6 places the room's baked
 // images: chunk i of bakeChunks(room) at depth 5, at x col0 x 40 less the camera; band b of depthBands(room) at depth
 // b and scale ZOOM, at x -round(factor x camera); the fog at depth 4 and the vignette at depth 9, at (0, 0); every one
 // with origin (0, 0), y 0, its baked size, visible and opaque, and no other image. The camera they share must be
