@@ -1,0 +1,115 @@
+{
+  "kind": "perf",
+  "head": "560524fa19f920b5519167152fa451ebbcdbf065",
+  "digest": "6c217e01ef418ee3d2664d310528567f0c56050f1b770e7d216da73486e414ac",
+  "query": "",
+  "headed": true,
+  "swiftshader": false,
+  "renderer": "ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "window": {
+    "inner": [
+      1536,
+      826
+    ],
+    "screen": [
+      1536,
+      912
+    ],
+    "dpr": 1.25,
+    "maximized": true
+  },
+  "power": "ac",
+  "powerSaver": false,
+  "plan": "Balanced",
+  "refreshHz": 60,
+  "heavyApps": [],
+  "sample": {
+    "cpu": [
+      {
+        "name": "msmpeng",
+        "cpu": 1.3
+      },
+      {
+        "name": "system",
+        "cpu": 1.2
+      },
+      {
+        "name": "claude",
+        "cpu": 0.9
+      },
+      {
+        "name": "claude",
+        "cpu": 0.7
+      }
+    ],
+    "gpu": [
+      {
+        "name": "claude",
+        "gpu": 5.8
+      },
+      {
+        "name": "PresentMonService",
+        "gpu": 0
+      },
+      {
+        "name": "msedgewebview2",
+        "gpu": 0
+      }
+    ]
+  },
+  "meanFps": 60,
+  "p20": 1,
+  "p99Ms": 16.8,
+  "maxMs": 17.9,
+  "durationSec": 60.1,
+  "phases": {
+    "rooms": {
+      "frames": 2404,
+      "seconds": 40.06660000000001,
+      "meanFps": 60.00009983377675,
+      "p20": 1,
+      "p99Ms": 16.80000000000291,
+      "maxMs": 17.900000000001455
+    },
+    "busy": {
+      "frames": 1201,
+      "seconds": 20.016699999999997,
+      "meanFps": 59.99990008343035,
+      "p20": 1,
+      "p99Ms": 16.80000000000291,
+      "maxMs": 16.90000000000873
+    }
+  },
+  "played": [
+    {
+      "stem": "01-wake",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "02-heartbeat",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "03-dash",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "04-thorns",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "05-doors",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "06-wave",
+      "outcome": "played until the phase ended"
+    },
+    {
+      "stem": "11-gauntlet",
+      "outcome": "busy window from step 5355"
+    }
+  ],
+  "problems": [],
+  "pass": true
+}

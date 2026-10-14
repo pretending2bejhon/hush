@@ -1,0 +1,657 @@
+{
+  "kind": "av",
+  "head": "560524fa19f920b5519167152fa451ebbcdbf065",
+  "digest": "6c217e01ef418ee3d2664d310528567f0c56050f1b770e7d216da73486e414ac",
+  "query": "",
+  "headed": true,
+  "track": "music/area1.strudel",
+  "contextRunning": true,
+  "state": "running",
+  "scheduledVoices": 2162,
+  "expectedVoices": 2140,
+  "voiceErrors": 0,
+  "lateShifted": 0,
+  "lateDropped": 0,
+  "masterSignalOk": true,
+  "masterSilenceOk": true,
+  "silence": {
+    "ok": true,
+    "peak": 0,
+    "samples": 126
+  },
+  "windows": [
+    {
+      "room": 2,
+      "layersBack": 1,
+      "ok": true,
+      "rms": 0.4151263578320691
+    },
+    {
+      "room": 3,
+      "layersBack": 2,
+      "ok": true,
+      "rms": 0.40905021482192894
+    },
+    {
+      "room": 4,
+      "layersBack": 3,
+      "ok": true,
+      "rms": 0.4089122333797584
+    },
+    {
+      "room": 5,
+      "layersBack": 4,
+      "ok": true,
+      "rms": 0.40596094112914827
+    },
+    {
+      "room": 6,
+      "layersBack": 5,
+      "ok": true,
+      "rms": 0.40761700382671323
+    },
+    {
+      "room": 7,
+      "layersBack": 6,
+      "ok": true,
+      "rms": 0.4034199731113829
+    },
+    {
+      "room": 8,
+      "layersBack": 7,
+      "ok": true,
+      "rms": 0.4015418922932726
+    },
+    {
+      "room": 9,
+      "layersBack": 8,
+      "ok": true,
+      "rms": 0.4026135351039467
+    },
+    {
+      "room": 10,
+      "layersBack": 9,
+      "ok": true,
+      "rms": 0.3987547843324061
+    },
+    {
+      "room": 11,
+      "layersBack": 10,
+      "ok": true,
+      "rms": 0.3874947756746529
+    }
+  ],
+  "layers": [
+    {
+      "layer": 1,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.4137423031978172,
+      "peak": 0
+    },
+    {
+      "layer": 2,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.07308048664884195,
+      "peak": 0
+    },
+    {
+      "layer": 3,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.014645257382673964,
+      "peak": 0
+    },
+    {
+      "layer": 4,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.04908137946293662,
+      "peak": 0
+    },
+    {
+      "layer": 5,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.00885204549047814,
+      "peak": 0
+    },
+    {
+      "layer": 6,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.02883482063338938,
+      "peak": 0
+    },
+    {
+      "layer": 7,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.006644330207202379,
+      "peak": 0
+    },
+    {
+      "layer": 8,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.015527780006406772,
+      "peak": 0
+    },
+    {
+      "layer": 9,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.01627119677950081,
+      "peak": 0
+    },
+    {
+      "layer": 10,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.10821890201347194,
+      "peak": 0
+    }
+  ],
+  "signalFloorRms": 0.002,
+  "silenceCeilingPeak": 0.0003,
+  "clockValid": true,
+  "clockJitterMs": 0.121,
+  "clockJitterBoundMs": 3,
+  "clockResyncs": 0,
+  "deaths": 0,
+  "durationSec": 68.4,
+  "segments": [
+    {
+      "room": 1,
+      "seconds": 3.45,
+      "witness": false
+    },
+    {
+      "room": 2,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 3,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 4,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 5,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 6,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 7,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 8,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 9,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 10,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 11,
+      "seconds": 30.65,
+      "witness": true
+    }
+  ],
+  "graph": {
+    "analyserAtSpeakers": true,
+    "others": [
+      {
+        "type": "GainNode",
+        "gain": 1,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      }
+    ],
+    "analyser": {
+      "type": "AnalyserNode",
+      "fftSize": 2048,
+      "smoothing": 0
+    },
+    "master": {
+      "type": "GainNode",
+      "gain": 0.800000011920929
+    },
+    "compressor": {
+      "type": "DynamicsCompressorNode",
+      "threshold": -10,
+      "knee": 6,
+      "ratio": 4,
+      "attack": 0.004999999888241291,
+      "release": 0.11999999731779099
+    },
+    "compressorInputs": 10,
+    "gatesIn": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "starts": {
+    "voices": 2319,
+    "matched": 2319,
+    "shifted": 0,
+    "silent": 0,
+    "onsets": 1907,
+    "covered": 1907,
+    "earliestMs": 0,
+    "latestMs": 0,
+    "off": 0,
+    "missing": 0,
+    "ungated": 0,
+    "tangled": 0,
+    "orphan": 0,
+    "unread": 0,
+    "runs": [
+      {
+        "room": 1,
+        "seconds": -0.25,
+        "voices": 0,
+        "onsets": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "started": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "room": 1,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 2,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 3,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 4,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 5,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 6,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 7,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 8,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 9,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 10,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 11,
+        "seconds": 30.451,
+        "voices": 1039,
+        "onsets": [
+          71,
+          17,
+          141,
+          141,
+          36,
+          282,
+          89,
+          53,
+          70,
+          17
+        ],
+        "started": [
+          71,
+          17,
+          141,
+          141,
+          36,
+          282,
+          89,
+          53,
+          70,
+          17
+        ]
+      }
+    ],
+    "firstOff": [],
+    "firstMissing": [],
+    "recorded": 4464
+  },
+  "problems": [],
+  "pass": true
+}
