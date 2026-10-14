@@ -1,0 +1,14 @@
+{
+  "kind": "live",
+  "url": "https://jhonalbert.com/hush/",
+  "tag": "hush-v1-rc1",
+  "expectedSha": "c9ce7243c7c7c4fc7a81c695439d8a0d5cc9b98f",
+  "status": 200,
+  "buildMeta": "c9ce7243c7c7c4fc7a81c695439d8a0d5cc9b98f",
+  "onOriginMain": true,
+  "consoleErrors": 0,
+  "pageErrors": 0,
+  "bootToCalibration": true,
+  "problems": [],
+  "pass": true
+}
