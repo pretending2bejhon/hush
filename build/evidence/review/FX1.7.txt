@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: FX1
+phase: review
+command: npx vitest run tests/fx/flash-limiter.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T23:51:37-05:00
+time-end: 2026-10-13T23:51:38-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  23:51:37
+   Duration  195ms (transform 63%, import 21%, worker 9%, tests 6%)
+
+--- end ---

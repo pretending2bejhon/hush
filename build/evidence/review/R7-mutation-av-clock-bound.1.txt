@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: R7-mutation-av-clock-bound
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/mut.mjs av-clock-bound
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T01:37:54-05:00
+time-end: 2026-10-14T01:46:51-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 1
+--- output ---
+mut av-clock-bound: X7: the device-clock line may move 300 ms peak to peak (CLOCK_JITTER_BOUND_MS 3 -> 300)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: tools/probe-av.mjs: "export const CLOCK_JITTER_BOUND_MS = 3;" -> "export const CLOCK_JITTER_BOUND_MS = 300;"
+tools/probe-av.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/tools  (exit 0, 89 s)
+  [2m Test Files [22m [1m[32m16 passed[39m[22m[90m (16)[39m
+mut: $ npx vitest run tests/controls/av-probe.test.mjs  (exit 0, 447 s)
+  [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+mut av-clock-bound: SURVIVED every command
+mut: restored tools/probe-av.mjs; clone clean
+(node:7972) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+--- end ---

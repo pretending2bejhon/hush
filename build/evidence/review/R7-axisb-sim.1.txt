@@ -1,0 +1,40 @@
+HUSH-EVIDENCE v1
+id: R7-axisb-sim
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/axisb-sim.mjs <repo> 55e41c8b8846c82489e2968f29d569a5767f0abc
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T00:27:21-05:00
+time-end: 2026-10-14T00:27:30-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+determinism 01-wake: run1 6001f0f9 run2 6001f0f9 witness 6001f0f9 oracle 6001f0f9; save() equal true; clear tick 1617; product = oracle at all 1618 steps true OK
+determinism 02-heartbeat: run1 04febedf run2 04febedf witness 04febedf oracle 04febedf; save() equal true; clear tick 1683; product = oracle at all 1684 steps true OK
+determinism 03-dash: run1 593d0787 run2 593d0787 witness 593d0787 oracle 593d0787; save() equal true; clear tick 1587; product = oracle at all 1588 steps true OK
+determinism 04-thorns: run1 123057cb run2 123057cb witness 123057cb oracle 123057cb; save() equal true; clear tick 1407; product = oracle at all 1408 steps true OK
+determinism 05-doors: run1 d181a484 run2 d181a484 witness d181a484 oracle d181a484; save() equal true; clear tick 2221; product = oracle at all 2222 steps true OK
+determinism 06-wave: run1 f3496b90 run2 f3496b90 witness f3496b90 oracle f3496b90; save() equal true; clear tick 1919; product = oracle at all 1920 steps true OK
+determinism 07-current: run1 1c7b52e9 run2 1c7b52e9 witness 1c7b52e9 oracle 1c7b52e9; save() equal true; clear tick 1942; product = oracle at all 1943 steps true OK
+determinism 08-steps: run1 e6a8f7ba run2 e6a8f7ba witness e6a8f7ba oracle e6a8f7ba; save() equal true; clear tick 1493; product = oracle at all 1494 steps true OK
+determinism 09-gates: run1 9498a96d run2 9498a96d witness 9498a96d oracle 9498a96d; save() equal true; clear tick 1904; product = oracle at all 1905 steps true OK
+determinism 10-crown: run1 5b909a19 run2 5b909a19 witness 5b909a19 oracle 5b909a19; save() equal true; clear tick 2387; product = oracle at all 2388 steps true OK
+determinism 11-gauntlet: run1 b3715ef7 run2 b3715ef7 witness b3715ef7 oracle b3715ef7; save() equal true; clear tick 14277; product = oracle at all 14278 steps true OK
+determinism: 32448 steps compared with the oracle
+layers 01-wake: clear tick 1617, layer 1 back on tick 2058 (first step of bar 5, 4.28 beats after the clear), changes 1, deaths after 0 OK
+layers 02-heartbeat: clear tick 1683, layer 2 back on tick 2058 (first step of bar 5, 3.64 beats after the clear), changes 1, deaths after 0 OK
+layers 03-dash: clear tick 1587, layer 3 back on tick 2058 (first step of bar 5, 4.57 beats after the clear), changes 1, deaths after 0 OK
+layers 04-thorns: clear tick 1407, layer 4 back on tick 1646 (first step of bar 4, 2.32 beats after the clear), changes 1, deaths after 0 OK
+layers 05-doors: clear tick 2221, layer 5 back on tick 2469 (first step of bar 6, 2.41 beats after the clear), changes 1, deaths after 0 OK
+layers 06-wave: clear tick 1919, layer 6 back on tick 2058 (first step of bar 5, 1.34 beats after the clear), changes 1, deaths after 0 OK
+layers 07-current: clear tick 1942, layer 7 back on tick 2058 (first step of bar 5, 1.12 beats after the clear), changes 1, deaths after 0 OK
+layers 08-steps: clear tick 1493, layer 8 back on tick 1646 (first step of bar 4, 1.48 beats after the clear), changes 1, deaths after 0 OK
+layers 09-gates: clear tick 1904, layer 9 back on tick 2058 (first step of bar 5, 1.49 beats after the clear), changes 1, deaths after 0 OK
+layers 10-crown: clear tick 2387, layer 10 back on tick 2880 (first step of bar 7, 4.79 beats after the clear), changes 1, deaths after 2 OK
+layers 11-gauntlet: clear tick 14277, finished 1, layer changes 0 OK
+portal seeds (HEAD's sha words): 1441012875 2286340132 2313328271 701852069 1988037308
+portals: 1111 runs; base to wave 505 (on a W cell 505); wave to base 505 (on a B cell 505, by a respawn or room entry 0); first wave in room 6; rooms with W cells: 6 7 9 10 11
+imports: closure src/rooms/codes.ts, src/rooms/compile.ts, src/rooms/gauntlet.ts, src/sim/beat.ts, src/sim/constants.ts, src/sim/headless.ts, src/sim/sim.ts, src/sim/types.ts
+imports: no import outside src/sim and src/rooms OK; no DOM, timer, clock, storage, audio or render global; Math calls: abs, ceil, floor, floor (rooms), imul, max, min
+axisb-sim: PASS
+--- end ---

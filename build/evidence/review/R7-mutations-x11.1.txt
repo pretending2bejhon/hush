@@ -1,0 +1,67 @@
+HUSH-EVIDENCE v1
+id: R7-mutations-x11
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/batch.mjs x11-max-20 x11-no-max x11-min-8 x11-latest-run
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T01:31:06-05:00
+time-end: 2026-10-14T01:32:39-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 1
+--- output ---
+mut x11-max-20: X11: the median first run may be up to 20 minutes (MAX_FIRST_RUN 900 -> 1200)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: tools/ship-gate.mjs: "const MAX_FIRST_RUN = 900;" -> "const MAX_FIRST_RUN = 1200;"
+tools/ship-gate.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/tools/ship-gate.test.mjs  (exit 0, 25 s)
+  [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+mut x11-max-20: SURVIVED every command
+mut: restored tools/ship-gate.mjs; clone clean
+(node:22688) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut x11-no-max: X11: no upper bound on the median first run
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: tools/ship-gate.mjs: "if (med === null || med < MIN_FIRST_RUN || med > MAX_FIRST_RUN)" -> "if (med === null || med < MIN_FIRST_RUN)"
+tools/ship-gate.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/tools/ship-gate.test.mjs  (exit 0, 23 s)
+  [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+mut x11-no-max: SURVIVED every command
+mut: restored tools/ship-gate.mjs; clone clean
+(node:23568) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut x11-min-8: X11: the median first run may be as short as 8 minutes (MIN_FIRST_RUN 600 -> 480)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: tools/ship-gate.mjs: "const MIN_FIRST_RUN = 600;" -> "const MIN_FIRST_RUN = 480;"
+tools/ship-gate.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/tools/ship-gate.test.mjs  (exit 0, 21 s)
+  [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+mut x11-min-8: SURVIVED every command
+mut: restored tools/ship-gate.mjs; clone clean
+(node:11756) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut x11-latest-run: X11: a friend's latest first-run row counts instead of the earliest
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: tools/ship-gate.mjs: "if (!prev || Date.parse(r.time) < Date.parse(prev.time)) firsts.set(r.who, r);" -> "if (!prev || Date.parse(r.time) >= Date.parse(prev.time)) firsts.set(r.who, r);"
+tools/ship-gate.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/tools/ship-gate.test.mjs  (exit 0, 24 s)
+  [2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+mut x11-latest-run: SURVIVED every command
+mut: restored tools/ship-gate.mjs; clone clean
+(node:30680) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+summary (4 mutants):
+  x11-max-20: SURVIVED every command
+  x11-no-max: SURVIVED every command
+  x11-min-8: SURVIVED every command
+  x11-latest-run: SURVIVED every command
+batch: 4 mutant(s) not killed
+--- end ---

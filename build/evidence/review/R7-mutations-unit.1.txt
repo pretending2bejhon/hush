@@ -1,0 +1,701 @@
+HUSH-EVIDENCE v1
+id: R7-mutations-unit
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/batch.mjs beat-phase-sign keys-step-late max-fall head-bump lock-press pending-late pending-edge unlock-edge compile-spawn-floor room-tile portal-column autorun-speed track-perc gauntlet-cycle mask-bit track-muted-label target-step clock-jump warn-two-beats band-factor edge-colour trail frame-centre limiter-full trim-low rise-short card-round origin-lead
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T00:44:18-05:00
+time-end: 2026-10-14T00:48:04-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 1
+--- output ---
+mut beat-phase-sign: section 4.4: an entity's phase counted forward instead of back (every phased hazard on the wrong sixteenth)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/sim/beat.ts: "mod(step * C.TICKS_PER_STEP - e.phase * C.TICKS_PER_SIXTEENTH, period)" -> "mod(step * C.TICKS_PER_STEP + e.phase * C.TICKS_PER_SIXTEENTH, period)"
+src/sim/beat.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 7 s)
+  [31m     [31m×[31m turns entities on and off as the oracle does, at rest while their layer is not back[39m[32m 25[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/sim/beat.test.mjs[2m > [22mSIM1 constants and beat functions[2m > [22mturns entities on and off as the oracle does, at rest while their layer is not back
+  [31m[1mAssertionError[22m: expected false to be true // Object.is equality[39m
+mut beat-phase-sign: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/sim/beat.ts; clone clean
+(node:27608) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut keys-step-late: section 9.2: every key event queued one step after the step stepOf names
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/input/keys.ts: "step: stepOf(e.timeStamp) });" -> "step: stepOf(e.timeStamp) + 1 });"
+src/input/keys.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 7 s)
+  [31m     [31m×[31m applies each event at its step, holds the OR of the keys down, keeps mapped keys from the page[39m[32m 16[2mms[22m[39m
+  [31m     [31m×[31m skips repeats and leaves unmapped keys alone[39m[32m 2[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/input/keys.test.mjs[2m > [22mIN1 keys[2m > [22mapplies each event at its step, holds the OR of the keys down, keeps mapped keys from the page
+  [31m[1mAssertionError[22m: expected +0 to be 2 // Object.is equality[39m
+  [41m[1m FAIL [22m[49m tests/input/keys.test.mjs[2m > [22mIN1 keys[2m > [22mskips repeats and leaves unmapped keys alone
+  [31m[1mAssertionError[22m: expected +0 to be 32 // Object.is equality[39m
+mut keys-step-late: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/input/keys.ts; clone clean
+(node:22516) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut max-fall: section 4.1: MAX_FALL 352 -> 320
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/sim/constants.ts: "MAX_FALL: 352," -> "MAX_FALL: 320,"
+src/sim/constants.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 6 s)
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run keeps the creature's track (review R2, MINOR 2)[2m > [22msteps the track after every tick, as trackStep over the sim's states, through landings, the wave and a layer's return
+  [31m[1mAssertionError[22m: room 1 at step 360: expected { landedAt: 322, grounded: 1, …(3) } to deeply equal { landedAt: 321, grounded: 1, …(3) }[39m
+  [41m[1m FAIL [22m[49m tests/sim/beat.test.mjs[2m > [22mSIM1 constants and beat functions[2m > [22mhas the oracle constants, bits and spike boxes
+  [31m[1mAssertionError[22m: expected { SUB: 256, TILE: 4096, …(33) } to deeply equal { SUB: 256, TILE: 4096, …(33) }[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-base.test.mjs[2m > [22mSIM2 base form against the oracle[2m > [22magrees in an open room on held walks and jumps
+  [31m[1mAssertionError[22m: expected { step: 120, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-base.test.mjs[2m > [22mSIM2 base form against the oracle[2m > [22magrees in 01-wake, spikes, pits, deaths and respawns included
+  [31m[1mAssertionError[22m: expected { step: 116, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-base.test.mjs[2m > [22mSIM2 base form against the oracle[2m > [22magrees on the clear at the right edge
+  [31m[1mAssertionError[22m: expected { step: 117, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees in room 2 with its layers back, and with none back (rest states)
+  [31m[1mAssertionError[22m: expected { step: 125, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees in room 4 with its layers back, and with none back (rest states)
+  [31m[1mAssertionError[22m: expected { step: 124, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees in room 5 with its layers back, and with none back (rest states)
+  [31m[1mAssertionError[22m: expected { step: 183, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees in room 8 with its layers back, and with none back (rest states)
+  [31m[1mAssertionError[22m: expected { step: 174, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees on the crush: a block that comes on over the creature
+  [31m[1mAssertionError[22m: expected { step: 40, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees on the clear, the pending layer and the next room, without stopping at the clear
+  [31m[1mAssertionError[22m: expected { step: 57, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-dash.test.mjs[2m > [22mSIM3 dash against the oracle[2m > [22magrees in an open room on dashes in every direction
+  [31m[1mAssertionError[22m: expected { step: 254, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-dash.test.mjs[2m > [22mSIM3 dash against the oracle[2m > [22magrees in 03-dash
+  [31m[1mAssertionError[22m: expected { step: 191, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-gauntlet.test.mjs[2m > [22mSIM6 gauntlet against the oracle[2m > [22magrees from the start: the wait for the bar, the first obstacles, deaths and restarts
+  [31m[1mAssertionError[22m: expected { step: 634, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-gauntlet.test.mjs[2m > [22mSIM6 gauntlet against the oracle[2m > [22magrees in mid-run, into and out of the wave bars and to the finish
+  [31m[1mAssertionError[22m: expected { step: 512, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees in room 6 through its wave portal
+  [31m[1mAssertionError[22m: expected { step: 456, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees in room 7 through its wave portal
+  [31m[1mAssertionError[22m: expected { step: 525, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees in room 9 through its wave portal
+  [31m[1mAssertionError[22m: expected { step: 646, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees in room 10 through its wave portal
+  [31m[1mAssertionError[22m: expected { step: 407, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees on the way from the spawn to the portal in 06-wave and on through it
+  [31m[1mAssertionError[22m: expected { step: 963, field: 'y', …(3) } to be null[39m
+mut max-fall: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/sim/constants.ts; clone clean
+(node:16592) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut head-bump: section 4.3: a head bump no longer ends the variable jump (base form)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/sim/sim.ts: "    if (moveX(s.vx)) s.vx = 0;\n    if (moveY(s.vy)) { if (s.vy < 0) s.varJump = 0; s.vy = 0; }" -> "    if (moveX(s.vx)) s.vx = 0;\n    if (moveY(s.vy)) { s.vy = 0; }"
+src/sim/sim.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 6 s)
+  [31m     [31m×[31m agrees in room 4 with its layers back, and with none back (rest states)[39m[32m 74[2mms[22m[39m
+  [31m     [31m×[31m agrees on the clear, the pending layer and the next room, without stopping at the clear[39m[32m 2[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees in room 4 with its layers back, and with none back (rest states)
+  [31m[1mAssertionError[22m: expected { step: 1215, field: 'varJump', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees on the clear, the pending layer and the next room, without stopping at the clear
+  [31m[1mAssertionError[22m: expected { step: 6, field: 'varJump', …(3) } to be null[39m
+mut head-bump: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/sim/sim.ts; clone clean
+(node:35344) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut lock-press: section 4.3: presses pass through the respawn lock (only held bits are zeroed)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/sim/sim.ts: "if (s.lock > 0) { s.lock -= 1; held = 0; press = 0; }" -> "if (s.lock > 0) { s.lock -= 1; held = 0; }"
+src/sim/sim.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 6 s)
+  [31m     [31m×[31m agrees in room 7 through its wave portal[39m[32m 87[2mms[22m[39m
+  [31m     [31m×[31m agrees in room 9 through its wave portal[39m[32m 21[2mms[22m[39m
+  [31m     [31m×[31m agrees in room 10 through its wave portal[39m[32m 14[2mms[22m[39m
+  [31m     [31m×[31m agrees on the way from the spawn to the portal in 06-wave and on through it[39m[32m 11[2mms[22m[39m
+  [31m     [31m×[31m agrees in 01-wake, spikes, pits, deaths and respawns included[39m[32m 42[2mms[22m[39m
+  [31m     [31m×[31m agrees in room 2 with its layers back, and with none back (rest states)[39m[32m 81[2mms[22m[39m
+  [31m     [31m×[31m agrees in room 4 with its layers back, and with none back (rest states)[39m[32m 163[2mms[22m[39m
+  [31m     [31m×[31m agrees in room 5 with its layers back, and with none back (rest states)[39m[32m 65[2mms[22m[39m
+  [31m     [31m×[31m agrees in room 8 with its layers back, and with none back (rest states)[39m[32m 159[2mms[22m[39m
+  [31m     [31m×[31m agrees on the clear, the pending layer and the next room, without stopping at the clear[39m[32m 110[2mms[22m[39m
+  [31m     [31m×[31m agrees in 03-dash[39m[32m 101[2mms[22m[39m
+  [2m Test Files [22m [1m[31m5 failed[39m[22m[2m | [22m[1m[32m20 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-base.test.mjs[2m > [22mSIM2 base form against the oracle[2m > [22magrees in 01-wake, spikes, pits, deaths and respawns included
+  [31m[1mAssertionError[22m: expected { step: 1277, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees in room 2 with its layers back, and with none back (rest states)
+  [31m[1mAssertionError[22m: expected { step: 763, field: 'x', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees in room 4 with its layers back, and with none back (rest states)
+  [31m[1mAssertionError[22m: expected { step: 2151, field: 'x', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees in room 5 with its layers back, and with none back (rest states)
+  [31m[1mAssertionError[22m: expected { step: 1705, field: 'x', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees in room 8 with its layers back, and with none back (rest states)
+  [31m[1mAssertionError[22m: expected { step: 556, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees on the clear, the pending layer and the next room, without stopping at the clear
+  [31m[1mAssertionError[22m: expected { step: 1277, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-dash.test.mjs[2m > [22mSIM3 dash against the oracle[2m > [22magrees in 03-dash
+  [31m[1mAssertionError[22m: expected { step: 2318, field: 'x', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-gauntlet.test.mjs[2m > [22mSIM6 gauntlet against the oracle[2m > [22magrees from the start: the wait for the bar, the first obstacles, deaths and restarts
+  [31m[1mAssertionError[22m: expected { step: 3048, field: 'buffer', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-gauntlet.test.mjs[2m > [22mSIM6 gauntlet against the oracle[2m > [22magrees in mid-run, into and out of the wave bars and to the finish
+  [31m[1mAssertionError[22m: expected { step: 75, field: 'buffer', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees in room 6 through its wave portal
+  [31m[1mAssertionError[22m: expected { step: 273, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees in room 7 through its wave portal
+  [31m[1mAssertionError[22m: expected { step: 828, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees in room 9 through its wave portal
+  [31m[1mAssertionError[22m: expected { step: 425, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees in room 10 through its wave portal
+  [31m[1mAssertionError[22m: expected { step: 243, field: 'y', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-wave.test.mjs[2m > [22mSIM5 wave and portals against the oracle[2m > [22magrees on the way from the spawn to the portal in 06-wave and on through it
+  [31m[1mAssertionError[22m: expected { step: 464, field: 'y', …(3) } to be null[39m
+mut lock-press: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/sim/sim.ts; clone clean
+(node:26292) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut pending-late: section 4.5: a cleared room's layer returns one step after its bar line in the sim
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/sim/sim.ts: "s.pendingAt = nextBarStep(s.step);" -> "s.pendingAt = nextBarStep(s.step) + 1;"
+src/sim/sim.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 8 s)
+  [31m     [31m×[31m agrees on the clear at the right edge[39m[32m 35[2mms[22m[39m
+  [31m     [31m×[31m steps the track after every tick, as trackStep over the sim's states, through landings, the wave and a layer's return[39m[32m 181[2mms[22m[39m
+  [31m     [31m×[31m room 1: layer 1 back on the bar line, its hazards at rest until then[39m[32m 20[2mms[22m[39m
+  [31m     [31m×[31m room 2: layer 2 back on the bar line, its hazards at rest until then[39m[32m 2[2mms[22m[39m
+  [31m     [31m×[31m room 3: layer 3 back on the bar line, its hazards at rest until then[39m[32m 9[2mms[22m[39m
+  [31m     [31m×[31m room 4: layer 4 back on the bar line, its hazards at rest until then[39m[32m 3[2mms[22m[39m
+  [31m     [31m×[31m room 5: layer 5 back on the bar line, its hazards at rest until then[39m[32m 2[2mms[22m[39m
+  [31m     [31m×[31m room 6: layer 6 back on the bar line, its hazards at rest until then[39m[32m 2[2mms[22m[39m
+  [31m     [31m×[31m room 7: layer 7 back on the bar line, its hazards at rest until then[39m[32m 4[2mms[22m[39m
+  [31m     [31m×[31m room 8: layer 8 back on the bar line, its hazards at rest until then[39m[32m 12[2mms[22m[39m
+  [31m     [31m×[31m room 9: layer 9 back on the bar line, its hazards at rest until then[39m[32m 4[2mms[22m[39m
+  [31m     [31m×[31m room 10: layer 10 back on the bar line, its hazards at rest until then[39m[32m 2[2mms[22m[39m
+  [31m     [31m×[31m agrees on the clear, the pending layer and the next room, without stopping at the clear[39m[32m 19[2mms[22m[39m
+  [2m Test Files [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m21 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run keeps the creature's track (review R2, MINOR 2)[2m > [22msteps the track after every tick, as trackStep over the sim's states, through landings, the wave and a layer's return
+  [31m[1mAssertionError[22m: room 6 at step 2160: expected { landedAt: 1574, grounded: 1, …(3) } to deeply equal { landedAt: 1574, grounded: 1, …(3) }[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-base.test.mjs[2m > [22mSIM2 base form against the oracle[2m > [22magrees on the clear at the right edge
+  [31m[1mAssertionError[22m: expected { step: 168, field: 'pendingAt', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees on the clear, the pending layer and the next room, without stopping at the clear
+  [31m[1mAssertionError[22m: expected { step: 77, field: 'pendingAt', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 1: layer 1 back on the bar line, its hazards at rest until then
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 2: layer 2 back on the bar line, its hazards at rest until then
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 3: layer 3 back on the bar line, its hazards at rest until then
+  [31m[1mAssertionError[22m: expected 824 to be 823 // Object.is equality[39m
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 4: layer 4 back on the bar line, its hazards at rest until then
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 5: layer 5 back on the bar line, its hazards at rest until then
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 6: layer 6 back on the bar line, its hazards at rest until then
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 7: layer 7 back on the bar line, its hazards at rest until then
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 8: layer 8 back on the bar line, its hazards at rest until then
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 9: layer 9 back on the bar line, its hazards at rest until then
+  [31m[1mAssertionError[22m: expected 1236 to be 1235 // Object.is equality[39m
+  [41m[1m FAIL [22m[49m tests/sim/progression.test.mjs[2m > [22mX7 progression: a layer returns on the bar line[2m > [22mroom 10: layer 10 back on the bar line, its hazards at rest until then
+  [31m[1mAssertionError[22m: expected 1647 to be 1646 // Object.is equality[39m
+mut pending-late: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/sim/sim.ts; clone clean
+(node:24436) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut pending-edge: section 4.5: the sim schedules the layer from the step after the clearing tick (nextBarStep(s + 1))
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/sim/sim.ts: "s.pendingAt = nextBarStep(s.step);" -> "s.pendingAt = nextBarStep(s.step + 1);"
+src/sim/sim.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 0, 8 s)
+  [2m Test Files [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+mut: $ node tools/replay.mjs --all --jitter --seed 1  (exit 0, 0 s)
+  replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/02-heartbeat.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+  replay: PASS, 11 witness(es)
+mut pending-edge: SURVIVED every command
+mut: restored src/sim/sim.ts; clone clean
+(node:35396) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut unlock-edge: GAME1 / X7: the run asks the audio for unlockBar of the step after the clearing tick
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/game/run.ts: "engine.unlockAt(pending, unlockBar(step));" -> "engine.unlockAt(pending, unlockBar(step + 1));"
+src/game/run.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 0, 8 s)
+  [2m Test Files [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+mut unlock-edge: SURVIVED every command
+mut: restored src/game/run.ts; clone clean
+(node:1956) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut compile-spawn-floor: section 5.1: the compiler no longer refuses a spawn with no solid tile under it
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/rooms/compile.ts: "  if (at(spawn.col, spawn.row + 1) !== CODE.SOLID) fail(name, 'the tile under the spawn must be solid');\n" -> ""
+src/rooms/compile.ts | 1 -
+ 1 file changed, 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 0, 8 s)
+  [2m Test Files [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+mut compile-spawn-floor: SURVIVED every command
+mut: restored src/rooms/compile.ts; clone clean
+(node:28224) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut room-tile: section 5.3: one clap spike cell of 07-current removed
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: rooms/07-current.txt: ".....aaa....W" -> ".....aa.....W"
+rooms/07-current.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ node tools/spec-content.mjs --tree  (exit 1, 0 s)
+  rooms/01-wake.txt: ok
+  rooms/02-heartbeat.txt: ok
+  rooms/03-dash.txt: ok
+  rooms/04-thorns.txt: ok
+  rooms/05-doors.txt: ok
+  rooms/06-wave.txt: ok
+  rooms/08-steps.txt: ok
+  rooms/09-gates.txt: ok
+  rooms/10-crown.txt: ok
+  rooms/11-gauntlet.txt: ok
+  music/area1.strudel: ok
+  spec-content: FAIL, 1 file(s)
+mut room-tile: KILLED by node tools/spec-content.mjs --tree
+mut: restored rooms/07-current.txt; clone clean
+
+mut portal-column: section 6.1: the portal column three columns before its bar instead of two
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/rooms/gauntlet.ts: "const pc = col(b, 0) - 2;" -> "const pc = col(b, 0) - 3;"
+src/rooms/gauntlet.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 8 s)
+  [31m     [31m×[31m agrees in mid-run, into and out of the wave bars and to the finish[39m[32m 238[2mms[22m[39m
+  [31m     [31m×[31m compiles the world in file order and refuses a gap[39m[33m 424[2mms[22m[39m
+  [31m     [31m×[31m parses the program and generates the oracle grid, byte for byte[39m[32m 6[2mms[22m[39m
+  [2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m23 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-gauntlet.test.mjs[2m > [22mSIM6 gauntlet against the oracle[2m > [22magrees in mid-run, into and out of the wave bars and to the finish
+  [31m[1mAssertionError[22m: expected { step: +0, field: 'vx', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/rooms/compile.test.mjs[2m > [22mRM1 room compiler[2m > [22mcompiles the world in file order and refuses a gap
+  [31m[1mAssertionError[22m: expected { rooms: [ { …(9) }, …(9) ], …(1) } to deeply equal { rooms: [ { …(9) }, …(9) ], …(1) }[39m
+  [41m[1m FAIL [22m[49m tests/rooms/compile.test.mjs[2m > [22mRM2 gauntlet generator[2m > [22mparses the program and generates the oracle grid, byte for byte
+  [31m[1mAssertionError[22m: expected { W: 544, H: 18, …(2) } to deeply equal { W: 544, H: 18, …(2) }[39m
+mut portal-column: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/rooms/gauntlet.ts; clone clean
+(node:5988) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut autorun-speed: section 6.2: the auto-run a little slower than 4 tiles a beat
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/sim/sim.ts: "const targetX = startX + fdiv(ticks * C.RUN_NUM, C.RUN_DEN);" -> "const targetX = startX + fdiv(ticks * C.RUN_NUM, C.RUN_DEN + 1);"
+src/sim/sim.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 8 s)
+  [31m     [31m×[31m agrees from the start: the wait for the bar, the first obstacles, deaths and restarts[39m[32m 128[2mms[22m[39m
+  [31m     [31m×[31m agrees in mid-run, into and out of the wave bars and to the finish[39m[32m 60[2mms[22m[39m
+  [31m     [31m×[31m maps gBeat / 4 on the entry from room 10 and on every respawn in the gauntlet[39m[32m 282[2mms[22m[39m
+  [31m     [31m×[31m agrees on the clear, the pending layer and the next room, without stopping at the clear[39m[33m 891[2mms[22m[39m
+  [2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m22 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run maps the gauntlet on every run start[2m > [22mmaps gBeat / 4 on the entry from room 10 and on every respawn in the gauntlet
+  [31m[1mAssertionError[22m: expected [ [ 'gauntlet', 7, 2388 ], …(5) ] to deeply equal [ [ 'gauntlet', 7, 2388 ], …(5) ][39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-beat.test.mjs[2m > [22mSIM4 beat entities and progression against the oracle[2m > [22magrees on the clear, the pending layer and the next room, without stopping at the clear
+  [31m[1mAssertionError[22m: expected { step: 235, field: 'x', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-gauntlet.test.mjs[2m > [22mSIM6 gauntlet against the oracle[2m > [22magrees from the start: the wait for the bar, the first obstacles, deaths and restarts
+  [31m[1mAssertionError[22m: expected { step: 412, field: 'x', …(3) } to be null[39m
+  [41m[1m FAIL [22m[49m tests/sim/oracle-gauntlet.test.mjs[2m > [22mSIM6 gauntlet against the oracle[2m > [22magrees in mid-run, into and out of the wave bars and to the finish
+  [31m[1mAssertionError[22m: expected { step: +0, field: 'x', …(3) } to be null[39m
+mut autorun-speed: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/sim/sim.ts; clone clean
+(node:432) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut track-perc: section 7: the perc layer euclid (5,8) -> (3,8)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: music/area1.strudel: "perc: note(\"c5(5,8)\")" -> "perc: note(\"c5(3,8)\")"
+music/area1.strudel | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ node tools/spec-content.mjs --tree  (exit 1, 0 s)
+  rooms/01-wake.txt: ok
+  rooms/02-heartbeat.txt: ok
+  rooms/03-dash.txt: ok
+  rooms/04-thorns.txt: ok
+  rooms/05-doors.txt: ok
+  rooms/06-wave.txt: ok
+  rooms/07-current.txt: ok
+  rooms/08-steps.txt: ok
+  rooms/09-gates.txt: ok
+  rooms/10-crown.txt: ok
+  rooms/11-gauntlet.txt: ok
+  spec-content: FAIL, 1 file(s)
+mut track-perc: KILLED by node tools/spec-content.mjs --tree
+mut: restored music/area1.strudel; clone clean
+
+mut gauntlet-cycle: section 8.3: the gauntlet's track restarts at cycle 1 instead of 0
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/audio/scheduler.ts: "bar >= startBar ? bar - startBar : bar);" -> "bar >= startBar ? bar - startBar + 1 : bar);"
+src/audio/scheduler.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 9 s)
+  [31m     [31m×[31m maps the gauntlet: from the start bar the pattern starts again at cycle 0[39m[33m 383[2mms[22m[39m
+  [31m     [31m×[31m moves the gauntlet mapping mid-run: from the new start bar the pattern starts again at cycle 0[39m[33m 304[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/audio/scheduler.test.mjs[2m > [22mAU2 transport[2m > [22mmaps the gauntlet: from the start bar the pattern starts again at cycle 0
+  [31m[1mAssertionError[22m: expected [ 'ab2', 'c3', 'eb3' ] to deeply equal [ 'c3', 'eb3', 'g3' ][39m
+      [90m 93|[39m     expect(got).toEqual(expected(2, 2, 2 + 6 * BAR + 0.12, 1));
+  [41m[1m FAIL [22m[49m tests/audio/scheduler.test.mjs[2m > [22mAU2 transport[2m > [22mmoves the gauntlet mapping mid-run: from the new start bar the pattern starts again at cycle 0
+  [31m[1mAssertionError[22m: expected [ 'ab2', 'c3', 'eb3' ] to deeply equal [ 'c3', 'eb3', 'g3' ][39m
+mut gauntlet-cycle: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/audio/scheduler.ts; clone clean
+(node:23768) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut mask-bit: section 8.3: setMask reads bit i for gate i (layer i + 1)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/audio/gates.ts: "g.setValueAtTime(mask & (1 << (i + 1)) ? 1 : 0, now);" -> "g.setValueAtTime(mask & (1 << i) ? 1 : 0, now);"
+src/audio/gates.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 9 s)
+  [31m     [31m×[31m sets every gate to the mask of the layers back on a restart[39m[32m 21[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/audio/gates.test.mjs[2m > [22mAU3 layer gates[2m > [22msets every gate to the mask of the layers back on a restart
+  [31m[1mAssertionError[22m: expected [ [ 'cancel', 7 ], [ 'set', +0, 7 ] ] to deeply equal [ [ 'cancel', 7 ], [ 'set', 1, 7 ] ][39m
+mut mask-bit: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/audio/gates.ts; clone clean
+(node:27996) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut track-muted-label: section 8.3: a label starting with _ is captured, not muted
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/audio/track.ts: "if (!key.startsWith('_') && !names.includes(key)) {" -> "if (!names.includes(key)) {"
+src/audio/track.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 9 s)
+  [31m     [31m×[31m numbers $ labels, mutes _ labels, and ignores the tempo call[39m[32m 16[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/audio/track.test.mjs[2m > [22mAU1 track layers[2m > [22mnumbers $ labels, mutes _ labels, and ignores the tempo call
+  [31m[1mAssertionError[22m: expected [ '$1', '_quiet', 'hat', '$2' ] to deeply equal [ '$1', 'hat', '$2' ][39m
+mut track-muted-label: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/audio/track.ts; clone clean
+(node:29620) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut target-step: section 9.1: the sim two steps past the heard time instead of one
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/clock/driver.ts: "Math.floor((heardSec - origin + displaySecs) * 240) + 1;" -> "Math.floor((heardSec - origin + displaySecs) * 240) + 2;"
+src/clock/driver.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 9 s)
+  [31m     [31m×[31m room 1: unlockAt(1, unlockBar(clear step)) once, right after the clearing tick[39m[32m 147[2mms[22m[39m
+  [31m     [31m×[31m room 2: unlockAt(2, unlockBar(clear step)) once, right after the clearing tick[39m[32m 52[2mms[22m[39m
+  [31m     [31m×[31m room 3: unlockAt(3, unlockBar(clear step)) once, right after the clearing tick[39m[32m 62[2mms[22m[39m
+  [31m     [31m×[31m room 4: unlockAt(4, unlockBar(clear step)) once, right after the clearing tick[39m[32m 84[2mms[22m[39m
+  [31m     [31m×[31m room 5: unlockAt(5, unlockBar(clear step)) once, right after the clearing tick[39m[32m 43[2mms[22m[39m
+  [31m     [31m×[31m room 6: unlockAt(6, unlockBar(clear step)) once, right after the clearing tick[39m[32m 95[2mms[22m[39m
+  [31m     [31m×[31m room 7: unlockAt(7, unlockBar(clear step)) once, right after the clearing tick[39m[32m 138[2mms[22m[39m
+  [31m     [31m×[31m room 8: unlockAt(8, unlockBar(clear step)) once, right after the clearing tick[39m[32m 26[2mms[22m[39m
+  [31m     [31m×[31m room 9: unlockAt(9, unlockBar(clear step)) once, right after the clearing tick[39m[32m 36[2mms[22m[39m
+  [31m     [31m×[31m room 10: unlockAt(10, unlockBar(clear step)) once, right after the clearing tick[39m[32m 79[2mms[22m[39m
+  [31m     [31m×[31m ends every frame one step past the heard time less displaySec(avOffset)[39m[32m 16[2mms[22m[39m
+  [31m     [31m×[31m ticks exactly MAX_STEPS_PER_FRAME steps in a frame heard 100 steps past the sim, and as many in the next[39m[32m 4[2mms[22m[39m
+  [31m     [31m×[31m takes the target step from the heard time, the origin and the display shift: one step past the time[39m[32m 20[2mms[22m[39m
+  [2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m23 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/clock/driver.test.mjs[2m > [22mCL2 tick driver[2m > [22mtakes the target step from the heard time, the origin and the display shift: one step past the time
+  [31m[1mAssertionError[22m: expected 122 to be 121 // Object.is equality[39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 1: unlockAt(1, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 1, 5, 1618 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 2: unlockAt(2, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 2, 5, 1684 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 3: unlockAt(3, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 3, 5, 1588 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 4: unlockAt(4, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 4, 4, 1408 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 5: unlockAt(5, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 5, 6, 2222 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 6: unlockAt(6, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 6, 5, 1920 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 7: unlockAt(7, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 7, 5, 1943 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 8: unlockAt(8, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 8, 4, 1494 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 9: unlockAt(9, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 9, 5, 1905 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run returns a layer on the bar line of its clear[2m > [22mroom 10: unlockAt(10, unlockBar(clear step)) once, right after the clearing tick
+  [31m[1mAssertionError[22m: expected [ [ 'unlockAt', 10, 7, 2388 ] ] to deeply equal [][39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run follows its calibration (review R2, MAJOR 4)[2m > [22mends every frame one step past the heard time less displaySec(avOffset)
+  [31m[1mAssertionError[22m: avOffset 0 inputBias 0 at 0.75 s: expected 190 to be 189 // Object.is equality[39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run catches up at most 24 steps a frame (review R4, MINOR 2)[2m > [22mticks exactly MAX_STEPS_PER_FRAME steps in a frame heard 100 steps past the sim, and as many in the next
+  [31m[1mAssertionError[22m: expected 221 to be 220 // Object.is equality[39m
+mut target-step: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/clock/driver.ts; clone clean
+(node:22964) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut clock-jump: section 8.5 / 9: the clock line's jump tolerance 4 ms -> 6 ms
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/clock/output-clock.ts: "const CLOCK_JUMP = 0.004;" -> "const CLOCK_JUMP = 0.006;"
+src/clock/output-clock.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 0, 10 s)
+  [2m Test Files [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+mut clock-jump: SURVIVED every command
+mut: restored src/clock/output-clock.ts; clone clean
+(node:26208) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut warn-two-beats: section 10.3: the warning outline two beats ahead instead of one
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/render/beat-art.ts: "if (until <= C.TICKS_PER_BEAT) return" -> "if (until <= 2 * C.TICKS_PER_BEAT) return"
+src/render/beat-art.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 8 s)
+  [31m     [31m×[31m gives every entity the reference look, layer back or not[39m[32m 134[2mms[22m[39m
+  [31m     [31m×[31m draws frame after frame through the limiter as the reference does[39m[33m 1057[2mms[22m[39m
+  [31m     [31m×[31m draws every frame of the rooms' witness runs as the reference does[39m[33m 2125[2mms[22m[39m
+  [31m     [31m×[31m draws the layer's ring as the reference does, past a room's clear until the ring has run out[39m[33m 1027[2mms[22m[39m
+  [2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m23 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/render/beat-art.test.mjs[2m > [22mRN3 beat art[2m > [22mgives every entity the reference look, layer back or not
+  [31m[1mAssertionError[22m: 4 a 52 2046: expected { look: 'warn', alpha: 0.25 } to deeply equal { look: 'off', alpha: 0.25 }[39m
+  [41m[1m FAIL [22m[49m tests/render/beat-art.test.mjs[2m > [22mRN3 beat art[2m > [22mdraws frame after frame through the limiter as the reference does
+  [31m[1mAssertionError[22m: room 4 cam 0 step 80: [0] rect.a 0.45, want 0.25[39m
+  [41m[1m FAIL [22m[49m tests/render/play-frame.test.mjs[2m > [22mRN4 the play scene's frame[2m > [22mdraws every frame of the rooms' witness runs as the reference does
+  [31m[1mAssertionError[22m: room 4 step 79: beat: [0] rect.a 0.45, want 0.25[39m
+  [41m[1m FAIL [22m[49m tests/render/play-frame.test.mjs[2m > [22mRN4 the play scene's frame[2m > [22mdraws the layer's ring as the reference does, past a room's clear until the ring has run out
+  [31m[1mAssertionError[22m: room 6 step 1930: beat: [3] rect.a 0.45, want 0.25[39m
+mut warn-two-beats: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/render/beat-art.ts; clone clean
+(node:10892) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut band-factor: section 10.4: the near band's parallax factor 0.85 -> 0.8
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/render/depth-art.ts: "{ factor: 0.85, color: COLOR.NEAR," -> "{ factor: 0.8, color: COLOR.NEAR,"
+src/render/depth-art.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 9 s)
+  [31m     [31m×[31m draws the four bands of every room[39m[32m 39[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/render/depth-art.test.mjs[2m > [22mRN4 depth[2m > [22mdraws the four bands of every room
+  [31m[1mAssertionError[22m: 01-wake band 3: expected { factor: 0.8, w: 1024, h: 288 } to deeply equal { factor: 0.85, w: 1056, h: 288 }[39m
+mut band-factor: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/render/depth-art.ts; clone clean
+(node:11864) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut edge-colour: section 10.2: the tile edge colour off by one level
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/render/art.ts: "EDGE: 0x2a3348," -> "EDGE: 0x2a3349,"
+src/render/art.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 9 s)
+  [31m     [31m×[31m draws every chunk of every room with the reference shapes[39m[32m 17[2mms[22m[39m
+  [31m     [31m×[31m rises over four bars[39m[32m 15[2mms[22m[39m
+  [31m     [31m×[31m draws each frame of the ending: the rise, then the card on the music's beat[39m[32m 4[2mms[22m[39m
+  [2m Test Files [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m23 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/render/ending-art.test.mjs[2m > [22mEND1 ending art[2m > [22mrises over four bars
+  [31m[1mAssertionError[22m: ceiling -0.5: [1] rect.c 2765641, want 2765640[39m
+  [41m[1m FAIL [22m[49m tests/render/ending-art.test.mjs[2m > [22mEND1 ending art[2m > [22mdraws each frame of the ending: the rise, then the card on the music's beat
+  [31m[1mAssertionError[22m: ending 65 65: [1] rect.c 2765641, want 2765640[39m
+  [41m[1m FAIL [22m[49m tests/render/room-art.test.mjs[2m > [22mRN1 room art[2m > [22mdraws every chunk of every room with the reference shapes
+  [31m[1mAssertionError[22m: 01-wake 0: [37] rect.c 2765641, want 2765640[39m
+mut edge-colour: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/render/art.ts; clone clean
+(node:29968) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut trail: section 10.3: the wave's trail 8 -> 7 positions
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/render/creature.ts: "export const TRAIL = 8;" -> "export const TRAIL = 7;"
+src/render/creature.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 8 s)
+  [31m     [31m×[31m steps the track after every tick, as trackStep over the sim's states, through landings, the wave and a layer's return[39m[32m 109[2mms[22m[39m
+  [31m     [31m×[31m tracks and draws the creature through 06-wave[39m[32m 48[2mms[22m[39m
+  [31m     [31m×[31m tracks and draws the creature through 07-current[39m[32m 70[2mms[22m[39m
+  [31m     [31m×[31m tracks and draws the creature through 09-gates[39m[32m 123[2mms[22m[39m
+  [31m     [31m×[31m tracks and draws the creature through 10-crown[39m[32m 204[2mms[22m[39m
+  [31m     [31m×[31m tracks and draws the creature through 11-gauntlet[39m[33m 1266[2mms[22m[39m
+  [31m     [31m×[31m tracks and draws the creature through room 6, right then jump held[39m[32m 18[2mms[22m[39m
+  [31m     [31m×[31m draws every frame of the rooms' witness runs as the reference does[39m[33m 4450[2mms[22m[39m
+  [31m     [31m×[31m draws the layer's ring as the reference does, past a room's clear until the ring has run out[39m[33m 307[2mms[22m[39m
+  [31m     [31m×[31m draws the gauntlet's witness run as the reference does[39m[33m 364[2mms[22m[39m
+  [2m Test Files [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m22 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run keeps the creature's track (review R2, MINOR 2)[2m > [22msteps the track after every tick, as trackStep over the sim's states, through landings, the wave and a layer's return
+  [31m[1mAssertionError[22m: room 6 at step 240: expected { landedAt: -1000, grounded: +0, …(3) } to deeply equal { landedAt: -1000, grounded: +0, …(3) }[39m
+  [41m[1m FAIL [22m[49m tests/render/creature.test.mjs[2m > [22mRN2 creature[2m > [22mtracks and draws the creature through 06-wave
+  [31m[1mAssertionError[22m: 06-wave step 178 a 1 cam 0: [1] ellipse.a 0.42857142857142855, want 0.4375[39m
+  [41m[1m FAIL [22m[49m tests/render/creature.test.mjs[2m > [22mRN2 creature[2m > [22mtracks and draws the creature through 07-current
+  [31m[1mAssertionError[22m: 07-current step 224 a 1 cam 0: [1] ellipse.a 0.42857142857142855, want 0.4375[39m
+  [41m[1m FAIL [22m[49m tests/render/creature.test.mjs[2m > [22mRN2 creature[2m > [22mtracks and draws the creature through 09-gates
+  [31m[1mAssertionError[22m: 09-gates step 502 a 1 cam 311: [1] ellipse.a 0.42857142857142855, want 0.4375[39m
+  [41m[1m FAIL [22m[49m tests/render/creature.test.mjs[2m > [22mRN2 creature[2m > [22mtracks and draws the creature through 10-crown
+  [31m[1mAssertionError[22m: 10-crown step 944 a 1 cam 791: [1] ellipse.a 0.42857142857142855, want 0.4375[39m
+  [41m[1m FAIL [22m[49m tests/render/creature.test.mjs[2m > [22mRN2 creature[2m > [22mtracks and draws the creature through 11-gauntlet
+  [31m[1mAssertionError[22m: 11-gauntlet step 6926 a 1 cam 9912: [1] ellipse.a 0.42857142857142855, want 0.4375[39m
+  [41m[1m FAIL [22m[49m tests/render/creature.test.mjs[2m > [22mRN2 creature[2m > [22mtracks and draws the creature through room 6, right then jump held
+  [31m[1mAssertionError[22m: room 6, right then jump held step 178 a 1 cam 0: [1] ellipse.a 0.42857142857142855, want 0.4375[39m
+  [41m[1m FAIL [22m[49m tests/render/play-frame.test.mjs[2m > [22mRN4 the play scene's frame[2m > [22mdraws every frame of the rooms' witness runs as the reference does
+  [31m[1mAssertionError[22m: room 6 step 179: creature: [1] ellipse.a 0.42857142857142855, want 0.4375[39m
+  [41m[1m FAIL [22m[49m tests/render/play-frame.test.mjs[2m > [22mRN4 the play scene's frame[2m > [22mdraws the layer's ring as the reference does, past a room's clear until the ring has run out
+  [31m[1mAssertionError[22m: room 6 step 178: creature: [1] ellipse.a 0.42857142857142855, want 0.4375[39m
+  [41m[1m FAIL [22m[49m tests/render/play-frame.test.mjs[2m > [22mRN4 the play scene's frame[2m > [22mdraws the gauntlet's witness run as the reference does
+  [31m[1mAssertionError[22m: room 11 step 6926: creature: [1] ellipse.a 0.42857142857142855, want 0.4375[39m
+mut trail: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/render/creature.ts; clone clean
+(node:14080) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut frame-centre: section 10.6: playFrame centres the camera and the ring 1 world px right
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/render/play-frame.ts: "const centreX = ix / SUB + 5;" -> "const centreX = ix / SUB + 6;"
+src/render/play-frame.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 8 s)
+  [31m     [31m×[31m draws every frame of the rooms' witness runs as the reference does[39m[33m 412[2mms[22m[39m
+  [31m     [31m×[31m draws the layer's ring as the reference does, past a room's clear until the ring has run out[39m[32m 144[2mms[22m[39m
+  [31m     [31m×[31m draws the gauntlet's witness run as the reference does[39m[32m 121[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/render/play-frame.test.mjs[2m > [22mRN4 the play scene's frame[2m > [22mdraws every frame of the rooms' witness runs as the reference does
+  [31m[1mAssertionError[22m: room 1 step 321: camera: expected 1 to be +0 // Object.is equality[39m
+  [41m[1m FAIL [22m[49m tests/render/play-frame.test.mjs[2m > [22mRN4 the play scene's frame[2m > [22mdraws the layer's ring as the reference does, past a room's clear until the ring has run out
+  [31m[1mAssertionError[22m: room 1 step 322: camera: expected 2 to be +0 // Object.is equality[39m
+  [41m[1m FAIL [22m[49m tests/render/play-frame.test.mjs[2m > [22mRN4 the play scene's frame[2m > [22mdraws the gauntlet's witness run as the reference does
+  [31m[1mAssertionError[22m: room 11 step 556: camera: expected 4 to be 2 // Object.is equality[39m
+mut frame-centre: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/render/play-frame.ts; clone clean
+(node:5444) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut limiter-full: section 11: beginFrame no longer clears the frame's held state
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/fx/flash-limiter.ts: "      sum = 0;\n      full = false;\n" -> "      sum = 0;\n"
+src/fx/flash-limiter.ts | 1 -
+ 1 file changed, 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 9 s)
+  [31m     [31m×[31m lets changes through until the frame would reach the limit, then keeps them under 0.1[39m[32m 18[2mms[22m[39m
+  [31m     [31m×[31m holds a change whose area reaches the limit exactly, and passes one just under it[39m[32m 3[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/fx/flash-limiter.test.mjs[2m > [22mFX1 flash limiter[2m > [22mlets changes through until the frame would reach the limit, then keeps them under 0.1
+  [31m[1mAssertionError[22m: expected 0.11900000000000001 to be 0.5 // Object.is equality[39m
+  [41m[1m FAIL [22m[49m tests/fx/flash-limiter.test.mjs[2m > [22mFX1 flash limiter[2m > [22mholds a change whose area reaches the limit exactly, and passes one just under it
+  [31m[1mAssertionError[22m: expected 0.099 to be 0.5 // Object.is equality[39m
+mut limiter-full: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/fx/flash-limiter.ts; clone clean
+(node:7680) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut trim-low: section 12: judgePass keeps the lowest tap (drops only the highest)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/input/calibrate.ts: ".sort((a, b) => a - b).slice(1, -1);" -> ".sort((a, b) => a - b).slice(0, -1);"
+src/input/calibrate.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 9 s)
+  [31m     [31m×[31m rejects a run whose deviation is over 35 ms and keeps a steady one[39m[32m 15[2mms[22m[39m
+  [31m     [31m×[31m drops the lowest and the highest tap before the median[39m[32m 2[2mms[22m[39m
+  [31m     [31m×[31m drops the lowest and the highest tap before the spread[39m[32m 2[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/input/calibrate.test.ts[2m > [22mcalibration (X8)[2m > [22mrejects a run whose deviation is over 35 ms and keeps a steady one
+  [31m[1mAssertionError[22m: expected 72 to be close to 36, received difference is 36, but expected 5e-7[39m
+  [41m[1m FAIL [22m[49m tests/input/calibrate.test.ts[2m > [22mcalibration (X8)[2m > [22mdrops the lowest and the highest tap before the median
+  [31m[1mAssertionError[22m: expected 14 to be close to 14.5, received difference is 0.5, but expected 5e-7[39m
+  [41m[1m FAIL [22m[49m tests/input/calibrate.test.ts[2m > [22mcalibration (X8)[2m > [22mdrops the lowest and the highest tap before the spread
+  [31m[1mAssertionError[22m: expected 10 to be close to 5, received difference is 5, but expected 5e-7[39m
+mut trim-low: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/input/calibrate.ts; clone clean
+(node:23492) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut rise-short: section 13: the rise over 3 bars instead of 4
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/render/ending-art.ts: "export const RISE_S = 16 * BEAT_S;" -> "export const RISE_S = 12 * BEAT_S;"
+src/render/ending-art.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 10 s)
+  [31m     [31m×[31m rises over four bars[39m[32m 11[2mms[22m[39m
+  [31m     [31m×[31m draws each frame of the ending: the rise, then the card on the music's beat[39m[32m 4[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/render/ending-art.test.mjs[2m > [22mEND1 ending art[2m > [22mrises over four bars
+  [31m[1mAssertionError[22m: expected 5.142857142857142 to be close to 6.857142857142857, received difference is 1.7142857142857144, but expected 5e-10[39m
+  [41m[1m FAIL [22m[49m tests/render/ending-art.test.mjs[2m > [22mEND1 ending art[2m > [22mdraws each frame of the ending: the rise, then the card on the music's beat
+  [31m[1mAssertionError[22m: 65 65.0173 glimpseY: expected 0.010661693245310744 to be less than 0.000001[39m
+mut rise-short: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/render/ending-art.ts; clone clean
+(node:23372) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut card-round: section 13: the card's beat rounded (half a beat early)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/render/ending-art.ts: "return ((Math.floor((heard - origin) / BEAT_S) % 4) + 4) % 4;" -> "return ((Math.round((heard - origin) / BEAT_S) % 4) + 4) % 4;"
+src/render/ending-art.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 10 s)
+  [31m     [31m×[31m counts the beat of the bar from the run's origin[39m[32m 32[2mms[22m[39m
+  [31m     [31m×[31m draws each frame of the ending: the rise, then the card on the music's beat[39m[32m 112[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/render/ending-art.test.mjs[2m > [22mEND1 ending art[2m > [22mcounts the beat of the bar from the run's origin
+  [31m[1mAssertionError[22m: 3.7 1.793: expected +0 to be 3 // Object.is equality[39m
+  [41m[1m FAIL [22m[49m tests/render/ending-art.test.mjs[2m > [22mEND1 ending art[2m > [22mdraws each frame of the ending: the rise, then the card on the music's beat
+  [31m[1mAssertionError[22m: ending 65 72.0584000000024: [0] ellipse.a 1, want 0.3[39m
+mut card-round: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/render/ending-art.ts; clone clean
+(node:29660) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut origin-lead: section 8.4: the run's origin 0.2 s ahead of the context time instead of 0.25
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/game/run.ts: "const ORIGIN_LEAD = 0.25;" -> "const ORIGIN_LEAD = 0.2;"
+src/game/run.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 1, 8 s)
+  [31m     [31m×[31m puts step 0 at 0.25 s past the context time when a run starts[39m[32m 14[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (25)[39m
+  [41m[1m FAIL [22m[49m tests/game/run.test.mjs[2m > [22mGAME1 the run starts ahead of the heard time[2m > [22mputs step 0 at 0.25 s past the context time when a run starts
+  [31m[1mAssertionError[22m: expected 5.2 to be close to 5.25, received difference is 0.04999999999999982, but expected 5e-13[39m
+mut origin-lead: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+mut: restored src/game/run.ts; clone clean
+(node:31948) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+summary (28 mutants):
+  beat-phase-sign: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  keys-step-late: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  max-fall: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  head-bump: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  lock-press: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  pending-late: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  pending-edge: SURVIVED every command
+  unlock-edge: SURVIVED every command
+  compile-spawn-floor: SURVIVED every command
+  room-tile: KILLED by node tools/spec-content.mjs --tree
+  portal-column: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  autorun-speed: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  track-perc: KILLED by node tools/spec-content.mjs --tree
+  gauntlet-cycle: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  mask-bit: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  track-muted-label: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  target-step: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  clock-jump: SURVIVED every command
+  warn-two-beats: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  band-factor: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  edge-colour: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  trail: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  frame-centre: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  limiter-full: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  trim-low: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  rise-short: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  card-round: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+  origin-lead: KILLED by npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game
+batch: 4 mutant(s) not killed
+--- end ---

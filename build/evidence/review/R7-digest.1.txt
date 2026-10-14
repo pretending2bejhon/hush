@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: R7-digest
+phase: review
+command: node tools/ship-gate.mjs --digest
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T23:49:07-05:00
+time-end: 2026-10-13T23:49:07-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+a03cbf0a4b6f5c31b7c32ce3f3aaf737c19450e3eb4477142ab296f22f2c6e8c
+--- end ---

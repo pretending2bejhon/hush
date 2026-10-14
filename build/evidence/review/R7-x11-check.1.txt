@@ -1,0 +1,19 @@
+HUSH-EVIDENCE v1
+id: R7-x11-check
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/x11-check.mjs <repo>
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T01:34:35-05:00
+time-end: 2026-10-14T01:34:35-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+median 10:00: passes; want pass OK
+median 15:00: passes; want pass OK
+median 9:59: refused (median first run 9:59 is outside 10:00 to 15:00); want refusal OK
+median 15:01: refused (median first run 15:01 is outside 10:00 to 15:00); want refusal OK
+median 16:00: refused (median first run 16:00 is outside 10:00 to 15:00); want refusal OK
+two first-run rows for P1: 11:00 then 19:00 (median 11:00): passes; want pass OK
+x11-check: PASS
+--- end ---

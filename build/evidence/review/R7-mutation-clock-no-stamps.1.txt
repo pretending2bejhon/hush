@@ -1,0 +1,60 @@
+HUSH-EVIDENCE v1
+id: R7-mutation-clock-no-stamps
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/mut.mjs clock-no-stamps --keep-going
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T01:47:58-05:00
+time-end: 2026-10-14T01:52:16-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+mut clock-no-stamps: section 8.3 / 9: the engine builds its clock line over a context view without getOutputTimestamp (heard time from currentTime less the latency)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/audio/engine.ts: "      clock = createOutputClock(context);" -> "      clock = createOutputClock({ get state() { return context.state; }, get currentTime() { return context.currentTime; }, sampleRate: context.sampleRate, bas
+src/audio/engine.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game  (exit 0, 6 s)
+  [2m Test Files [22m [1m[32m25 passed[39m[22m[90m (25)[39m
+mut: $ npx vite build  (exit 0, 2 s)
+  [36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+  transforming...
+  ✓ 47 modules transformed.
+  rendering chunks...
+  computing gzip size...
+  dist/index.html                    1.00 kB │ gzip:   0.66 kB
+  dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+  dist/assets/index-D210pwKy.js  2,101.11 kB │ gzip: 596.32 kB
+  [32m✓ built in 860ms[39m
+mut: $ node tools/probe-play.mjs --check console,play,unlock,scene,keys  (exit 0, 178 s)
+  play: chrome headless: room 01-wake done
+  play: chrome headless: room 02-heartbeat done
+  play: chrome headless: room 03-dash done
+  play: chrome headless: room 04-thorns done
+  play: chrome headless: room 05-doors done
+  play: chrome headless: room 06-wave done
+  play: chrome headless: room 07-current done
+  play: chrome headless: room 08-steps done
+  play: chrome headless: room 09-gates done
+  play: chrome headless: room 10-crown done
+  play: chrome headless: room 11-gauntlet done
+  play: chrome headless: ending seen, texts read 10284 ms into it
+  play: chrome headless: console: ok: zero console and page errors
+  play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+  play: chrome headless: unlock: ok: 10 rooms cleared, each layer's gate closed until its bar line and open after it; the gauntlet's track mapped from its run's bar at its entry and its respawn (71 reads)
+  play: chrome headless: scene: ok: 11 rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, 34480 bake pixels as their shapes; every frame of every run replayed, 773 drawn command for command as the reference (37 while the limiter held a change, 63 with a layer's ring); 7840 frames on the step the heard time gives (the farthest 1 step(s) off); the 
+  play: chrome headless: keys: ok: after the hand-over (100, -60) a run at room 1; real keys reached the sim on the steps stepOf names, every state read while they were pressed and after equal to their replay
+  play: chrome headless: PASS (console,play,unlock,scene,keys)
+mut: $ node tools/probe-av.mjs --headed  (exit 1, 71 s)
+  av: 2173 voices scheduled for 2151 onsets, 0 errors, 0 dropped, 0 shifted; clock 191.633 ms p-p, 0 resyncs; 68.9 s
+  av: silence peak 0.00e+0; windows rms 0.4151 0.3907 0.4018 0.4075 0.4016 0.4019 0.3960 0.3993 0.3930 0.3947
+  av: solos rms 0.3742 0.0596 0.0141 0.0491 0.0089 0.0293 0.0067 0.0158 0.0165 0.0713; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+  av: mix speakers <- AnalyserNode and 9 other(s), 9 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+  av: starts 2319 voice start(s) of 4464 recorded: 2319 on their layer's onsets (+0.00 to +0.00 ms), 0 late-shifted, 0 unable to sound, 0 off; 1909 of 1909 onsets started
+  av: device clock offset moved 191.633 ms peak to peak (bound 3)
+  av: FAIL
+mut clock-no-stamps: KILLED by node tools/probe-av.mjs --headed
+mut: restored src/audio/engine.ts; clone clean
+(node:1140) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+--- end ---

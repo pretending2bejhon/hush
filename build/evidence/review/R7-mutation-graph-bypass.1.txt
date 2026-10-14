@@ -1,0 +1,39 @@
+HUSH-EVIDENCE v1
+id: R7-mutation-graph-bypass
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/mut.mjs graph-bypass
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T01:08:08-05:00
+time-end: 2026-10-14T01:09:22-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+mut graph-bypass: section 8.4: every layer gate wired into the master gain, past the compressor
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/audio/engine.ts: "        gate.connect(bus);" -> "        gate.connect(master);"
+src/audio/engine.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vite build  (exit 0, 2 s)
+  [36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+  transforming...
+  ✓ 47 modules transformed.
+  rendering chunks...
+  computing gzip size...
+  dist/index.html                    1.00 kB │ gzip:   0.66 kB
+  dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+  dist/assets/index-DfauCsMR.js  2,100.96 kB │ gzip: 596.27 kB
+  [32m✓ built in 867ms[39m
+mut: $ node tools/probe-av.mjs --headed  (exit 1, 72 s)
+  av: 2170 voices scheduled for 2153 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.189 ms p-p, 0 resyncs; 69 s
+  av: silence peak 0.00e+0; windows rms 0.4289 0.4031 0.4113 0.4032 0.4117 0.4287 0.4166 0.4095 0.4121 0.4103
+  av: solos rms 0.4254 0.0386 0.0072 0.0340 0.0053 0.0200 0.0045 0.0106 0.0103 0.0825; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+  av: mix speakers <- AnalyserNode and 1 other(s), 1 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 0 of 10 gates in, 0 inputs
+  av: starts 2316 voice start(s) of 4455 recorded: 2316 on their layer's onsets (+0.00 to +0.00 ms), 0 late-shifted, 0 unable to sound, 0 off; 1909 of 1909 onsets started
+  av: the compressor's inputs miss layer gate(s) 1, 2, 3, 4, 5, 6, 7, 8, 9, 10
+  av: FAIL
+mut graph-bypass: KILLED by node tools/probe-av.mjs --headed
+mut: restored src/audio/engine.ts; clone clean
+(node:15452) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+--- end ---

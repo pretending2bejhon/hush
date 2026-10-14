@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: CAL1
+phase: review
+command: npm run test:calibration
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T23:51:31-05:00
+time-end: 2026-10-13T23:51:32-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+
+> hush@0.0.0 test:calibration
+> vitest run tests/input/calibrate.test.ts
+
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  23:51:32
+   Duration  181ms (transform 56%, import 20%, tests 17%, worker 8%)
+
+--- end ---

@@ -1,0 +1,76 @@
+HUSH-EVIDENCE v1
+id: R7-mutations-notices
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/batch.mjs notices-holder-email notices-no-texts supply-devoptional
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T00:55:45-05:00
+time-end: 2026-10-14T00:55:54-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+mut notices-holder-email: audit 1 MINOR 3: holderOf keeps an email address in the holder
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: tools/notices.mjs: ".replace(/\\S+@\\S+/g, ' ')" -> ""
+tools/notices.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/tools/notices.test.mjs  (exit 1, 3 s)
+  [31m     [31m×[31m gives a package with no licence file the standard ISC or MIT text, its holder named without email or URL[39m[32m 40[2mms[22m[39m
+  [31m     [31m×[31m names the holder of an author string or object and nothing else[39m[32m 2[2mms[22m[39m
+  [31m     [31m×[31m pass check-public: the one third-party address they carry is masked, and an address not listed is still found[39m[32m 164[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+  [41m[1m FAIL [22m[49m tests/tools/notices.test.mjs[2m > [22mnotices.mjs: the file[2m > [22mgives a package with no licence file the standard ISC or MIT text, its holder named without email or URL
+  [31m[1mAssertionError[22m: expected 'Third-party notices for The Hush\n\nT…' to contain '(c@1.0.0 ships no licence file: this …'[39m
+  [41m[1m FAIL [22m[49m tests/tools/notices.test.mjs[2m > [22mnotices.mjs: the file[2m > [22mnames the holder of an author string or object and nothing else
+  [31m[1mAssertionError[22m: expected '<redacted>' to be null[39m
+  [41m[1m FAIL [22m[49m tests/tools/notices.test.mjs[2m > [22mthe repo's own notices[2m > [22mpass check-public: the one third-party address they carry is masked, and an address not listed is still found
+  [31m[1mAssertionError[22m: expected 'THIRD-PARTY-NOTICES.txt:1080: email\n…' to match /check-public root \(1 files\): clean/[39m
+  check-public root (1 files): FAIL, 1 finding(s) (fixture denylist (HUSH_NAMES_FILE), 1 names + 1 machine names)
+mut notices-holder-email: KILLED by npx vitest run tests/tools/notices.test.mjs
+mut: restored tools/notices.mjs; clone clean
+(node:11464) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut notices-no-texts: audit 1 MINOR 3: the notices list every package but carry no licence text
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: tools/notices.mjs: "    out.push('', g.text);\n" -> "    out.push('');\n"
+tools/notices.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/tools/notices.test.mjs  (exit 1, 2 s)
+  [31m     [31m×[31m lists packages that ship one text above one copy of it, a NOTICE after its licence, and leaves out dev and missing optional packages[39m[32m 21[2mms[22m[39m
+  [31m     [31m×[31m gives a package with no licence file the standard ISC or MIT text, its holder named without email or URL[39m[32m 20[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+  [41m[1m FAIL [22m[49m tests/tools/notices.test.mjs[2m > [22mnotices.mjs: the file[2m > [22mlists packages that ship one text above one copy of it, a NOTICE after its licence, and leaves out dev and missing optional packages
+  [31m[1mAssertionError[22m: expected 'Third-party notices for The Hush\n\nT…' to contain '- @s/b@1.0.0 (MIT)\n- a@1.0.0 (MIT)\n…'[39m
+  [41m[1m FAIL [22m[49m tests/tools/notices.test.mjs[2m > [22mnotices.mjs: the file[2m > [22mgives a package with no licence file the standard ISC or MIT text, its holder named without email or URL
+  [31m[1mAssertionError[22m: expected 'Third-party notices for The Hush\n\nT…' to contain '- c@2.0.0 (ISC)\n\n(c@2.0.0 ships no …'[39m
+mut notices-no-texts: KILLED by npx vitest run tests/tools/notices.test.mjs
+mut: restored tools/notices.mjs; clone clean
+(node:33184) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+mut supply-devoptional: audit 1 MINOR 3: X10's notices row also wants devOptional lockfile entries
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: tools/probe-supply.mjs: "if (!key || v.dev || v.devOptional || v.link) continue;" -> "if (!key || v.dev || v.link) continue;"
+tools/probe-supply.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/tools/notices.test.mjs  (exit 1, 2 s)
+  [31m     [31m×[31m wants every runtime entry, nested ones and installed optional ones, but no dev entry[39m[32m 4[2mms[22m[39m
+  [31m     [31m×[31m fails a build without the file, a file that leaves a package out, and a package under another licence id[39m[32m 2[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+  [41m[1m FAIL [22m[49m tests/tools/notices.test.mjs[2m > [22mX10: the notices row (tools/probe-supply.mjs)[2m > [22mwants every runtime entry, nested ones and installed optional ones, but no dev entry
+  [31m[1mAssertionError[22m: expected [ 'a@1.0.0', 'c@2.0.0', …(2) ] to deeply equal [ 'a@1.0.0', 'c@2.0.0', 'o@1.0.0' ][39m
+  [41m[1m FAIL [22m[49m tests/tools/notices.test.mjs[2m > [22mX10: the notices row (tools/probe-supply.mjs)[2m > [22mfails a build without the file, a file that leaves a package out, and a package under another licence id
+  [31m[1mAssertionError[22m: expected [ Array(1) ] to deeply equal [ Array(1) ][39m
+mut supply-devoptional: KILLED by npx vitest run tests/tools/notices.test.mjs
+mut: restored tools/probe-supply.mjs; clone clean
+(node:22868) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+
+
+summary (3 mutants):
+  notices-holder-email: KILLED by npx vitest run tests/tools/notices.test.mjs
+  notices-no-texts: KILLED by npx vitest run tests/tools/notices.test.mjs
+  supply-devoptional: KILLED by npx vitest run tests/tools/notices.test.mjs
+batch: every mutant killed
+--- end ---

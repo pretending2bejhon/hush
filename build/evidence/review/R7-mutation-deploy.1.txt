@@ -1,0 +1,26 @@
+HUSH-EVIDENCE v1
+id: R7-mutation-deploy
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/mut.mjs deploy-any-repo
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T00:56:09-05:00
+time-end: 2026-10-14T00:59:01-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+mut deploy-any-repo: audit 1 MINOR 4: a dry run takes any local git repository as its remote, bare or not
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: tools/deploy.mjs: "return r.status === 0 && String(r.stdout).trim() === 'true';" -> "return r.status === 0;"
+tools/deploy.mjs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vitest run tests/controls/deploy.test.mjs -t refuses a remote that is not an existing local bare repository  (exit 1, 172 s)
+  [31m     [31m×[31m refuses a remote that is not an existing local bare repository, and pushes nothing[39m[33m 140395[2mms[22m[39m
+  [2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[2m | [22m[33m28 skipped[39m[90m (34)[39m
+  [41m[1m FAIL [22m[49m tests/controls/deploy.test.mjs[2m > [22mdeploy.mjs --dry-run[2m > [22mrefuses a remote that is not an existing local bare repository, and pushes nothing
+  [31m[1mAssertionError[22m: expected 'deploy: dry-run of 5efcf3a60da3 as hu…' to match /REFUSED: a dry run publishes only to …/[39m
+mut deploy-any-repo: KILLED by npx vitest run tests/controls/deploy.test.mjs -t refuses a remote that is not an existing local bare repository
+mut: restored tools/deploy.mjs; clone clean
+(node:3612) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+--- end ---

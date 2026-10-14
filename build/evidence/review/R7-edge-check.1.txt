@@ -1,0 +1,15 @@
+HUSH-EVIDENCE v1
+id: R7-edge-check
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/edge-check.mjs <repo>
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T00:54:55-05:00
+time-end: 2026-10-14T00:54:56-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+sim: room 1 cleared by the tick of step 1954 (unlockBar 5, unlockBar of the next step 6); the oracle returns layer 1 on the tick of step 2058 (nextBarStep 2058); product = oracle at every step: yes
+run: unlockAt calls [["unlockAt",1,5,1955]] (want [["unlockAt",1,5,1955]])
+edge-check: PASS
+--- end ---

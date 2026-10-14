@@ -1,0 +1,38 @@
+HUSH-EVIDENCE v1
+id: R7-mutation-calib-handler-time
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/mut.mjs calib-handler-time
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T01:10:11-05:00
+time-end: 2026-10-14T01:14:42-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 1
+--- output ---
+mut calib-handler-time: section 12: the scene stamps each tap with the handler's performance.now() instead of the event's timeStamp
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/render/calibration-scene.ts: "const h = c ? audibleSec(c, e.timeStamp) : -Infinity;" -> "const h = c ? audibleSec(c, performance.now()) : -Infinity;"
+mut: src/render/calibration-scene.ts: "} else if (e.timeStamp >= a.p0 + (COUNT_IN - 0.5) * BEAT * 1000) a.taps.push(e.timeStamp);" -> "} else if (performance.now() >= a.p0 + (COUNT_IN - 0.5) * BEAT * 1000) a.taps.push(performance.now());"
+src/render/calibration-scene.ts | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+mut: $ npx vite build  (exit 0, 2 s)
+  [36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+  transforming...
+  ✓ 47 modules transformed.
+  rendering chunks...
+  computing gzip size...
+  dist/index.html                    1.00 kB │ gzip:   0.66 kB
+  dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+  dist/assets/index-6l6wyqEf.js  2,100.98 kB │ gzip: 596.27 kB
+  [32m✓ built in 853ms[39m
+mut: $ node tools/probe-flash.mjs --calibration  (exit 0, 267 s)
+  flash: calibration up 44 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2617 frames, 2176 analyser samples); click starts 48 of 48 on their marks; frames 2566 timed (51 filled, 307 with the ring)
+  flash: tapped calibration up 22.1 s: values 6.3 34.5 (the taps' own 6.3 34.5; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5); click starts 24 of 24 on their marks; frames 1283 timed (26 filled, 156 with the ring)
+  flash: retried calibration up 43.5 s: values 5.9 34.8 (the taps' own 5.9 34.8; A1 and B1 untapped, A2 and B2 tapped as above; marks 5.5 34.5); click starts 48 of 48 on their marks; frames 2567 timed (50 filled, 309 with the ring)
+  flash: 11786 frames over 197.1 s, median 16.41 ms; general max 9653 px, red max 0 px (limit 25600)
+  flash: PASS
+mut calib-handler-time: SURVIVED every command
+mut: restored src/render/calibration-scene.ts; clone clean
+(node:35728) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+--- end ---

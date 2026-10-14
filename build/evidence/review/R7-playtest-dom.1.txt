@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: R7-playtest-dom
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/playtest-dom.mjs <repo>
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T00:29:48-05:00
+time-end: 2026-10-14T00:36:04-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+dist built from 55e41c8b8846c82489e2968f29d569a5767f0abc; HEAD 55e41c8b8846c82489e2968f29d569a5767f0abc; product files unchanged between them: yes
+default boot 1280x720: ok; errors 0
+default 2 s after a key: ok
+default through the calibration: 98 reads over 50 s, 0 failing; in room 1 after real keys: ok; errors 0
+default boot 800x450: ok; errors 0
+default boot 900x1200: ok; errors 0
+?playtest boot 1280x720: ok; errors 0
+?playtest 2 s after a key: ok
+?playtest boot 800x450: ok; errors 0
+?playtest boot 900x1200: ok; errors 0
+?probe&playtest: 11 of 11 rooms cleared, 11 room-end reads; ending: 193 reads over 12 s, 722 ending frames logged, 0 failing; run line first seen 6.913 s after the ending's first frame (RISE_S 6.857 s; last read without it 6.849 s); text objects 0; texts at the end: A: Source (AGPL-3.0) | SPAN: Music engine: Strudel, AGPL-3.0-or-later | OUTPUT#playtest: run 0:59 · deaths 0; errors 0
+?probe: 11 of 11 rooms cleared, 11 room-end reads; ending: 194 reads over 12 s, 724 ending frames logged, 0 failing; output#playtest hidden true, text ""; text objects 0; texts at the end: A: Source (AGPL-3.0) | SPAN: Music engine: Strudel, AGPL-3.0-or-later; errors 0
+playtest-dom: PASS
+--- end ---

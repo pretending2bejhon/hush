@@ -1,0 +1,40 @@
+HUSH-EVIDENCE v1
+id: R7-mutation-no-fit
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/mut.mjs no-fit
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T01:05:03-05:00
+time-end: 2026-10-14T01:05:11-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+mut no-fit: section 10.1: the canvas not fitted to the window (scale mode NONE)
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/render/game.ts: "mode: Phaser.Scale.FIT," -> "mode: Phaser.Scale.NONE,"
+src/render/game.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ npx vite build  (exit 0, 2 s)
+  [36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+  transforming...
+  ✓ 47 modules transformed.
+  rendering chunks...
+  computing gzip size...
+  dist/index.html                    1.00 kB │ gzip:   0.66 kB
+  dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+  dist/assets/index-CfYRfewd.js  2,100.96 kB │ gzip: 596.28 kB
+  [32m✓ built in 875ms[39m
+mut: $ node tools/probe-smoke.mjs  (exit 1, 5 s)
+  smoke: page: ok: GET /hush/ 200
+  smoke: build-meta: ok: hush-build 55e41c8b8846
+  smoke: boot: ok: scenes ["calibration"]
+  smoke: canvas: ok: not blank (1280 by 720)
+  smoke: text: FAIL: text over the canvas: "Source (AGPL-3.0)"; text over the canvas: "Music engine: Strudel, AGPL-3.0-or-later"; missing page text "Source (AGPL-3.0)"; missing page text "Music engine: Strudel, AGPL-3.0-or-later"; text objects 0
+  smoke: requests: ok: every request answered below 400
+  smoke: console: ok: zero console and page errors
+  smoke: FAIL (/hush/)
+mut no-fit: KILLED by node tools/probe-smoke.mjs
+mut: restored src/render/game.ts; clone clean
+(node:25648) [DEP0190] DeprecationWarning: Passing args to a child process with shell option true can lead to security vulnerabilities, as the arguments are not escaped, only concatenated.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+--- end ---

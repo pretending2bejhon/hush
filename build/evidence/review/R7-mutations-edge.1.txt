@@ -1,0 +1,37 @@
+HUSH-EVIDENCE v1
+id: R7-mutations-edge
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/batch.mjs pending-edge-check unlock-edge-check
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T00:55:11-05:00
+time-end: 2026-10-14T00:55:12-05:00
+head: 55e41c8b8846c82489e2968f29d569a5767f0abc
+exit: 0
+--- output ---
+mut pending-edge-check: section 4.5, against the edge check: the sim schedules the layer from the step after the clearing tick
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/sim/sim.ts: "s.pendingAt = nextBarStep(s.step);" -> "s.pendingAt = nextBarStep(s.step + 1);"
+src/sim/sim.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/edge-check.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/clone  (exit 1, 0 s)
+  edge-check: FAIL, 1 problem(s)
+mut pending-edge-check: KILLED by node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/edge-check.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/clone
+mut: restored src/sim/sim.ts; clone clean
+
+mut unlock-edge-check: GAME1 / X7, against the edge check: the run asks the audio for unlockBar of the step after the clearing tick
+mut: clone at 55e41c8b8846c82489e2968f29d569a5767f0abc
+mut: src/game/run.ts: "engine.unlockAt(pending, unlockBar(step));" -> "engine.unlockAt(pending, unlockBar(step + 1));"
+src/game/run.ts | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+mut: $ node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/edge-check.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/clone  (exit 1, 0 s)
+  edge-check: FAIL, 1 problem(s)
+mut unlock-edge-check: KILLED by node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/edge-check.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/clone
+mut: restored src/game/run.ts; clone clean
+
+
+summary (2 mutants):
+  pending-edge-check: KILLED by node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/edge-check.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/clone
+  unlock-edge-check: KILLED by node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/edge-check.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/ff75dfc2-15c7-4375-aa05-14cd9d649b27/scratchpad/r7/clone
+batch: every mutant killed
+--- end ---
