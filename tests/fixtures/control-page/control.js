@@ -11,6 +11,8 @@
 //   ?fetch=<url>  one request to that URL (X10)                ?store=local|session|cookie|idb (X10)
 //   ?text         a Phaser Text object (D8)                    ?domtext a DOM text over the canvas (D16)
 //   ?novis        no suspension when the page is hidden (D4)
+//   ?center=none  the canvas left uncentred in #game (smoke's layout row; review R7, MINOR 4)
+//   ?bg=<hex>     another background colour (smoke's background row; review R6, MINOR 5)
 //   ?av=master-off|synth-throw|layer-off|master-low|late|swap|nostamps|leak|nostart|undercount|drop  the av probe's
 //                 planted faults (X7; master-low, the mix of section 8.4; late, every note handed over 0.1 s after its
 //                 time, and swap, layers 1 and 2 through each other's gate: review R4, MAJOR 1; and review R7, MAJOR 2,
@@ -412,8 +414,9 @@ game = new Phaser.Game({
   parent: 'game',
   width: 1280,
   height: 720,
-  backgroundColor: '#07080d',
-  scale: { mode: Phaser.Scale.FIT, autoCenter: Phaser.Scale.CENTER_BOTH },
+  // ?bg=<hex> and ?center=none (review R7, MINOR 4; R6, MINOR 5): smoke's background and layout rows.
+  backgroundColor: params.has('bg') ? `#${params.get('bg')}` : '#07080d',
+  scale: { mode: Phaser.Scale.FIT, autoCenter: params.get('center') === 'none' ? Phaser.Scale.NO_CENTER : Phaser.Scale.CENTER_BOTH },
   fps: { limit: 0 },
   audio: { noAudio: true },
   input: { keyboard: false, mouse: false, touch: false, gamepad: false, windowEvents: false },

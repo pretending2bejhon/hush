@@ -8,6 +8,15 @@
 // run fails when either sum reaches AREA_LIMIT, 25% of a 10 degree field taken as 2.78% of the 1280 by 720
 // canvas (HUSH-SPEC section 11).
 export const AREA_LIMIT = 25600;
+
+// The run's verdict on the area (D10, X6): one problem for each kind whose largest area reaches AREA_LIMIT. Review R7
+// (MINOR 5) moved it here from probe-flash.mjs, so the edge is tested in Node: 25,600 px fails and 25,599 px passes.
+export function flashProblems(result) {
+  const problems = [];
+  if (result.maxGeneralArea >= AREA_LIMIT) problems.push(`general flashes over ${result.maxGeneralArea} canvas px at ${result.maxGeneralAtMs} ms (limit ${AREA_LIMIT})`);
+  if (result.maxRedArea >= AREA_LIMIT) problems.push(`red flashes over ${result.maxRedArea} canvas px at ${result.maxRedAtMs} ms (limit ${AREA_LIMIT})`);
+  return problems;
+}
 export const LUM_STEP = 0.1;
 export const DARK_LIMIT = 0.8;
 export const RED_RATIO = 0.8;

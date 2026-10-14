@@ -64,6 +64,18 @@ describe('calibration (X8)', () => {
     expect(under.accepted).toBe(true);
   });
 
+  // Review R6 (MINOR 1), carried as review R7's MINOR 6: X8's edge itself. A deviation of exactly 35 ms is kept, and one of
+  // 35.5 ms is rejected.
+  it('keeps a pass whose deviation is exactly 35 ms and rejects one of 35.5 ms', () => {
+    const spread = (d: number) => [-1000, ...Array<number>(5).fill(-d), ...Array<number>(5).fill(d), 1000];
+    const edge = mod.judgePass(spread(35));
+    expect(edge.mad).toBeCloseTo(35, 6);
+    expect(edge.accepted).toBe(true);
+    const past = mod.judgePass(spread(35.5));
+    expect(past.mad).toBeCloseTo(35.5, 6);
+    expect(past.accepted).toBe(false);
+  });
+
   it('rejects a pass of fewer than 10 taps', () => {
     expect(mod.judgePass([1, 2, 3, 4, 5, 6, 7, 8, 9]).accepted).toBe(false);
     expect(mod.judgePass([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]).accepted).toBe(true);

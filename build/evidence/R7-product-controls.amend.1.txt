@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R7-product-controls
+phase: amend
+command: npx vitest run tests/controls/product-tests.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T02:46:19-05:00
+time-end: 2026-10-14T02:48:00-05:00
+head: 2126ec09180116af44c9f1a6613f6da133d9e135
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  46 passed (46)
+   Start at  02:46:20
+   Duration  99.89s (tests 100%)
+
+--- end ---

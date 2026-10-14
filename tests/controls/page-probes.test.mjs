@@ -1,5 +1,6 @@
 // PF-CONTROLS for the headless browser probes, on the control page (tests/fixtures/control-page) built under
-// /hush/: the smoke probe (X1) against a wrong Vite base, the playthrough (X5, X10's browser rows, D3, D8, D16)
+// /hush/: the smoke probe (X1) against a wrong Vite base, an uncentred canvas and another background (review R7,
+// MINOR 4; R6, MINOR 5), the playthrough (X5, X10's browser rows, D3, D8, D16)
 // against every planted fault, the ending's included (no hand-over, no run line under ?playtest, a run line
 // without it, one before the card, one from the wrong step), the supply probe (X10) against a loose pin, an
 // audit finding, a planted write, a build without its third-party notices and notices that leave a runtime
@@ -51,6 +52,21 @@ describe('smoke probe (X1)', () => {
     expect(bad.out).toMatch(/smoke: requests: FAIL: 404/);
     expect(bad.out).toMatch(/smoke: FAIL/);
     expect(bad.code).toBe(1);
+  }, T);
+
+  // Review R7 (MINOR 4) and R6 (MINOR 5): section 10.1's centring and section 10.2's background, read on the page.
+  it('wants the canvas centred in #game and its undrawn pixels #07080d', () => {
+    const ok = tool('probe-smoke.mjs', ['--dist', dist]);
+    expect(ok.out).toMatch(/smoke: layout: ok: the canvas centred in #game/);
+    expect(ok.out).toMatch(/smoke: background: ok: an undrawn canvas pixel reads #07080d/);
+    const off = tool('probe-smoke.mjs', ['--dist', dist, '--query', 'center=none']);
+    expect(off.out).toMatch(/smoke: layout: FAIL: the canvas is not centred in #game/);
+    expect(off.out).toMatch(/smoke: background: ok/);
+    expect(off.code).toBe(1);
+    const bg = tool('probe-smoke.mjs', ['--dist', dist, '--query', 'bg=000000']);
+    expect(bg.out).toMatch(/smoke: background: FAIL: an undrawn canvas pixel reads #000000, want #07080d/);
+    expect(bg.out).toMatch(/smoke: layout: ok/);
+    expect(bg.code).toBe(1);
   }, T);
 });
 

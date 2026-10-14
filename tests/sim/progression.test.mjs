@@ -2,10 +2,15 @@
 // the first step on the bar line unlockBar(s), at least a beat after the clear; until then every hazard bound to
 // layer k holds its rest state, and from then on it follows its pattern; the audio gate opens on the same bar
 // line (unlockTime(origin, unlockBar(s))), within one step of the sim's.
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
+import { readWitness } from '../../tools/replay.mjs';
 import { load } from '../helpers/load.mjs';
 import * as O from '../fixtures/oracle/index.mjs';
 import { worlds } from './compare.mjs';
+
+const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..', '..');
 
 const B = await load('HUSH_BEAT_MODULE', new URL('../../src/sim/beat.ts', import.meta.url));
 const G = await load('HUSH_AUDIO_MODULE', new URL('../../src/audio/gates.ts', import.meta.url));
@@ -30,6 +35,30 @@ describe('X7 progression: a layer returns on the bar line', () => {
       expect(B.gauntletStartBeat(s)).toBe(O.gauntletStartBeat(s));
       expect(B.nextBarStep(s) * 7 - s * 7).toBeGreaterThanOrEqual(720);
     }
+  });
+
+  // Review R7 (MINOR 1): a clear on the one step per bar whose next step lies past the bar line's edge. Room 1's witness,
+  // delayed 337 steps, clears on the tick of step 1954, where unlockBar is 5 and one step later 6: the layer comes back
+  // on bar 5's first step, nextBarStep(1954), not nextBarStep(1955).
+  it('room 1 cleared on the bar line\'s edge step: layer 1 back on that step\'s bar line', () => {
+    const D = 337;
+    const changes = readWitness(path.join(REPO, 'replays', '01-wake.json')).changes.map(([s, b]) => [s + D, b]);
+    const sim = P.createSim(w.product, { room: 1, step: 0, layers: canonical(1), stopAtClear: false });
+    let k = 0;
+    let bits = 0;
+    let clearStep = -1;
+    for (let s = 0; s < 4000 && clearStep < 0; s++) {
+      while (k < changes.length && changes[k][0] <= s) { bits = changes[k][1]; k += 1; }
+      const before = sim.step;
+      sim.tick(bits);
+      if (sim.status().cleared > 0) clearStep = before;
+    }
+    expect(clearStep).toBe(1954);
+    expect([B.unlockBar(1954), B.unlockBar(1955)]).toEqual([5, 6]);
+    const st = sim.save();
+    expect(st[O.FIELDS.indexOf('pendingLayer')]).toBe(1);
+    expect(st[O.FIELDS.indexOf('pendingAt')]).toBe(B.nextBarStep(1954));
+    expect(B.nextBarStep(1954)).not.toBe(B.nextBarStep(1955));
   });
 
   for (let k = 1; k <= 10; k++) {

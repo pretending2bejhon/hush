@@ -35,6 +35,7 @@ function refMutant(file, from, to) {
   return out;
 }
 const clockMutant = (from, to) => path.join(mutate(['tests/fixtures/control-page/clock.js'], 'tests/fixtures/control-page/clock.js', from, to), 'clock.js');
+const calibMutant = (from, to) => path.join(mutate(['tests/fixtures/calibration/reference.mjs'], 'tests/fixtures/calibration/reference.mjs', from, to), 'reference.mjs');
 // The reference run imports the oracle, the art reference and the driver reference by relative path: its mutant
 // takes them from the repo.
 function runMutant(from, to) {
@@ -110,6 +111,16 @@ const cases = [
   ['tests/fx/flash-limiter.test.mjs', { HUSH_FX_MODULE: `${REF}/flash-limiter.mjs` }, () => ({ HUSH_FX_MODULE: refMutant('flash-limiter.mjs', 'sum + area >= FLASH_AREA_LIMIT', 'sum + area > FLASH_AREA_LIMIT') }), 'edge'],
   // Review R4 (MINOR 2): a run that catches up any number of steps in one frame.
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('stepsDue(sim.step, targetStep(heard, origin, displaySec(avOffset)))', 'Math.max(targetStep(heard, origin, displaySec(avOffset)) - sim.step, 0)') }), 'cap'],
+  // Review R7 (MINOR 1): a clear on the bar line's edge, its layer's bar taken one step late in the sim and in the run.
+  ['tests/sim/progression.test.mjs', oracleEnv(`${ORACLE}/index.mjs`), () => oracleEnv(oracleMutant('sim.mjs', 's.pendingAt = nextBarStep(s.step);', 's.pendingAt = nextBarStep(s.step + 1);')), 'edge'],
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('engine.unlockAt(pending, unlockBar(step));', 'engine.unlockAt(pending, unlockBar(step + 1));') }), 'edge'],
+  // Review R7 (MINOR 2): the clock line's jump tolerance from both sides, and its agreement burst's 50 ms floor.
+  ['tests/clock/output-clock.test.mjs', { HUSH_CLOCK_MODULE: 'tests/fixtures/control-page/clock.js' }, () => ({ HUSH_CLOCK_MODULE: clockMutant('const CLOCK_JUMP = 0.004;', 'const CLOCK_JUMP = 0.003;') }), 'CLOCK_JUMP 3 ms'],
+  ['tests/clock/output-clock.test.mjs', { HUSH_CLOCK_MODULE: 'tests/fixtures/control-page/clock.js' }, () => ({ HUSH_CLOCK_MODULE: clockMutant('const CLOCK_JUMP = 0.004;', 'const CLOCK_JUMP = 0.005;') }), 'CLOCK_JUMP 5 ms'],
+  ['tests/clock/output-clock.test.mjs', { HUSH_CLOCK_MODULE: 'tests/fixtures/control-page/clock.js' }, () => ({ HUSH_CLOCK_MODULE: clockMutant('Math.max(50, 1500', 'Math.max(30, 1500') }), 'burst'],
+  // Review R6 (MINOR 1), carried as review R7's MINOR 6: X8's edge, a calibrator that keeps 35.5 ms and one that drops 35 ms.
+  ['tests/input/calibrate.test.ts', { HUSH_CALIBRATE_MODULE: 'tests/fixtures/calibration/reference.mjs' }, () => ({ HUSH_CALIBRATE_MODULE: calibMutant('accepted: mad <= 35', 'accepted: mad < 36') }), 'MAD under 36'],
+  ['tests/input/calibrate.test.ts', { HUSH_CALIBRATE_MODULE: 'tests/fixtures/calibration/reference.mjs' }, () => ({ HUSH_CALIBRATE_MODULE: calibMutant('accepted: mad <= 35', 'accepted: mad < 35') }), 'MAD under 35'],
 ];
 
 describe('product tests: green on the reference, red on one planted fault', () => {

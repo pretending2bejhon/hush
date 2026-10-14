@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R7-flash-controls
+phase: amend
+command: npx vitest run tests/controls/flash-probe.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T02:48:32-05:00
+time-end: 2026-10-14T02:49:45-05:00
+head: 2126ec09180116af44c9f1a6613f6da133d9e135
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  9 passed (9)
+   Start at  02:48:33
+   Duration  71.70s (tests 99%, import 1%)
+
+--- end ---

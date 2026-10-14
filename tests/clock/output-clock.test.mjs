@@ -63,6 +63,9 @@ describe('CL1 device-clock line against the reference port', () => {
     'stale pairs after a resume': [{ start: 2000, staleUntil: 2600 }, null],
     'a large output buffer': [{ baseLatency: 0.09, burst: 0.2 }, null],
     'a glitch moves the line down 6 ms': [{ glitchAt: 4000, glitch: -0.006 }, 'yes'],
+    // Review R7 (MINOR 2): CLOCK_JUMP from both sides. A 3.5 ms drop is inside the 4 ms tolerance and a 4.5 ms drop is past it.
+    'a glitch moves the line down 3.5 ms': [{ glitchAt: 4000, glitch: -0.0035 }, 'no'],
+    'a glitch moves the line down 4.5 ms': [{ glitchAt: 4000, glitch: -0.0045 }, 'yes'],
     'a blip of exactly two low pairs': [{ lead: 0.015, glitchAt: 4000, glitchUntil: 4200, glitch: -0.02 }, 'no'],
     'a lead of three render quanta': [{ lead: (3 * 128) / 48000 }, null],
   };
@@ -79,6 +82,22 @@ describe('CL1 device-clock line against the reference port', () => {
     both(device({ stamps: false }), device({ stamps: false }), 300, 7);
     const { a } = both(device({ lead: 0 }), device({ lead: 0 }), 900, 7);
     expect(a.valid).toBe(true);
+  });
+
+  // Review R7 (MINOR 2): the agreement burst's 50 ms floor. Every pair of this device is trusted (a fresh pair each
+  // 20 ms, 30 ms ahead), its baseLatency is 0 and it is sampled every 10 ms, so the line is valid exactly 50 ms after
+  // the first trusted pair past settling: at 210 ms, the 21st sample. A floor of 30 ms would make it valid at 190 ms.
+  it('agrees: the agreement burst on a device with baseLatency 0, sampled every 10 ms', () => {
+    const { a } = both(device({ burst: 0.02, baseLatency: 0 }), device({ burst: 0.02, baseLatency: 0 }), 60, 10);
+    expect(a.valid).toBe(true);
+    const d = device({ burst: 0.02, baseLatency: 0 });
+    const line = ref.createOutputClock(d);
+    let firstValid = -1;
+    for (let i = 0; i < 60 && firstValid < 0; i++) {
+      d.advance(10);
+      if (line.sample(d.now).valid) firstValid = d.now;
+    }
+    expect(firstValid).toBe(210);
   });
 
   it('agrees across a suspension: no sample while suspended, the line starts again on resume', () => {

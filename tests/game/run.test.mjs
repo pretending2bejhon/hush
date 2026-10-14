@@ -96,6 +96,27 @@ describe('GAME1 the run returns a layer on the bar line of its clear', () => {
       expect(h.calls.filter((c) => c[0] === 'unlockAt')).toEqual([['unlockAt', k, O.unlockBar(s), s + 1]]);
     });
   }
+
+  // Review R7 (MINOR 1): the clear on the bar line's edge. Room 1's witness, delayed 337 steps, clears on the tick of
+  // step 1954: unlockBar(1954) is 5 and unlockBar(1955) is 6, so the run must ask for bar 5, where the sim returns it.
+  it('room 1 cleared on the bar line\'s edge step: unlockAt(1, 5), the clearing tick\'s bar', () => {
+    const D = 337;
+    const changes = witness(1).changes.map(([s, b]) => [s + D, b]);
+    const o = O.createSim(world, { room: 1, step: 0, layers: canonical(1), stopAtClear: true });
+    const src = source(() => o, 1, changes);
+    let s = -1;
+    for (let i = 0; i < 4000 && s < 0; i++) {
+      o.tick(src.next(i));
+      if (o.status().cleared > 0) s = i;
+    }
+    expect(s).toBe(1954);
+    expect([O.unlockBar(s), O.unlockBar(s + 1)]).toEqual([5, 6]);
+    const h = harness();
+    h.run.startRoom(1);
+    h.run.attachInput(source(() => h.run.sim, 1, changes));
+    h.advance(O.nextBarStep(s) + 480);
+    expect(h.calls.filter((c) => c[0] === 'unlockAt')).toEqual([['unlockAt', 1, 5, s + 1]]);
+  });
 });
 
 describe('GAME1 the run starts ahead of the heard time', () => {

@@ -26,7 +26,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { centreSum, judgeCalibration, judgeTapped, TAP_A_MS, TAP_B_MS } from './calibration-check.mjs';
-import { createFlashAnalyzer } from './flash-analyzer.mjs';
+import { createFlashAnalyzer, flashProblems } from './flash-analyzer.mjs';
 import { decodePng } from './png.mjs';
 import { bootGame, emitJson, headSha, launch, loadWitnesses, openGame, openPage, originViolations, parseOptions, playthrough, REPO, requireDist, serveDir, storageReport, verdictDigest } from './probe-lib.mjs';
 
@@ -203,8 +203,7 @@ async function main(argv) {
   const problems = [];
   if (!result || result.frames < 2) problems.push('no frames were analysed');
   else {
-    if (result.maxGeneralArea >= result.areaLimit) problems.push(`general flashes over ${result.maxGeneralArea} canvas px at ${result.maxGeneralAtMs} ms (limit ${result.areaLimit})`);
-    if (result.maxRedArea >= result.areaLimit) problems.push(`red flashes over ${result.maxRedArea} canvas px at ${result.maxRedAtMs} ms (limit ${result.areaLimit})`);
+    problems.push(...flashProblems(result));
     if (result.medianFrameMs > MAX_MEDIAN_FRAME_MS) problems.push(`undersampled: median frame interval ${result.medianFrameMs} ms`);
   }
   if (frameErrors.length) problems.push(`frame errors: ${frameErrors.join(' | ')}`);
