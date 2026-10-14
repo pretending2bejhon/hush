@@ -515,3 +515,33 @@ DISPOSITION: R6-NOTE3 | the page's sanctioned texts | 2026-10-13T19:40:00-05:00 
 
 The next step is VERIFY (re-entry row 11): the last cycle ended with a fresh PASS and there is no HUSH-BUILD.md.
 
+## Audit 1 (cycle 2): HUSH-AUDIT: FAIL, head bbe7208, digest 6c217e01
+
+Recorded 2026-10-13T22:39-05:00 by the producer (Opus standing in for Fable), in `1ef9158` (build/reviews/AUDIT-1.md, evidence build/evidence/audit/). Cycle 2 opened on it in `81f4f41`.
+- **The count.** Findings: 5 (0 BLOCKER, 1 MAJOR, 4 MINOR) and 5 NOTEs. It is the first audit; the last round, R6, had 8 (0 BLOCKER, 0 MAJOR, 8 MINOR).
+- **What passed.** Every mandated probe: the history of every ref is public-safe; the pins, the lockfile and `npm audit --omit=dev` are clean; the page reaches only its origin and stores nothing; the flash probe passes; the licence texts and the identities hold; and the deploy's dry run published in order, with X1 to X10 all green.
+- **The run.** The dry run takes about 16 minutes in one call, over the 10-minute shell limit that stopped the 20:39 producer. The owner chose to raise the limit (option A). BASH_MAX_TIMEOUT_MS sat at the top level of the user settings, where Claude Code ignores it. On the owner's yes it moved into `env`, and this session picked it up without a restart. Beside the verbatim mandate, the auditor was told the limit, the hook's bans and that its report is public, as operational notes only.
+- **The machine sample.** build/evidence/audit/A-machine.1.txt lists the processes running on the owner's laptop. On the owner's word ("Leave it out") it was left out of the record commit, and the owner deletes it. The record's AC and 60 Hz line rests on the other records' machine lines (NOTE 5).
+- **The routing.** The MAJOR and MINOR 1, 2 and 4 are gaps in PROTECTED verifiers, and MINOR 3 is in a spec-owned config: each is the producer's amendment. No product file changes, so no applier.
+
+DISPOSITION: AUDIT1-MAJOR1 | D15's controls cannot run at HEAD: makeControlCopy re-extracts the rooms and the track that CT1 made tracked, and spec-content --extract never overwrites (tests/controls/control-copy.mjs:39-43) | 2026-10-13T22:45:00-05:00 | to fix by amendment (verifier)
+- makeControlCopy extracts a content file only when the copy lacks it. A copy of a tree that tracks the rooms and the track keeps them byte for byte, and the release clone's spec-content --tree and protect --check still judge them.
+- The cases that reach the gate now run X1 to X10 in full on the copy, so their timeouts grow to fit one full gate run each (two for the first case).
+- Red: build/evidence/audit/A-deploy-control-dirty.1.txt (exit 1 at control-copy.mjs:41). Green: every case re-run and recorded, in parts under the call limit.
+DISPOSITION: AUDIT1-MINOR4 | a dry run pushes to whatever remote it is given (tools/deploy.mjs:61, :125) | 2026-10-13T22:45:00-05:00 | to fix by amendment (verifier), with MAJOR 1
+- deploy.mjs --dry-run refuses a --remote that is not an existing local bare repository (`git rev-parse --is-bare-repository` in it prints true), before it reads the source or clones anything. The release is unchanged.
+- Control: a new case in tests/controls/deploy.test.mjs. A local repo that is not bare and a URL are each refused with nothing pushed. It is red on the old deploy.mjs, which pushes into the repo that is not bare.
+DISPOSITION: AUDIT1-MINOR1 | X10's rows cannot see a WebSocket, a service worker, WebRTC or the origin-private file system (tools/probe-lib.mjs:107, :390-413) | 2026-10-13T22:45:00-05:00 | carried to the next cycle (a MINOR does not block a PASS); fix by amendment (verifier) as the auditor's fix: openPage also logs page websockets and context-level requests, an init script fails any RTCPeerConnection, storageReport also reads service worker registrations and the private file system, and the control page gains a socket fault and a service-worker fault
+DISPOSITION: AUDIT1-MINOR2 | check-public reads every file and blob as UTF-8 (tools/check-public.mjs:60, :77, :172, :195) | 2026-10-13T22:45:00-05:00 | carried to the next cycle; fix by amendment (verifier): a body with a UTF-16 BOM, or with NULs on every other byte, is decoded as UTF-16 before the scan, any other body holding a NUL is reported as unscannable, and tests/tools/check-public.test.mjs gains a UTF-16LE case
+DISPOSITION: AUDIT1-MINOR3 | the published bundle carries no third-party licence notice (vite.config.ts:11-18) | 2026-10-13T22:45:00-05:00 | design, settled here; to fix by amendment in this FIX round, before review R7: a fix after this cycle's PASS would cost another cycle, and the next public build must carry the notices
+- The build writes THIRD-PARTY-NOTICES.txt into dist beside index.html. Nothing links it, so the page's text stays the Handoff's.
+- It holds, for every npm package with a module in the bundle (Phaser and @strudel/web today) and for every package that @strudel/web's prebuilt bundle inlines, the package's name, version and licence id and its full licence text, read from node_modules at build time. A package whose licence text cannot be found fails the build.
+- The supply probe (X10) wants the file in dist with every bundled package named in it. Control: a build without the file fails X10.
+DISPOSITION: AUDIT1-NOTE1 | the deploy reads its identity from git config only | 2026-10-13T22:45:00-05:00 | no action; the pre-push scan refuses a foreign identity before any push
+DISPOSITION: AUDIT1-NOTE2 | X6 never sees a death or a respawn | 2026-10-13T22:45:00-05:00 | no action; section 11 holds them by construction
+DISPOSITION: AUDIT1-NOTE3 | a dev-only advisory remains (source-map-js 1.2.1) | 2026-10-13T22:45:00-05:00 | no action; known since PF-FACTS, and nothing from it ships
+DISPOSITION: AUDIT1-NOTE4 | time metadata is public by design | 2026-10-13T22:45:00-05:00 | no action
+DISPOSITION: AUDIT1-NOTE5 | A-machine.1 holds the full machine sample | 2026-10-13T22:45:00-05:00 | left out of the record on the owner's word; the owner deletes the file
+
+R6-MINOR1 to R6-MINOR8 stay carried. This FIX round takes the audit's findings, and each R6 MINOR is carried on to the next cycle unless a round of this one reaches it.
+
