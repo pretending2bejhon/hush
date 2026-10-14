@@ -564,6 +564,7 @@ MAJOR 1 and MINOR 4 fixed 2026-10-13T22:59-05:00 in `07b5ac9` (hush-spec: amend 
   - This is the room's known margin (R1-MINOR5, R5-NOTE1: about 2% of digests), not a product change.
   - Standing replays with seed 1 and stays green. X3 and npm test's replay step read the digest's seed, so both would fail at this digest.
   - MINOR 3's amendment moves the digest again. The producer who lands it runs `node tools/replay.mjs --all --jitter --seed <the new digest's seed>` before review R7. If a witness is still short, an applier re-solves it (HUSH-BUILD.md, known gaps). The product never changes for it.
+  - Committing that record in `5672096` moved the digest once more, to 2894d541, because item evidence counts in the digest (D18). That was a side effect of recording the short, not a re-roll sought. On the new seed, 680842561, all 11 witnesses clear 20 of 20 (session record build/evidence/session/X3-seed.1.txt, not committed, so the digest stays at 2894d541).
 
 MINOR 3, measured 2026-10-13T23:01-05:00 for the producer who lands it (read from node_modules; not recorded):
 - **The closure.** package.json's runtime dependencies (@strudel/core, @strudel/web, phaser, superdough), followed through each package's own `dependencies`, come to 59 packages. 12 are AGPL-3.0-or-later (Strudel, superdough, supradough, kabelsalat), 40 MIT (32 of them @tonaljs packages), 4 BSD-2-Clause (escodegen, esprima, estraverse, esutils), 2 Apache-2.0 (webmidi, djipevents) and 1 ISC (chord-voicings). Grouped by identical text, they need 15 licence texts.
