@@ -609,3 +609,56 @@ MINOR 3 fixed 2026-10-13T23:45:19-05:00 in `a41eb11` (hush-spec: amend the build
 
 FIX AUDIT-1 is recorded in build/HUSH-PROGRESS.md, `## Rounds`: fixed=3 (MAJOR 1, MINOR 4 and MINOR 3), rebutted=0, superseded=0. MINOR 1 and 2 stay carried, and so do R6-MINOR1 to 8. Review R7 is next: cycle 2's audit findings are fixed, so a PASS in R7 follows that FIX round and ends the cycle.
 
+## Review R7 (cycle 2): HUSH-REVIEW-R7: FAIL, head 55e41c8, digest a03cbf0a
+
+Recorded 2026-10-14T02:00-05:00 by the producer (Opus standing in for Fable), in `aac8c8c` (build/reviews/REVIEW-R7.md, evidence build/evidence/review/).
+- **The count.** Findings: 15 (0 BLOCKER, 2 MAJOR, 13 MINOR) and 5 NOTEs. The last round, R6, had 8 (0, 0, 8). Those 8 are R6's MINORs, carried, and the other 7 are new. This is cycle 2's first round, after FIX AUDIT-1.
+- **What held.** Audit 1's three fixes hold, and the reviewer's mutants of each fail. The product is unchanged since R3, matches every Action and passes all 23 acceptances. Every spec area's core mutation is killed, and every Axis B check passes.
+- **The class.** Both MAJORs are in the gate's own checks. X11's median window is pinned from below only. X7's clock row has no control, and the gate reads its bound from the JSON it judges. MINORs 1, 2 and 5 are R6's class again: a threshold with a test on one side only.
+- **The routing.** Every finding is in a PROTECTED verifier or in the spec, so each one is the producer's amendment. No product file changes and no applier.
+- **The session.** It reached R7's record at 2h58m of its 6 active hours, and a review takes about 2h15m. So FIX R7 lands here, and review R8 goes to the next producer.
+
+DISPOSITION: R7-MAJOR1 | X11's median window has no test above 15 minutes, none at either edge, and none for a friend's earliest run (ship-gate.mjs:27-28, :125, :130) | 2026-10-14T02:10:00-05:00 | to fix by amendment (tests)
+- tests/tools/ship-gate.test.mjs passes medians of 10:00 and 15:00 and refuses 9:59 and 15:01.
+- It also counts a friend's earliest first run by its time, in a ledger where that friend's later row comes first in the file.
+- Controls in a scratch copy: MAX 901, MAX 1200, no upper check, MIN 599, MIN 480, the latest row by time, and the first row in the file.
+DISPOSITION: R7-MAJOR2 | X7's device-clock row has no control, the spec never set its bound, and AV_OK reads the bound from the JSON it judges (probe-av.mjs:29, :304; ship-gate.mjs:239-243) | 2026-10-14T02:10:00-05:00 | design, settled here; to fix by amendment (spec and verifier)
+- The spec sets X7's bound in section 8.4: once valid, the line's offset moves at most 3 ms peak to peak over the av probe's run. The bound is 0.157 ms on HEAD, under the line's own 4 ms jump tolerance, and about 3% of a sixteenth. A line without output timestamps moves 175 to 192 ms.
+- tools/ship-gate.mjs AV_OK holds clockJitterMs to its own X7_CLOCK_BOUND_MS (3). It also wants clockValid, a number, and the JSON's bound equal to its own. tests/tools pins both constants to 3 and refuses an av record whose bound was raised.
+- The control page gains `?av=nostamps`, which builds its clock line over a view of the context without getOutputTimestamp. It must fail on the device-clock row alone.
+- Each row the reviewer found without a control of its own gets one:
+  - `?av=leak`: a constant 0.05 summed into layer 1's gate gain, so that layer sounds while muted. It must fail both silence rows.
+  - `?av=suspended`: the context suspended once started. The probe must refuse it at the first key, with exit 2.
+  - `?av=undercount`: layer 1's voices are played but not counted. It must fail the voices row alone.
+  - `?av=drop`: layer 1's notes of each run's second bar reach the transport 0.2 s late, so the transport drops them and counts them as dropped. It must fail the late-drop row.
+DISPOSITION: R7-MINOR1 | X7 at the bar line's edge: nextBarStep(s + 1) in the sim and unlockBar(step + 1) in the run survive (sim.ts:179, run.ts:125, :133) | 2026-10-14T02:10:00-05:00 | to fix by amendment (tests)
+- A clear on the edge step joins the oracle comparison in tests/sim and the run's wiring in tests/game/run.test.mjs. Room 1's witness, delayed 337 steps, clears on step 1954: there unlockBar is 5, and one step later it becomes 6.
+- Both mutants become controls in tests/controls/product-tests.test.mjs.
+DISPOSITION: R7-MINOR2 | CL1's jump tolerance and agreement burst are pinned from one side only (output-clock.ts:7, :90) | 2026-10-14T02:10:00-05:00 | to fix by amendment (tests)
+- tests/clock/output-clock.test.mjs gains three cases: a 3 ms drop with no resync, a 5 ms drop with one, and a device with baseLatency 0, sampled every 10 ms, that becomes valid after 50 ms of agreement.
+- Controls: CLOCK_JUMP 0.003 and 0.005, and a burst of 30 ms.
+DISPOSITION: R7-MINOR3 | the tapper dispatches each key at once, so a scene that reads its handler's time passes (calibration-scene.ts:91, :93; api.ts:795-800) | 2026-10-14T02:10:00-05:00 | design, settled; carried to the next round
+- The tapper creates each event at its planned moment and dispatches it 8 ms later, so the event keeps its creation timeStamp.
+- Section 12 says so, and the control page gains `?calib=handlertime`.
+DISPOSITION: R7-MINOR4 | no check reads the canvas's centring (game.ts:12) | 2026-10-14T02:10:00-05:00 | to fix by amendment (verifier), with R6-MINOR5
+- Smoke's canvas row wants the canvas centred in #game, with equal margins on each axis within 1 px, and an undrawn corner pixel of #07080d.
+- Controls: the control page with `?center=none` and with `?bg=000000`.
+DISPOSITION: R7-MINOR5 | X6's analyzer limit is held only within the controls' 5% band (flash-analyzer.mjs:10) | 2026-10-14T02:10:00-05:00 | to fix by amendment (tests)
+- Analyzer cases at exactly 25,600 px, which fails, and at 25,599 px, which passes, written against the literal number.
+- Controls: limits of 25,601 and 26,000, and `>` for `>=`.
+DISPOSITION: R7-MINOR6 (R6-MINOR1) | X8's MAD edge | 2026-10-14T02:10:00-05:00 | to fix by amendment (tests), as designed in R6: spread(35) accepted and spread(35.5) rejected; control `mad < 36`
+DISPOSITION: R7-MINOR7 (R6-MINOR2) | the calibration's key-repeat filter | 2026-10-14T02:10:00-05:00 | carried, as designed in R6, to land with R7-MINOR3 (the same tapper)
+DISPOSITION: R7-MINOR8 (R6-MINOR3) | the ending's rise is not timed from its first frame | 2026-10-14T02:10:00-05:00 | carried, as designed in R6
+DISPOSITION: R7-MINOR9 (R6-MINOR4) | X7's gate opening is held only within 30 ms | 2026-10-14T02:10:00-05:00 | carried, as designed in R6
+DISPOSITION: R7-MINOR10 (R6-MINOR5) | the canvas background | 2026-10-14T02:10:00-05:00 | to fix by amendment (verifier), with R7-MINOR4
+DISPOSITION: R7-MINOR11 (R6-MINOR6) | section 9.1's alpha | 2026-10-14T02:10:00-05:00 | carried, as designed in R6
+DISPOSITION: R7-MINOR12 (R6-MINOR7) | the notes' level and length | 2026-10-14T02:10:00-05:00 | carried, as in R5 and R6
+DISPOSITION: R7-MINOR13 (R6-MINOR8) | the ?playtest line's deaths are only ever read as 0 | 2026-10-14T02:10:00-05:00 | carried, as in R4 to R6
+DISPOSITION: R7-NOTE1 | the compiler's spawn-floor and exit refusals have no test; unreachable in v1 | 2026-10-14T02:10:00-05:00 | no action
+DISPOSITION: R7-NOTE2 | section 9.1 does not say when the view stops tweening | 2026-10-14T02:10:00-05:00 | no action this round; one sentence in 9.1 when that section is next amended
+DISPOSITION: R7-NOTE3 | X4's conditions have no negative control | 2026-10-14T02:10:00-05:00 | no action; a harder condition only makes a pass harder, and R4's block on battery showed the rule at work
+DISPOSITION: R7-NOTE4 | X3's margin: 04-thorns clears 18 of 20 on the digest seed | 2026-10-14T02:10:00-05:00 | no action; the next digest re-rolls the seed, and the producer checks it in session
+DISPOSITION: R7-NOTE5 | audit 1's MINOR 1 and 2 remain open | 2026-10-14T02:10:00-05:00 | carried, as dispositioned in audit 1
+
+Each carried MINOR keeps its design, so the round that takes it up starts from a settled fix. A carried finding has had no fix attempt, so it does not count toward the two-round escalation.
+
