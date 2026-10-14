@@ -1,0 +1,67 @@
+HUSH-EVIDENCE v1
+id: R8-mutations-browser
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\mut.mjs batch-browser.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T11:58:39-05:00
+time-end: 2026-10-14T12:09:43-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+mut: clone at e6468ae318a153c83b0c5f936e4e16c82f428363
+mut: pfdead [10.3 / 10.6] playFrame passes dead 0 and lock 0 to the creature
+  vitest tests/render/creature.test.mjs tests/render/play-frame.test.mjs: exit 0 (3.1 s) Test Files  2 passed (2) | Tests  17 passed (17)
+  build: exit 0 (1.0 s) 
+  probe-play scene (END1): exit 0 (170.7 s) play: chrome headless: scene: ok: 11 rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, 34480 bake pixels as their shapes; every frame of every ru
+  => pfdead: SURVIVED
+mut: nocenter [10.1 (R7 MINOR 4)] autoCenter NO_CENTER
+  build: exit 0 (1.0 s) 
+  smoke: exit 1 (4.6 s) KILLS
+      smoke: layout: FAIL: the canvas is not centred in #game (left 0.0, right 60.5, top 0.0, bottom 0.0)
+      smoke: requests: ok: every request answered below 400
+      smoke: FAIL (/hush/)
+  => nocenter: killed (smoke)
+mut: bg [10.2 (R7 MINOR 10)] backgroundColor #000000
+  build: exit 0 (1.0 s) 
+  smoke: exit 1 (4.6 s) KILLS
+      smoke: layout: ok: the canvas centred in #game (left 30.0, right 30.5, top 0.0, bottom 0.0)
+      smoke: background: FAIL: an undrawn canvas pixel reads #000000, want #07080d
+      smoke: requests: ok: every request answered below 400
+      smoke: FAIL (/hush/)
+  => bg: killed (smoke)
+mut: calend [12] pass A ends a beat early
+  build: exit 0 (1.0 s) 
+  probe-flash --calibration (CAL2): exit 0 (264.0 s) flash: PASS
+  => calend: SURVIVED
+mut: perf99 [X4] the perf probe's 99% row at 50%
+  vitest tests/controls/perf-probe.test.mjs: exit 0 (134.6 s) Test Files  1 passed (1) | Tests  2 passed (2)
+  => perf99: SURVIVED
+mut: noopfs [X10 (audit 1 MINOR 1)] storageReport leaves the private file system out
+  vitest tests/controls/page-probes.test.mjs -t fails \?store=opfs|passes every check on the clean control page: exit 1 (39.1 s) KILLS
+      ❯ tests/controls/page-probes.test.mjs (32 tests | 1 failed | 30 skipped) 38026ms
+      × fails ?store=opfs on its storage check 16199ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 30 skipped (32)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/controls/page-probes.test.mjs > playthrough probe (X5, X10, D3, D8, D16) > fails ?store=opfs on its storage check
+  => noopfs: killed (vitest tests/controls/page-probes.test.mjs -t fails \?store=opfs|passes every check on the clean control page)
+mut: nows [X10 (audit 1 MINOR 1)] openPage logs no WebSocket
+  vitest tests/controls/page-probes.test.mjs -t fails \?ws=|passes every check on the clean control page: exit 1 (39.0 s) KILLS
+      ❯ tests/controls/page-probes.test.mjs (32 tests | 1 failed | 30 skipped) 38002ms
+      × fails ?ws=ws://127.0.0.2:9/x on its network check 16148ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 1 passed | 30 skipped (32)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/controls/page-probes.test.mjs > playthrough probe (X5, X10, D3, D8, D16) > fails ?ws=ws://127.0.0.2:9/x on its network check
+  => nows: killed (vitest tests/controls/page-probes.test.mjs -t fails \?ws=|passes every check on the clean control page)
+mut: clone after the batch: clean
+mut: summary
+  pfdead: SURVIVED
+  nocenter: killed (smoke)
+  bg: killed (smoke)
+  calend: SURVIVED
+  perf99: SURVIVED
+  noopfs: killed (vitest tests/controls/page-probes.test.mjs -t fails \?store=opfs|passes every check on the clean control page)
+  nows: killed (vitest tests/controls/page-probes.test.mjs -t fails \?ws=|passes every check on the clean control page)
+--- end ---

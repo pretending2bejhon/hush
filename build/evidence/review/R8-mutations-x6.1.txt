@@ -1,0 +1,83 @@
+HUSH-EVIDENCE v1
+id: R8-mutations-x6
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\mut.mjs batch-verifiers2.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T11:50:44-05:00
+time-end: 2026-10-14T11:50:58-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+mut: clone at e6468ae318a153c83b0c5f936e4e16c82f428363
+mut: trans10 [X6] more than three flashes read as 10 transitions
+  vitest tests/tools/flash-analyzer.test.mjs: exit 1 (0.9 s) KILLS
+      ❯ tests/tools/flash-analyzer.test.mjs (6 tests | 4 failed) 402ms
+      × fails a full-field general flash at 4 Hz and passes one at 3 Hz 60ms
+      × fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike 76ms
+      × counts isoluminant red to blue as red flashes, never as general ones 60ms
+      × sums small separate areas flashing together 60ms
+      Test Files  1 failed (1)
+  => trans10: killed (vitest tests/tools/flash-analyzer.test.mjs)
+mut: trans7 [X6] more than three flashes read as 7 transitions
+  vitest tests/tools/flash-analyzer.test.mjs: exit 1 (1.2 s) KILLS
+      ❯ tests/tools/flash-analyzer.test.mjs (6 tests | 1 failed) 680ms
+      × fails a full-field general flash at 4 Hz and passes one at 3 Hz 119ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/flash-analyzer.test.mjs > flash analyzer > fails a full-field general flash at 4 Hz and passes one at 3 Hz
+  => trans7: killed (vitest tests/tools/flash-analyzer.test.mjs)
+mut: win900 [X6] the window 900 ms
+  vitest tests/tools/flash-analyzer.test.mjs: exit 0 (1.3 s) Test Files  1 passed (1) | Tests  6 passed (6)
+  => win900: SURVIVED
+mut: win1100 [X6] the window 1100 ms
+  vitest tests/tools/flash-analyzer.test.mjs: exit 0 (1.2 s) Test Files  1 passed (1) | Tests  6 passed (6)
+  => win1100: SURVIVED
+mut: lum12 [X6] a transition needs 0.12 of luminance
+  vitest tests/tools/flash-analyzer.test.mjs: exit 0 (1.2 s) Test Files  1 passed (1) | Tests  6 passed (6)
+  => lum12: SURVIVED
+mut: lum20 [X6] a transition needs 0.2 of luminance
+  vitest tests/tools/flash-analyzer.test.mjs: exit 0 (1.3 s) Test Files  1 passed (1) | Tests  6 passed (6)
+  => lum20: SURVIVED
+mut: dark60 [X6] the darker state must be under 0.6
+  vitest tests/tools/flash-analyzer.test.mjs: exit 0 (1.2 s) Test Files  1 passed (1) | Tests  6 passed (6)
+  => dark60: SURVIVED
+mut: dark90 [X6] the darker state must be under 0.9
+  vitest tests/tools/flash-analyzer.test.mjs: exit 1 (1.2 s) KILLS
+      ❯ tests/tools/flash-analyzer.test.mjs (6 tests | 1 failed) 724ms
+      × ignores a change of less than 0.1 in relative luminance, and one whose darker state is 0.80 or more 84ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/flash-analyzer.test.mjs > flash analyzer > ignores a change of less than 0.1 in relative luminance, and one whose darker state is 0.80 or more
+  => dark90: killed (vitest tests/tools/flash-analyzer.test.mjs)
+mut: ratio90 [X6] saturated red needs a ratio of 0.9
+  vitest tests/tools/flash-analyzer.test.mjs: exit 0 (1.3 s) Test Files  1 passed (1) | Tests  6 passed (6)
+  => ratio90: SURVIVED
+mut: duv25 [X6] a red transition needs 0.25 apart
+  vitest tests/tools/flash-analyzer.test.mjs: exit 0 (1.3 s) Test Files  1 passed (1) | Tests  6 passed (6)
+  => duv25: SURVIVED
+mut: duv50 [X6] a red transition needs 0.5 apart
+  vitest tests/tools/flash-analyzer.test.mjs: exit 1 (1.1 s) KILLS
+      ❯ tests/tools/flash-analyzer.test.mjs (6 tests | 2 failed) 551ms
+      × fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike 237ms
+      × counts isoluminant red to blue as red flashes, never as general ones 30ms
+      Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+  => duv50: killed (vitest tests/tools/flash-analyzer.test.mjs)
+mut: clone after the batch: clean
+mut: summary
+  trans10: killed (vitest tests/tools/flash-analyzer.test.mjs)
+  trans7: killed (vitest tests/tools/flash-analyzer.test.mjs)
+  win900: SURVIVED
+  win1100: SURVIVED
+  lum12: SURVIVED
+  lum20: SURVIVED
+  dark60: SURVIVED
+  dark90: killed (vitest tests/tools/flash-analyzer.test.mjs)
+  ratio90: SURVIVED
+  duv25: SURVIVED
+  duv50: killed (vitest tests/tools/flash-analyzer.test.mjs)
+--- end ---

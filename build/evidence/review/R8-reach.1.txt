@@ -1,0 +1,29 @@
+HUSH-EVIDENCE v1
+id: R8-reach
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\mut.mjs batch-reach.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T11:51:37-05:00
+time-end: 2026-10-14T11:53:55-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+mut: clone at e6468ae318a153c83b0c5f936e4e16c82f428363
+mut: gwall [4.3 / 6.2] the gauntlet's horizontal collision does not kill
+  reach room 11 +-24: exit 0 (36.5 s) 
+  reach room 11 +-60: exit 0 (38.6 s) 
+  reach room 11 +-6: exit 0 (22.9 s) 
+  => gwall: SURVIVED
+mut: portalprio [4.3 / 6.2] a base portal cell wins over a wave cell
+  reach room 6 +-24: exit 0 (3.8 s) 
+  reach room 7 +-24: exit 0 (2.6 s) 
+  reach room 9 +-24: exit 0 (6.2 s) 
+  reach room 10 +-24: exit 0 (6.7 s) 
+  reach room 11 +-24: exit 0 (19.8 s) 
+  => portalprio: SURVIVED
+mut: clone after the batch: clean
+mut: summary
+  gwall: SURVIVED
+  portalprio: SURVIVED
+--- end ---

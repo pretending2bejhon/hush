@@ -1,0 +1,27 @@
+HUSH-EVIDENCE v1
+id: R8-mutations-track
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\mut.mjs batch-track.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T12:48:54-05:00
+time-end: 2026-10-14T12:48:56-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+mut: clone at e6468ae318a153c83b0c5f936e4e16c82f428363
+mut: clapmove [7] the clap on the second and fourth eighth, not beats 2 and 4
+  vitest tests/rooms/gauntlet-pattern.test.mjs: exit 1 (0.8 s) KILLS
+      ❯ tests/rooms/gauntlet-pattern.test.mjs (2 tests | 1 failed) 167ms
+      × puts every obstacle on an onset of its layer 155ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/rooms/gauntlet-pattern.test.mjs > the gauntlet is built from the pattern > puts every obstacle on an onset of its layer
+  spec-content --tree: exit 1 (0.1 s) KILLS
+      spec-content: FAIL, 1 file(s)
+  => clapmove: killed (spec-content --tree)
+mut: clone after the batch: clean
+mut: summary
+  clapmove: killed (spec-content --tree)
+--- end ---

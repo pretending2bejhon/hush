@@ -1,0 +1,31 @@
+HUSH-EVIDENCE v1
+id: R8-mutations-calib
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\mut.mjs batch-browser.mjs calend,calendb
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T12:10:54-05:00
+time-end: 2026-10-14T12:19:38-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+mut: clone at e6468ae318a153c83b0c5f936e4e16c82f428363
+mut: calend [12] pass A ends a beat early
+  build: exit 0 (1.0 s) 
+  probe-flash --calibration (CAL2): exit 0 (264.0 s) flash: PASS
+      flash: calibration up 43 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2565 frames, 2134 analyser samples); click starts 48 of 48 on their marks; frames 2510 timed (50 filled, 306 with the ring)
+      flash: tapped calibration up 21.7 s: values 4.5 34.5 (the taps' own 4.5 34.5; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5); click starts 24 of 24 on their marks; frames 1258 timed (26 filled, 155 with the ring)
+      flash: retried calibration up 42.6 s: values 4.6 34.5 (the taps' own 4.6 34.5; A1 and B1 untapped, A2 and B2 tapped as above; marks 5.5 34.5); click starts 48 of 48 on their marks; frames 2506 timed (51 filled, 308 with the ring)
+  => calend: SURVIVED
+mut: calendb [12] both passes end two beats early
+  build: exit 0 (1.0 s) 
+  probe-flash --calibration (CAL2): exit 1 (257.5 s) KILLS
+      flash: calibration up 40.1 s: clicks 46, count-in fills 8, rings 44, values 0 0, Escape ignored (2397 frames, 1996 analyser samples); click starts 46 of 48 on their marks; frames 2356 timed (52 filled, 281 with the ring)
+      flash: 11564 frames over 193.1 s, median 15.72 ms; general max 9653 px, red max 0 px (limit 25600)
+      flash: FAIL
+  => calendb: killed (probe-flash --calibration (CAL2))
+mut: clone after the batch: clean
+mut: summary
+  calend: SURVIVED
+  calendb: killed (probe-flash --calibration (CAL2))
+--- end ---

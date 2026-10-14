@@ -1,0 +1,44 @@
+HUSH-EVIDENCE v1
+id: RN4
+phase: review
+command: npm run accept:rn4
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T10:51:05-05:00
+time-end: 2026-10-14T10:55:11-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+
+> hush@0.0.0 accept:rn4
+> vitest run tests/render/depth-art.test.mjs tests/render/play-frame.test.mjs && npm run check:art
+
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  2 passed (2)
+      Tests  7 passed (7)
+   Start at  10:51:05
+   Duration  2.52s (tests 84%, transform 12%, import 4%)
+
+
+> hush@0.0.0 check:art
+> vite build && node tools/probe-flash.mjs && node tools/probe-perf.mjs --headed
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+dist/assets/index-Dqh8GbB8.js  2,100.96 kB │ gzip: 596.28 kB
+
+✓ built in 730ms
+flash: 9030 frames over 150.5 s, median 15.79 ms; general max 9592 px, red max 0 px (limit 25600)
+flash: PASS
+perf: 59.98 fps mean, 99.97% of 3602 intervals <= 20 ms, p99 17 ms, over 60.1 s (headed, ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11))
+perf: machine: power ac, saver off (Balanced), refresh [60], heavy apps none
+perf: PASS
+--- end ---

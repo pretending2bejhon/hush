@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R8-x10-reach
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\x10-reach.mjs <repo>
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T11:57:04-05:00
+time-end: 2026-10-14T11:57:34-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+x10: fetch: page tried ["fetch"]; the row sees http://localhost:51533 (2 request(s) logged)
+x10: worker: page tried ["worker","worker said TypeError: Failed to fetch"]; the row sees http://localhost:51533 (3 request(s) logged)
+x10: shared: page tried ["shared","shared said TypeError: Failed to fetch"]; the row SEES NOTHING (2 request(s) logged)
+x10: beacon: page tried ["beacon"]; the row sees http://localhost:51533 (2 request(s) logged)
+x10: eventsource: page tried ["eventsource"]; the row sees http://localhost:51533 (2 request(s) logged)
+x10: webtransport: page tried ["webtransport","wt WebTransportError: Opening handshake failed."]; the row SEES NOTHING (1 request(s) logged)
+x10: iframe: page tried ["iframe"]; the row sees http://localhost:51533 (2 request(s) logged)
+x10: popup: page tried ["popup","popup opened"]; the row SEES NOTHING (1 request(s) logged)
+x10: the row is blind to shared, webtransport, popup
+--- end ---

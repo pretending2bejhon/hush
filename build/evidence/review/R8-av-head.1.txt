@@ -1,0 +1,34 @@
+HUSH-EVIDENCE v1
+id: R8-av-head
+phase: review
+command: npm run probe:av -- --headed
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T11:03:23-05:00
+time-end: 2026-10-14T11:04:36-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+
+> hush@0.0.0 probe:av
+> vite build && node tools/probe-av.mjs --headed
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+dist/assets/index-Dqh8GbB8.js  2,100.96 kB │ gzip: 596.28 kB
+
+✓ built in 931ms
+cannot use window: not in browser?
+🌀 @strudel/core loaded 🌀
+av: 2173 voices scheduled for 2142 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.106 ms p-p, 0 resyncs; 68.6 s
+av: silence peak 0.00e+0; windows rms 0.4195 0.4089 0.4099 0.4030 0.4074 0.3968 0.4031 0.3935 0.4007 0.3886
+av: solos rms 0.3756 0.0593 0.0147 0.0491 0.0086 0.0288 0.0066 0.0155 0.0165 0.0809; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 1 other(s), 1 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: starts 2324 voice start(s) of 4470 recorded: 2324 on their layer's onsets (+0.00 to +0.00 ms), 0 late-shifted, 0 unable to sound, 0 off; 1912 of 1912 onsets started
+av: PASS
+--- end ---

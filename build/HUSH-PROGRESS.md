@@ -72,6 +72,7 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - Review R7 found R6's class a third time, now inside the gate. A gate row must hold a record to the spec's own number, never to a bound the record carries: X7's AV_OK compared the clock with the JSON's own bound, so a probe edited to 300 ms passed with every check green. Every row of a probe also needs a control that fails it alone, or its number can drift unseen (producer, review R7).
 - The cap hook refuses a Bash heredoc whose quotes it cannot balance (an apostrophe in the text is enough). Write ledger rows with the Edit tool. Vite inlines any asset under 4 KB as a data URL, a script included, and a service worker cannot register from one: import it with `?url&no-inline` (producer, review R7).
 - A file the build publishes beside the page is as public as the page. The licence texts in dist/THIRD-PARTY-NOTICES.txt carried one third-party email that no scan of the tree could see, so scan the built dist with `check-public --root dist` before a deploy does. Rolldown also leaves a module out of a chunk's `moduleIds` once it has inlined all the bundle uses from it, so a check over the bundle's modules sees only code that ships, and its fixture needs a side effect (producer, audit 1, MINOR 3).
+- Audit 1 and review R8 found one class in X10's network row twice. A row that logs the channels it knows is open to the next one: audit 1 found WebSockets, service workers and WebRTC, and R8 found SharedWorker, WebTransport and a popup. Where the product never uses an API, refuse and count it at the page's start, and give each refusal a control of its own (producer, review R8).
 
 ## Rounds
 
@@ -92,6 +93,8 @@ CYCLE 2: start | 2026-10-13T22:40:35-05:00 | audit-fail 1 | head=1ef9158ff53024e
 FIX AUDIT-1: 2026-10-13T23:45:19-05:00 | fixed=3 rebutted=0 superseded=0
 HUSH-REVIEW-R7: FAIL (head=55e41c8b8846c82489e2968f29d569a5767f0abc digest=a03cbf0a4b6f5c31b7c32ce3f3aaf737c19450e3eb4477142ab296f22f2c6e8c blockers=0 majors=2 minors=13)
 FIX R7: 2026-10-14T03:40:16-05:00 | fixed=9 rebutted=0 superseded=0
+HUSH-REVIEW-R8: PASS (head=e6468ae318a153c83b0c5f936e4e16c82f428363 digest=81a1d6cc2560d24e1f8b93daf725980262ada7b898d9552af9b9cafa6e3a9d58 blockers=0 majors=0 minors=14)
+CYCLE 2: end | 2026-10-14T12:56:35-05:00 | R8
 
 ## Checkpoint
 

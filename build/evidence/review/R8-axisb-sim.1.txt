@@ -1,0 +1,39 @@
+HUSH-EVIDENCE v1
+id: R8-axisb-sim
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\axisb-sim.mjs <repo>
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T11:16:50-05:00
+time-end: 2026-10-14T11:16:59-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+determinism 01-wake: clear at step 1618, checksums 6001f0f9 6001f0f9, witness 6001f0f9 equal
+determinism 02-heartbeat: clear at step 1684, checksums 04febedf 04febedf, witness 04febedf equal
+determinism 03-dash: clear at step 1588, checksums 593d0787 593d0787, witness 593d0787 equal
+determinism 04-thorns: clear at step 1408, checksums 123057cb 123057cb, witness 123057cb equal
+determinism 05-doors: clear at step 2222, checksums d181a484 d181a484, witness d181a484 equal
+determinism 06-wave: clear at step 1920, checksums f3496b90 f3496b90, witness f3496b90 equal
+determinism 07-current: clear at step 1943, checksums 1c7b52e9 1c7b52e9, witness 1c7b52e9 equal
+determinism 08-steps: clear at step 1494, checksums e6a8f7ba e6a8f7ba, witness e6a8f7ba equal
+determinism 09-gates: clear at step 1905, checksums 9498a96d 9498a96d, witness 9498a96d equal
+determinism 10-crown: clear at step 2388, checksums 5b909a19 5b909a19, witness 5b909a19 equal
+determinism 11-gauntlet: clear at step 14278, checksums b3715ef7 b3715ef7, witness b3715ef7 equal
+determinism: 32448 steps compared, product equal to the oracle at each
+layers 01-wake: clear on step 1617; 1 change(s): +bit 1 on the tick of step 2058; bar 5 starts at step 2058; 4.29 beats after the clear OK
+layers 02-heartbeat: clear on step 1683; 1 change(s): +bit 2 on the tick of step 2058; bar 5 starts at step 2058; 3.65 beats after the clear OK
+layers 03-dash: clear on step 1587; 1 change(s): +bit 3 on the tick of step 2058; bar 5 starts at step 2058; 4.58 beats after the clear OK
+layers 04-thorns: clear on step 1407; 1 change(s): +bit 4 on the tick of step 1646; bar 4 starts at step 1646; 2.32 beats after the clear OK
+layers 05-doors: clear on step 2221; 1 change(s): +bit 5 on the tick of step 2469; bar 6 starts at step 2469; 2.41 beats after the clear OK
+layers 06-wave: clear on step 1919; 1 change(s): +bit 6 on the tick of step 2058; bar 5 starts at step 2058; 1.35 beats after the clear OK
+layers 07-current: clear on step 1942; 1 change(s): +bit 7 on the tick of step 2058; bar 5 starts at step 2058; 1.13 beats after the clear OK
+layers 08-steps: clear on step 1493; 1 change(s): +bit 8 on the tick of step 1646; bar 4 starts at step 1646; 1.49 beats after the clear OK
+layers 09-gates: clear on step 1904; 1 change(s): +bit 9 on the tick of step 2058; bar 5 starts at step 2058; 1.50 beats after the clear OK
+layers 10-crown: clear on step 2387; 1 change(s): +bit 10 on the tick of step 2880; bar 7 starts at step 2880; 4.79 beats after the clear OK
+layers 11-gauntlet: cleared on step 14277, finished 1, layer changes 0
+wave: 1111 runs, 3274795 steps; base to wave 504 times, wave to base 504 times, each on its portal cell; W cells in rooms 6, 7, 9, 10, 11
+closure: src/rooms/codes.ts, src/rooms/compile.ts, src/rooms/gauntlet.ts, src/sim/beat.ts, src/sim/constants.ts, src/sim/headless.ts, src/sim/sim.ts, src/sim/types.ts
+closure: Math calls abs, ceil, floor, imul, max, min; no DOM, timer, clock, storage, audio or render global
+axisb-sim: PASS
+--- end ---

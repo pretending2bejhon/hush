@@ -1,0 +1,281 @@
+HUSH-EVIDENCE v1
+id: R8-mutations-verifiers
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\mut.mjs batch-verifiers.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T11:40:14-05:00
+time-end: 2026-10-14T11:49:09-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+mut: clone at e6468ae318a153c83b0c5f936e4e16c82f428363
+mut: max901 [X11] MAX_FIRST_RUN 900 -> 901
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (22.7 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 21752ms
+      × refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1) 1181ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+  => max901: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: max1200 [X11] MAX_FIRST_RUN 900 -> 1200
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (24.4 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 23354ms
+      × refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1) 1104ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+  => max1200: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: min599 [X11] MIN_FIRST_RUN 600 -> 599
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (24.4 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 23373ms
+      × refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1) 1077ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+  => min599: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: min480 [X11] MIN_FIRST_RUN 600 -> 480
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (27.8 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 26645ms
+      × refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1) 1343ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+  => min480: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: noupper [X11] no upper check on the median
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (29.9 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 28778ms
+      × refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1) 1560ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+  => noupper: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: latest [X11] a friend's latest first run counts
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (30.7 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 29381ms
+      × counts each friend's earliest first run by its time, wherever its row sits (review R7, MAJOR 1) 1409ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > counts each friend's earliest first run by its time, wherever its row sits (review R7, MAJOR 1)
+  => latest: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: firstrow [X11] a friend's first row in the file counts
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (31.3 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 29956ms
+      × counts each friend's earliest first run by its time, wherever its row sits (review R7, MAJOR 1) 1479ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > counts each friend's earliest first run by its time, wherever its row sits (review R7, MAJOR 1)
+  => firstrow: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: n6two [X11] N6 friends 3 -> 2
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (31.3 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 2 failed) 29928ms
+      × counts one friend who played three times as one friend 1359ms
+      × does not count a run bound to an older rc unless the owner carries it 1464ms
+      Test Files  1 failed (1)
+      Tests  2 failed | 17 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+  => n6two: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: nofirefox [X11] N7 Firefox smoke run not required
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (24.4 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 23338ms
+      × refuses a median outside 10 to 15 minutes, and a missing Firefox run 1113ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median outside 10 to 15 minutes, and a missing Firefox run
+  => nofirefox: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: gate300 [X7] X7_CLOCK_BOUND_MS 3 -> 300
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (24.7 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 3 failed) 23516ms
+      × holds the device clock to the spec's 3 ms, in the gate and in the probe 6ms
+      × passes a fresh green record, and one exactly at the bound 1ms
+      × refuses a clock over the bound, a record that carries a raised bound, an invalid clock and no reading 1ms
+      Test Files  1 failed (1)
+      Tests  3 failed | 16 passed (19)
+  => gate300: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: gaterecord [X7] AV_OK reads the record's own bound
+  vitest tests/tools/ship-gate.test.mjs: exit 0 (24.5 s) Test Files  1 passed (1) | Tests  19 passed (19)
+  => gaterecord: SURVIVED
+mut: gatevalid [X7] AV_OK drops clockValid
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (23.6 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 22466ms
+      × refuses a clock over the bound, a record that carries a raised bound, an invalid clock and no reading 5ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X7: the av record > refuses a clock over the bound, a record that carries a raised bound, an invalid clock and no reading
+  => gatevalid: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: gatesame [X7] AV_OK drops the record's bound equal to its own
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (22.5 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 21366ms
+      × refuses a clock over the bound, a record that carries a raised bound, an invalid clock and no reading 7ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X7: the av record > refuses a clock over the bound, a record that carries a raised bound, an invalid clock and no reading
+  => gatesame: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: probe300 [X7] the av probe judges with 300 ms
+  vitest tests/tools/ship-gate.test.mjs: exit 1 (23.4 s) KILLS
+      ❯ tests/tools/ship-gate.test.mjs (19 tests | 1 failed) 22343ms
+      × holds the device clock to the spec's 3 ms, in the gate and in the probe 5ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 18 passed (19)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/ship-gate.test.mjs > ship-gate.mjs X7: the av record > holds the device clock to the spec's 3 ms, in the gate and in the probe
+  => probe300: killed (vitest tests/tools/ship-gate.test.mjs)
+mut: avsilence [X7] AV_OK drops the master silence row
+  vitest tests/tools/ship-gate.test.mjs: exit 0 (23.2 s) Test Files  1 passed (1) | Tests  19 passed (19)
+  => avsilence: SURVIVED
+mut: avdur [X7] AV_OK takes 30 s
+  vitest tests/tools/ship-gate.test.mjs: exit 0 (22.5 s) Test Files  1 passed (1) | Tests  19 passed (19)
+  => avdur: SURVIVED
+mut: perf50 [X4] PERF_OK takes a mean of 50 fps
+  vitest tests/tools/ship-gate.test.mjs: exit 0 (22.1 s) Test Files  1 passed (1) | Tests  19 passed (19)
+  => perf50: SURVIVED
+mut: perf90 [X4] PERF_OK takes 90% of intervals
+  vitest tests/tools/ship-gate.test.mjs: exit 0 (22.2 s) Test Files  1 passed (1) | Tests  19 passed (19)
+  => perf90: SURVIVED
+mut: perfbatt [X4] PERF_OK takes a battery run
+  vitest tests/tools/ship-gate.test.mjs: exit 0 (22.7 s) Test Files  1 passed (1) | Tests  19 passed (19)
+  => perfbatt: SURVIVED
+mut: perfheavy [X4] PERF_OK takes heavy apps
+  vitest tests/tools/ship-gate.test.mjs: exit 0 (22.3 s) Test Files  1 passed (1) | Tests  19 passed (19)
+  => perfheavy: SURVIVED
+mut: area25601 [X6] AREA_LIMIT 25600 -> 25601
+  vitest tests/tools/flash-analyzer.test.mjs: exit 1 (1.0 s) KILLS
+      ❯ tests/tools/flash-analyzer.test.mjs (6 tests | 1 failed) 428ms
+      × fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike 6ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/flash-analyzer.test.mjs > flash analyzer > fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike
+  => area25601: killed (vitest tests/tools/flash-analyzer.test.mjs)
+mut: area26000 [X6] AREA_LIMIT 25600 -> 26000
+  vitest tests/tools/flash-analyzer.test.mjs: exit 1 (1.0 s) KILLS
+      ❯ tests/tools/flash-analyzer.test.mjs (6 tests | 1 failed) 436ms
+      × fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike 6ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/flash-analyzer.test.mjs > flash analyzer > fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike
+  => area26000: killed (vitest tests/tools/flash-analyzer.test.mjs)
+mut: areagt [X6] general: > for >=
+  vitest tests/tools/flash-analyzer.test.mjs: exit 1 (1.1 s) KILLS
+      ❯ tests/tools/flash-analyzer.test.mjs (6 tests | 1 failed) 510ms
+      × fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike 86ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/flash-analyzer.test.mjs > flash analyzer > fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike
+  => areagt: killed (vitest tests/tools/flash-analyzer.test.mjs)
+mut: redgt [X6] red: > for >=
+  vitest tests/tools/flash-analyzer.test.mjs: exit 1 (1.2 s) KILLS
+      ❯ tests/tools/flash-analyzer.test.mjs (6 tests | 1 failed) 651ms
+      × fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike 265ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/flash-analyzer.test.mjs > flash analyzer > fails a flashing area of exactly 25,600 canvas px and passes 25,599, general and red alike
+  => redgt: killed (vitest tests/tools/flash-analyzer.test.mjs)
+mut: trans7 [X6] more than three flashes read as 9 transitions
+  vitest tests/tools/flash-analyzer.test.mjs: exit 0 (1.3 s) Test Files  1 passed (1) | Tests  6 passed (6)
+  => trans7: SURVIVED
+mut: redduv [X6] the red flash needs 0.3 apart in u v
+  vitest tests/tools/flash-analyzer.test.mjs: exit 0 (1.3 s) Test Files  1 passed (1) | Tests  6 passed (6)
+  => redduv: SURVIVED
+mut: nobe [X9] no UTF-16BE BOM branch
+  vitest tests/tools/check-public.test.mjs: exit 1 (6.9 s) KILLS
+      ❯ tests/tools/check-public.test.mjs (5 tests | 1 failed) 6315ms
+      × reads UTF-16 bodies in every mode, and reports a binary body as unscannable 585ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+  => nobe: killed (vitest tests/tools/check-public.test.mjs)
+mut: nolenobom [X9] no UTF-16LE detection without a BOM
+  vitest tests/tools/check-public.test.mjs: exit 1 (6.6 s) KILLS
+      ❯ tests/tools/check-public.test.mjs (5 tests | 1 failed) 5943ms
+      × reads UTF-16 bodies in every mode, and reports a binary body as unscannable 576ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+  => nolenobom: killed (vitest tests/tools/check-public.test.mjs)
+mut: binutf8 [X9] a binary body read as UTF-8
+  vitest tests/tools/check-public.test.mjs: exit 1 (7.7 s) KILLS
+      ❯ tests/tools/check-public.test.mjs (5 tests | 1 failed) 7142ms
+      × reads UTF-16 bodies in every mode, and reports a binary body as unscannable 1956ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      FAIL  tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+  => binutf8: killed (vitest tests/tools/check-public.test.mjs)
+mut: slack3 [13] RISE_SLACK_PX 0.5 -> 3
+  vitest tests/tools/scene-check.test.mjs: exit 1 (1.2 s) KILLS
+      ❯ tests/tools/scene-check.test.mjs (18 tests | 1 failed) 230ms
+      ❯ riseTimingProblems: the glimpse timed from the ending's first frame (3)
+      × fails a rise timed from the second frame or 50 ms late, and a rise over 3 bars 5ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 17 passed (18)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+  => slack3: killed (vitest tests/tools/scene-check.test.mjs)
+mut: rise1 [13] MIN_RISE_FRAMES 30 -> 1
+  vitest tests/tools/scene-check.test.mjs: exit 1 (1.3 s) KILLS
+      ❯ tests/tools/scene-check.test.mjs (18 tests | 1 failed) 224ms
+      ❯ riseTimingProblems: the glimpse timed from the ending's first frame (3)
+      × wants the rise seen: too few frames, or none 7ms
+      Test Files  1 failed (1)
+      Tests  1 failed | 17 passed (18)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+  => rise1: killed (vitest tests/tools/scene-check.test.mjs)
+mut: second [13] the rise timed from the second frame
+  vitest tests/tools/scene-check.test.mjs: exit 1 (1.3 s) KILLS
+      ❯ tests/tools/scene-check.test.mjs (18 tests | 2 failed) 234ms
+      ❯ riseTimingProblems: the glimpse timed from the ending's first frame (3)
+      × passes the rise of section 13 timed from the first frame, and times the frames inside it 7ms
+      × fails a rise timed from the second frame or 50 ms late, and a rise over 3 bars 1ms
+      Test Files  1 failed (1)
+      Tests  2 failed | 16 passed (18)
+  => second: killed (vitest tests/tools/scene-check.test.mjs)
+mut: clone after the batch: clean
+mut: summary
+  max901: killed (vitest tests/tools/ship-gate.test.mjs)
+  max1200: killed (vitest tests/tools/ship-gate.test.mjs)
+  min599: killed (vitest tests/tools/ship-gate.test.mjs)
+  min480: killed (vitest tests/tools/ship-gate.test.mjs)
+  noupper: killed (vitest tests/tools/ship-gate.test.mjs)
+  latest: killed (vitest tests/tools/ship-gate.test.mjs)
+  firstrow: killed (vitest tests/tools/ship-gate.test.mjs)
+  n6two: killed (vitest tests/tools/ship-gate.test.mjs)
+  nofirefox: killed (vitest tests/tools/ship-gate.test.mjs)
+  gate300: killed (vitest tests/tools/ship-gate.test.mjs)
+  gaterecord: SURVIVED
+  gatevalid: killed (vitest tests/tools/ship-gate.test.mjs)
+  gatesame: killed (vitest tests/tools/ship-gate.test.mjs)
+  probe300: killed (vitest tests/tools/ship-gate.test.mjs)
+  avsilence: SURVIVED
+  avdur: SURVIVED
+  perf50: SURVIVED
+  perf90: SURVIVED
+  perfbatt: SURVIVED
+  perfheavy: SURVIVED
+  area25601: killed (vitest tests/tools/flash-analyzer.test.mjs)
+  area26000: killed (vitest tests/tools/flash-analyzer.test.mjs)
+  areagt: killed (vitest tests/tools/flash-analyzer.test.mjs)
+  redgt: killed (vitest tests/tools/flash-analyzer.test.mjs)
+  trans7: SURVIVED
+  redduv: SURVIVED
+  nobe: killed (vitest tests/tools/check-public.test.mjs)
+  nolenobom: killed (vitest tests/tools/check-public.test.mjs)
+  binutf8: killed (vitest tests/tools/check-public.test.mjs)
+  slack3: killed (vitest tests/tools/scene-check.test.mjs)
+  rise1: killed (vitest tests/tools/scene-check.test.mjs)
+  second: killed (vitest tests/tools/scene-check.test.mjs)
+--- end ---

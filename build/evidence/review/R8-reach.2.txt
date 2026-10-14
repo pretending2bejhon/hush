@@ -1,0 +1,20 @@
+HUSH-EVIDENCE v1
+id: R8-reach
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\mut.mjs batch-reach.mjs gwall
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T11:55:15-05:00
+time-end: 2026-10-14T11:55:16-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+mut: clone at e6468ae318a153c83b0c5f936e4e16c82f428363
+mut: gwall [4.3 / 6.2] the gauntlet's horizontal collision does not kill
+  search room 11: exit 1 (0.1 s) KILLS
+      search: room 11: from the witness state at step 10060, holding 16 for 0 steps then 16, the mutant parts from the oracle 181 steps on: y 26064 against 25936 (oracle dead 72, mutant dead 0; col 386, row 6.33, form 0); 1 pa
+  => gwall: killed (search room 11)
+mut: clone after the batch: clean
+mut: summary
+  gwall: killed (search room 11)
+--- end ---

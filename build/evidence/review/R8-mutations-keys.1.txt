@@ -1,0 +1,27 @@
+HUSH-EVIDENCE v1
+id: R8-mutations-keys
+phase: review
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\R8\mut.mjs batch-keys.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T12:20:33-05:00
+time-end: 2026-10-14T12:25:48-05:00
+head: e6468ae318a153c83b0c5f936e4e16c82f428363
+exit: 0
+--- output ---
+mut: clone at e6468ae318a153c83b0c5f936e4e16c82f428363
+mut: order [9.2] keys: the queue applied newest first
+  build: exit 0 (1.0 s) 
+  probe-play keys: exit 0 (154.7 s) play: chrome headless: keys: ok: after the hand-over (100, -60) a run at room 1; real keys reached the sim on the steps stepOf names, every state read while they were pressed and after equal to their 
+      play: chrome headless: keys: ok: after the hand-over (100, -60) a run at room 1; real keys reached the sim on the steps stepOf names, every state read while they were pressed and after equal to their replay
+  => order: SURVIVED
+mut: repeat [9.2] keys: a repeat keydown is not skipped
+  build: exit 0 (4.1 s) 
+  probe-play keys: exit 0 (154.3 s) play: chrome headless: keys: ok: after the hand-over (100, -60) a run at room 1; real keys reached the sim on the steps stepOf names, every state read while they were pressed and after equal to their 
+      play: chrome headless: keys: ok: after the hand-over (100, -60) a run at room 1; real keys reached the sim on the steps stepOf names, every state read while they were pressed and after equal to their replay
+  => repeat: SURVIVED
+mut: clone after the batch: clean
+mut: summary
+  order: SURVIVED
+  repeat: SURVIVED
+--- end ---
