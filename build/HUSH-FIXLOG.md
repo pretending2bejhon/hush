@@ -662,3 +662,33 @@ DISPOSITION: R7-NOTE5 | audit 1's MINOR 1 and 2 remain open | 2026-10-14T02:10:0
 
 Each carried MINOR keeps its design, so the round that takes it up starts from a settled fix. A carried finding has had no fix attempt, so it does not count toward the two-round escalation.
 
+FIX R7, closed 2026-10-14T03:40:16-05:00 at `a5a50c0`, by the producer (Opus standing in for Fable). Every fix is a producer amendment. No product file changes and no applier. Once both MAJORs were in, the session's time allowed three of the carried findings as well: R7's MINOR 8 and audit 1's MINOR 1 and 2.
+- **Landed:**
+  - `2126ec0`, MAJOR 1 and 2. X11's window is held at both edges and on each friend's earliest run. X7's clock bound is set at 3 ms in section 8.4, and the gate holds the record to it. Every av row has a control. Evidence:
+    - R7-av-controls.amend.1, 12 of 12 on the device;
+    - R7-gate-mutants.amend.1, 14 of 14;
+    - R7-majors-verifiers.amend.1, 301 of 301;
+    - R7-majors-standing.amend.1, GREEN.
+  - `92bea7c`, MINOR 1, 2, 4, 5, 6 and 10. X7's bar-line edge in the sim and the run; the clock line's tolerance from both sides and its burst floor; X6's area verdict at exactly 25,600 px; X8's deviation at exactly 35 ms; smoke reading the centring and the background. Evidence:
+    - R7-product-controls.amend.1, 46 of 46;
+    - R7-x6-mutants.amend.1, 4 of 4;
+    - R7-flash-controls.amend.1, 9 of 9;
+    - R7-smoke-controls.amend.1;
+    - R7-minors-verifiers.amend.1, 302 of 302, and R7-minors-standing.amend.1, GREEN.
+  - `acc8aea`, audit 1's MINOR 2: check-public reads UTF-16 and reports any other body with a NUL as unscannable. Evidence:
+    - AUDIT1-utf16-mutants.amend.2, 8 of 8 (.1 is the first run, 7 of 7, before the root case);
+    - R7-utf16-verifiers.amend.1, 303 of 303, and R7-utf16-standing.amend.1, GREEN.
+  - `216dbf0`, MINOR 8 (R6's MINOR 3), first carried: the ending's rise is timed from its first frame. Evidence:
+    - R7-rise-mutants.amend.1, 4 of 4;
+    - R7-rise-product.amend.1, 412 frames of the rise on the product;
+    - R7-mutant-rise-late50.amend.1, a rise 50 ms late caught in the browser;
+    - R7-rise-verifiers.amend.1, 306 of 306, and R7-rise-standing.amend.1, GREEN.
+  - `a5a50c0`, audit 1's MINOR 1, first carried: X10's rows see WebSockets, a service worker's requests and registration, RTCPeerConnections and the origin-private file system. Evidence:
+    - AUDIT1-x10-controls.amend.2, 10 of 10. In .1 only the service worker case failed: Vite had inlined its script as a data URL.
+    - AUDIT1-x10-product.amend.1, X10 on the product; AUDIT1-x10-game.amend.1 and AUDIT1-x10-flash.amend.1, GAME1's and CAL2's acceptances under the new init script;
+    - AUDIT1-x10-verifiers.amend.1, 306 of 306, and AUDIT1-x10-standing.amend.1, GREEN.
+- **The count:** fixed=9 of R7's 15: MAJOR 1 and 2, and MINOR 1, 2, 4, 5, 6, 8 and 10. rebutted=0, superseded=0. Audit 1's MINOR 1 and 2 are fixed too. Carried, each with its design above: MINOR 3, 7, 9, 11, 12 and 13.
+- **The digest** is now 81a1d6cc, and X3's seed is 2174867148. On it all 11 witnesses clear 20 of 20. The record is in phase session (build/evidence/session/X3-seed.6.txt), not committed. Every digest this round passed through also passed its seed: 04-thorns at 18 of 20 twice, the others at 19 or 20 (X3-seed.2 to .5).
+- **The next producer** starts at re-entry row 8. The open cycle's last round, R7, is FAIL, and FIX R7 is done, its line in `## Rounds`. So it runs review R8. A PASS in R8 follows FIX R7 and ends cycle 2, and VERIFY comes next (row 11).
+- One evidence run in this round was cut by its own pipe (`Select-Object -First`), the class the learnings already name. It wrote no record and was run again.
+

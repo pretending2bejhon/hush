@@ -69,6 +69,8 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - A control that no suite runs rots unseen. D15's seven deploy cases ran once, at PF-CONTROLS. CT1 then made the copy's extraction collide with the tracked rooms, and nothing noticed until audit 1. tests/controls lies outside npm test, so VERIFY re-runs the control file of every verifier that copies or builds the tree, not only npm test (producer, audit 1).
 - Claude Code reads environment variables only from the settings' `env` object, and a top-level BASH_MAX_TIMEOUT_MS is ignored without a word. Moved into `env`, it reached the running session at once. A subagent's Bash description still says 600000 ms, so a dispatch whose agent runs a long call (the deploy dry run takes about 16 minutes) states the real limit beside the mandate (producer, audit 1).
 - A record under build/evidence/ outside the review, audit, verify and live folders is item evidence, and the digest counts it (D18). Committing a check of the digest's own X3 seed therefore re-rolls the seed it judged. Run such a check in phase `session`, which is never committed, and quote it in the ledger (producer, audit 1).
+- Review R7 found R6's class a third time, now inside the gate. A gate row must hold a record to the spec's own number, never to a bound the record carries: X7's AV_OK compared the clock with the JSON's own bound, so a probe edited to 300 ms passed with every check green. Every row of a probe also needs a control that fails it alone, or its number can drift unseen (producer, review R7).
+- The cap hook refuses a Bash heredoc whose quotes it cannot balance (an apostrophe in the text is enough). Write ledger rows with the Edit tool. Vite inlines any asset under 4 KB as a data URL, a script included, and a service worker cannot register from one: import it with `?url&no-inline` (producer, review R7).
 - A file the build publishes beside the page is as public as the page. The licence texts in dist/THIRD-PARTY-NOTICES.txt carried one third-party email that no scan of the tree could see, so scan the built dist with `check-public --root dist` before a deploy does. Rolldown also leaves a module out of a chunk's `moduleIds` once it has inlined all the bundle uses from it, so a check over the bundle's modules sees only code that ships, and its fixture needs a side effect (producer, audit 1, MINOR 3).
 
 ## Rounds
@@ -89,6 +91,7 @@ CYCLE 1: end | 2026-10-13T19:38:00-05:00 | R6
 CYCLE 2: start | 2026-10-13T22:40:35-05:00 | audit-fail 1 | head=1ef9158ff53024eaf44bac36aa664617d1e45981
 FIX AUDIT-1: 2026-10-13T23:45:19-05:00 | fixed=3 rebutted=0 superseded=0
 HUSH-REVIEW-R7: FAIL (head=55e41c8b8846c82489e2968f29d569a5767f0abc digest=a03cbf0a4b6f5c31b7c32ce3f3aaf737c19450e3eb4477142ab296f22f2c6e8c blockers=0 majors=2 minors=13)
+FIX R7: 2026-10-14T03:40:16-05:00 | fixed=9 rebutted=0 superseded=0
 
 ## Checkpoint
 
