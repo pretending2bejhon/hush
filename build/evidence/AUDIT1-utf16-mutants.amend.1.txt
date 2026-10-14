@@ -1,0 +1,28 @@
+HUSH-EVIDENCE v1
+id: AUDIT1-utf16-mutants
+phase: amend
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ff75dfc2-15c7-4375-aa05-14cd9d649b27\scratchpad\mut\harness.mjs <repo> <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ff75dfc2-15c7-4375-aa05-14cd9d649b27\scratchpad\mut\utf16 <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ff75dfc2-15c7-4375-aa05-14cd9d649b27\scratchpad\mut\utf16.json
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T02:57:24-05:00
+time-end: 2026-10-14T02:58:55-05:00
+head: 92bea7cb2221ee27427314a88cd3596c228d09a1
+exit: 0
+--- output ---
+clean copy: ok: passes; Tests  5 passed (5) (tests/tools/check-public.test.mjs)
+mutant utf8-only (tools/check-public.mjs): ok: caught (exit 1); Tests  1 failed | 4 passed (5)
+  failed: tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+mutant binary-passes (tools/check-public.mjs): ok: caught (exit 1); Tests  1 failed | 4 passed (5)
+  failed: tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+mutant no-be-pairs (tools/check-public.mjs): ok: caught (exit 1); Tests  1 failed | 4 passed (5)
+  failed: tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+mutant no-le-bom (tools/check-public.mjs): ok: caught (exit 1); Tests  1 failed | 4 passed (5)
+  failed: tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+mutant no-be-bom (tools/check-public.mjs): ok: caught (exit 1); Tests  1 failed | 4 passed (5)
+  failed: tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+mutant staged-utf8 (tools/check-public.mjs): ok: caught (exit 1); Tests  1 failed | 4 passed (5)
+  failed: tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+mutant history-utf8 (tools/check-public.mjs): ok: caught (exit 1); Tests  1 failed | 4 passed (5)
+  failed: tests/tools/check-public.test.mjs > check-public > reads UTF-16 bodies in every mode, and reports a binary body as unscannable
+mutants: PASS (7 planted faults and the clean copy)
+--- end ---

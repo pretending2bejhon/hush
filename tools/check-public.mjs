@@ -5,7 +5,9 @@
 //                                                 annotated tag on the given refs (default: every ref)
 //   node tools/check-public.mjs --root <dir>      every file under a directory (fixtures, scratch copies)
 // Exit 0 clean, 1 findings, 2 usage or git error, 3 denylist missing or empty (fail closed).
-// Findings name the place and the class, never the matched text.
+// Findings name the place and the class, never the matched text. Every file and blob is read as the text it holds:
+// UTF-8, or UTF-16 when it carries a BOM or NULs on one byte of each pair; any other body with a NUL is reported as
+// unscannable (audit 1, MINOR 2).
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import path from 'node:path';
@@ -45,6 +47,30 @@ function scanInto(findings, where, text, ctx) {
   for (const h of scanText(text, ctx)) findings.push({ where: `${where}:${h.line}`, cls: h.cls });
 }
 
+// Audit 1, MINOR 2: a body is scanned as the text it holds. A UTF-16 body (a BOM, or NULs on one byte of each pair:
+// the form Windows PowerShell 5.1 writes with `>` and Out-File) is decoded as UTF-16 first. Any other body that holds a
+// NUL is no text this scan can read, and is reported as unscannable instead of passing unread.
+export function decodeBody(buf) {
+  const b = Buffer.isBuffer(buf) ? buf : Buffer.from(buf);
+  const be = (x) => { const c = Buffer.from(x.subarray(0, x.length - (x.length % 2))); return c.swap16().toString('utf16le'); };
+  if (b.length >= 2 && b[0] === 0xff && b[1] === 0xfe) return { text: b.subarray(2).toString('utf16le'), encoding: 'utf-16le' };
+  if (b.length >= 2 && b[0] === 0xfe && b[1] === 0xff) return { text: be(b.subarray(2)), encoding: 'utf-16be' };
+  if (!b.includes(0)) return { text: b.toString('utf8'), encoding: 'utf-8' };
+  let even = 0;
+  let odd = 0;
+  for (let i = 0; i < b.length; i++) if (b[i] === 0) { if (i % 2) odd++; else even++; }
+  const half = Math.floor(b.length / 2);
+  if (even === 0 && odd >= half / 2) return { text: b.toString('utf16le'), encoding: 'utf-16le' };
+  if (odd === 0 && even >= half / 2) return { text: be(b), encoding: 'utf-16be' };
+  return { text: null, encoding: 'binary' };
+}
+
+function scanBody(findings, where, buf, ctx) {
+  const { text } = decodeBody(buf);
+  if (text === null) findings.push({ where, cls: 'unscannable (a NUL outside UTF-16 text)' });
+  else scanInto(findings, where, text, ctx);
+}
+
 function scanName(findings, where, name, ctx) {
   for (const h of scanText(name, ctx)) findings.push({ where, cls: `${h.cls} (pathname)` });
 }
@@ -57,7 +83,7 @@ function treeMode(cwd, ctx) {
     scanName(findings, rel, rel, ctx);
     const abs = path.join(top, rel);
     if (!fs.existsSync(abs) || fs.statSync(abs).isDirectory()) continue;
-    scanInto(findings, rel, fs.readFileSync(abs).toString('utf8'), ctx);
+    scanBody(findings, rel, fs.readFileSync(abs), ctx);
   }
   return report(findings, ctx, `tree (${files.length} files)`);
 }
@@ -74,7 +100,7 @@ function stagedMode(cwd, ctx) {
   for (const e of entries) {
     scanName(findings, `index:${e.rel}`, e.rel, ctx);
     const b = blobs.get(e.sha);
-    if (b) scanInto(findings, `index:${e.rel}`, b.body.toString('utf8'), ctx);
+    if (b) scanBody(findings, `index:${e.rel}`, b.body, ctx);
   }
   return report(findings, ctx, `staged (${entries.length} entries)`);
 }
@@ -169,7 +195,7 @@ function historyMode(cwd, refsArg, ctx) {
       for (const name of treeNames(o.body)) scanName(findings, `tree ${short} entry`, name, ctx);
     } else if (o.type === 'blob') {
       blobs++;
-      scanInto(findings, `blob ${short} (${paths.get(sha) || '?'})`, o.body.toString('utf8'), ctx);
+      scanBody(findings, `blob ${short} (${paths.get(sha) || '?'})`, o.body, ctx);
     }
   }
   return report(findings, ctx, `history (${tips.length} refs, ${commits} commits, ${trees} trees, ${blobs} blobs)`);
@@ -192,7 +218,7 @@ function rootMode(dir, ctx) {
   const findings = [];
   for (const rel of files) {
     scanName(findings, rel, rel, ctx);
-    scanInto(findings, rel, fs.readFileSync(path.join(base, rel)).toString('utf8'), ctx);
+    scanBody(findings, rel, fs.readFileSync(path.join(base, rel)), ctx);
   }
   return report(findings, ctx, `root (${files.length} files)`);
 }
