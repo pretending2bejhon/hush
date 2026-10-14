@@ -721,3 +721,19 @@ Each carried MINOR keeps its design, so the round that takes it up starts from a
 
 The next step is VERIFY (re-entry row 11): the last cycle ended with a fresh PASS (R8, digest 81a1d6cc), and build/HUSH-BUILD.md is stale (its header is head 560524f, digest 6c217e01).
 
+## Audit 2: HUSH-AUDIT: PASS, head ddc6665, digest 81a1d6cc
+
+Recorded 2026-10-14T14:38-05:00 by the producer (Opus standing in for Fable), in `c9ce724` (build/reviews/AUDIT-2.md, evidence build/evidence/audit/A2-* and deploy/, deploy-dirty/), after VERIFY in `ddc6665`.
+- **The count.** Findings: 0 (0 BLOCKER, 0 MAJOR, 0 MINOR) and 5 NOTEs, against audit 1's 5 (0, 1, 4).
+- **What passed.** Every mandated probe. The history of every ref is public-safe, and the private remote holds nothing beyond it. The pins, the lockfile and `npm audit --omit=dev` are clean. The page reaches only its own origin and stores nothing, also as a visitor gets it with no ?probe. The flash probe passes, and the licence texts and identities hold. The dry run published main, the fixture tag and gh-pages in that order, with X1 to X10 all green. All 8 deploy controls pass.
+- **The release tag.** `hush-v1-rc1` is annotated on `c9ce724` with the repo's noreply identity as tagger. That commit holds only bookkeeping beside the audited candidate, so its digest is 81a1d6cc, equal to the HUSH-SHIP-GATE line's. `node tools/ship-gate.mjs --rows V` is GREEN: R8 fresh, HUSH-BUILD.md fresh, AUDIT-2 fresh with the ship-gate line matching, and rc1's digest equal.
+- The mandated `--out` overwrote audit 1's two deploy records (deploy/deploy.json and deploy/ship-gate.json). Audit 1's versions stay in history at `1ef9158`.
+
+DISPOSITION: AUDIT2-NOTE1 (AUDIT1-NOTE1) | the deploy reads its identity from git config only (deploy.mjs:74-78) | 2026-10-14T14:40:08-05:00 | no action; the pre-push scan refuses a foreign identity before any push
+DISPOSITION: AUDIT2-NOTE2 (AUDIT1-NOTE3) | a dev-only advisory remains (source-map-js 1.2.1 through vite and postcss) | 2026-10-14T14:40:08-05:00 | no action; nothing from it ships, and the pins move only by amendment once a fixed release exists
+DISPOSITION: AUDIT2-NOTE3 | mapped keys are prevented whatever the modifiers, so a browser shortcut on a mapped code is swallowed while the page has focus (keys.ts:29-30, HUSH-SPEC.md:822) | 2026-10-14T14:40:08-05:00 | no action without the owner's word; it is put to him with the preview, as a design question the spec settled one way
+DISPOSITION: AUDIT2-NOTE4 | the bundle names hosts it never contacts | 2026-10-14T14:40:08-05:00 | no action; X10's network row would catch a track that loads samples
+DISPOSITION: AUDIT2-NOTE5 (AUDIT1-NOTE4) | test runs leave temp folders, and time metadata is public by design | 2026-10-14T14:40:08-05:00 | no action
+
+R8-MINOR1 to R8-MINOR14 stay carried with their designs into the next cycle. The next step is JHON-PREVIEW (re-entry row 14): the last scan over every ref at the HEAD to be published, then the owner's three commands.
+
