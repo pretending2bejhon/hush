@@ -4,9 +4,12 @@
 // Rows: the lockfile is tracked; every pin in package.json is an exact version and equals the lockfile's root
 // entry and installed version; `npm audit --omit=dev` (or the --audit-json fixture) reports no high or
 // critical finding; LICENSE is the AGPL-3.0 text and package.json says AGPL-3.0-or-later; no package in the
-// lockfile has an install script except the allowlisted ones, and .npmrc keeps ignore-scripts; unless
-// --no-browser, the e2e playthrough in headless Chrome (tools/probe-play.mjs --check network,storage) shows
-// only the page's own origin and leaves nothing stored. Exit 0 every row green, 1 a row red, 2 usage.
+// lockfile has an install script except the allowlisted ones, and .npmrc keeps ignore-scripts; the build's
+// THIRD-PARTY-NOTICES.txt (in --dist, resolved against --root) names every runtime package of the lockfile, each
+// entry that is neither dev nor devOptional and, when optional, installed, as `- <name>@<version> (<licence>)`
+// with the lockfile's licence (audit 1, MINOR 3); unless --no-browser, the e2e playthrough in headless Chrome
+// (tools/probe-play.mjs --check network,storage) shows only the page's own origin and leaves nothing stored.
+// Exit 0 every row green, 1 a row red, 2 usage.
 import { execFileSync, spawnSync } from 'node:child_process';
 import crypto from 'node:crypto';
 import fs from 'node:fs';
@@ -14,6 +17,8 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+// The file the build must carry beside index.html (tools/notices.mjs writes it; named here on its own).
+export const NOTICES_FILE = 'THIRD-PARTY-NOTICES.txt';
 // sha256 of the GNU AGPL v3 text as committed at PF-REPO (LF endings).
 export const AGPL_SHA256 = '0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0';
 export const LICENSE_ID = 'AGPL-3.0-or-later';
@@ -50,6 +55,32 @@ export function pinProblems(pkg, lock) {
     }
   }
   return problems;
+}
+
+// The lockfile's runtime packages, read apart from tools/notices.mjs's own walk of node_modules, so the two
+// must agree: name@version -> licence id (null when the entry names none).
+export function lockRuntimePackages(lock, isInstalled) {
+  const out = new Map();
+  for (const [key, v] of Object.entries(lock.packages || {})) {
+    if (!key || v.dev || v.devOptional || v.link) continue;
+    if (v.optional && !isInstalled(key)) continue;
+    const name = v.name || key.slice(key.lastIndexOf('node_modules/') + 'node_modules/'.length);
+    out.set(`${name}@${v.version}`, typeof v.license === 'string' ? v.license : null);
+  }
+  return out;
+}
+
+export function noticesProblems(lock, text, isInstalled) {
+  if (text == null) return [`${NOTICES_FILE} is missing from the build`];
+  const lines = text.replace(/\r\n?/g, '\n').split('\n');
+  const have = new Set(lines);
+  const missing = [];
+  for (const [id, licence] of lockRuntimePackages(lock, isInstalled)) {
+    const named = licence ? have.has(`- ${id} (${licence})`) : lines.some((l) => l.startsWith(`- ${id} (`));
+    if (!named) missing.push(`${id} (${licence ?? 'no licence id'})`);
+  }
+  if (!missing.length) return [];
+  return [`${NOTICES_FILE} does not name ${missing.length} runtime package(s) of the lockfile: ${missing.slice(0, 6).join(', ')}${missing.length > 6 ? ', ...' : ''}`];
 }
 
 export function auditProblems(report) {
@@ -92,6 +123,10 @@ async function main(argv) {
   const npmrc = fs.existsSync(path.join(o.root, '.npmrc')) ? read('.npmrc') : '';
   if (!/^ignore-scripts=true$/m.test(npmrc)) scripts.push('.npmrc does not keep ignore-scripts=true');
   row('install-scripts', scripts, 'no unexpected install script; ignore-scripts=true');
+  const noticesFile = path.join(path.resolve(o.root, o.dist), NOTICES_FILE);
+  const noticesText = fs.existsSync(noticesFile) ? fs.readFileSync(noticesFile, 'utf8') : null;
+  const installed = (key) => fs.existsSync(path.join(o.root, key, 'package.json'));
+  row('notices', noticesProblems(lock, noticesText, installed), `${NOTICES_FILE} names the ${lockRuntimePackages(lock, installed).size} runtime packages of the lockfile with their licences`);
   if (o.browser) {
     const r = spawnSync(process.execPath, [path.join(REPO, 'tools', 'probe-play.mjs'), '--dist', o.dist, '--rooms', o.rooms, '--replays', o.replays, '--check', 'network,storage', ...(o.query ? ['--query', o.query] : [])], { cwd: REPO, encoding: 'utf8' });
     const lines = `${r.stdout || ''}${r.stderr || ''}`.trim().split('\n').filter((l) => /network|storage|PASS|FAIL|never booted/.test(l));
@@ -104,4 +139,6 @@ async function main(argv) {
   return pass ? 0 : 1;
 }
 
-main(process.argv.slice(2)).then((c) => { process.exitCode = c; }, (e) => { process.stderr.write(`supply: ${e.message}\n`); process.exitCode = 2; });
+if (process.argv[1] && path.resolve(process.argv[1]).toLowerCase() === fileURLToPath(import.meta.url).toLowerCase()) {
+  main(process.argv.slice(2)).then((c) => { process.exitCode = c; }, (e) => { process.stderr.write(`supply: ${e.message}\n`); process.exitCode = 2; });
+}

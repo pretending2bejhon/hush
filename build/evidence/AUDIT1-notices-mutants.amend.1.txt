@@ -1,0 +1,49 @@
+HUSH-EVIDENCE v1
+id: AUDIT1-notices-mutants
+phase: amend
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ff75dfc2-15c7-4375-aa05-14cd9d649b27\scratchpad\notices\mutants.mjs <repo> <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ff75dfc2-15c7-4375-aa05-14cd9d649b27\scratchpad\notices\mut
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T23:28:46-05:00
+time-end: 2026-10-13T23:29:00-05:00
+head: d0f1587795e3de4c306190ef1f826a6426f1b4fb
+exit: 0
+--- output ---
+mutant clean: ok: the clean copy passes; Tests  14 passed (14)
+mutant no-optional: ok: caught (exit 1); Tests  5 failed | 9 passed (14)
+  failed: tests/tools/notices.test.mjs > notices.mjs: the runtime tree > walks dependencies and installed optional dependencies as Node resolves them, nested versions included
+  failed: tests/tools/notices.test.mjs > notices.mjs: the runtime tree > fails on a dependency that is not installed, naming it and who needs it
+  failed: tests/tools/notices.test.mjs > notices.mjs: the file > lists packages that ship one text above one copy of it, a NOTICE after its licence, and leaves out dev and missing optional packages
+  failed: tests/tools/notices.test.mjs > notices.mjs: the file > fails on a package with no licence file whose licence id is neither MIT nor ISC
+  failed: tests/tools/notices.test.mjs > the repo's own notices > name every runtime package of the lockfile with its licence
+mutant no-crlf-normal: ok: caught (exit 1); Tests  1 failed | 13 passed (14)
+  failed: tests/tools/notices.test.mjs > notices.mjs: the file > lists packages that ship one text above one copy of it, a NOTICE after its licence, and leaves out dev and missing optional packages
+mutant holder-email: ok: caught (exit 1); Tests  3 failed | 11 passed (14)
+  failed: tests/tools/notices.test.mjs > notices.mjs: the file > gives a package with no licence file the standard ISC or MIT text, its holder named without email or URL
+  failed: tests/tools/notices.test.mjs > notices.mjs: the file > names the holder of an author string or object and nothing else
+  failed: tests/tools/notices.test.mjs > the repo's own notices > pass check-public: the one third-party address they carry is masked, and an address not listed is still found
+mutant any-id-standard: ok: caught (exit 1); Tests  1 failed | 13 passed (14)
+  failed: tests/tools/notices.test.mjs > notices.mjs: the file > fails on a package with no licence file whose licence id is neither MIT nor ISC
+mutant no-bundle-check: ok: caught (exit 1); Tests  1 failed | 13 passed (14)
+  failed: tests/tools/notices.test.mjs > notices.mjs: the bundle > the Vite plugin writes the file into dist, and fails the build on a bundled devDependency
+mutant no-emit: ok: caught (exit 1); Tests  1 failed | 13 passed (14)
+  failed: tests/tools/notices.test.mjs > notices.mjs: the bundle > the Vite plugin writes the file into dist, and fails the build on a bundled devDependency
+mutant no-nested: ok: caught (exit 1); Tests  5 failed | 9 passed (14)
+  failed: tests/tools/notices.test.mjs > notices.mjs: the runtime tree > walks dependencies and installed optional dependencies as Node resolves them, nested versions included
+  failed: tests/tools/notices.test.mjs > notices.mjs: the file > lists packages that ship one text above one copy of it, a NOTICE after its licence, and leaves out dev and missing optional packages
+  failed: tests/tools/notices.test.mjs > notices.mjs: the file > gives a package with no licence file the standard ISC or MIT text, its holder named without email or URL
+  failed: tests/tools/notices.test.mjs > notices.mjs: the bundle > refuses a bundled module whose package lies outside the runtime tree
+  failed: tests/tools/notices.test.mjs > the repo's own notices > name every runtime package of the lockfile with its licence
+mutant x10-optional-always: ok: caught (exit 1); Tests  2 failed | 12 passed (14)
+  failed: tests/tools/notices.test.mjs > X10: the notices row (tools/probe-supply.mjs) > wants every runtime entry, nested ones and installed optional ones, but no dev entry
+  failed: tests/tools/notices.test.mjs > X10: the notices row (tools/probe-supply.mjs) > fails a build without the file, a file that leaves a package out, and a package under another licence id
+mutant x10-any-licence: ok: caught (exit 1); Tests  1 failed | 13 passed (14)
+  failed: tests/tools/notices.test.mjs > X10: the notices row (tools/probe-supply.mjs) > fails a build without the file, a file that leaves a package out, and a package under another licence id
+mutant x10-dev-counted: ok: caught (exit 1); Tests  3 failed | 11 passed (14)
+  failed: tests/tools/notices.test.mjs > X10: the notices row (tools/probe-supply.mjs) > wants every runtime entry, nested ones and installed optional ones, but no dev entry
+  failed: tests/tools/notices.test.mjs > X10: the notices row (tools/probe-supply.mjs) > fails a build without the file, a file that leaves a package out, and a package under another licence id
+  failed: tests/tools/notices.test.mjs > the repo's own notices > name every runtime package of the lockfile with its licence
+mutant mask-dropped: ok: caught (exit 1); Tests  1 failed | 13 passed (14)
+  failed: tests/tools/notices.test.mjs > the repo's own notices > pass check-public: the one third-party address they carry is masked, and an address not listed is still found
+mutants: PASS (11 planted faults and the clean copy)
+--- end ---

@@ -3,8 +3,9 @@
 // identity and records X1 to X10; a second run extends gh-pages without force; a modified tracked file is
 // refused and an untracked one ignored; a CRLF room and README turn the release clone's checks red; a private
 // path in a commit body and an email in an annotated tag's message each stop the push; a diverged remote main
-// is never forced; --release refuses an rc tag whose digest differs from its HUSH-SHIP-GATE line's; and (audit 1,
-// MINOR 4) a dry run refuses a remote that is not an existing local bare repository, so it never publishes.
+// is never forced; --release refuses an rc tag whose digest differs from its HUSH-SHIP-GATE line's; (audit 1,
+// MINOR 4) a dry run refuses a remote that is not an existing local bare repository, so it never publishes; and
+// (audit 1, MINOR 3) gh-pages carries the build's THIRD-PARTY-NOTICES.txt.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -48,6 +49,7 @@ describe('deploy.mjs --dry-run', () => {
     expect(files).toContain('index.html');
     expect(files).toContain('.nojekyll');
     expect(files.some((f) => f.startsWith('assets/'))).toBe(true);
+    expect(files).toContain('THIRD-PARTY-NOTICES.txt');
     expect(files).not.toContain('CNAME');
     expect(files).not.toContain('untracked-note.txt');
     expect(who(bare, 'gh-pages', '%an <%ae> %cn <%ce>')).toBe(`${REPO_NAME} <${REPO_EMAIL}> ${REPO_NAME} <${REPO_EMAIL}>`);

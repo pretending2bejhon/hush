@@ -18,11 +18,14 @@ const VAULT_ROOT_HASHES = new Map([
   [9, new Set(['aecd89bf0078a5075c85eea68cd57dd24d13c3a4f56238de9b577b5b98c42c90'])],
 ]);
 
-// sha256 of each lowercased third-party email a pinned dependency ships inside the built bundle, as public npm
-// metadata: escodegen's maintainer contact, inlined by @strudel/web 1.3.0's prebuilt bundle (found by the deploy
-// dry run of PF-CONTROLS, the only email in the built page). Held as hashes so this file names nothing.
+// sha256 of each lowercased third-party email a pinned dependency ships into dist, as public npm metadata:
+// escodegen's maintainer contact, inlined by @strudel/web 1.3.0's prebuilt bundle (found by the deploy dry run of
+// PF-CONTROLS, the only email in the built page), and the copyright line of nanostores 0.11.4's LICENSE, which
+// dist/THIRD-PARTY-NOTICES.txt carries verbatim (audit 1, MINOR 3; check-public --root over the built dist found
+// no other). Held as hashes so this file names nothing.
 const THIRD_PARTY_EMAIL_HASHES = new Set([
   '6a6e0568bbcd7e8b0e458a545ad4b34078198bdb54b31ba03a21e6d12c1aee9c',
+  'a0d4602853a0c952b5c5f2f8d66f0820a73a3774841aa4ba1a78c99ecb160348',
 ]);
 const EMAIL_RE = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g;
 

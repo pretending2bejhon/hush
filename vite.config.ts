@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { defineConfig } from 'vite';
+import { thirdPartyNotices } from './tools/notices.mjs';
 
 // D15: the built page carries the commit it was built from, so probe:live can match the deploy to its tag.
 function buildSha(): string {
@@ -26,5 +27,7 @@ export default defineConfig({
         };
       },
     },
+    // Audit 1, MINOR 3: dist/THIRD-PARTY-NOTICES.txt, the licence notices of the runtime dependency tree.
+    thirdPartyNotices(),
   ],
 });

@@ -2,7 +2,8 @@
 // /hush/: the smoke probe (X1) against a wrong Vite base, the playthrough (X5, X10's browser rows, D3, D8, D16)
 // against every planted fault, the ending's included (no hand-over, no run line under ?playtest, a run line
 // without it, one before the card, one from the wrong step), the supply probe (X10) against a loose pin, an
-// audit finding and a planted write, and the live probe (X12) against a 404, a wrong build hash, a commit
+// audit finding, a planted write, a build without its third-party notices and notices that leave a runtime
+// package out (audit 1, MINOR 3), and the live probe (X12) against a 404, a wrong build hash, a commit
 // absent from origin's main, a console error and a page that never boots. Each probe must also pass the clean
 // control page.
 import { execFileSync, spawn, spawnSync } from 'node:child_process';
@@ -142,8 +143,18 @@ describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
 });
 
 describe('supply probe (X10)', () => {
-  it('passes the repo (static rows) and fails a loose pin and a high audit finding', () => {
-    const ok = tool('probe-supply.mjs', ['--no-browser']);
+  // The repo built with its own config into a temp folder, so the notices row reads the build's own file
+  // (audit 1, MINOR 3) and never a stale dist.
+  let built;
+  beforeAll(() => {
+    built = tmp('hush-supply-dist-');
+    const r = spawnSync(process.execPath, [path.join(REPO, 'node_modules', 'vite', 'bin', 'vite.js'), 'build', '--outDir', built, '--emptyOutDir', '--logLevel', 'error'], { cwd: REPO, encoding: 'utf8' });
+    expect(r.status, `${r.stdout}${r.stderr}`).toBe(0);
+  }, 120000);
+
+  it('passes the repo (static rows and the build\'s notices) and fails a loose pin and a high audit finding', () => {
+    const ok = tool('probe-supply.mjs', ['--no-browser', '--dist', built]);
+    expect(ok.out).toMatch(/supply: notices: ok: THIRD-PARTY-NOTICES\.txt names the \d+ runtime packages of the lockfile with their licences/);
     expect(ok.out).toMatch(/supply: PASS/);
     expect(ok.code).toBe(0);
     const root = tmp('hush-supply-');
@@ -158,6 +169,26 @@ describe('supply probe (X10)', () => {
     expect(bad.out).toMatch(/supply: audit: FAIL: 1 high and 0 critical/);
     expect(bad.out).toMatch(/supply: lockfile: FAIL/);
     expect(bad.code).toBe(1);
+  }, T);
+
+  // Audit 1, MINOR 3: the build's third-party notices.
+  it('fails a build without the notices file and one whose notices leave a runtime package out', () => {
+    const none = tmp('hush-supply-nonotices-');
+    fs.cpSync(built, none, { recursive: true });
+    fs.rmSync(path.join(none, 'THIRD-PARTY-NOTICES.txt'));
+    const missing = tool('probe-supply.mjs', ['--no-browser', '--dist', none]);
+    expect(missing.out).toMatch(/supply: notices: FAIL: THIRD-PARTY-NOTICES\.txt is missing from the build/);
+    expect(missing.code).toBe(1);
+    const phaser = JSON.parse(fs.readFileSync(path.join(REPO, 'package.json'), 'utf8')).dependencies.phaser;
+    const short = tmp('hush-supply-short-');
+    fs.cpSync(built, short, { recursive: true });
+    const file = path.join(short, 'THIRD-PARTY-NOTICES.txt');
+    const text = fs.readFileSync(file, 'utf8');
+    expect(text).toContain(`- phaser@${phaser} (MIT)\n`);
+    fs.writeFileSync(file, text.replace(`- phaser@${phaser} (MIT)\n`, ''));
+    const left = tool('probe-supply.mjs', ['--no-browser', '--dist', short]);
+    expect(left.out).toMatch(new RegExp(`supply: notices: FAIL: THIRD-PARTY-NOTICES\\.txt does not name 1 runtime package\\(s\\) of the lockfile: phaser@${phaser.replace(/\./g, '\\.')} \\(MIT\\)`));
+    expect(left.code).toBe(1);
   }, T);
 
   it('fails a planted sessionStorage write through its browser row', () => {

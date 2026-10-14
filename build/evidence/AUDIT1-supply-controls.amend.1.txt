@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: AUDIT1-supply-controls
+phase: amend
+command: npx vitest run tests/controls/page-probes.test.mjs -t "supply probe"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T23:29:04-05:00
+time-end: 2026-10-13T23:29:28-05:00
+head: d0f1587795e3de4c306190ef1f826a6426f1b4fb
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  3 passed | 24 skipped (27)
+   Start at  23:29:05
+   Duration  23.26s (tests 98%, import 1%)
+
+--- end ---
