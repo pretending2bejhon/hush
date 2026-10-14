@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: RM1
+phase: review
+command: npx vitest run tests/rooms/compile.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T17:43:51-05:00
+time-end: 2026-10-13T17:43:53-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  5 passed (5)
+   Start at  17:43:52
+   Duration  410ms (tests 47%, transform 38%, import 12%, worker 2%)
+
+--- end ---

@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: R6-mutation-browser-calib
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/mut.mjs browser-calib
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T19:02:56-05:00
+time-end: 2026-10-13T19:07:24-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+=== S12-repeat-taps: section 12: the calibration scene takes key repeats as taps
+    src/render/calibration-scene.ts: "if (e.code === 'Escape' || e.repeat) return;" -> "if (e.code === 'Escape') return;" (1 match)
+    $ node node_modules/vite/bin/vite.js build -> exit 0 in 1 s
+    $ node tools/probe-flash.mjs --calibration -> exit 0 in 267 s
+      flash: calibration up 43.9 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2620 frames, 2181 analyser samples); click starts 48 of 48 on their marks; frames 2562 timed (52 filled, 307 with the ring)
+      flash: tapped calibration up 22.1 s: values 5.5 34.5 (the taps' own 5.5 34.5; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5); click starts 24 of 24 on their marks; frames 1282 timed (26 filled, 152 with the ring)
+      flash: retried calibration up 43.5 s: values 5.6 34.5 (the taps' own 5.6 34.5; A1 and B1 untapped, A2 and B2 tapped as above; marks 5.5 34.5); click starts 48 of 48 on their marks; frames 2564 timed (52 filled, 309 with the ring)
+      flash: PASS
+    SURVIVED every command
+
+clone status after restore: clean
+mutants: 1, survived 1
+--- end ---

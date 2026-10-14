@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: AU3
+phase: review
+command: npm run test:av
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T17:44:06-05:00
+time-end: 2026-10-13T17:44:07-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+> hush@0.0.0 test:av
+> vitest run tests/audio tests/sim/progression.test.mjs tests/game/run.test.mjs
+
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  5 passed (5)
+      Tests  40 passed (40)
+   Start at  17:44:06
+   Duration  909ms (transform 43%, tests 38%, import 18%, worker 1%)
+
+--- end ---

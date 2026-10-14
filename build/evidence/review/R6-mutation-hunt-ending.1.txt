@@ -1,0 +1,28 @@
+HUSH-EVIDENCE v1
+id: R6-mutation-hunt-ending
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/mut.mjs hunt-ending
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T19:11:02-05:00
+time-end: 2026-10-13T19:13:57-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+=== H-ending-t0-late: section 13: the rise starts 1.5 s after the ending's first frame (t0 = its heard time + 1.5)
+    src/render/ending-scene.ts: "if (this.t0 === null) this.t0 = heard;" -> "if (this.t0 === null) this.t0 = heard + 1.5;" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/render -> exit 0 in 3 s
+       Test Files  7 passed (7)
+            Tests  36 passed (36)
+    $ node node_modules/vite/bin/vite.js build -> exit 0 in 1 s
+    $ node tools/probe-play.mjs --query playtest --check console,play,text,scene -> exit 0 in 171 s
+      play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+      play: chrome headless: text: ok: title, link and notice only, and once the card is up "run 0:59 · deaths 0"; nothing over the canvas; no text object
+      play: chrome headless: scene: ok: 11 rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, 34480 bake pixels as their shapes; every frame of every run replayed, 758 drawn command for command as the reference (44 while the limiter held a change, 49 with a layer's ring); 8737 fram
+      play: chrome headless: PASS (console,play,text,scene)
+    SURVIVED every command
+
+clone status after restore: clean
+mutants: 1, survived 1
+--- end ---

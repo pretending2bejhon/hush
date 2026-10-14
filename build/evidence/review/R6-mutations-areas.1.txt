@@ -1,0 +1,209 @@
+HUSH-EVIDENCE v1
+id: R6-mutations-areas
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/mut.mjs areas
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T18:46:50-05:00
+time-end: 2026-10-13T18:47:14-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+=== S2-unlock-sixteenth: section 2/4.5: a layer returns on the first bar line a sixteenth (not a beat) after the clear
+    src/sim/beat.ts: "(step * C.TICKS_PER_STEP + C.TICKS_PER_BEAT) / C.TICKS_PER_BAR" -> "(step * C.TICKS_PER_STEP + C.TICKS_PER_SIXTEENTH) / C.TICKS_PER_BAR" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/sim tests/game -> exit 1 in 2 s
+       ❯ tests/sim/progression.test.mjs (11 tests | 1 failed) 96ms
+           × computes the bar line as the oracle does 15ms
+       ❯ tests/game/run.test.mjs (17 tests | 4 failed) 510ms
+           × room 1: unlockAt(1, unlockBar(clear step)) once, right after the clearing tick 62ms
+           × room 3: unlockAt(3, unlockBar(clear step)) once, right after the clearing tick 26ms
+           × room 10: unlockAt(10, unlockBar(clear step)) once, right after the clearing tick 34ms
+           × steps the track after every tick, as trackStep over the sim's states, through landings, the wave and a layer's return 67ms
+       ❯ tests/sim/beat.test.mjs (3 tests | 1 failed) 848ms
+           × finds the bar lines as the oracle does 5ms
+       ❯ tests/sim/oracle-beat.test.mjs (6 tests | 1 failed) 994ms
+           × agrees on the clear, the pending layer and the next room, without stopping at the clear 54ms
+       Test Files  4 failed | 4 passed (8)
+            Tests  7 failed | 43 passed (50)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 7 ⎯⎯⎯⎯⎯⎯⎯
+    KILLED by node_modules/vitest/vitest.mjs run tests/sim tests/game
+
+=== S3-keyC-dash: section 3: KeyC dashes instead of jumping
+    src/input/keys.ts: "KeyC: 16" -> "KeyC: 32" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/input -> exit 1 in 1 s
+       ❯ tests/input/keys.test.mjs (5 tests | 1 failed) 18ms
+           × maps the codes of section 3 13ms
+       Test Files  1 failed | 1 passed (2)
+            Tests  1 failed | 10 passed (11)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+       FAIL  tests/input/keys.test.mjs > IN1 keys > maps the codes of section 3
+      AssertionError: expected { ArrowLeft: 1, KeyA: 1, …(12) } to deeply equal { ArrowLeft: 1, KeyA: 1, …(12) }
+    KILLED by node_modules/vitest/vitest.mjs run tests/input
+
+=== S4-coyote-20: section 4.1: COYOTE 20 instead of 24
+    src/sim/constants.ts: "COYOTE: 24," -> "COYOTE: 20," (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/sim -> exit 1 in 1 s
+       ❯ tests/sim/oracle-dash.test.mjs (2 tests | 2 failed) 20ms
+           × agrees in an open room on dashes in every direction 16ms
+           × agrees in 03-dash 2ms
+       ❯ tests/sim/oracle-wave.test.mjs (5 tests | 5 failed) 23ms
+           × agrees in room 6 through its wave portal 14ms
+           × agrees in room 7 through its wave portal 2ms
+           × agrees in room 9 through its wave portal 2ms
+           × agrees in room 10 through its wave portal 1ms
+           × agrees on the way from the spawn to the portal in 06-wave and on through it 1ms
+       ❯ tests/sim/oracle-beat.test.mjs (6 tests | 6 failed) 38ms
+           × agrees in room 2 with its layers back, and with none back (rest states) 20ms
+           × agrees in room 4 with its layers back, and with none back (rest states) 7ms
+           × agrees in room 5 with its layers back, and with none back (rest states) 2ms
+           × agrees in room 8 with its layers back, and with none back (rest states) 1ms
+    KILLED by node_modules/vitest/vitest.mjs run tests/sim
+
+=== S5-room-tile: section 5.3: one floor spike of 05-doors removed
+    rooms/05-doors.txt: "##################^^^^^#######" -> "##################^^.^^#######" (1 match)
+    $ node tools/spec-content.mjs --tree -> exit 1 in 0 s
+      spec-content: FAIL, 1 file(s)
+    KILLED by tools/spec-content.mjs --tree
+
+=== S6-kick-left: section 6.1: the second kick spike placed left of the onset column, not right
+    src/rooms/gauntlet.ts: "grid[(FLOOR - 1) * W + c + 1] = '^';" -> "grid[(FLOOR - 1) * W + c - 1] = '^';" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/rooms tests/sim/oracle-gauntlet.test.mjs -> exit 1 in 1 s
+       ❯ tests/rooms/compile.test.mjs (5 tests | 2 failed) 145ms
+           × compiles the world in file order and refuses a gap 87ms
+           × parses the program and generates the oracle grid, byte for byte 2ms
+       ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 1 failed) 313ms
+           × agrees in mid-run, into and out of the wave bars and to the finish 29ms
+       Test Files  2 failed | 1 passed (3)
+            Tests  3 failed | 6 passed (9)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+       FAIL  tests/sim/oracle-gauntlet.test.mjs > SIM6 gauntlet against the oracle > agrees in mid-run, into and out of the wave bars and to the finish
+      AssertionError: expected { step: 61, field: 'vx', …(3) } to be null
+       FAIL  tests/rooms/compile.test.mjs > RM1 room compiler > compiles the world in file order and refuses a gap
+      AssertionError: expected { rooms: [ { …(9) }, …(9) ], …(1) } to deeply equal { rooms: [ { …(9) }, …(9) ], …(1) }
+           59|     const files = [...ROOMS.map((k) => ({ name: k.slice(6), text: bloc…
+           62|     expect(() => P.compileWorld(files.filter((f) => !f.name.startsWith…
+    KILLED by node_modules/vitest/vitest.mjs run tests/rooms tests/sim/oracle-gauntlet.test.mjs
+
+=== S6-hat-row: section 6.1: the hat obstacle one row higher (no v1 bar carries a hat mask)
+    src/rooms/gauntlet.ts: "else grid[(FLOOR - 4) * W + c] = 'v';" -> "else grid[(FLOOR - 5) * W + c] = 'v';" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/rooms tests/sim/oracle-gauntlet.test.mjs -> exit 0 in 1 s
+       Test Files  3 passed (3)
+            Tests  9 passed (9)
+    SURVIVED every command
+
+=== S7-clap-gain: section 7: the clap layer at gain .38
+    music/area1.strudel: ".hpf(1500).gain(.28)" -> ".hpf(1500).gain(.38)" (1 match)
+    $ node tools/spec-content.mjs --tree -> exit 1 in 0 s
+      spec-content: FAIL, 1 file(s)
+    KILLED by tools/spec-content.mjs --tree
+
+=== S8-late-008: section 8.3: the transport drops notes only 80 ms late (LATE 0.08)
+    src/audio/scheduler.ts: "export const LATE = 0.05;" -> "export const LATE = 0.08;" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/audio -> exit 1 in 1 s
+       ❯ tests/audio/scheduler.test.mjs (8 tests | 1 failed) 299ms
+           × has the constants of section 8 11ms
+       Test Files  1 failed | 2 passed (3)
+            Tests  1 failed | 11 passed (12)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+       FAIL  tests/audio/scheduler.test.mjs > AU2 transport > has the constants of section 8
+      AssertionError: expected 0.08 to be 0.05 // Object.is equality
+    KILLED by node_modules/vitest/vitest.mjs run tests/audio
+
+=== S8-openat-50ms: section 8.3: openAt starts its ramp 50 ms before the bar line
+    src/audio/gates.ts: "param.setValueAtTime(0, t - 0.005);" -> "param.setValueAtTime(0, t - 0.05);" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/audio -> exit 1 in 1 s
+       ❯ tests/audio/gates.test.mjs (2 tests | 1 failed) 14ms
+           × opens a gate on its bar line with a 5 ms ramp 11ms
+       Test Files  1 failed | 2 passed (3)
+            Tests  1 failed | 11 passed (12)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+       FAIL  tests/audio/gates.test.mjs > AU3 layer gates > opens a gate on its bar line with a 5 ms ramp
+      AssertionError: expected [ …(2) ] to deeply equal [ …(2) ]
+    KILLED by node_modules/vitest/vitest.mjs run tests/audio
+
+=== S9-inputlag-clamp: section 9.1: inputLagSec clamped at 0.2 s, not 0.15
+    src/clock/driver.ts: "clamp((avOffsetMs + inputBiasMs) / 1000, 0, 0.15)" -> "clamp((avOffsetMs + inputBiasMs) / 1000, 0, 0.2)" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/clock tests/game -> exit 1 in 2 s
+       ❯ tests/clock/driver.test.mjs (4 tests | 1 failed) 11ms
+           × turns the calibration into a display shift and an input lag, both clamped 5ms
+       ❯ tests/game/run.test.mjs (17 tests | 1 failed) 387ms
+         ❯ GAME1 the run follows its calibration (review R2, MAJOR 4) (2)
+           × stamps an input event with the step heard at its time less inputLagSec(avOffset, inputBias) 9ms
+       Test Files  2 failed | 1 passed (3)
+            Tests  2 failed | 30 passed (32)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+       FAIL  tests/clock/driver.test.mjs > CL2 tick driver > turns the calibration into a display shift and an input lag, both clamped
+      AssertionError: expected 0.2 to be close to 0.15, received difference is 0.05000000000000002, but expected 5e-13
+       FAIL  tests/game/run.test.mjs > GAME1 the run follows its calibration (review R2, MAJOR 4) > stamps an input event with the step heard at its time less inputLagSec(avOffset, inputBias)
+      AssertionError: avOffset 400 inputBias 0 at 0.5 s: expected 81 to be 93 // Object.is equality
+    KILLED by node_modules/vitest/vitest.mjs run tests/clock tests/game
+
+=== S10-squash-7: section 10.3: the landing squash lasts 7 steps
+    src/render/creature.ts: "export const SQUASH_STEPS = 6;" -> "export const SQUASH_STEPS = 7;" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/render -> exit 1 in 2 s
+       ❯ tests/render/play-frame.test.mjs (3 tests | 3 failed) 197ms
+           × draws every frame of the rooms' witness runs as the reference does 66ms
+           × draws the layer's ring as the reference does, past a room's clear until the ring has run out 57ms
+           × draws the gauntlet's witness run as the reference does 73ms
+       ❯ tests/render/creature.test.mjs (14 tests | 11 failed) 684ms
+           × tracks and draws the creature through 01-wake 70ms
+           × tracks and draws the creature through 02-heartbeat 39ms
+           × tracks and draws the creature through 03-dash 44ms
+           × tracks and draws the creature through 04-thorns 19ms
+           × tracks and draws the creature through 05-doors 55ms
+           × tracks and draws the creature through 07-current 21ms
+           × tracks and draws the creature through 08-steps 27ms
+           × tracks and draws the creature through 09-gates 23ms
+           × tracks and draws the creature through 10-crown 25ms
+    KILLED by node_modules/vitest/vitest.mjs run tests/render
+
+=== S11-area-25700: section 11: FLASH_AREA_LIMIT 25,700
+    src/fx/flash-limiter.ts: "export const FLASH_AREA_LIMIT = 25600;" -> "export const FLASH_AREA_LIMIT = 25700;" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/fx tests/render -> exit 1 in 4 s
+       ❯ tests/fx/flash-limiter.test.mjs (4 tests | 2 failed) 17ms
+           × has the limit of section 11 10ms
+           × holds a change whose area reaches the limit exactly, and passes one just under it 1ms
+       Test Files  1 failed | 7 passed (8)
+            Tests  2 failed | 38 passed (40)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+       FAIL  tests/fx/flash-limiter.test.mjs > FX1 flash limiter > has the limit of section 11
+      AssertionError: expected 25700 to be 25600 // Object.is equality
+       FAIL  tests/fx/flash-limiter.test.mjs > FX1 flash limiter > holds a change whose area reaches the limit exactly, and passes one just under it
+      AssertionError: expected 0.5 to be less than 0.1
+    KILLED by node_modules/vitest/vitest.mjs run tests/fx tests/render
+
+=== S12-mad-lt36: section 12 / X8: a pass with MAD up to 36 ms (exclusive) accepted, where the spec rejects MAD above 35
+    src/input/calibrate.ts: "accepted: mad <= 35 }" -> "accepted: mad < 36 }" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/input -> exit 0 in 1 s
+       Test Files  2 passed (2)
+            Tests  11 passed (11)
+    SURVIVED every command
+
+=== S12-mad-lt35: section 12: a pass with MAD exactly 35 rejected, where the spec accepts it
+    src/input/calibrate.ts: "accepted: mad <= 35 }" -> "accepted: mad < 35 }" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/input -> exit 0 in 1 s
+       Test Files  2 passed (2)
+            Tests  11 passed (11)
+    SURVIVED every command
+
+=== S13-card-25: section 13: the card dots 25 world px apart
+    src/render/ending-art.ts: "x: 640 + (i - 1) * 24 * ZOOM" -> "x: 640 + (i - 1) * 25 * ZOOM" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/render -> exit 1 in 4 s
+       ❯ tests/render/ending-art.test.mjs (5 tests | 2 failed) 47ms
+           × lights one dot a beat and rests on the fourth 7ms
+           × draws each frame of the ending: the rise, then the card on the music's beat 15ms
+       Test Files  1 failed | 6 passed (7)
+            Tests  2 failed | 34 passed (36)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+       FAIL  tests/render/ending-art.test.mjs > END1 ending art > lights one dot a beat and rests on the fourth
+      AssertionError: card 0: [0] ellipse.x 577.5, want 580
+           73|   if (d) expect.fail(`${label}: ${d}`);
+       FAIL  tests/render/ending-art.test.mjs > END1 ending art > draws each frame of the ending: the rise, then the card on the music's beat
+      AssertionError: ending 65 71.86810000000233: [0] ellipse.x 577.5, want 580
+           73|   if (d) expect.fail(`${label}: ${d}`);
+    KILLED by node_modules/vitest/vitest.mjs run tests/render
+
+clone status after restore: clean
+mutants: 15, survived 3
+--- end ---

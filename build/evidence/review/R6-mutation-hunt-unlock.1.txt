@@ -1,0 +1,48 @@
+HUSH-EVIDENCE v1
+id: R6-mutation-hunt-unlock
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/mut.mjs hunt-unlock
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T19:14:26-05:00
+time-end: 2026-10-13T19:19:59-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+=== H-unlock-late25: X7 / section 8.4: every layer gate opens 25 ms after its bar line
+    src/audio/engine.ts: "openAt(gate.gain, unlockTime(transport.origin, bar));" -> "openAt(gate.gain, unlockTime(transport.origin, bar) + 0.025);" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/audio tests/game -> exit 0 in 1 s
+       Test Files  4 passed (4)
+            Tests  29 passed (29)
+    $ node node_modules/vite/bin/vite.js build -> exit 0 in 1 s
+    $ node tools/probe-play.mjs --check unlock -> exit 0 in 165 s
+      play: chrome headless: room 11-gauntlet done
+      play: chrome headless: ending seen, texts read 9922 ms into it
+      play: chrome headless: unlock: ok: 10 rooms cleared, each layer's gate closed until its bar line and open after it; the gauntlet's track mapped from its run's bar at its entry and its respawn (83 reads)
+      play: chrome headless: PASS (unlock)
+    SURVIVED every command
+
+=== H-unlock-early25: X7 / section 8.4: every layer gate opens 25 ms before its bar line
+    src/audio/engine.ts: "openAt(gate.gain, unlockTime(transport.origin, bar));" -> "openAt(gate.gain, unlockTime(transport.origin, bar) - 0.025);" (1 match)
+    $ node node_modules/vite/bin/vite.js build -> exit 0 in 1 s
+    $ node tools/probe-play.mjs --check unlock -> exit 1 in 165 s
+      play: chrome headless: room 01-wake done
+      play: chrome headless: room 02-heartbeat done
+      play: chrome headless: room 03-dash done
+      play: chrome headless: room 04-thorns done
+      play: chrome headless: room 05-doors done
+      play: chrome headless: room 06-wave done
+      play: chrome headless: room 07-current done
+      play: chrome headless: room 08-steps done
+      play: chrome headless: room 09-gates done
+      play: chrome headless: room 10-crown done
+      play: chrome headless: room 11-gauntlet done
+      play: chrome headless: ending seen, texts read 9902 ms into it
+      play: chrome headless: unlock: FAIL: room 5: layer 5's gate reads 0.186 32 ms before its bar line 6 (want 0 until that bar)
+      play: chrome headless: FAIL (unlock)
+    KILLED by tools/probe-play.mjs --check unlock
+
+clone status after restore: clean
+mutants: 2, survived 1
+--- end ---

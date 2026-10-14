@@ -65,6 +65,7 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - The headed perf probe also wants its window seen. A window that is covered for most of the minute gets frames a second apart and reads as 13 fps. Re-run it before suspecting the product (producer, review R4 FIX).
 - Reviews R4 and R5 found one class from its two sides: a binding to the beat that the checks hold by what plays or shows, never by when. R4 timed the sounds; R5 found the calibration's rings and fills, the sim's step and the ending's card untimed against the heard time. A check that judges what a frame shows must also hold when it shows it, against the clock its binding names (producer, review R5).
 - A picture's time is held by bracketing its frame. Phaser runs PRE_STEP, every scene's update and POST_STEP inside one animation-frame callback, where no timer runs, so performance.now() and the clock line read at the two events bracket the scene's own frameMs and heard time. Judging only the frames whose bracket holds no window edge makes the check exact, with no tolerance to tune (producer, review R5 FIX).
+- Every threshold the spec names needs a test on both sides of its edge: one case exactly at it, one just past it, and the off-by-one comparison as its control. R1 found three of CL1's thresholds unpinned, R3 the limiter's 25,600 px and R6 X8's MAD of 35 ms. Every tolerance a check allows is also room for a mutant. R5 found 80 to 100 ms on the step and the card, and R6 found 30 ms on a gate's opening and any alpha from 0 to 1 (producer, review R6).
 
 ## Rounds
 
@@ -79,6 +80,8 @@ HUSH-REVIEW-R4: BLOCKED (head=c9f589cf1d1544a0e09a4ab49324d9eac879e6d2 digest=c9
 FIX R4: 2026-10-13T11:53:12-05:00 | fixed=3 rebutted=0 superseded=0
 HUSH-REVIEW-R5: FAIL (head=bd16d9550e4a4c07da9cc5c5286e72e53e099f3a digest=3fce9ef0e9f6e11c0e6a369d29a9300a81df073d9b6b2eba1e6844f43c431059 blockers=0 majors=2 minors=2)
 FIX R5: 2026-10-13T17:36:33-05:00 | fixed=2 rebutted=0 superseded=0
+HUSH-REVIEW-R6: PASS (head=8f007a3bf705dede3599e764b36f45ccc6395510 digest=6c217e01ef418ee3d2664d310528567f0c56050f1b770e7d216da73486e414ac blockers=0 majors=0 minors=8)
+CYCLE 1: end | 2026-10-13T19:38:00-05:00 | R6
 
 ## Checkpoint
 

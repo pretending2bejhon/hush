@@ -1,0 +1,28 @@
+HUSH-EVIDENCE v1
+id: R6-mutation-hunt-alpha
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/mut.mjs hunt-alpha
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T19:28:04-05:00
+time-end: 2026-10-13T19:31:01-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+=== H-view-alpha-1: section 9.1: the render never interpolates (the view's alpha always 1)
+    src/game/run.ts: "if (view) view.alpha = alpha(heard, origin, display, sim.step);" -> "if (view) view.alpha = 1;" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/game tests/render tests/clock -> exit 0 in 4 s
+       Test Files  10 passed (10)
+            Tests  68 passed (68)
+    $ node node_modules/vite/bin/vite.js build -> exit 0 in 1 s
+    $ node tools/probe-play.mjs --check scene -> exit 0 in 171 s
+      play: chrome headless: room 11-gauntlet done
+      play: chrome headless: ending seen, texts read 10081 ms into it
+      play: chrome headless: scene: ok: 11 rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, 34480 bake pixels as their shapes; every frame of every run replayed, 758 drawn command for command as the reference (40 while the limiter held a change, 49 with a layer's ring); 8703 fram
+      play: chrome headless: PASS (scene)
+    SURVIVED every command
+
+clone status after restore: clean
+mutants: 1, survived 1
+--- end ---

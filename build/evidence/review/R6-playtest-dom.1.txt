@@ -1,0 +1,24 @@
+HUSH-EVIDENCE v1
+id: R6-playtest-dom
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/playtest-dom.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T18:40:05-05:00
+time-end: 2026-10-13T18:41:27-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 1
+--- output ---
+A bare 1280x720 at boot: title "The Hush", texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], over the canvas 0, output {"hidden":true,"text":"","over":false}, probe false, canvas [30,0,1220,686]
+A bare 800x450 at boot: title "The Hush", texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], over the canvas 0, output {"hidden":true,"text":"","over":false}, probe false, canvas [30,0,740,416]
+A bare 900x1200 at boot: title "The Hush", texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], over the canvas 0, output {"hidden":true,"text":"","over":false}, probe false, canvas [0,329,900,506]
+B ?playtest at boot: title "The Hush", texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], over the canvas 0, output {"hidden":true,"text":"","over":false}, probe false, canvas [30,0,1220,686]
+A bare at boot: title "The Hush", texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], over the canvas 0, output {"hidden":true,"text":"","over":false}, probe false, canvas [30,0,1220,686]
+A bare 2 s after a key: title "The Hush", texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], over the canvas 0, output {"hidden":true,"text":"","over":false}, probe false, canvas [30,0,1220,686]
+B ?playtest 2 s after a key: title "The Hush", texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], over the canvas 0, output {"hidden":true,"text":"","over":false}, probe false, canvas [30,0,1220,686]
+A bare 48 s after a key (room 1 after the untouched calibration): title "The Hush", texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"], over the canvas 0, output {"hidden":true,"text":"","over":false}, probe false, canvas [30,0,1220,686]
+D ?probe: 253 reads over 12 s of the ending; text objects max 0; over the canvas 0; output hidden and empty throughout: true
+FAIL C ?probe&playtest: the run line 6.780 s into the ending, before the card at 6.857 s
+C ?probe&playtest: 252 reads over 12 s of the ending; text objects max 0; over the canvas 0; the line "run 0:59 · deaths 0" at 6.780 s heard into the ending (card at 6.857 s), outside the canvas true
+playtest-dom: FAIL (1)
+--- end ---

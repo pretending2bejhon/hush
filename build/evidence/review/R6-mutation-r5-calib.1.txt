@@ -1,0 +1,30 @@
+HUSH-EVIDENCE v1
+id: R6-mutation-r5-calib
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/mut.mjs r5-calib
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T18:51:59-05:00
+time-end: 2026-10-13T18:56:28-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+=== R5-calib-frametime: R5 MAJOR 1(a): frameTimes 100 ms after the frames that drew their rings
+    src/render/calibration-scene.ts: "a.frameTimes[i] = frameMs;" -> "a.frameTimes[i] = frameMs + 100;" (1 match)
+    $ node node_modules/vite/bin/vite.js build -> exit 0 in 1 s
+    $ node tools/probe-flash.mjs --calibration -> exit 1 in 267 s
+      flash: calibration up 43.9 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2622 frames, 2181 analyser samples); click starts 48 of 48 on their marks; frames 2566 timed (52 filled, 309 with the ring)
+      flash: tapped calibration up 22.1 s: values 5.5 34.5 (the taps' own 5.5 34.5; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5); click starts 24 of 24 on their marks; frames 1283 timed (26 filled, 152 with the ring)
+      flash: retried calibration up 43.5 s: values 5.6 34.5 (the taps' own 5.6 34.5; A1 and B1 untapped, A2 and B2 tapped as above; marks 5.5 34.5); click starts 48 of 48 on their marks; frames 2565 timed (52 filled, 306 with the ring)
+      flash: calibration frames: B1: frameTimes[0] is +116.5 ms from its due time, but the first frame that drew ring 0 ran +16.5 ms to +16.7 ms from it (want that frame's frameMs) (and 23 more like it)
+      flash: calibration frames: B2: frameTimes[0] is +100.2 ms from its due time, but the first frame that drew ring 0 ran +0.1 ms to +0.2 ms from it (want that frame's frameMs) (and 23 more like it)
+      flash: tapped calibration frames: B1: frameTimes[0] is +116.5 ms from its due time, but the first frame that drew ring 0 ran +16.4 ms to +16.7 ms from it (want that frame's frameMs) (and 23 more like it)
+      flash: retried calibration frames: B1: frameTimes[0] is +100.0 ms from its due time, but the first frame that drew ring 0 ran +0.0 ms to +0.2 ms from it (want that frame's frameMs) (and 23 more like it)
+      flash: retried calibration frames: B2: frameTimes[0] is +116.8 ms from its due time, but the first frame that drew ring 0 ran +16.6 ms to +16.8 ms from it (want that frame's frameMs) (and 23 more like it)
+      flash: FAIL
+    KILLED by tools/probe-flash.mjs --calibration
+
+clone status after restore: clean
+mutants: 1, survived 0
+--- end ---

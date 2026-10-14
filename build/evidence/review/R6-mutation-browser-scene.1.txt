@@ -1,0 +1,35 @@
+HUSH-EVIDENCE v1
+id: R6-mutation-browser-scene
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/mut.mjs browser-scene
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T18:56:45-05:00
+time-end: 2026-10-13T18:59:38-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+=== S10.6-dust-down: section 10.6: the dust drawn 1 px down
+    src/render/play-scene.ts: "drawShapes(this.dust, f.dust);" -> "drawShapes(this.dust, f.dust, 0, 1);" (1 match)
+    $ node node_modules/vite/bin/vite.js build -> exit 0 in 1 s
+    $ node tools/probe-play.mjs --check scene -> exit 1 in 172 s
+      play: chrome headless: room 01-wake done
+      play: chrome headless: room 02-heartbeat done
+      play: chrome headless: room 03-dash done
+      play: chrome headless: room 04-thorns done
+      play: chrome headless: room 05-doors done
+      play: chrome headless: room 06-wave done
+      play: chrome headless: room 07-current done
+      play: chrome headless: room 08-steps done
+      play: chrome headless: room 09-gates done
+      play: chrome headless: room 10-crown done
+      play: chrome headless: room 11-gauntlet done
+      play: chrome headless: ending seen, texts read 10030 ms into it
+      play: chrome headless: scene: FAIL: room 01-wake at step 0: the dust (depth 8) differs at entry 5 of 480: [0.3,3,79.245,527.056,2.5,2.5,7], want [0.3,3,79.245,526.056,2.5,2.5,7]; room 01-wake at step 0: the dust (depth 8) differs at entry 5 of 480: [0.3,3,79.245,527.056,2.5,2.5,7], want [0.3,3,79.245,526.056,2.5,2.5,7]; room 01-
+      play: chrome headless: FAIL (scene)
+    KILLED by tools/probe-play.mjs --check scene
+
+clone status after restore: clean
+mutants: 1, survived 0
+--- end ---

@@ -1,0 +1,46 @@
+HUSH-EVIDENCE v1
+id: R6-axisb-sim
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/axisb-sim.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T18:38:53-05:00
+time-end: 2026-10-13T18:39:05-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+seeds from HEAD 8f007a3bf705dede3599e764b36f45ccc6395510: 2399173179 4144357086 899278692 3010414028 3325646096
+determinism 01-wake: clear at 1618 and 1618, checksums 6001f0f9 6001f0f9 (witness 6001f0f9), save() identical, deaths 0
+determinism 02-heartbeat: clear at 1684 and 1684, checksums 04febedf 04febedf (witness 04febedf), save() identical, deaths 0
+determinism 03-dash: clear at 1588 and 1588, checksums 593d0787 593d0787 (witness 593d0787), save() identical, deaths 0
+determinism 04-thorns: clear at 1408 and 1408, checksums 123057cb 123057cb (witness 123057cb), save() identical, deaths 0
+determinism 05-doors: clear at 2222 and 2222, checksums d181a484 d181a484 (witness d181a484), save() identical, deaths 0
+determinism 06-wave: clear at 1920 and 1920, checksums f3496b90 f3496b90 (witness f3496b90), save() identical, deaths 0
+determinism 07-current: clear at 1943 and 1943, checksums 1c7b52e9 1c7b52e9 (witness 1c7b52e9), save() identical, deaths 0
+determinism 08-steps: clear at 1494 and 1494, checksums e6a8f7ba e6a8f7ba (witness e6a8f7ba), save() identical, deaths 0
+determinism 09-gates: clear at 1905 and 1905, checksums 9498a96d 9498a96d (witness 9498a96d), save() identical, deaths 0
+determinism 10-crown: clear at 2388 and 2388, checksums 5b909a19 5b909a19 (witness 5b909a19), save() identical, deaths 0
+determinism 11-gauntlet: clear at 14278 and 14278, checksums b3715ef7 b3715ef7 (witness b3715ef7), save() identical, deaths 0
+product equal to the oracle at all 32448 witness steps
+layers 01-wake: clear on tick 1617, bit 1 back on tick 2058, the first step of bar 5 (4.28 beats after the clear), the only change
+layers 02-heartbeat: clear on tick 1683, bit 2 back on tick 2058, the first step of bar 5 (3.64 beats after the clear), the only change
+layers 03-dash: clear on tick 1587, bit 3 back on tick 2058, the first step of bar 5 (4.57 beats after the clear), the only change
+layers 04-thorns: clear on tick 1407, bit 4 back on tick 1646, the first step of bar 4 (2.32 beats after the clear), the only change
+layers 05-doors: clear on tick 2221, bit 5 back on tick 2469, the first step of bar 6 (2.41 beats after the clear), the only change
+layers 06-wave: clear on tick 1919, bit 6 back on tick 2058, the first step of bar 5 (1.34 beats after the clear), the only change
+layers 07-current: clear on tick 1942, bit 7 back on tick 2058, the first step of bar 5 (1.12 beats after the clear), the only change
+layers 08-steps: clear on tick 1493, bit 8 back on tick 1646, the first step of bar 4 (1.48 beats after the clear), the only change
+layers 09-gates: clear on tick 1904, bit 9 back on tick 2058, the first step of bar 5 (1.49 beats after the clear), the only change
+layers 10-crown: clear on tick 2387, bit 10 back on tick 2880, the first step of bar 7 (4.79 beats after the clear), the only change
+layers 11-gauntlet: clear on tick 14277, run finished, no layer change
+wave: 1111 runs, base to wave 505 times (each on a W cell), wave to base 505 times (each on a B cell), 0 other changes; W cells in rooms 6, 7, 9, 10, 11
+sources src/sim/beat.ts: imports ["./constants.ts","./types.ts"]; Math ["ceil"]; DOM/timer/random globals 0
+sources src/sim/constants.ts: imports []; Math []; DOM/timer/random globals 0
+sources src/sim/headless.ts: imports ["../rooms/compile.ts","./sim.ts"]; Math []; DOM/timer/random globals 0
+sources src/sim/sim.ts: imports ["../rooms/codes.ts","./types.ts","./beat.ts","./constants.ts"]; Math ["floor","min","max","imul","abs"]; DOM/timer/random globals 0
+sources src/sim/types.ts: imports ["../rooms/gauntlet.ts"]; Math []; DOM/timer/random globals 0
+sources src/rooms/codes.ts: imports []; Math []; DOM/timer/random globals 0
+sources src/rooms/compile.ts: imports ["../sim/types.ts","./codes.ts","./gauntlet.ts","./codes.ts"]; Math []; DOM/timer/random globals 0
+sources src/rooms/gauntlet.ts: imports ["../sim/types.ts","./codes.ts"]; Math ["floor"]; DOM/timer/random globals 0
+axisb-sim: PASS
+--- end ---

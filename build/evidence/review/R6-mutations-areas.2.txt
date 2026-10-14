@@ -1,0 +1,44 @@
+HUSH-EVIDENCE v1
+id: R6-mutations-areas
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/mut.mjs areas2
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T19:11:00-05:00
+time-end: 2026-10-13T19:11:01-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+=== S12-avoffset-flip: section 12: avOffset = medianV - medianA
+    src/input/calibrate.ts: "avOffset: medianA - medianV" -> "avOffset: medianV - medianA" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/input -> exit 1 in 1 s
+       ❯ tests/input/calibrate.test.ts (6 tests | 2 failed) 8ms
+         ❯ calibration (X8) (6)
+           × returns avOffset and inputBias within 5 ms of the injected values 4ms
+           × takes 0 for a rejected pass 1ms
+       Test Files  1 failed | 1 passed (2)
+            Tests  2 failed | 9 passed (11)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+       FAIL  tests/input/calibrate.test.ts > calibration (X8) > returns avOffset and inputBias within 5 ms of the injected values
+      AssertionError: expected 160.080973864533 to be less than or equal to 5
+       FAIL  tests/input/calibrate.test.ts > calibration (X8) > takes 0 for a rejected pass
+      AssertionError: expected 29.87163996975869 to be close to -29.87163996975869, received difference is 59.74327993951738, but expected 5e-7
+    KILLED by node_modules/vitest/vitest.mjs run tests/input
+
+=== S12-rejected-keeps-median: section 12: a rejected pass still gives its median
+    src/input/calibrate.ts: "const medianA = a.accepted ? a.median : 0;" -> "const medianA = a.median;" (1 match)
+    $ node node_modules/vitest/vitest.mjs run tests/input -> exit 1 in 1 s
+       ❯ tests/input/calibrate.test.ts (6 tests | 1 failed) 12ms
+         ❯ calibration (X8) (6)
+           × takes 0 for a rejected pass 4ms
+       Test Files  1 failed | 1 passed (2)
+            Tests  1 failed | 10 passed (11)
+      ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+       FAIL  tests/input/calibrate.test.ts > calibration (X8) > takes 0 for a rejected pass
+      AssertionError: expected 30.289609807543457 to be close to -29.87163996975869, received difference is 60.161249777302146, but expected 5e-7
+    KILLED by node_modules/vitest/vitest.mjs run tests/input
+
+clone status after restore: clean
+mutants: 2, survived 0
+--- end ---

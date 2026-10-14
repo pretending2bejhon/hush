@@ -1,0 +1,35 @@
+HUSH-EVIDENCE v1
+id: R6-mutation-browser-keys
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/47a9b914-d0f9-4fd2-8e74-e3cb28e5ef2c/scratchpad/r6/mut.mjs browser-keys
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T18:59:38-05:00
+time-end: 2026-10-13T19:02:14-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+
+=== S9.2-stepof-plus2: section 9.2: main.ts stamps every key 2 steps (8 ms) late
+    src/main.ts: "stepOf: (t) => run.stepOf(t) })" -> "stepOf: (t) => run.stepOf(t) + 2 })" (1 match)
+    $ node node_modules/vite/bin/vite.js build -> exit 0 in 1 s
+    $ node tools/probe-play.mjs --check keys -> exit 1 in 155 s
+      play: chrome headless: room 01-wake done
+      play: chrome headless: room 02-heartbeat done
+      play: chrome headless: room 03-dash done
+      play: chrome headless: room 04-thorns done
+      play: chrome headless: room 05-doors done
+      play: chrome headless: room 06-wave done
+      play: chrome headless: room 07-current done
+      play: chrome headless: room 08-steps done
+      play: chrome headless: room 09-gates done
+      play: chrome headless: room 10-crown done
+      play: chrome headless: room 11-gauntlet done
+      play: chrome headless: ending seen, texts read 9879 ms into it
+      play: chrome headless: keys: FAIL: keys: the sim's states while the keys were pressed differ from their replay on the steps stepOf names (at step 43 x live 8996, replay 9080; 4 key events, 30 reads from step 23)
+      play: chrome headless: FAIL (keys)
+    KILLED by tools/probe-play.mjs --check keys
+
+clone status after restore: clean
+mutants: 1, survived 0
+--- end ---

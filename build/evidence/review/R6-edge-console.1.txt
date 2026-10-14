@@ -1,0 +1,28 @@
+HUSH-EVIDENCE v1
+id: R6-edge-console
+phase: review
+command: node tools/probe-play.mjs --channel edge --headed --check console,play,text
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T18:32:24-05:00
+time-end: 2026-10-13T18:34:57-05:00
+head: 8f007a3bf705dede3599e764b36f45ccc6395510
+exit: 0
+--- output ---
+play: edge headed: room 01-wake done
+play: edge headed: room 02-heartbeat done
+play: edge headed: room 03-dash done
+play: edge headed: room 04-thorns done
+play: edge headed: room 05-doors done
+play: edge headed: room 06-wave done
+play: edge headed: room 07-current done
+play: edge headed: room 08-steps done
+play: edge headed: room 09-gates done
+play: edge headed: room 10-crown done
+play: edge headed: room 11-gauntlet done
+play: edge headed: ending seen, texts read 9933 ms into it
+play: edge headed: console: ok: zero console and page errors
+play: edge headed: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: edge headed: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+play: edge headed: PASS (console,play,text)
+--- end ---
