@@ -10,7 +10,9 @@
 // order, never forced. The release enforces every check and publishes the newest rc tag only, and only when the
 // tag commit's digest equals its HUSH-SHIP-GATE line's (D18). The dry run tags hush-dryrun-<sha8> in its clone,
 // records every check in --out instead of enforcing it (a red check-public still refuses the push) and writes
-// nothing into the source tree. Never a CNAME, never a force push.
+// nothing into the source tree. A dry run publishes only to an existing local bare repository: any other
+// --remote, a URL or the origin included, is refused before anything runs (audit 1, MINOR 4). Never a CNAME,
+// never a force push.
 // Exit 0 published (or recorded); 1 refused; 2 usage or a tool failure.
 import { execFileSync, spawnSync } from 'node:child_process';
 import fs from 'node:fs';
@@ -101,6 +103,13 @@ export function releaseTarget(src, tagArg) {
   return { tag, commit, main };
 }
 
+// A dry run's remote: an existing local directory that git calls a bare repository.
+function isLocalBare(dir) {
+  if (!fs.existsSync(dir) || !fs.statSync(dir).isDirectory()) return false;
+  const r = spawnSync('git', ['rev-parse', '--is-bare-repository'], { cwd: dir, encoding: 'utf8' });
+  return r.status === 0 && String(r.stdout).trim() === 'true';
+}
+
 function emptyDir(dir) {
   for (const e of fs.readdirSync(dir)) if (e !== '.git') fs.rmSync(path.join(dir, e), { recursive: true, force: true });
 }
@@ -112,6 +121,7 @@ async function main(argv) {
   const say = (s) => { record.steps.push(s); process.stdout.write(`deploy: ${s}\n`); };
   let work = null;
   try {
+    if (o.dryRun && !isLocalBare(o.remote)) throw new Refusal('a dry run publishes only to an existing local bare repository (--remote)');
     const dirt = git(src, ['status', '--porcelain', o.dryRun ? '--untracked-files=no' : '--untracked-files=all']);
     if (dirt) throw new Refusal(`the source tree is dirty (${dirt.split('\n').slice(0, 3).map((l) => l.trim()).join(', ')})`);
     let target;

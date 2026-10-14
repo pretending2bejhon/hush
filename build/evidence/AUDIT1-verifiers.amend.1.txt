@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: AUDIT1-verifiers
+phase: amend
+command: npm run test:verifiers
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T22:57:22-05:00
+time-end: 2026-10-13T22:58:34-05:00
+head: 045adbdb778b04c011a735721f0b40f7a02d6847
+exit: 0
+--- output ---
+
+> hush@0.0.0 test:verifiers
+> vitest run tests/tools
+
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  15 passed (15)
+      Tests  281 passed (281)
+   Start at  22:57:23
+   Duration  71.12s (tests 97%, import 2%, transform 1%)
+
+--- end ---

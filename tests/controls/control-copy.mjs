@@ -1,6 +1,8 @@
 // A temp copy of the repo for the deploy controls (PF-CONTROLS), outside the repo: every file git would see,
-// the control page committed as index.html, the rooms and the track transcribed from the spec, both
-// manifests regenerated, one commit with the repo's noreply identity, and a bare remote beside it.
+// the control page committed as index.html, the rooms and the track transcribed from the spec where the tree
+// does not track them yet (since CT1 it does, and the copy keeps them byte for byte: spec-content --extract
+// never overwrites, so re-extracting them stopped every case; audit 1, MAJOR 1), both manifests regenerated,
+// one commit with the repo's noreply identity, and a bare remote beside it.
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs';
 import os from 'node:os';
@@ -38,9 +40,12 @@ export function makeControlCopy() {
   fs.writeFileSync(path.join(dir, 'index.html'), page);
   for (const name of CONTENT) {
     const out = name === '11-gauntlet' ? 'rooms/11-gauntlet.txt' : `rooms/${name}.txt`;
+    if (fs.existsSync(path.join(dir, out))) continue;
     execFileSync(process.execPath, [path.join(dir, 'tools', 'spec-content.mjs'), '--extract', name, path.join(dir, out)], { cwd: dir, stdio: 'pipe' });
   }
-  execFileSync(process.execPath, [path.join(dir, 'tools', 'spec-content.mjs'), '--extract', 'area1', path.join(dir, 'music', 'area1.strudel')], { cwd: dir, stdio: 'pipe' });
+  if (!fs.existsSync(path.join(dir, 'music', 'area1.strudel'))) {
+    execFileSync(process.execPath, [path.join(dir, 'tools', 'spec-content.mjs'), '--extract', 'area1', path.join(dir, 'music', 'area1.strudel')], { cwd: dir, stdio: 'pipe' });
+  }
   git(dir, ['init', '-q', '-b', 'main']);
   identity(dir);
   execFileSync(process.execPath, [path.join(dir, 'tools', 'protect.mjs'), '--write'], { cwd: dir, stdio: 'pipe' });

@@ -3,7 +3,8 @@
 // identity and records X1 to X10; a second run extends gh-pages without force; a modified tracked file is
 // refused and an untracked one ignored; a CRLF room and README turn the release clone's checks red; a private
 // path in a commit body and an email in an annotated tag's message each stop the push; a diverged remote main
-// is never forced; --release refuses an rc tag whose digest differs from its HUSH-SHIP-GATE line's.
+// is never forced; --release refuses an rc tag whose digest differs from its HUSH-SHIP-GATE line's; and (audit 1,
+// MINOR 4) a dry run refuses a remote that is not an existing local bare repository, so it never publishes.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -112,6 +113,19 @@ describe('deploy.mjs --dry-run', () => {
     expect(r.code).not.toBe(0);
     expect(r.out).toMatch(/rejected|non-fast-forward|fetch first|failed to push/i);
     expect(git(bare, ['rev-parse', 'refs/heads/main'])).toBe(before);
+  }, T);
+
+  it('refuses a remote that is not an existing local bare repository, and pushes nothing', () => {
+    const { dir } = makeControlCopy();
+    const plain = fs.mkdtempSync(path.join(os.tmpdir(), 'hush-plain-'));
+    git(plain, ['init', '-q', '-b', 'elsewhere']);
+    const r = deploy(dir, ['--dry-run', '--candidate', 'HEAD', '--remote', plain, '--out', outDir()]);
+    expect(r.out).toMatch(/REFUSED: a dry run publishes only to an existing local bare repository/);
+    expect(r.code).toBe(1);
+    expect(refs(plain)).toEqual([]);
+    const url = deploy(dir, ['--dry-run', '--candidate', 'HEAD', '--remote', 'https://example.invalid/hush.git', '--out', outDir()]);
+    expect(url.out).toMatch(/REFUSED: a dry run publishes only to an existing local bare repository/);
+    expect(url.code).toBe(1);
   }, T);
 });
 

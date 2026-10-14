@@ -1,0 +1,55 @@
+HUSH-EVIDENCE v1
+id: AUDIT1-remote-red
+phase: amend
+command: npx vitest run tests/controls/deploy.test.mjs -t "refuses a remote that is not"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T22:43:36-05:00
+time-end: 2026-10-13T22:45:42-05:00
+head: 045adbdb778b04c011a735721f0b40f7a02d6847
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/deploy.test.mjs (8 tests | 1 failed | 7 skipped) 124652ms
+   ❯ deploy.mjs --dry-run (6)
+     × refuses a remote that is not an existing local bare repository, and pushes nothing 124651ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/deploy.test.mjs > deploy.mjs --dry-run > refuses a remote that is not an existing local bare repository, and pushes nothing
+AssertionError: expected 'deploy: dry-run of e57a9a69369c as hu…' to match /REFUSED: a dry run publishes only to …/
+
+- Expected:
+/REFUSED: a dry run publishes only to an existing local bare repository/
+
++ Received:
+"deploy: dry-run of e57a9a69369c as hush-dryrun-e57a9a69, main at e57a9a69369c
+deploy: release clone at e57a9a69369c, identity pretending2bejhon
+deploy: npm ci and build in the clone
+deploy: checks: content green, protect green, X1-X10 recorded
+deploy: gh-pages commit 110566b49702 (first publication)
+deploy: check-public --history clean over main, the tag and gh-pages
+deploy: pushed main
+deploy: pushed tag
+deploy: pushed gh-pages
+"
+
+ ❯ tests/controls/deploy.test.mjs:125:19
+    123|     git(plain, ['init', '-q', '-b', 'elsewhere']);
+    124|     const r = deploy(dir, ['--dry-run', '--candidate', 'HEAD', '--remo…
+    125|     expect(r.out).toMatch(/REFUSED: a dry run publishes only to an exi…
+       |                   ^
+    126|     expect(r.code).toBe(1);
+    127|     expect(refs(plain)).toEqual([]);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 skipped (8)
+   Start at  22:43:37
+   Duration  124.84s (tests 100%)
+
+--- end ---
