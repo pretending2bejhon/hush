@@ -1,0 +1,58 @@
+HUSH-EVIDENCE v1
+id: X5
+phase: verify
+command: npm run probe:console
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T13:12:25-05:00
+time-end: 2026-10-14T13:17:30-05:00
+head: 55831ccf49d300802334db24b1cd8f52c1f2b596
+exit: 0
+--- output ---
+
+> hush@0.0.0 probe:console
+> vite build && node tools/probe-play.mjs --check console,play,text && node tools/probe-play.mjs --channel edge --headed --check console,play,text
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+dist/assets/index-Dqh8GbB8.js  2,100.96 kB │ gzip: 596.28 kB
+
+✓ built in 706ms
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 03-dash done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 05-doors done
+play: chrome headless: room 06-wave done
+play: chrome headless: room 07-current done
+play: chrome headless: room 08-steps done
+play: chrome headless: room 09-gates done
+play: chrome headless: room 10-crown done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 9917 ms into it
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: chrome headless: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+play: chrome headless: PASS (console,play,text)
+play: edge headed: room 01-wake done
+play: edge headed: room 02-heartbeat done
+play: edge headed: room 03-dash done
+play: edge headed: room 04-thorns done
+play: edge headed: room 05-doors done
+play: edge headed: room 06-wave done
+play: edge headed: room 07-current done
+play: edge headed: room 08-steps done
+play: edge headed: room 09-gates done
+play: edge headed: room 10-crown done
+play: edge headed: room 11-gauntlet done
+play: edge headed: ending seen, texts read 9906 ms into it
+play: edge headed: console: ok: zero console and page errors
+play: edge headed: play: ok: 11 rooms cleared by witness, in-page checksums equal
+play: edge headed: text: ok: title, link and notice only through the ending; nothing over the canvas; no text object
+play: edge headed: PASS (console,play,text)
+--- end ---

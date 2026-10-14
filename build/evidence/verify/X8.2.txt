@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: X8
+phase: verify
+command: npm run test:calibration
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T13:04:58-05:00
+time-end: 2026-10-14T13:04:59-05:00
+head: 55831ccf49d300802334db24b1cd8f52c1f2b596
+exit: 0
+--- output ---
+
+> hush@0.0.0 test:calibration
+> vitest run tests/input/calibrate.test.ts
+
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+   Start at  13:04:59
+   Duration  197ms (transform 57%, import 20%, tests 16%, worker 7%, environment 1%)
+
+--- end ---

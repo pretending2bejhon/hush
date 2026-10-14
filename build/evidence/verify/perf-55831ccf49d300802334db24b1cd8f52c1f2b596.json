@@ -1,0 +1,115 @@
+{
+  "kind": "perf",
+  "head": "55831ccf49d300802334db24b1cd8f52c1f2b596",
+  "digest": "81a1d6cc2560d24e1f8b93daf725980262ada7b898d9552af9b9cafa6e3a9d58",
+  "query": "",
+  "headed": true,
+  "swiftshader": false,
+  "renderer": "ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "window": {
+    "inner": [
+      1536,
+      826
+    ],
+    "screen": [
+      1536,
+      912
+    ],
+    "dpr": 1.25,
+    "maximized": true
+  },
+  "power": "ac",
+  "powerSaver": false,
+  "plan": "Balanced",
+  "refreshHz": 60,
+  "heavyApps": [],
+  "sample": {
+    "cpu": [
+      {
+        "name": "claude",
+        "cpu": 0.9
+      },
+      {
+        "name": "claude",
+        "cpu": 0.5
+      },
+      {
+        "name": "system",
+        "cpu": 0.5
+      },
+      {
+        "name": "esrv_svc",
+        "cpu": 0.4
+      }
+    ],
+    "gpu": [
+      {
+        "name": "claude",
+        "gpu": 4.5
+      },
+      {
+        "name": "PresentMonService",
+        "gpu": 0
+      },
+      {
+        "name": "Slack",
+        "gpu": 0
+      }
+    ]
+  },
+  "meanFps": 60,
+  "p20": 1,
+  "p99Ms": 16.9,
+  "maxMs": 17.7,
+  "durationSec": 60.1,
+  "phases": {
+    "rooms": {
+      "frames": 2405,
+      "seconds": 40.0832,
+      "meanFps": 60.00019958486349,
+      "p20": 1,
+      "p99Ms": 16.899999999997817,
+      "maxMs": 17.099999999998545
+    },
+    "busy": {
+      "frames": 1201,
+      "seconds": 20.016699999999997,
+      "meanFps": 59.99990008343035,
+      "p20": 1,
+      "p99Ms": 16.89999999999418,
+      "maxMs": 17.69999999999709
+    }
+  },
+  "played": [
+    {
+      "stem": "01-wake",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "02-heartbeat",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "03-dash",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "04-thorns",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "05-doors",
+      "outcome": "cleared"
+    },
+    {
+      "stem": "06-wave",
+      "outcome": "played until the phase ended"
+    },
+    {
+      "stem": "11-gauntlet",
+      "outcome": "busy window from step 5350"
+    }
+  ],
+  "problems": [],
+  "pass": true
+}
