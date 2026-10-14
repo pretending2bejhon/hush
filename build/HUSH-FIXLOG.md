@@ -493,3 +493,25 @@ MAJOR 1 and NOTE 2 fixed 2026-10-13T17:35-05:00 in `2bd9d23` (hush-spec: amend t
 
 Round R5 closed 2026-10-13T17:36-05:00: 2 fixed (MAJOR 1, MAJOR 2), 0 rebutted, 0 superseded, every one by the producer's amendment and no applier. MINOR 1 (the notes' level and length) and MINOR 2 (the line's deaths, R4-MINOR1) are carried to the next cycle. NOTE 2 is fixed with MAJOR 1; NOTE 1 and NOTE 3 needed no action. The product is unchanged since the review (src/ outside src/probe, rooms, music and replays as at bd16d95). The next step is review R6, the round the owner granted: a PASS ends cycle 1, and a FAIL escalates again.
 
+## Review R6 (cycle 1): HUSH-REVIEW-R6: PASS, head 8f007a3, digest 6c217e01
+
+Recorded 2026-10-13T19:38-05:00 by the producer (Opus standing in for Fable), in `5b725e5`.
+- **The count.** Findings: 8 (0 BLOCKER, 0 MAJOR, 8 MINOR) and 3 NOTEs, against R5's 4 (0, 2, 2). Six MINORs are new and two are R5's, carried.
+- **What held.** Every R5 fix held. The reviewer re-ran R5's MAJOR 2 mutant (the driver 50 ms late) and MAJOR 1(a) mutant (frameTimes 100 ms late), and both now fail. Every spec area's suite kills its core mutation, all 23 acceptances pass, and every Axis B check passes. The product is unchanged since R3.
+- **The cycle.** R6 is a PASS that follows FIX R5, so cycle 1 ended on it (`CYCLE 1: end | ... | R6` in build/HUSH-PROGRESS.md). That was the round the owner granted on 2026-10-13 ("A, go on with FIX R5").
+- **The MINORs.** A cycle-ending PASS leaves its MINORs open. They are carried into the next cycle and never fixed in place, so the PASS stays fresh (digest 6c217e01). Each one below is a spec'd detail or a tolerance that no check reads. None changes an exit criterion's verdict on the product as it stands.
+
+DISPOSITION: R6-MINOR1 | X8's threshold edge is not pinned (calibrate.ts:24, MAD 35 accepted and 35.5 rejected untested) | 2026-10-13T19:40:00-05:00 | carried to the next cycle; fix by amendment (test): spread(35) accepted and spread(35.5) rejected, control `mad < 36`
+DISPOSITION: R6-MINOR2 | the calibration scene's key-repeat filter is never exercised (calibration-scene.ts:79) | 2026-10-13T19:40:00-05:00 | carried to the next cycle; fix by amendment (verifier): the tapper also sends `repeat: true` keydowns off the spread in every attempt, logged apart as the Escapes are, control page `?calib=repeat`
+DISPOSITION: R6-MINOR3 | the ending's rise is never timed from its first frame (ending-scene.ts:82) | 2026-10-13T19:40:00-05:00 | carried to the next cycle; fix by amendment (verifier): every logged ending frame's glimpse y held to riseAt(h - t0) over its bracket, t0 from the first frame's bracket
+DISPOSITION: R6-MINOR4 | X7's gate opening is held only within 30 ms of its bar line (engine.ts:164) | 2026-10-13T19:40:00-05:00 | carried to the next cycle; fix by amendment (verifier): under ?probe, record the gates' AudioParam automation and hold each unlock ramp's end to unlockTime(origin, unlockBar(clear)) within 1 ms
+DISPOSITION: R6-MINOR5 | the canvas's background colour is never read (game.ts:10) | 2026-10-13T19:40:00-05:00 | carried to the next cycle; fix by amendment (verifier): one undrawn canvas pixel read, wanting #07080d
+DISPOSITION: R6-MINOR6 | section 9.1's interpolation is never checked (run.ts:142, any alpha in [0, 1] passes) | 2026-10-13T19:40:00-05:00 | carried to the next cycle; fix by amendment (verifier): each full frame's alpha held to section 9.1's for the light record's heard time, within 0.01
+DISPOSITION: R6-MINOR7 | the notes' level and length are unchecked (R5-MINOR1) | 2026-10-13T19:40:00-05:00 | carried to the next cycle, as in R5
+DISPOSITION: R6-MINOR8 | the ?playtest line's deaths are only ever read as 0 (R5-MINOR2, R4-MINOR1) | 2026-10-13T19:40:00-05:00 | carried to the next cycle, as in R4 and R5
+DISPOSITION: R6-NOTE1 | the gauntlet generator's hat rule is untested, equivalent on v1 | 2026-10-13T19:40:00-05:00 | no action
+DISPOSITION: R6-NOTE2 | X3's margin, as R5 found it | 2026-10-13T19:40:00-05:00 | no action
+DISPOSITION: R6-NOTE3 | the page's sanctioned texts | 2026-10-13T19:40:00-05:00 | no action
+
+The next step is VERIFY (re-entry row 11): the last cycle ended with a fresh PASS and there is no HUSH-BUILD.md.
+
