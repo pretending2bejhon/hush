@@ -515,6 +515,35 @@ export function stepTimingProblems(light, { avOffset = 0, label = 'run' } = {}) 
   return { problems, judged, worst };
 }
 
+// The ending's rise held to its first frame (review R6, MINOR 3, carried as R7's MINOR 8). Section 13 places the glimpse at
+// riseAt(h - t0).glimpseY, t0 the heard time the scene read in its first frame and h the one it reads in this frame; each
+// read lies in its frame's bracket [pre, post]. So every logged frame's y must lie between the glimpse's places at the
+// bracket's two ends, timed from the first frame's: riseAt(post - pre0) at the most risen and riseAt(pre - post0) at the
+// least, within RISE_SLACK_PX: the heard time's line may move within a frame by up to X7's 3 ms (section 8.4), which at the
+// rise's steepest (720 px times 1.5 over RISE_S, 157.5 px a second) is 0.47 px. A rise timed from the second frame, 17 ms
+// late, is 2.6 px off at its steepest. The log starts before the ending does, so its first frame is the ending's first.
+// Returns { problems, judged }: judged counts the frames inside the rise.
+export const RISE_SLACK_PX = 0.5;
+export const MIN_RISE_FRAMES = 30;
+export function riseTimingProblems(frames, { label = 'ending' } = {}) {
+  const problems = [];
+  const list = (frames || []).filter((f) => typeof f.pre === 'number' && typeof f.post === 'number' && typeof f.y === 'number');
+  if (!list.length) return { problems: [`${label}: no ending frame to time the rise from`], judged: 0 };
+  const first = list[0];
+  let judged = 0;
+  for (const f of list) {
+    if (problems.length >= 3) break;
+    const most = ART.riseAt(f.post - first.pre).glimpseY;
+    const least = ART.riseAt(f.pre - first.post).glimpseY;
+    if (f.pre - first.post < ART.RISE_S) judged += 1;
+    if (f.y < most - RISE_SLACK_PX || f.y > least + RISE_SLACK_PX) {
+      problems.push(`${label}: a frame heard ${Math.round((f.pre - first.pre) * 1000)} ms into the ending draws the glimpse at y ${Math.round(f.y * 100) / 100}, want ${Math.round(most * 100) / 100} to ${Math.round(least * 100) / 100} (section 13, the rise timed from the ending's first frame)`);
+    }
+  }
+  if (!problems.length && judged < MIN_RISE_FRAMES) problems.push(`${label}: ${judged} frames of the rise timed from the ending's first frame, want at least ${MIN_RISE_FRAMES}`);
+  return { problems, judged };
+}
+
 // The ending's card held to the heard beat. The probe logs every frame of the scene `ending` with the heard time at prestep
 // and at poststep, between which the scene read its own (src/probe/api.ts endingLog). Once the card is up (the glimpse at
 // y 0), a frame whose two times fall in one beat of the bar must draw exactly cardShapes(beatOfBar) of that beat; a frame

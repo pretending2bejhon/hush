@@ -10,7 +10,7 @@ import * as ART from '../fixtures/reference/art.mjs';
 import { createFlashLimiter } from '../fixtures/reference/flash-limiter.mjs';
 import { REPO } from '../../tools/probe-lib.mjs';
 import { readWitness, loadRoomFiles } from '../../tools/replay.mjs';
-import { bakeProbe, CMD, composite, encodeShapes, endingDrawnProblems, endingTimingProblems, frameLogProblems, pixelProblems, replayRun, roomBakes, stepTimingProblems } from '../../tools/scene-check.mjs';
+import { bakeProbe, CMD, composite, encodeShapes, endingDrawnProblems, endingTimingProblems, frameLogProblems, pixelProblems, replayRun, riseTimingProblems, roomBakes, stepTimingProblems } from '../../tools/scene-check.mjs';
 import * as DRIVER from '../fixtures/reference/driver.mjs';
 
 const world = compileWorld(loadRoomFiles(path.join(REPO, 'rooms')));
@@ -248,5 +248,40 @@ describe('the frames\' time (review R5, MAJOR 2)', () => {
     expect(endingTimingProblems(cardFrames().map((f) => ({ ...f, y: 5 }))).problems.join(' | ')).toMatch(/ending: 0 card frames judged against the heard beat, want at least 30/);
     expect(endingTimingProblems([{ ...cardFrames()[0], graphics: [] }]).problems.join(' | ')).toMatch(/a card frame without one Graphics at depth 1/);
     expect(endingTimingProblems(null).problems.join(' | ')).toMatch(/0 card frames judged/);
+  });
+});
+
+// Review R6 (MINOR 3), carried as R7's MINOR 8: the rise timed from the ending's first frame. A synthetic ending at 60 fps,
+// each frame's bracket 2 ms wide with the scene's own read in its middle, the first read t0 (plus `late`, a scene that times
+// the rise from later than its first frame); `riseS` stretches or shrinks the rise.
+describe('riseTimingProblems: the glimpse timed from the ending\'s first frame', () => {
+  const ending = ({ late = 0, riseS = ART.RISE_S, n = 480 } = {}) => {
+    const out = [];
+    let t0 = null;
+    for (let i = 0; i < n; i++) {
+      const pre = 41.3 + i / 60;
+      const h = pre + 0.001;
+      if (t0 === null) t0 = h + late;
+      const u = Math.min(Math.max((h - t0) / riseS, 0), 1);
+      out.push({ pre, post: pre + 0.002, origin: 30, y: 720 * (1 - u * u * (3 - 2 * u)), graphics: [] });
+    }
+    return out;
+  };
+
+  it('passes the rise of section 13 timed from the first frame, and times the frames inside it', () => {
+    const r = riseTimingProblems(ending());
+    expect(r.problems).toEqual([]);
+    expect(r.judged).toBeGreaterThan(400);
+  });
+
+  it('fails a rise timed from the second frame or 50 ms late, and a rise over 3 bars', () => {
+    expect(riseTimingProblems(ending({ late: 1 / 60 })).problems.join(' | ')).toMatch(/ending: a frame heard \d+ ms into the ending draws the glimpse at y [\d.]+, want [\d.]+ to [\d.]+ \(section 13, the rise timed from the ending's first frame\)/);
+    expect(riseTimingProblems(ending({ late: 0.05 })).problems.length).toBeGreaterThan(0);
+    expect(riseTimingProblems(ending({ riseS: 12 * ART.BEAT_S })).problems.length).toBeGreaterThan(0);
+  });
+
+  it('wants the rise seen: too few frames, or none', () => {
+    expect(riseTimingProblems(ending({ n: 20 })).problems.join(' | ')).toMatch(/ending: 20 frames of the rise timed from the ending's first frame, want at least 30/);
+    expect(riseTimingProblems([]).problems.join(' | ')).toMatch(/no ending frame to time the rise from/);
   });
 });

@@ -43,7 +43,7 @@ import { compileWorld } from '../tests/fixtures/oracle/index.mjs';
 import { FIELDS } from '../tests/fixtures/oracle/sim.mjs';
 import { bootGame, emitJson, endingLayoutProblems, extraTexts, gauntletMapProblems, keyReplayProblems, launch, loadWitnesses, openPage, originViolations, parseOptions, playLayoutProblems, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
 import { loadRoomFiles } from './replay.mjs';
-import { endingDrawnProblems, endingTimingProblems, frameLogProblems, glimpseBake, pixelProblems, roomBakes, stepTimingProblems } from './scene-check.mjs';
+import { endingDrawnProblems, endingTimingProblems, frameLogProblems, glimpseBake, pixelProblems, riseTimingProblems, roomBakes, stepTimingProblems } from './scene-check.mjs';
 
 // Review R5 (MAJOR 2): the fewest play-scene frames the scene check must hold to the heard time over a playthrough.
 const MIN_TIMED_FRAMES = 300;
@@ -351,6 +351,12 @@ async function main(argv) {
       onPoll,
       frameLog: want.includes('scene'),
       onRoom: async (w, phase, info) => {
+        // Review R6 (MINOR 3): the ending log starts before the last room is played, so its first frame is the ending's
+        // own first frame, the one whose heard time times the rise. Frames before the ending are not logged.
+        if (phase === 'start') {
+          if (want.includes('scene') && w === witnesses[witnesses.length - 1]) await page.evaluate(() => window.__hush.endingLogStart());
+          return;
+        }
         if (phase !== 'end') return;
         objectCounts.push(await page.evaluate(() => window.__hush.textObjects()));
         if (want.includes('unlock') && info.ok && info.clearStep !== null && w.room >= 1 && w.room <= layerCount) {
@@ -374,8 +380,9 @@ async function main(argv) {
     });
     const last = rooms.length ? rooms[rooms.length - 1] : null;
     // Review R5 (MAJOR 2): every frame of the ending is logged with the heard time around it, so the card is judged on the
-    // beat heard while the scene drew it.
-    if (want.includes('scene')) await page.evaluate(() => window.__hush.endingLogStart());
+    // beat heard while the scene drew it. The log started with the last room (review R6, MINOR 3); with no witness it
+    // starts here.
+    if (want.includes('scene') && !witnesses.length) await page.evaluate(() => window.__hush.endingLogStart());
     const ending = await watchEnding(page, { playtest, layouts: scene.endingReads, glimpse });
     const endingLog = want.includes('scene') ? await page.evaluate(() => window.__hush.endingLogTake()) : null;
     if (want.includes('scene') && witnesses.length) {
@@ -404,14 +411,15 @@ async function main(argv) {
       if (unread.length) scene.problems.push(`no layout read in ${unread.join(', ')}`);
       const drawn = ending.started ? endingDrawnProblems(scene.endingReads) : { problems: [], rise: 0, card: 0 };
       const cardTimed = ending.started ? endingTimingProblems(endingLog) : { problems: [], judged: 0 };
+      const riseTimed = ending.started ? riseTimingProblems(endingLog) : { problems: [], judged: 0 };
       const endingSide = ending.started
-        ? [...endingLayoutProblems(scene.endingReads), ...drawn.problems, ...cardTimed.problems, ...pixelProblems(glimpse, ending.glimpsePixels, 'ending')]
+        ? [...endingLayoutProblems(scene.endingReads), ...drawn.problems, ...cardTimed.problems, ...riseTimed.problems, ...pixelProblems(glimpse, ending.glimpsePixels, 'ending')]
         : ['the ending never started, so its layout was not read'];
       // The rooms' first problems and the ending's, so that neither hides the other.
       const shown = [...scene.problems.slice(0, 3), ...endingSide.slice(0, 2)];
       checks.scene = {
         ok: scene.problems.length + endingSide.length === 0,
-        detail: shown.join('; ') || `${scene.sampled.size} rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, ${scene.pixels} bake pixels as their shapes; every frame of every run replayed, ${scene.frames} drawn command for command as the reference (${scene.held} while the limiter held a change, ${scene.rings} with a layer's ring); ${scene.timed} frames on the step the heard time gives (the farthest ${scene.worst} step(s) off); the glimpse risen to y 0 by the card, ${drawn.rise} reads of the ceiling and ${drawn.card} of the card on the beat as the reference, ${cardTimed.judged} card frames on the beat heard while drawn, ${glimpse.probe.length} glimpse pixels (${scene.endingReads.length} ending reads)`,
+        detail: shown.join('; ') || `${scene.sampled.size} rooms read half-way, every baked image and Graphics where section 10.6 puts it at the creature's camera, ${scene.pixels} bake pixels as their shapes; every frame of every run replayed, ${scene.frames} drawn command for command as the reference (${scene.held} while the limiter held a change, ${scene.rings} with a layer's ring); ${scene.timed} frames on the step the heard time gives (the farthest ${scene.worst} step(s) off); the glimpse risen to y 0 by the card, ${drawn.rise} reads of the ceiling and ${drawn.card} of the card on the beat as the reference, ${cardTimed.judged} card frames on the beat heard while drawn, ${riseTimed.judged} frames of the rise timed from the ending's first, ${glimpse.probe.length} glimpse pixels (${scene.endingReads.length} ending reads)`,
       };
     }
     if (want.includes('keys')) {
