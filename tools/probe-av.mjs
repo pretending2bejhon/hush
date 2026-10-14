@@ -26,6 +26,8 @@ import { compileTrack } from './strudel-node.mjs';
 // decay .035, high-passed at 2 kHz, area1's perc) peaks near 0.0067 RMS a frame; a muted master reads 0.
 export const SIGNAL_RMS = 0.002;
 export const SILENCE_PEAK = 0.0003;
+// X7's device-clock bound, HUSH-SPEC section 8.4 (review R7, MAJOR 2): tests/tools/ship-gate.test.mjs pins it, and the
+// control page's ?av=nostamps (a line without output timestamps, about 190 ms peak to peak) must fail on it alone.
 export const CLOCK_JITTER_BOUND_MS = 3;
 export const MIN_SECONDS = 60;
 const BAR = (60 / 140) * 4;

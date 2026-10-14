@@ -236,11 +236,16 @@ function jsonEvidence(top, folder, kind, want) {
 export const PERF_OK = (current) => (j) => j.kind === 'perf' && j.digest === current && j.headed === true && j.swiftshader === false
   && j.power === 'ac' && j.powerSaver === false && j.refreshHz === 60 && Array.isArray(j.heavyApps) && j.heavyApps.length === 0
   && j.meanFps >= 58 && j.p20 >= 0.99 && j.durationSec >= 60 && j.pass === true;
+// X7's device-clock bound (HUSH-SPEC section 8.4; review R7, MAJOR 2): once valid, the line's offset moves at most
+// this many ms peak to peak over the av probe's run. The gate holds the record to its own number, never to the bound
+// the record carries, and wants the probe to have judged with the same one.
+export const X7_CLOCK_BOUND_MS = 3;
 export const AV_OK = (current) => (j) => j.kind === 'av' && j.digest === current && j.headed === true && j.contextRunning === true
   && j.scheduledVoices >= j.expectedVoices && j.expectedVoices > 0 && j.voiceErrors === 0 && j.lateDropped === 0
   && j.masterSignalOk === true && j.masterSilenceOk === true && Array.isArray(j.layers) && j.layers.length >= 1
   && j.layers.every((l) => l.soloSignalOk === true && l.soloSilenceOk === true)
-  && j.clockJitterMs <= j.clockJitterBoundMs && j.durationSec >= 60 && j.pass === true;
+  && j.clockValid === true && typeof j.clockJitterMs === 'number' && j.clockJitterMs <= X7_CLOCK_BOUND_MS
+  && j.clockJitterBoundMs === X7_CLOCK_BOUND_MS && j.durationSec >= 60 && j.pass === true;
 export const LIVE_OK = (sha) => (j) => j.kind === 'live' && j.expectedSha === sha && j.status === 200 && j.buildMeta === sha
   && j.onOriginMain === true && j.consoleErrors === 0 && j.pageErrors === 0 && j.bootToCalibration === true && j.pass === true;
 

@@ -1,0 +1,45 @@
+HUSH-EVIDENCE v1
+id: R7-gate-mutants
+phase: amend
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ff75dfc2-15c7-4375-aa05-14cd9d649b27\scratchpad\mut\harness.mjs <repo> <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ff75dfc2-15c7-4375-aa05-14cd9d649b27\scratchpad\mut\gate <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\ff75dfc2-15c7-4375-aa05-14cd9d649b27\scratchpad\mut\gate.json
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T02:28:08-05:00
+time-end: 2026-10-14T02:39:11-05:00
+head: 953cff3f392c2e02103ad21a2a4bd49032825e17
+exit: 0
+--- output ---
+clean copy: ok: passes; Tests  19 passed (19) (tests/tools/ship-gate.test.mjs)
+clean copy: ok: passes; Tests  1 passed | 11 skipped (12) (tests/controls/av-probe.test.mjs -t "without output timestamps")
+mutant x11-max-901 (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+mutant x11-max-1200 (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+mutant x11-no-upper-check (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+mutant x11-min-599 (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+mutant x11-min-480 (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)
+mutant x11-min-edge-exclusive (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > passes a median of exactly 10:00 and of exactly 15:00 (review R7, MAJOR 1)
+mutant x11-max-edge-exclusive (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > passes a median of exactly 10:00 and of exactly 15:00 (review R7, MAJOR 1)
+mutant x11-latest-run (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > counts each friend's earliest first run by its time, wherever its row sits (review R7, MAJOR 1)
+mutant x11-first-row-in-file (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > counts each friend's earliest first run by its time, wherever its row sits (review R7, MAJOR 1)
+mutant x7-gate-bound-300 (tools/ship-gate.mjs): ok: caught (exit 1); Tests  3 failed | 16 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X7: the av record > holds the device clock to the spec's 3 ms, in the gate and in the probe
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X7: the av record > passes a fresh green record, and one exactly at the bound
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X7: the av record > refuses a clock over the bound, a record that carries a raised bound, an invalid clock and no reading
+mutant x7-gate-reads-record-bound (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X7: the av record > refuses a clock over the bound, a record that carries a raised bound, an invalid clock and no reading
+mutant x7-gate-no-valid-check (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X7: the av record > refuses a clock over the bound, a record that carries a raised bound, an invalid clock and no reading
+mutant x7-probe-bound-300-unit (tools/probe-av.mjs): ok: caught (exit 1); Tests  1 failed | 18 passed (19)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X7: the av record > holds the device clock to the spec's 3 ms, in the gate and in the probe
+mutant x7-probe-bound-300-browser (tools/probe-av.mjs): ok: caught (exit 1); Tests  1 failed | 11 skipped (12)
+  failed: tests/controls/av-probe.test.mjs > av probe (X7) > fails a clock line built without output timestamps, on the device-clock row alone (section 8.4: 3 ms)
+mutants: PASS (14 planted faults and the clean copy)
+--- end ---

@@ -3,7 +3,9 @@
 // with one later layer's gate disconnected while the earlier layers play, it must fail, each for its reason; and
 // (review R3, MINOR 4) with the master gain at 0.4, whose signal stays above the floors, on the mix check alone; and
 // (review R4, MAJOR 1) with every note handed over 0.1 s late, and with layers 1 and 2 through each other's gate, on
-// the start check alone.
+// the start check alone; and (review R7, MAJOR 2) one control for each row that had none: a clock line without
+// output timestamps on the device-clock row alone, a gate leaking while muted on both silence rows, no AudioContext
+// at the first key (refused, exit 2), voices played but not counted on the voices row alone, and notes dropped late.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -79,6 +81,48 @@ describe('av probe (X7)', () => {
     const r = av('av=layer-off');
     expect(r.out).toMatch(/av: layer 3 soloed: no signal/);
     expect(r.out).not.toMatch(/av: no master signal/);
+    expect(r.out).toMatch(/av: FAIL/);
+    expect(r.code).toBe(1);
+  }, 180000);
+
+  // Review R7, MAJOR 2: every row of X7 has a control of its own.
+  const otherRows = (except) => new RegExp(`av: (${['no master signal', 'no silence', 'layer \\d+ (soloed|muted)', 'scheduled \\d+ voices', '\\d+ voice errors', '\\d+ late-dropped',
+    'the analyser', 'the master', 'the speakers', 'the compressor', 'device clock', 'the device clock never', 'starts:', '\\d+ death'].filter((p) => !except.includes(p)).join('|')})`);
+
+  it('fails a clock line built without output timestamps, on the device-clock row alone (section 8.4: 3 ms)', () => {
+    const r = av('av=nostamps');
+    expect(r.out).toMatch(/av: device clock offset moved \d+(\.\d+)? ms peak to peak \(bound 3\)/);
+    expect(r.out).not.toMatch(otherRows(['device clock']));
+    expect(r.out).toMatch(/av: FAIL/);
+    expect(r.code).toBe(1);
+  }, 180000);
+
+  it('fails a gate that leaks while muted, on both silence rows', () => {
+    const r = av('av=leak');
+    expect(r.out).toMatch(/av: no silence with every layer muted/);
+    expect(r.out).toMatch(/av: layer \d+ muted alone: not silent/);
+    expect(r.out).not.toMatch(otherRows(['no silence', 'layer \\d+ (soloed|muted)']));
+    expect(r.out).toMatch(/av: FAIL/);
+    expect(r.code).toBe(1);
+  }, 180000);
+
+  it('refuses a page whose first key leaves no running AudioContext', () => {
+    const r = av('av=nostart');
+    expect(r.out).toMatch(/av: the page never booted to a running AudioContext/);
+    expect(r.code).toBe(2);
+  }, 180000);
+
+  it('fails voices played but not counted, on the voices row alone', () => {
+    const r = av('av=undercount');
+    expect(r.out).toMatch(/av: scheduled \d+ voices, the track has \d+ onsets in the time played/);
+    expect(r.out).not.toMatch(otherRows(['scheduled \\d+ voices']));
+    expect(r.out).toMatch(/av: FAIL/);
+    expect(r.code).toBe(1);
+  }, 180000);
+
+  it('fails notes the transport drops as late, on the late-drop row', () => {
+    const r = av('av=drop');
+    expect(r.out).toMatch(/av: \d+ late-dropped notes/);
     expect(r.out).toMatch(/av: FAIL/);
     expect(r.code).toBe(1);
   }, 180000);

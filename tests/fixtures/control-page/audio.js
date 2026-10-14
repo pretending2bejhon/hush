@@ -40,6 +40,18 @@ export function compileTrack(code) {
   return { names, layers };
 }
 
+// The context as the clock line sees it, without getOutputTimestamp (?av=nostamps): the line then follows
+// currentTime and the device's latency, which move by far more than X7's bound.
+function withoutStamps(ctx) {
+  return {
+    get state() { return ctx.state; },
+    get currentTime() { return ctx.currentTime; },
+    get outputLatency() { return ctx.outputLatency; },
+    get baseLatency() { return ctx.baseLatency; },
+    get sampleRate() { return ctx.sampleRate; },
+  };
+}
+
 export function createEngine(trackText, variant = '') {
   const status = { state: 'none', time: 0, origin: 0, scheduledVoices: 0, voiceErrors: 0, lateShifted: 0, lateDropped: 0, layerGains: [], gauntletBar: -1 };
   let ctx = null;
@@ -67,7 +79,8 @@ export function createEngine(trackText, variant = '') {
     }
     const orbit = variant === 'swap' && layer < 2 ? 2 - layer : layer + 1;
     S.superdough({ ...value, orbit }, t + (variant === 'late' ? 0.1 : 0), seconds, CPS, cycle).catch(() => { status.voiceErrors += 1; });
-    status.scheduledVoices += 1;
+    // ?av=undercount (review R7, MAJOR 2): layer 1's voices play but are not counted.
+    if (!(variant === 'undercount' && layer === 0)) status.scheduledVoices += 1;
   }
 
   function scheduleStep(step) {
@@ -81,7 +94,10 @@ export function createEngine(trackText, variant = '') {
         if (!hap.hasOnset()) continue;
         const onset = Number(hap.whole.begin);
         const length = Number(hap.whole.end) - onset;
-        play(i, hap.value, origin + (bar + onset - cycle) * BAR, length * BAR, onset);
+        // ?av=drop (review R7, MAJOR 2): layer 1's notes of each run's second bar reach play() 0.2 s late, so they are
+        // dropped and counted as the transport drops a note it gets too late.
+        const late = variant === 'drop' && i === 0 && bar === 1 ? 0.2 : 0;
+        play(i, hap.value, origin + (bar + onset - cycle) * BAR - late, length * BAR, onset);
       }
     });
   }
@@ -113,6 +129,8 @@ export function createEngine(trackText, variant = '') {
     // returns the first call's promise, as the product's engine does.
     start() {
       if (starting) return starting;
+      // ?av=nostart (review R7, MAJOR 2): the first key starts no AudioContext.
+      if (variant === 'nostart') { starting = Promise.resolve(); return starting; }
       ctx = new AudioContext({ latencyHint: 0.1 });
       const resumed = ctx.resume();
       S.setAudioContext(ctx);
@@ -141,7 +159,14 @@ export function createEngine(trackText, variant = '') {
         if (!(variant === 'layer-off' && i === track.layers.length - 2)) g.connect(compressor);
         return g;
       });
-      clock = createOutputClock(ctx);
+      // ?av=leak (review R7, MAJOR 2): a constant 0.05 summed into layer 1's gate gain, so that layer sounds while muted.
+      if (variant === 'leak') {
+        const leak = new ConstantSourceNode(ctx, { offset: 0.05 });
+        leak.connect(gates[0].gain);
+        leak.start();
+      }
+      // ?av=nostamps (review R7, MAJOR 2): the line is built over a view of the context without getOutputTimestamp.
+      clock = createOutputClock(variant === 'nostamps' ? withoutStamps(ctx) : ctx);
       window.setInterval(() => clock.sample(), 7);
       window.setInterval(tick, 25);
       const registered = (async () => {

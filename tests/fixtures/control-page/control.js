@@ -11,9 +11,12 @@
 //   ?fetch=<url>  one request to that URL (X10)                ?store=local|session|cookie|idb (X10)
 //   ?text         a Phaser Text object (D8)                    ?domtext a DOM text over the canvas (D16)
 //   ?novis        no suspension when the page is hidden (D4)
-//   ?av=master-off|synth-throw|layer-off|master-low|late|swap  the av probe's planted faults (X7; master-low, the mix of
-//                 section 8.4; late, every note handed over 0.1 s after its time, and swap, layers 1 and 2 through each
-//                 other's gate: review R4, MAJOR 1)
+//   ?av=master-off|synth-throw|layer-off|master-low|late|swap|nostamps|leak|nostart|undercount|drop  the av probe's
+//                 planted faults (X7; master-low, the mix of section 8.4; late, every note handed over 0.1 s after its
+//                 time, and swap, layers 1 and 2 through each other's gate: review R4, MAJOR 1; and review R7, MAJOR 2,
+//                 one for each row that had none: nostamps, the clock line built without output timestamps; leak, a
+//                 constant 0.05 summed into layer 1's gate gain; nostart, no AudioContext at the first key; undercount,
+//                 layer 1's voices played but not counted; drop, layer 1's notes of each run's second bar dropped late)
 //   ?unlock=late|early|none  the playthrough's unlock check (X7's clear-time half): a cleared room's layer
 //                 returns a bar late, a bar early, or never
 //   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow|first|clicklate|ringlate|filllate|frametime

@@ -1,11 +1,14 @@
 // PF-CONTROLS for tools/ship-gate.mjs (D18, X11): a stale PASS is refused three ways, a missing gate
 // line, a playtest on an older rc and a JHON-SHIP for an older rc are refused, one friend playing three
-// times counts once, the digest survives record commits, and a dirty tree is not judged.
+// times counts once, the digest survives record commits, and a dirty tree is not judged. Review R7: X11's
+// median window passes 10:00 and 15:00 and refuses 9:59 and 15:01, a friend's earliest first run counts by
+// its time (MAJOR 1), and X7's av record is held to the spec's 3 ms clock bound, never its own (MAJOR 2).
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { commit, git, makeRepo, put, tool } from './fixture-repo.mjs';
-import { x3Seed } from '../../tools/ship-gate.mjs';
+import { CLOCK_JITTER_BOUND_MS } from '../../tools/probe-av.mjs';
+import { AV_OK, X7_CLOCK_BOUND_MS, x3Seed } from '../../tools/ship-gate.mjs';
 
 const T = '2026-11-02T20:00:00-05:00';
 const gate = (dir, args) => tool('ship-gate.mjs', args, { cwd: dir });
@@ -106,6 +109,35 @@ describe('ship-gate.mjs verdicts', () => {
   });
 });
 
+// Review R7, MAJOR 2: X7's av record is held to the spec's clock bound (section 8.4), not to the one it carries.
+describe('ship-gate.mjs X7: the av record', () => {
+  const D = 'd'.repeat(64);
+  const good = {
+    kind: 'av', digest: D, headed: true, contextRunning: true, scheduledVoices: 2173, expectedVoices: 2151, voiceErrors: 0, lateDropped: 0,
+    masterSignalOk: true, masterSilenceOk: true, layers: [{ soloSignalOk: true, soloSilenceOk: true }],
+    clockValid: true, clockJitterMs: 0.157, clockJitterBoundMs: 3, durationSec: 60.4, pass: true,
+  };
+
+  it('holds the device clock to the spec\'s 3 ms, in the gate and in the probe', () => {
+    expect(X7_CLOCK_BOUND_MS).toBe(3);
+    expect(CLOCK_JITTER_BOUND_MS).toBe(3);
+  });
+
+  it('passes a fresh green record, and one exactly at the bound', () => {
+    expect(AV_OK(D)(good)).toBe(true);
+    expect(AV_OK(D)({ ...good, clockJitterMs: 3 })).toBe(true);
+  });
+
+  it('refuses a clock over the bound, a record that carries a raised bound, an invalid clock and no reading', () => {
+    expect(AV_OK(D)({ ...good, clockJitterMs: 3.001 })).toBe(false);
+    expect(AV_OK(D)({ ...good, clockJitterMs: 175.4, clockJitterBoundMs: 300 })).toBe(false);
+    expect(AV_OK(D)({ ...good, clockJitterBoundMs: 300 })).toBe(false);
+    expect(AV_OK(D)({ ...good, clockValid: false })).toBe(false);
+    expect(AV_OK(D)({ ...good, clockJitterMs: null })).toBe(false);
+    expect(AV_OK('e'.repeat(64))(good)).toBe(false);
+  });
+});
+
 function playRows(lines) {
   return `# PLAYTESTS\n\n${lines.join('\n')}\n`;
 }
@@ -146,6 +178,43 @@ describe('ship-gate.mjs X11 and --playtests', () => {
     expect(r.out).toMatch(/median first run 7:10 is outside/);
     expect(r.out).toMatch(/no Firefox smoke run/);
     expect(r.code).toBe(1);
+  });
+
+  // Review R7, MAJOR 1: the window's both edges, each side of each, and the earliest first run by time.
+  const owner = [row(8, 'JHON', 1, '9:00', 'no'), row(9, 'JHON-FIREFOX', 1, '3:00', 'no')];
+  const medianOf = (dir, mid) => {
+    put(dir, 'build/PLAYTESTS.md', playRows([row(1, 'P1', 1, '5:00', 'yes'), row(2, 'P2', 1, mid, 'yes'), row(3, 'P3', 1, '20:00', 'yes'), ...owner]));
+    return gate(dir, ['--playtests', 'rc1']);
+  };
+
+  it('passes a median of exactly 10:00 and of exactly 15:00 (review R7, MAJOR 1)', () => {
+    const { dir } = greenRepo();
+    for (const mid of ['10:00', '15:00']) {
+      const r = medianOf(dir, mid);
+      expect(r.out).toMatch(new RegExp(`playtests: PASS rc1: P1, P2, P3, median ${mid}`));
+      expect(r.code).toBe(0);
+    }
+  });
+
+  it('refuses a median of 9:59 and of 15:01, one second outside each edge (review R7, MAJOR 1)', () => {
+    const { dir } = greenRepo();
+    for (const mid of ['9:59', '15:01']) {
+      const r = medianOf(dir, mid);
+      expect(r.out).toMatch(new RegExp(`playtests: median first run ${mid} is outside 10:00 to 15:00`));
+      expect(r.out).toMatch(/playtests: FAIL rc1/);
+      expect(r.code).toBe(1);
+    }
+  });
+
+  it('counts each friend\'s earliest first run by its time, wherever its row sits (review R7, MAJOR 1)', () => {
+    const { dir } = greenRepo();
+    const at = (k, who, time, mmss) => row(k, who, 1, mmss, 'yes').replace(T, time);
+    // P1's later run (16:00) comes first in the file; the earlier one (11:00) gives a median of 11:00. The latest
+    // run, or the first row, would give 16:00, outside the window.
+    put(dir, 'build/PLAYTESTS.md', playRows([at(1, 'P1', '2026-11-03T20:00:00-05:00', '16:00'), at(2, 'P2', T, '11:00'), at(3, 'P3', T, '16:00'), at(4, 'P1', '2026-11-01T20:00:00-05:00', '11:00'), ...owner]));
+    const r = gate(dir, ['--playtests', 'rc1']);
+    expect(r.out).toMatch(/playtests: PASS rc1: P1, P2, P3, median 11:00/);
+    expect(r.code).toBe(0);
   });
 
   it('X11 refuses a missing gate line, and a JHON-SHIP for an rc that is not the newest', () => {
