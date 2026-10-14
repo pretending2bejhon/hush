@@ -1,0 +1,95 @@
+HUSH-EVIDENCE v1
+id: A2-visitor-page
+phase: audit
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\0b3db865-9017-4881-a884-01c5644467cd\scratchpad\audit2\visitor-page.mjs <repo>
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T14:33:12-05:00
+time-end: 2026-10-14T14:33:48-05:00
+head: ddc6665fb78877c861086e6c20b5dffb42895534
+exit: 0
+--- output ---
+{
+  "audioContextsAtBoot": 0,
+  "probeApiAtBoot": [],
+  "audioContextsAfterEscape": 0,
+  "audioContexts": [
+    {
+      "activation": true,
+      "inKeydown": true,
+      "key": "Space"
+    }
+  ],
+  "audioState": {
+    "canvas": true,
+    "canvasInGame": true
+  },
+  "body": {
+    "title": "The Hush",
+    "footer": [
+      {
+        "tag": "a",
+        "text": "Source (AGPL-3.0)",
+        "href": "https://github.com/pretending2bejhon/hush",
+        "hidden": false
+      },
+      {
+        "tag": "span",
+        "text": "Music engine: Strudel, AGPL-3.0-or-later",
+        "href": null,
+        "hidden": false
+      },
+      {
+        "tag": "output",
+        "text": "",
+        "href": null,
+        "hidden": true
+      }
+    ],
+    "gameText": "",
+    "bodyChildren": [
+      "div#game",
+      "footer"
+    ]
+  },
+  "calls": {
+    "fetch": 0,
+    "xhr": 0,
+    "beacon": 0,
+    "open": 0,
+    "midi": 0,
+    "media": 0,
+    "enumerate": 0
+  },
+  "storage": {
+    "cookies": 0,
+    "cookie": "",
+    "localStorage": 0,
+    "sessionStorage": 0,
+    "indexedDB": [],
+    "caches": 0,
+    "serviceWorkers": 0,
+    "opfs": 0,
+    "clean": true
+  },
+  "violations": [],
+  "requests": [
+    "<origin>/hush/",
+    "<origin>/hush/assets/index-Dqh8GbB8.js",
+    "blob:<origin>/9f2c78ff-2aad-4a85-ab02-db0059f37999"
+  ],
+  "consoleErrors": [],
+  "pageErrors": [],
+  "checks": {
+    "noAudioBeforeKey": true,
+    "oneAudioContextInKeydownWithActivation": true,
+    "onlyOwnOrigin": true,
+    "nothingStored": true,
+    "noNetworkOrDeviceCalls": true,
+    "noErrors": true,
+    "pageText": true,
+    "canvasInGame": true
+  }
+}
+visitor-page: PASS
+--- end ---

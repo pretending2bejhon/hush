@@ -1,0 +1,8 @@
+{
+  "mode": "dry-run",
+  "steps": [],
+  "checks": {},
+  "pushes": [],
+  "result": "refused",
+  "error": "the source tree is dirty (M build/evidence/audit/deploy/deploy.json, M build/evidence/audit/deploy/ship-gate.json)"
+}

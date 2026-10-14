@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: A2-telemetry
+phase: audit
+command: node -e "const fs=require('fs'),p=require('path'),cp=require('child_process');\nlet files=0;const hits=[],logjs=[];\nfunction walk(d){fs.readdirSync(d,{withFileTypes:true}).forEach(function(e){const f=p.join(d,e.name);if(e.isDirectory()){walk(f)}else if(e.isFile()){files++;if(e.name.toLowerCase()==='log.js')logjs.push(f.split(p.sep).join('/'));if(fs.readFileSync(f).toString('latin1').toLowerCase().includes('gryzor'))hits.push(f)}})}\n['node_modules','dist'].forEach(function(d){walk(d)});\nconsole.log('working copy: node_modules and dist, files read:',files);\nconsole.log('  gryzor hits:',hits.length?hits.join(', '):'none');\nconsole.log('  files named log.js:',logjs.length?logjs.join(', '):'none');\nconsole.log('root log.js exists:',fs.existsSync('log.js'));\nconst pkg=JSON.parse(fs.readFileSync('package.json','utf8'));\nconsole.log('package.json scripts naming log.js or gryzor:',Object.entries(pkg.scripts).filter(function(e){return /log\\.js|gryzor/i.test(e[1])}).length);\nconst g=function(a,i){return cp.execFileSync('git',a,{input:i,maxBuffer:2e9})};\nconst list=g(['rev-list','--all','--objects']).toString('utf8').split('\\n').filter(Boolean);\nconst shas=Array.from(new Set(list.map(function(l){return l.slice(0,40)})));\nconst names=list.map(function(l){return l.slice(41)}).filter(Boolean);\nconsole.log('history: objects',shas.length,'paths named log.js:',names.filter(function(n){return /(^|\\/)log\\.js$/i.test(n)}).length);\nconst buf=g(['cat-file','--batch'],shas.join('\\n')+'\\n');\nlet pos=0,n=0,gh=0;\nwhile(pos!==buf.length){const nl=buf.indexOf(10,pos);const h=buf.subarray(pos,nl).toString('utf8').split(' ');const size=Number(h[2]);const body=buf.subarray(nl+1,nl+1+size);n++;if(body.toString('latin1').toLowerCase().includes('gryzor')){gh++;console.log('  gryzor in',h[1],h[0])}pos=nl+1+size+1}\nconsole.log('history: commits, trees, blobs and tags read:',n,'holding gryzor:',gh);"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T14:17:57-05:00
+time-end: 2026-10-14T14:18:00-05:00
+head: ddc6665fb78877c861086e6c20b5dffb42895534
+exit: 0
+--- output ---
+working copy: node_modules and dist, files read: 8054
+  gryzor hits: none
+  files named log.js: none
+root log.js exists: false
+package.json scripts naming log.js or gryzor: 0
+history: objects 2109 paths named log.js: 0
+  gryzor in blob c9657b03bb124dc8ada5d231ac7eb9cd1fb9c80f
+  gryzor in blob 8e5cd8e1a6a09d25b29d54c17d1c8dadc64bd34c
+history: commits, trees, blobs and tags read: 2109 holding gryzor: 2
+--- end ---

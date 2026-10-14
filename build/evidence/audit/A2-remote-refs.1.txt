@@ -1,0 +1,15 @@
+HUSH-EVIDENCE v1
+id: A2-remote-refs
+phase: audit
+command: git -C <home>\AppData\Local\Temp\hush-audit2-remote.git for-each-ref "--format=%(objecttype) %(refname) %(objectname)"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T14:05:02-05:00
+time-end: 2026-10-14T14:05:02-05:00
+head: ddc6665fb78877c861086e6c20b5dffb42895534
+exit: 0
+--- output ---
+commit refs/heads/gh-pages 2318a3685fa53f5c37c61a229d32b4841c122062
+commit refs/heads/main ddc6665fb78877c861086e6c20b5dffb42895534
+tag refs/tags/hush-dryrun-ddc6665f fe6d18d860cfeb5467c6bc3309f7fd07c0acd123
+--- end ---

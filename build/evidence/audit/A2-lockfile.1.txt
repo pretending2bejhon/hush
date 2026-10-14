@@ -1,0 +1,17 @@
+HUSH-EVIDENCE v1
+id: A2-lockfile
+phase: audit
+command: node -e "const fs=require('fs');\nconst lock=JSON.parse(fs.readFileSync('package-lock.json','utf8'));\nconst pkg=JSON.parse(fs.readFileSync('package.json','utf8'));\nconsole.log('lockfileVersion:',lock.lockfileVersion);\nconst exact=/^[0-9]+\\.[0-9]+\\.[0-9]+$/;\nlet loose=0;\n['dependencies','devDependencies'].forEach(function(k){Object.entries(pkg[k]||{}).forEach(function(e){if(!exact.test(e[1])){loose++;console.log('NOT EXACT',k,e[0],e[1])}})});\nconsole.log('package.json ranges that are not exact versions:',loose);\nconst root=lock.packages[''];\nlet drift=0;\n['dependencies','devDependencies'].forEach(function(k){Object.entries(pkg[k]||{}).forEach(function(e){const r=(root[k]||{})[e[0]];const inst=(lock.packages['node_modules/'+e[0]]||{}).version;if(r!==e[1]||inst!==e[1]){drift++;console.log('DRIFT',e[0],e[1],r,inst)}})});\nconsole.log('direct deps whose lock root or locked version differs from package.json:',drift);\nlet n=0,noInt=0,offReg=0,scripts=[],prod=0;\nObject.entries(lock.packages).forEach(function(e){if(!e[0])return;n++;const p=e[1];if(p.link){console.log('LINK',e[0]);return}if(!p.dev)prod++;if(!p.integrity){noInt++;console.log('NO INTEGRITY',e[0])}if(!/^https:\\/\\/registry\\.npmjs\\.org\\//.test(p.resolved||'')){offReg++;console.log('NOT REGISTRY',e[0],p.resolved)}if(p.hasInstallScript)scripts.push(e[0]+(p.dev?' (dev)':' (prod)')+(p.optional?' (optional)':''))});\nconsole.log('locked packages:',n,'production:',prod,'without integrity:',noInt,'resolved off registry.npmjs.org:',offReg);\nconsole.log('hasInstallScript:',scripts.length?scripts.join(', '):'none');"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T14:07:08-05:00
+time-end: 2026-10-14T14:07:08-05:00
+head: ddc6665fb78877c861086e6c20b5dffb42895534
+exit: 0
+--- output ---
+lockfileVersion: 3
+package.json ranges that are not exact versions: 0
+direct deps whose lock root or locked version differs from package.json: 0
+locked packages: 227 production: 76 without integrity: 0 resolved off registry.npmjs.org: 0
+hasInstallScript: node_modules/fsevents (dev) (optional)
+--- end ---

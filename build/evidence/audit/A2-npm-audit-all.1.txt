@@ -1,0 +1,24 @@
+HUSH-EVIDENCE v1
+id: A2-npm-audit-all
+phase: audit
+command: npm audit
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T14:06:52-05:00
+time-end: 2026-10-14T14:06:53-05:00
+head: ddc6665fb78877c861086e6c20b5dffb42895534
+exit: 1
+--- output ---
+# npm audit report
+
+source-map-js  1.0.0 - 1.2.1
+Severity: high
+source-map-js allows event-loop denial of service through indexed source-map section offsets - https://github.com/advisories/GHSA-68fv-2mgg-jv7q
+fix available via `npm audit fix`
+node_modules/source-map-js
+
+1 high severity vulnerability
+
+To address all issues, run:
+  npm audit fix
+--- end ---

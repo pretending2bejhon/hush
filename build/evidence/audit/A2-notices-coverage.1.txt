@@ -1,0 +1,15 @@
+HUSH-EVIDENCE v1
+id: A2-notices-coverage
+phase: audit
+command: node -e "const fs=require('fs');\nconst lock=JSON.parse(fs.readFileSync('package-lock.json','utf8'));\nconst notes=fs.readFileSync('dist/THIRD-PARTY-NOTICES.txt','utf8');\nconst prod=[],devopt=[],opt=[];\nObject.entries(lock.packages).forEach(function(e){if(!e[0]||e[1].dev)return;const name=e[0].split('node_modules/').pop();if(e[1].devOptional)devopt.push(name);else{prod.push(name);if(e[1].optional)opt.push(name)}});\nconsole.log('lockfile entries not dev:',prod.length+devopt.length,'devOptional:',devopt.length,'runtime (neither):',prod.length,'of them optional:',opt.length);\nconst missing=prod.filter(function(n){return !notes.includes(n)});\nconsole.log('runtime packages the notices file does not name:',missing.length,missing.join(' '));\nconsole.log('devOptional names:',devopt.join(' '));"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T14:35:11-05:00
+time-end: 2026-10-14T14:35:11-05:00
+head: ddc6665fb78877c861086e6c20b5dffb42895534
+exit: 0
+--- output ---
+lockfile entries not dev: 76 devOptional: 0 runtime (neither): 76 of them optional: 3
+runtime packages the notices file does not name: 0 
+devOptional names: 
+--- end ---

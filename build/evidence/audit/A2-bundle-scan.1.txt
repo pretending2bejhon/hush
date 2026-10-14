@@ -1,0 +1,29 @@
+HUSH-EVIDENCE v1
+id: A2-bundle-scan
+phase: audit
+command: node -e "const fs=require('fs');\nconst js=fs.readdirSync('dist/assets').filter(function(f){return f.endsWith('.js')});\njs.forEach(function(f){const t=fs.readFileSync('dist/assets/'+f,'utf8');\nconst urls=Array.from(new Set((t.match(/(https?|wss?):\\/\\/[A-Za-z0-9.-]+/g)||[])));\nconsole.log(f,'bytes',t.length);console.log('  absolute origins named:',urls.length,urls.join(' '));\n['new WebSocket','EventSource(','RTCPeerConnection','serviceWorker.register','sendBeacon','navigator.requestMIDIAccess','getUserMedia','localStorage.setItem','indexedDB.open','document.cookie='].forEach(function(k){console.log('  '+k+':',t.split(k).length-1)});\n['samples(','loadModules','evalScope','import(','fetch('].forEach(function(k){console.log('  '+k+':',t.split(k).length-1)})});"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T14:18:17-05:00
+time-end: 2026-10-14T14:18:18-05:00
+head: ddc6665fb78877c861086e6c20b5dffb42895534
+exit: 0
+--- output ---
+index-Dqh8GbB8.js bytes 2097543
+  absolute origins named: 7 https://phaser.io http://www.w3.org https://dollchan.net https://raw.githubusercontent.com http://localhost https://shabda.ndre.gr http://github.com
+  new WebSocket: 0
+  EventSource(: 0
+  RTCPeerConnection: 0
+  serviceWorker.register: 0
+  sendBeacon: 0
+  navigator.requestMIDIAccess: 0
+  getUserMedia: 9
+  localStorage.setItem: 0
+  indexedDB.open: 0
+  document.cookie=: 0
+  samples(: 0
+  loadModules: 0
+  evalScope: 3
+  import(: 2
+  fetch(: 8
+--- end ---

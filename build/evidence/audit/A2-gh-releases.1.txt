@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: A2-gh-releases
+phase: audit
+command: gh release list --repo pretending2bejhon/hush
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T14:35:51-05:00
+time-end: 2026-10-14T14:35:51-05:00
+head: ddc6665fb78877c861086e6c20b5dffb42895534
+exit: 0
+--- output ---
+
+--- end ---

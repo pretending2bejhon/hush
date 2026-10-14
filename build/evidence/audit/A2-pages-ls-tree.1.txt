@@ -1,0 +1,16 @@
+HUSH-EVIDENCE v1
+id: A2-pages-ls-tree
+phase: audit
+command: git -C <home>\AppData\Local\Temp\hush-audit2-remote.git ls-tree -r -l refs/heads/gh-pages
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T14:19:13-05:00
+time-end: 2026-10-14T14:19:13-05:00
+head: ddc6665fb78877c861086e6c20b5dffb42895534
+exit: 0
+--- output ---
+100644 blob e69de29bb2d1d6434b8b29ae775ad8c2e48c5391       0	.nojekyll
+100644 blob 8457f198b11fe7d1d495bcd4836c84bdb5924a0f   68558	THIRD-PARTY-NOTICES.txt
+100644 blob ccca0403b3efd91f70efe10c986b935ee806ad21 2100963	assets/index-Dqh8GbB8.js
+100644 blob a2c511f6c62bdddf2bb2cc6129bd0b20d5887d64    1004	index.html
+--- end ---
