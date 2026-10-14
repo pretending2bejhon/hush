@@ -1,0 +1,54 @@
+HUSH-EVIDENCE v1
+id: AUDIT1-x10-controls
+phase: amend
+command: npx vitest run tests/controls/page-probes.test.mjs -t "fails \\?(store|ws|rtc|fetch)|passes every check on the clean control page"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-14T03:19:15-05:00
+time-end: 2026-10-14T03:22:11-05:00
+head: 216dbf0d2f664e27c5af1a972e8c2498444be84d
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/page-probes.test.mjs (32 tests | 1 failed | 22 skipped) 173929ms
+   ❯ playthrough probe (X5, X10, D3, D8, D16) (26)
+     × fails ?store=sw on its storage check 16641ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/page-probes.test.mjs > playthrough probe (X5, X10, D3, D8, D16) > fails ?store=sw on its storage check
+AssertionError: expected 'play: chrome headless: room 01-toy-a …' to match /storage: FAIL: .*"serviceWorkers":1/
+
+- Expected:
+/storage: FAIL: .*"serviceWorkers":1/
+
++ Received:
+"play: chrome headless: room 01-toy-a done
+play: chrome headless: room 02-toy-b done
+play: chrome headless: room 03-toy-c done
+play: chrome headless: room 04-toy-d done
+play: chrome headless: room 05-toy-e done
+play: chrome headless: ending seen, texts read 9924 ms into it
+play: chrome headless: storage: ok: nothing stored
+play: chrome headless: PASS (storage)
+"
+
+ ❯ tests/controls/page-probes.test.mjs:113:21
+    111|     it(`fails ?${query} on its ${check} check`, () => {
+    112|       const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--que…
+    113|       expect(r.out).toMatch(line);
+       |                     ^
+    114|       expect(r.code).toBe(1);
+    115|     }, T);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 9 passed | 22 skipped (32)
+   Start at  03:19:16
+   Duration  174.56s (tests 100%)
+
+--- end ---

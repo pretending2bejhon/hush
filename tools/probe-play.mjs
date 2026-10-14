@@ -41,7 +41,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { compileWorld } from '../tests/fixtures/oracle/index.mjs';
 import { FIELDS } from '../tests/fixtures/oracle/sim.mjs';
-import { bootGame, emitJson, endingLayoutProblems, extraTexts, gauntletMapProblems, keyReplayProblems, launch, loadWitnesses, openPage, originViolations, parseOptions, playLayoutProblems, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
+import { bootGame, emitJson, endingLayoutProblems, extraTexts, gauntletMapProblems, keyReplayProblems, launch, loadWitnesses, networkViolations, openPage, parseOptions, playLayoutProblems, playthrough, PLAYTEST_TEXT, REPO, requireDist, serveDir, storageReport, textProblems } from './probe-lib.mjs';
 import { loadRoomFiles } from './replay.mjs';
 import { endingDrawnProblems, endingTimingProblems, frameLogProblems, glimpseBake, pixelProblems, riseTimingProblems, roomBakes, stepTimingProblems } from './scene-check.mjs';
 
@@ -429,7 +429,7 @@ async function main(argv) {
     objectCounts.push(await page.evaluate(() => window.__hush.textObjects()));
     const objects = Math.max(...objectCounts);
     const storage = await storageReport(page, context);
-    const violations = originViolations(log.requests, [srv.origin]);
+    const violations = await networkViolations(page, log, [srv.origin]);
     const roomProblems = [
       ...missing.map((f) => `no witness for ${f}`),
       ...rooms.filter((r) => !r.ok || !r.checksumOk).map((r) => `${r.stem}: ${r.ok ? '' : `${r.why}; `}in page ${r.inPage}${r.checksumOk ? '' : ' (checksum differs from the witness)'}`),

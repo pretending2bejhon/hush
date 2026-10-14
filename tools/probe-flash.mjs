@@ -28,7 +28,7 @@ import path from 'node:path';
 import { centreSum, judgeCalibration, judgeTapped, TAP_A_MS, TAP_B_MS } from './calibration-check.mjs';
 import { createFlashAnalyzer, flashProblems } from './flash-analyzer.mjs';
 import { decodePng } from './png.mjs';
-import { bootGame, emitJson, headSha, launch, loadWitnesses, openGame, openPage, originViolations, parseOptions, playthrough, REPO, requireDist, serveDir, storageReport, verdictDigest } from './probe-lib.mjs';
+import { bootGame, emitJson, headSha, launch, loadWitnesses, networkViolations, openGame, openPage, parseOptions, playthrough, REPO, requireDist, serveDir, storageReport, verdictDigest } from './probe-lib.mjs';
 
 export const MAX_MEDIAN_FRAME_MS = 34;
 export const CALIBRATION_TIMEOUT_MS = 120000;
@@ -44,7 +44,7 @@ async function pageProblems(name, page, context, log, origin) {
   const problems = [];
   const errors = [...log.pageErrors, ...log.consoleErrors];
   if (errors.length) problems.push(`${name} page: ${errors.length} console or page error(s): ${errors.slice(0, 2).join(' | ')}`);
-  const away = originViolations(log.requests, [origin]);
+  const away = await networkViolations(page, log, [origin]);
   if (away.length) problems.push(`${name} page: requests to other origins: ${away.join(', ')}`);
   const storage = await storageReport(page, context);
   if (!storage.clean) problems.push(`${name} page: something was stored: ${JSON.stringify(storage)}`);

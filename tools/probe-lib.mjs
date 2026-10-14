@@ -100,11 +100,25 @@ export async function launch({ channel = 'chrome', headed = false, maximized = f
 // A page with every collector attached. viewport null keeps the window's own size (a maximized headed run).
 export async function openPage(browser, { viewport = { width: 1280, height: 720 } } = {}) {
   const context = await browser.newContext({ viewport, deviceScaleFactor: viewport ? 1 : undefined });
+  // Audit 1, MINOR 1: X10's network row sees past the page's own requests. An RTCPeerConnection, which reaches other
+  // hosts with no request the page logs, is refused and counted (networkViolations reads the count); a WebSocket's URL and
+  // a service worker's requests join the request log.
+  await context.addInitScript(() => {
+    const refuse = function () {
+      window.__probeRtc = (window.__probeRtc || 0) + 1;
+      throw new Error('probe: RTCPeerConnection is refused (X10)');
+    };
+    for (const k of ['RTCPeerConnection', 'webkitRTCPeerConnection']) {
+      if (k in window) Object.defineProperty(window, k, { value: refuse, configurable: true, writable: true });
+    }
+  });
   const page = await context.newPage();
   const log = { consoleErrors: [], pageErrors: [], requests: [], failed: [], badStatus: [] };
   page.on('console', (m) => { if (m.type() === 'error') log.consoleErrors.push(m.text().slice(0, 300)); });
   page.on('pageerror', (e) => log.pageErrors.push(String(e && e.message ? e.message : e).slice(0, 300)));
   page.on('request', (r) => log.requests.push(r.url()));
+  page.on('websocket', (ws) => log.requests.push(ws.url()));
+  context.on('request', (r) => { if (typeof r.serviceWorker === 'function' && r.serviceWorker()) log.requests.push(r.url()); });
   page.on('requestfailed', (r) => log.failed.push(`${r.url()} ${r.failure() ? r.failure().errorText : ''}`.slice(0, 300)));
   page.on('response', (r) => { if (r.status() >= 400) log.badStatus.push(`${r.status()} ${r.url()}`.slice(0, 300)); });
   return { context, page, log };
@@ -394,10 +408,31 @@ export async function storageReport(page, context) {
     try { dbs = (await window.indexedDB.databases()).map((d) => d.name); } catch (e) { dbs = [`<databases() failed: ${e}>`]; }
     let cacheKeys = [];
     try { cacheKeys = window.caches ? await window.caches.keys() : []; } catch { cacheKeys = []; }
-    return { cookie: document.cookie, localStorage: window.localStorage.length, sessionStorage: window.sessionStorage.length, indexedDB: dbs, caches: cacheKeys.length };
+    // Audit 1, MINOR 1: a service worker's registration and the origin-private file system are storage too. A read that
+    // fails counts as -1, which is not clean.
+    let serviceWorkers = 0;
+    try { serviceWorkers = navigator.serviceWorker ? (await navigator.serviceWorker.getRegistrations()).length : 0; } catch { serviceWorkers = -1; }
+    let opfs = 0;
+    try {
+      if (navigator.storage && navigator.storage.getDirectory) {
+        const root = await navigator.storage.getDirectory();
+        for await (const name of root.keys()) if (name !== undefined) opfs += 1;
+      }
+    } catch { opfs = -1; }
+    return { cookie: document.cookie, localStorage: window.localStorage.length, sessionStorage: window.sessionStorage.length, indexedDB: dbs, caches: cacheKeys.length, serviceWorkers, opfs };
   });
-  const clean = cookies === 0 && inPage.cookie === '' && inPage.localStorage === 0 && inPage.sessionStorage === 0 && inPage.indexedDB.length === 0 && inPage.caches === 0;
+  const clean = cookies === 0 && inPage.cookie === '' && inPage.localStorage === 0 && inPage.sessionStorage === 0 && inPage.indexedDB.length === 0 && inPage.caches === 0
+    && inPage.serviceWorkers === 0 && inPage.opfs === 0;
   return { cookies, ...inPage, clean };
+}
+
+// X10's network row (audit 1, MINOR 1): the origins the page reached besides its own, and every RTCPeerConnection it
+// tried to open (refused by openPage's init script).
+export async function networkViolations(page, log, allowed) {
+  const out = originViolations(log.requests, allowed);
+  const rtc = await page.evaluate(() => window.__probeRtc || 0).catch(() => 0);
+  if (rtc) out.push(`${rtc} RTCPeerConnection attempt(s)`);
+  return out;
 }
 
 // Requests to any origin but the page's own (data: and blob: URLs are the page's own).

@@ -8,7 +8,9 @@
 //   ?strobe=multi six 80x80 squares at 4 Hz, 38,400 px         ?strobe=below 190x128 at 4 Hz, 24,320 px
 //   ?strobe=above 210x128 at 4 Hz, 26,880 px                   ?strobe=slow  full-field white at 2 Hz
 //   ?scroll=<hex> a row of spikes in that colour scrolling at run speed (the art check of X6)
-//   ?fetch=<url>  one request to that URL (X10)                ?store=local|session|cookie|idb (X10)
+//   ?fetch=<url>  one request to that URL (X10)                ?store=local|session|cookie|idb|sw|opfs (X10; sw and
+//                 opfs, a service worker and the origin-private file system: audit 1, MINOR 1)
+//   ?ws=<url>     a WebSocket to that URL (X10)                ?rtc    one RTCPeerConnection (X10; audit 1, MINOR 1)
 //   ?text         a Phaser Text object (D8)                    ?domtext a DOM text over the canvas (D16)
 //   ?novis        no suspension when the page is hidden (D4)
 //   ?center=none  the canvas left uncentred in #game (smoke's layout row; review R7, MINOR 4)
@@ -46,6 +48,8 @@ import { compileWorld, createSim } from '../toy-sim/index.mjs';
 import { createEngine } from './audio.js';
 import { audibleSec } from './clock.js';
 import trackText from './control.strudel?raw';
+// Emitted as a file, never inlined: a service worker cannot be registered from a data URL (?store=sw; audit 1, MINOR 1).
+import swUrl from './sw.js?url&no-inline';
 import roomA from './rooms/01-toy-a.txt?raw';
 import roomB from './rooms/02-toy-b.txt?raw';
 import roomC from './rooms/03-toy-c.txt?raw';
@@ -383,6 +387,16 @@ function planted() {
   if (store === 'session') window.sessionStorage.setItem('planted', '1');
   if (store === 'cookie') document.cookie = 'planted=1; path=/';
   if (store === 'idb') window.indexedDB.open('planted', 1);
+  // Audit 1, MINOR 1: what X10's rows could not see before. A service worker registered from an emitted asset, a file in
+  // the origin-private file system, a WebSocket and an RTCPeerConnection (which the probe refuses and counts).
+  if (store === 'sw' && navigator.serviceWorker) navigator.serviceWorker.register(swUrl).catch(() => {});
+  if (store === 'opfs' && navigator.storage) navigator.storage.getDirectory().then((d) => d.getFileHandle('planted', { create: true })).catch(() => {});
+  if (params.has('ws')) {
+    try { new WebSocket(params.get('ws')); } catch { /* a malformed URL plants nothing */ }
+  }
+  if (params.has('rtc')) {
+    try { new RTCPeerConnection(); } catch { /* the probe refuses it */ }
+  }
   if (params.has('domtext')) {
     const div = document.createElement('div');
     div.textContent = 'planted';

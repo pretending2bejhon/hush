@@ -99,6 +99,11 @@ describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
     ['store=session', 'storage', /storage: FAIL: .*"sessionStorage":1/],
     ['store=cookie', 'storage', /storage: FAIL: .*"cookies":1/],
     ['store=idb', 'storage', /storage: FAIL: .*"indexedDB":\["planted"\]/],
+    // Audit 1, MINOR 1: a service worker, the origin-private file system, a WebSocket and an RTCPeerConnection.
+    ['store=sw', 'storage', /storage: FAIL: .*"serviceWorkers":1/],
+    ['store=opfs', 'storage', /storage: FAIL: .*"opfs":1/],
+    ['ws=ws://127.0.0.2:9/x', 'network', /network: FAIL: other origins: ws:\/\/127\.0\.0\.2:9/],
+    ['rtc', 'network', /network: FAIL: other origins: 1 RTCPeerConnection attempt\(s\)/],
     ['text', 'text', /text: FAIL: text objects 1/],
     ['domtext', 'text', /text: FAIL: text over the canvas/],
   ];
