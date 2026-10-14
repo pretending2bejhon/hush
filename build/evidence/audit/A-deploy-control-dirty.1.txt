@@ -1,0 +1,40 @@
+HUSH-EVIDENCE v1
+id: A-deploy-control-dirty
+phase: audit
+command: npx vitest run tests/controls/deploy.test.mjs -t "refuses a modified tracked file"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:58:28-05:00
+time-end: 2026-10-13T21:58:29-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/deploy.test.mjs (7 tests | 1 failed | 6 skipped) 576ms
+   ❯ deploy.mjs --dry-run (5)
+     × refuses a modified tracked file and pushes nothing 575ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/deploy.test.mjs > deploy.mjs --dry-run > refuses a modified tracked file and pushes nothing
+Error: Command failed: C:\Program Files\nodejs\node.exe <home>\AppData\Local\Temp\hush-copy-afJlSL\tools\spec-content.mjs --extract 01-wake <home>\AppData\Local\Temp\hush-copy-afJlSL\rooms\01-wake.txt
+ ❯ makeControlCopy tests/controls/control-copy.mjs:41:5
+     39|   for (const name of CONTENT) {
+     40|     const out = name === '11-gauntlet' ? 'rooms/11-gauntlet.txt' : `ro…
+     41|     execFileSync(process.execPath, [path.join(dir, 'tools', 'spec-cont…
+       |     ^
+     42|   }
+     43|   execFileSync(process.execPath, [path.join(dir, 'tools', 'spec-conten…
+ ❯ tests/controls/deploy.test.mjs:65:27
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 6 skipped (7)
+   Start at  21:58:29
+   Duration  748ms (tests 92%, transform 6%, import 2%, worker 1%)
+
+--- end ---

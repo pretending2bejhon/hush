@@ -1,0 +1,30 @@
+HUSH-EVIDENCE v1
+id: A-supply-extra
+phase: audit
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/9153f9a0-4938-429f-86d5-0c93ba3e5e95/scratchpad/audit/supply-extra.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:43:02-05:00
+time-end: 2026-10-13T21:43:05-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+package.json dependencies: 4 (@strudel/core@1.2.6, @strudel/web@1.3.0, phaser@4.2.1, superdough@1.3.0)
+package.json devDependencies: 7 (@playwright/test@1.63.0, @types/node@24.19.0, eslint@10.11.0, typescript@6.0.3, typescript-eslint@8.70.1, vite@8.3.1, vitest@5.0.2)
+package.json optionalDependencies: 0
+package.json peerDependencies: 0
+package.json bundleDependencies: 0
+package.json overrides: 0
+package.json scripts: 25, lifecycle hooks: 0
+package.json license: AGPL-3.0-or-later; private: true; engines.node: 24.18.0
+lockfileVersion: 3; root name hush
+lockfile packages: 227 (76 prod, 151 dev, 30 optional, 0 links)
+lockfile resolved hosts: https://registry.npmjs.org 227
+lockfile integrity: sha512 227
+lockfile hasInstallScript: node_modules/fsevents@2.3.3 (dev) (optional) os darwin
+node_modules: 202 installed packages checked, 0 version mismatches, 0 missing, 0 extraneous
+installed lifecycle scripts (preinstall, install, postinstall, prepare): node_modules/@eslint-community/eslint-utils/node_modules/eslint-visitor-keys@3.4.3 (prepare) NOT flagged in the lockfile; node_modules/@humanfs/core@0.19.2 (prepare) NOT flagged in the lockfile; node_modules/@humanfs/node@0.16.8 (prepare) NOT flagged in the lockfile; node_modules/@humanfs/types@0.15.0 (prepare) NOT flagged in the lockfile; node_modules/@humanwhocodes/module-importer@1.0.1 (prepare) NOT flagged in the lockfile; node_modules/@humanwhocodes/retry@0.4.3 (prepare) NOT flagged in the lockfile; node_modules/acorn@8.18.0 (prepare) NOT flagged in the lockfile; node_modules/balanced-match@4.0.4 (prepare) NOT flagged in the lockfile; node_modules/brace-expansion@5.0.12 (prepare) NOT flagged in the lockfile; node_modules/hashery@1.5.1 (prepare) NOT flagged in the lockfile; node_modules/hookified@1.15.1 (prepare) NOT flagged in the lockfile; node_modules/lightningcss@1.33.0 (prepare) NOT flagged in the lockfile; node_modules/minimatch@10.2.6 (prepare) NOT flagged in the lockfile; node_modules/tinyexec@1.3.1 (prepare) NOT flagged in the lockfile; node_modules/ts-api-utils@2.5.0 (prepare) NOT flagged in the lockfile
+installed binding.gyp: none
+telemetry search: 8045 node_modules files and 2 dist files read for gryzor; root log.js absent; hits 0
+supply-extra: clean
+--- end ---

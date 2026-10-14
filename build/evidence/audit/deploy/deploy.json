@@ -1,0 +1,44 @@
+{
+  "mode": "dry-run",
+  "steps": [
+    "dry-run of bbe7208cbf92 as hush-dryrun-bbe7208c, main at bbe7208cbf92",
+    "release clone at bbe7208cbf92, identity pretending2bejhon",
+    "npm ci and build in the clone",
+    "checks: content green, protect green, X1-X10 recorded",
+    "gh-pages commit 7515a368ed96 (first publication)",
+    "check-public --history clean over main, the tag and gh-pages",
+    "pushed main",
+    "pushed tag",
+    "pushed gh-pages"
+  ],
+  "checks": {
+    "content": {
+      "ok": true,
+      "detail": "music/area1.strudel: ok | spec-content: tree clean, 12 file(s)"
+    },
+    "protect": {
+      "ok": true,
+      "detail": "protect: clean"
+    },
+    "gate": {
+      "ok": true,
+      "detail": "X1: green | npm run smoke exit 0 | X2: green | npm test exit 0 | X3: green | node <home>\\AppData\\Local\\Temp\\hush-release-raFlkp\\release\\tools\\replay.mjs --all --jitter --seed 1814134273 exit 0 | X4: green | build/evidence/verify/perf-560524fa19f920b5519167152fa451ebbcdbf065.json | X5: green | npm run probe:console exit 0 | X6: green | npm run probe:flash exit 0 | X7: green | build/evidence/verify/av-560524fa19f920b5519167152fa451ebbcdbf065.json | X8: green | npm run test:calibration exit 0 | X9: green | node <home>\\AppData\\Local\\Temp\\hush-release-raFlkp\\release\\tools\\check-public.mjs --history exit 0 | X10: green | npm run probe:supply exit 0 | ship-gate: GREEN (digest 6c217e01ef41)"
+    },
+    "history": {
+      "ok": true,
+      "detail": "check-public history (3 refs, 99 commits, 511 trees, 1082 blobs): clean (owner denylist, 4 names + 1 machine names)"
+    }
+  },
+  "pushes": [
+    "main",
+    "tag",
+    "gh-pages"
+  ],
+  "target": {
+    "tag": "hush-dryrun-bbe7208c",
+    "commit": "bbe7208cbf92131618d1296286078a9b897b0122",
+    "main": "bbe7208cbf92131618d1296286078a9b897b0122",
+    "ownTag": false
+  },
+  "result": "published"
+}

@@ -1,0 +1,14 @@
+HUSH-EVIDENCE v1
+id: A-branches
+phase: audit
+command: git branch -a -vv
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:39:51-05:00
+time-end: 2026-10-13T21:39:51-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+* main                bbe7208 [origin/main: ahead 59] hush-verify: 560524fa19f920b5519167152fa451ebbcdbf065, X1 to X10 green on fresh evidence at digest 6c217e01 with X4 and X7 on the real GPU and audio, X11 and X12 open post-preview (Opus standing in for Fable)
+  remotes/origin/main f477989 hush-spec: reopen CAL2 RN1 RN2 RN3 RN4 END1 (Opus standing in for Fable)
+--- end ---

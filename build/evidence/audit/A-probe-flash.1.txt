@@ -1,0 +1,30 @@
+HUSH-EVIDENCE v1
+id: A-probe-flash
+phase: audit
+command: npm run probe:flash
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:49:14-05:00
+time-end: 2026-10-13T21:53:41-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+
+> hush@0.0.0 probe:flash
+> vite build && node tools/probe-flash.mjs --calibration
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.00 kB │ gzip:   0.66 kB
+dist/assets/index-Dqh8GbB8.js  2,100.96 kB │ gzip: 596.28 kB
+
+[32m✓ built in 670ms[39m
+flash: calibration up 43.5 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2609 frames, 2170 analyser samples); click starts 48 of 48 on their marks; frames 2561 timed (52 filled, 307 with the ring)
+flash: tapped calibration up 22.1 s: values 5.6 34.5 (the taps' own 5.6 34.5; taps 21 to 59 ms after each click and 25 to 44 ms after each ring, the count-in's too, and Escape 3 times an attempt; marks 5.5 34.5); click starts 24 of 24 on their marks; frames 1284 timed (26 filled, 155 with the ring)
+flash: retried calibration up 43.5 s: values 6.8 34.5 (the taps' own 6.8 34.5; A1 and B1 untapped, A2 and B2 tapped as above; marks 5.5 34.5); click starts 48 of 48 on their marks; frames 2564 timed (52 filled, 306 with the ring)
+flash: 11772 frames over 196.5 s, median 15.73 ms; general max 9609 px, red max 0 px (limit 25600)
+flash: PASS
+--- end ---

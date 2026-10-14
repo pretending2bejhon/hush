@@ -1,0 +1,16 @@
+HUSH-EVIDENCE v1
+id: A-deploy-log
+phase: audit
+command: git log --format=%h%x20%ad%x20%s --date=iso -- tools/deploy.mjs tests/controls/deploy.test.mjs tests/controls/control-copy.mjs tools/ship-gate.mjs tools/check-public.mjs tools/public-patterns.mjs tools/identity.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:57:38-05:00
+time-end: 2026-10-13T21:57:38-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+020b7a7 2026-10-12 14:50:28 -0500 hush-spec: amend GAME1 AU3 CAL2 and the verifiers, review R1 clear-time unlock check, tapped calibration, pinned thresholds and the digest seed (Opus standing in for Fable)
+dfdd44c 2026-10-11 22:40:55 -0500 hush-spec: control page, probe API, browser probes, deploy, standing and every PF-CONTROLS control (Opus standing in for Fable)
+b1b1d7a 2026-10-11 19:21:34 -0500 hush-spec: ship gate with digest, playtest function and verdict controls (Opus standing in for Fable)
+198c7ba 2026-10-11 15:12:31 -0500 hush-spec: scaffold, ledgers, check-public and evidence (Opus standing in for Fable)
+--- end ---

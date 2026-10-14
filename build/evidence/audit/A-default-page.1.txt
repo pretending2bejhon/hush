@@ -1,0 +1,23 @@
+HUSH-EVIDENCE v1
+id: A-default-page
+phase: audit
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/9153f9a0-4938-429f-86d5-0c93ba3e5e95/scratchpad/audit/default-page.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:55:11-05:00
+time-end: 2026-10-13T21:56:18-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+boot: title "The Hush"; canvas {"x":30,"y":0,"w":1220,"h":686}; link {"text":"Source (AGPL-3.0)","href":"https://github.com/pretending2bejhon/hush","resolved":"https://github.com/pretending2bejhon/hush","inFooter":true}; shown texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"]; output#playtest {"hidden":true,"text":""}; __hush undefined; build meta bbe7208cbf92
+escape: AudioContext not created
+first key: AudioContext running; order keydown:Escape@2933, keydown:KeyQ@3945, AudioContext:visible@3945
+in play: shown texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"]; covered points 0
+api calls after load (fetch, beacon, sockets, storage, device, windows): none
+storage: cookies 0, document.cookie "", localStorage 0, sessionStorage 0, IndexedDB [], Cache Storage [], service workers [], OPFS [], estimate usage 0, window.name ""
+requests: 3 (Playwright context), 8 (CDP); origins the page origin, blob:, data:
+requests list: document /hush/ | script /hush/assets/index-Dqh8GbB8.js | script blob:/d69d1037-f0cf-49e6-ad1a-a9a17eda4fe6
+websockets 0; workers ["blob:http://127.0.0.1:51007/d69d1037-f0c"]; service workers []; console or page errors 0
+?playtest boot: shown texts ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"]; output#playtest {"hidden":true,"text":""}; __hush undefined
+default-page: PASS
+--- end ---

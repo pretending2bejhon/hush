@@ -1,0 +1,55 @@
+{
+  "digest": "6c217e01ef418ee3d2664d310528567f0c56050f1b770e7d216da73486e414ac",
+  "rows": [
+    {
+      "id": "X1",
+      "ok": true,
+      "detail": "npm run smoke exit 0"
+    },
+    {
+      "id": "X2",
+      "ok": true,
+      "detail": "npm test exit 0"
+    },
+    {
+      "id": "X3",
+      "ok": true,
+      "detail": "node <home>\\AppData\\Local\\Temp\\hush-release-raFlkp\\release\\tools\\replay.mjs --all --jitter --seed 1814134273 exit 0"
+    },
+    {
+      "id": "X4",
+      "ok": true,
+      "detail": "build/evidence/verify/perf-560524fa19f920b5519167152fa451ebbcdbf065.json"
+    },
+    {
+      "id": "X5",
+      "ok": true,
+      "detail": "npm run probe:console exit 0"
+    },
+    {
+      "id": "X6",
+      "ok": true,
+      "detail": "npm run probe:flash exit 0"
+    },
+    {
+      "id": "X7",
+      "ok": true,
+      "detail": "build/evidence/verify/av-560524fa19f920b5519167152fa451ebbcdbf065.json"
+    },
+    {
+      "id": "X8",
+      "ok": true,
+      "detail": "npm run test:calibration exit 0"
+    },
+    {
+      "id": "X9",
+      "ok": true,
+      "detail": "node <home>\\AppData\\Local\\Temp\\hush-release-raFlkp\\release\\tools\\check-public.mjs --history exit 0"
+    },
+    {
+      "id": "X10",
+      "ok": true,
+      "detail": "npm run probe:supply exit 0"
+    }
+  ]
+}

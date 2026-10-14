@@ -1,0 +1,17 @@
+HUSH-EVIDENCE v1
+id: A-check-public-history
+phase: audit
+command: npm run check:public -- --history
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:41:47-05:00
+time-end: 2026-10-13T21:41:48-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+
+> hush@0.0.0 check:public
+> node tools/check-public.mjs --history
+
+check-public history (3 refs, 98 commits, 509 trees, 1079 blobs): clean (owner denylist, 4 names + 1 machine names)
+--- end ---

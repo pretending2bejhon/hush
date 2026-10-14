@@ -1,0 +1,166 @@
+HUSH-EVIDENCE v1
+id: A-npm-ls-prod
+phase: audit
+command: npm ls --omit=dev --all
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:43:26-05:00
+time-end: 2026-10-13T21:43:27-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+hush@0.0.0 <repo>
++-- @strudel/core@1.2.6
+| +-- @kabelsalat/web@0.4.1
+| | +-- @kabelsalat/core@0.4.0
+| | `-- @kabelsalat/lib@0.4.1 deduped
+| `-- fraction.js@5.3.4
++-- @strudel/web@1.3.0
+| +-- @strudel/core@1.2.6 deduped
+| +-- @strudel/mini@1.2.6
+| | `-- @strudel/core@1.2.6 deduped
+| +-- @strudel/tonal@1.2.6
+| | +-- @strudel/core@1.2.6 deduped
+| | +-- @tonaljs/tonal@4.10.0
+| | | +-- @tonaljs/abc-notation@4.9.1
+| | | | +-- @tonaljs/pitch-distance@5.0.5
+| | | | | +-- @tonaljs/pitch-interval@6.1.0
+| | | | | | `-- @tonaljs/pitch@5.0.2 deduped
+| | | | | +-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | | `-- @tonaljs/pitch@5.0.2
+| | | | `-- @tonaljs/pitch-note@6.1.0
+| | | |   `-- @tonaljs/pitch@5.0.2
+| | | +-- @tonaljs/array@4.8.4
+| | | | `-- @tonaljs/pitch-note@6.1.0 deduped
+| | | +-- @tonaljs/chord-type@4.8.2
+| | | | +-- @tonaljs/core@4.10.4 deduped
+| | | | `-- @tonaljs/pcset@4.10.1 deduped
+| | | +-- @tonaljs/chord@4.10.2
+| | | | +-- @tonaljs/chord-detect@4.9.1
+| | | | | +-- @tonaljs/chord-type@5.1.1
+| | | | | | `-- @tonaljs/pcset@4.10.1 deduped
+| | | | | +-- @tonaljs/pcset@4.10.1 deduped
+| | | | | `-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | +-- @tonaljs/chord-type@4.8.2 deduped
+| | | | +-- @tonaljs/collection@4.9.0 deduped
+| | | | +-- @tonaljs/core@4.10.4 deduped
+| | | | +-- @tonaljs/pcset@4.10.1 deduped
+| | | | `-- @tonaljs/scale-type@4.9.2 deduped
+| | | +-- @tonaljs/collection@4.9.0
+| | | +-- @tonaljs/core@4.10.4
+| | | | +-- @tonaljs/pitch-distance@5.0.2
+| | | | | +-- @tonaljs/pitch-interval@5.0.2 deduped
+| | | | | +-- @tonaljs/pitch-note@5.0.3 deduped
+| | | | | `-- @tonaljs/pitch@5.0.1 deduped
+| | | | +-- @tonaljs/pitch-interval@5.0.2
+| | | | | `-- @tonaljs/pitch@5.0.1 deduped
+| | | | +-- @tonaljs/pitch-note@5.0.3
+| | | | | `-- @tonaljs/pitch@5.0.1 deduped
+| | | | `-- @tonaljs/pitch@5.0.1
+| | | +-- @tonaljs/duration-value@4.9.0
+| | | +-- @tonaljs/interval@4.8.2
+| | | | +-- @tonaljs/pitch-distance@5.0.5 deduped
+| | | | +-- @tonaljs/pitch-interval@5.0.2 deduped
+| | | | `-- @tonaljs/pitch@5.0.1 deduped
+| | | +-- @tonaljs/key@4.11.2
+| | | | +-- @tonaljs/note@4.12.1 deduped
+| | | | +-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | `-- @tonaljs/roman-numeral@4.9.1 deduped
+| | | +-- @tonaljs/midi@4.10.2
+| | | | `-- @tonaljs/pitch-note@6.1.0 deduped
+| | | +-- @tonaljs/mode@4.9.2
+| | | | +-- @tonaljs/collection@4.9.0 deduped
+| | | | +-- @tonaljs/interval@5.1.0
+| | | | | +-- @tonaljs/pitch-distance@5.0.5 deduped
+| | | | | +-- @tonaljs/pitch-interval@6.1.0
+| | | | | | `-- @tonaljs/pitch@5.0.2 deduped
+| | | | | `-- @tonaljs/pitch@5.0.2
+| | | | +-- @tonaljs/pcset@4.10.1 deduped
+| | | | +-- @tonaljs/pitch-distance@5.0.5 deduped
+| | | | +-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | `-- @tonaljs/scale-type@4.9.2 deduped
+| | | +-- @tonaljs/note@4.12.1
+| | | | +-- @tonaljs/midi@4.10.2 deduped
+| | | | +-- @tonaljs/pitch-distance@5.0.5 deduped
+| | | | +-- @tonaljs/pitch-interval@6.1.0
+| | | | | `-- @tonaljs/pitch@5.0.2 deduped
+| | | | +-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | `-- @tonaljs/pitch@5.0.2
+| | | +-- @tonaljs/pcset@4.10.1
+| | | | +-- @tonaljs/collection@4.9.0 deduped
+| | | | +-- @tonaljs/pitch-distance@5.0.5 deduped
+| | | | +-- @tonaljs/pitch-interval@6.1.0
+| | | | | `-- @tonaljs/pitch@5.0.2 deduped
+| | | | +-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | `-- @tonaljs/pitch@5.0.2
+| | | +-- @tonaljs/progression@4.9.2
+| | | | +-- @tonaljs/chord@6.1.2
+| | | | | +-- @tonaljs/chord-detect@4.9.1 deduped
+| | | | | +-- @tonaljs/chord-type@5.1.1
+| | | | | | `-- @tonaljs/pcset@4.10.1 deduped
+| | | | | +-- @tonaljs/collection@4.9.0 deduped
+| | | | | +-- @tonaljs/interval@5.1.0
+| | | | | | +-- @tonaljs/pitch-distance@5.0.5 deduped
+| | | | | | +-- @tonaljs/pitch-interval@6.1.0 deduped
+| | | | | | `-- @tonaljs/pitch@5.0.2 deduped
+| | | | | +-- @tonaljs/pcset@4.10.1 deduped
+| | | | | +-- @tonaljs/pitch-distance@5.0.5 deduped
+| | | | | +-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | | `-- @tonaljs/scale-type@4.9.2 deduped
+| | | | +-- @tonaljs/pitch-distance@5.0.5 deduped
+| | | | +-- @tonaljs/pitch-interval@6.1.0
+| | | | | `-- @tonaljs/pitch@5.0.2
+| | | | +-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | `-- @tonaljs/roman-numeral@4.9.1 deduped
+| | | +-- @tonaljs/range@4.9.2
+| | | | +-- @tonaljs/collection@4.9.0 deduped
+| | | | `-- @tonaljs/midi@4.10.2 deduped
+| | | +-- @tonaljs/roman-numeral@4.9.1
+| | | | +-- @tonaljs/pitch-interval@6.1.0
+| | | | | `-- @tonaljs/pitch@5.0.2 deduped
+| | | | +-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | `-- @tonaljs/pitch@5.0.2
+| | | +-- @tonaljs/scale-type@4.9.2
+| | | | `-- @tonaljs/pcset@4.10.1 deduped
+| | | +-- @tonaljs/scale@4.13.4
+| | | | +-- @tonaljs/chord-type@5.1.1
+| | | | | `-- @tonaljs/pcset@4.10.1 deduped
+| | | | +-- @tonaljs/collection@4.9.0 deduped
+| | | | +-- @tonaljs/note@4.12.1 deduped
+| | | | +-- @tonaljs/pcset@4.10.1 deduped
+| | | | +-- @tonaljs/pitch-distance@5.0.5 deduped
+| | | | +-- @tonaljs/pitch-note@6.1.0 deduped
+| | | | `-- @tonaljs/scale-type@4.9.2 deduped
+| | | `-- @tonaljs/time-signature@4.9.0
+| | +-- chord-voicings@0.0.1
+| | | `-- @tonaljs/tonal@4.10.0 deduped
+| | `-- webmidi@3.3.1
+| |   +-- djipevents@2.0.7
+| |   | `-- @babel/runtime@7.29.7
+| |   `-- jzz@1.9.6
+| |     `-- jazz-midi@1.7.9
+| +-- @strudel/transpiler@1.2.6
+| | +-- @strudel/core@1.2.6 deduped
+| | +-- @strudel/mini@1.2.6 deduped
+| | +-- acorn@8.18.0
+| | +-- escodegen@2.1.0
+| | | +-- esprima@4.0.1
+| | | +-- estraverse@5.3.0
+| | | +-- esutils@2.0.3
+| | | `-- source-map@0.6.1
+| | `-- estree-walker@3.0.3
+| |   `-- @types/estree@1.0.9
+| `-- @strudel/webaudio@1.3.0
+|   +-- @strudel/core@1.2.6 deduped
+|   +-- @strudel/draw@1.2.6
+|   | `-- @strudel/core@1.2.6 deduped
+|   +-- superdough@1.3.0 deduped
+|   `-- supradough@1.2.4
++-- phaser@4.2.1
+| `-- eventemitter3@5.0.4
+`-- superdough@1.3.0
+  +-- @kabelsalat/lib@0.4.1
+  | `-- @kabelsalat/core@0.4.0 deduped
+  `-- nanostores@0.11.4
+
+--- end ---

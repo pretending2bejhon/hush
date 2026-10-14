@@ -1,0 +1,26 @@
+HUSH-EVIDENCE v1
+id: A-history-extra
+phase: audit
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/9153f9a0-4938-429f-86d5-0c93ba3e5e95/scratchpad/audit/history-extra.mjs --pushed 198c7ba,4540176,7c30367,7a8bf49,ebf5940,f477989
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:41:40-05:00
+time-end: 2026-10-13T21:41:41-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+refs: refs/heads/main, refs/remotes/origin/main, HEAD
+history: 3 refs, 98 commits, 1079 blobs, 0 signed commits
+identity author: the repo noreply identity: 98
+identity committer: the repo noreply identity: 98
+blob encodings: utf8 1079
+tracked files: 785, non-utf8 0
+pushed tip 198c7ba: an ancestor of HEAD
+pushed tip 4540176: an ancestor of HEAD
+pushed tip 7c30367: an ancestor of HEAD
+pushed tip 7a8bf49: an ancestor of HEAD
+pushed tip ebf5940: an ancestor of HEAD
+pushed tip f477989: an ancestor of HEAD
+extra hits: 1 (sensitive file name 1)
+hit tracked .npmrc: sensitive file name
+--- end ---

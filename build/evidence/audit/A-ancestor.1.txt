@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: A-ancestor
+phase: audit
+command: git merge-base --is-ancestor f477989fea9692fc0818c01188a902496496c3bb bbe7208cbf92131618d1296286078a9b897b0122
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:40:04-05:00
+time-end: 2026-10-13T21:40:04-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+
+--- end ---

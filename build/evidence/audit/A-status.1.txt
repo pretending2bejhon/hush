@@ -1,0 +1,14 @@
+HUSH-EVIDENCE v1
+id: A-status
+phase: audit
+command: git status --porcelain --untracked-files=all --ignored=no
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:39:46-05:00
+time-end: 2026-10-13T21:39:46-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+?? build/evidence/audit/A-digest.1.txt
+?? build/evidence/audit/A-head.1.txt
+--- end ---

@@ -1,0 +1,23 @@
+HUSH-EVIDENCE v1
+id: A-inspect-remote
+phase: audit
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/9153f9a0-4938-429f-86d5-0c93ba3e5e95/scratchpad/audit/inspect-remote.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/9153f9a0-4938-429f-86d5-0c93ba3e5e95/scratchpad/audit-remote.git bbe7208cbf92131618d1296286078a9b897b0122
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T22:17:40-05:00
+time-end: 2026-10-13T22:17:40-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+remote refs: refs/heads/gh-pages commit, refs/heads/main commit, refs/tags/hush-dryrun-bbe7208c tag
+pushes received, in order: 1:refs/heads/main create, 2:refs/tags/hush-dryrun-bbe7208c create, 3:refs/heads/gh-pages create
+main: the candidate
+tag hush-dryrun-bbe7208c: tag, on the candidate, tagger the repo noreply identity, message "deploy dry run of bbe7208cbf92"
+gh-pages: 0 parent(s), 1 commit(s) reachable, author the repo noreply identity, committer the repo noreply identity, message "pages: hush-dryrun-bbe7208c at bbe7208cbf92"
+gh-pages tree: .nojekyll (100644), assets/index-Dqh8GbB8.js (100644), index.html (100644)
+dist/index.html: byte-equal on gh-pages
+dist/assets/index-Dqh8GbB8.js: byte-equal on gh-pages
+gh-pages files beyond dist: .nojekyll
+gh-pages index.html build meta: the candidate
+inspect-remote: PASS
+--- end ---

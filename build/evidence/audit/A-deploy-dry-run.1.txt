@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: A-deploy-dry-run
+phase: audit
+command: node tools/deploy.mjs --dry-run --candidate bbe7208cbf92131618d1296286078a9b897b0122 --remote <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/9153f9a0-4938-429f-86d5-0c93ba3e5e95/scratchpad/audit-remote.git --out build/evidence/audit/deploy/
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T22:01:17-05:00
+time-end: 2026-10-13T22:17:00-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+deploy: dry-run of bbe7208cbf92 as hush-dryrun-bbe7208c, main at bbe7208cbf92
+deploy: release clone at bbe7208cbf92, identity pretending2bejhon
+deploy: npm ci and build in the clone
+deploy: checks: content green, protect green, X1-X10 recorded
+deploy: gh-pages commit 7515a368ed96 (first publication)
+deploy: check-public --history clean over main, the tag and gh-pages
+deploy: pushed main
+deploy: pushed tag
+deploy: pushed gh-pages
+--- end ---

@@ -1,0 +1,44 @@
+HUSH-EVIDENCE v1
+id: A-bundle-licenses
+phase: audit
+command: node -e "const fs=require('fs');const p=(n)=>JSON.parse(fs.readFileSync('node_modules/'+n+'/package.json','utf8'));for(const n of ['phaser','eventemitter3','@strudel/web','@strudel/core','@strudel/mini','@strudel/tonal','@strudel/transpiler','@strudel/webaudio','@strudel/draw','superdough','supradough','@kabelsalat/web','@kabelsalat/core','@kabelsalat/lib','fraction.js','@tonaljs/tonal','chord-voicings','webmidi','jzz','jazz-midi','djipevents','@babel/runtime','acorn','escodegen','esprima','estraverse','esutils','source-map','estree-walker','nanostores']){try{const j=p(n);console.log(n+'@'+j.version+' license '+JSON.stringify(j.license||j.licenses)+' files '+fs.readdirSync('node_modules/'+n).filter(f=>/licen[cs]e|notice|copying/i.test(f)).join(','))}catch(e){console.log(n+' not installed')}}const js=fs.readdirSync('dist/assets').filter(f=>f.endsWith('.js'));for(const f of js){const t=fs.readFileSync('dist/assets/'+f,'utf8');console.log('dist/assets/'+f+': '+t.length+' chars; legal comments '+(t.match(/\\/\\*[!*][^]*?\\*\\//g)||[]).filter(c=>/licen|copyright/i.test(c)).length+'; Copyright '+(t.match(/Copyright/g)||[]).length+'; @license '+(t.match(/@license/g)||[]).length)}console.log('dist files: '+fs.readdirSync('dist',{recursive:true}).join(', '))"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:57:07-05:00
+time-end: 2026-10-13T21:57:07-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+phaser@4.2.1 license "MIT" files LICENSE.md
+eventemitter3@5.0.4 license "MIT" files LICENSE
+@strudel/web@1.3.0 license "AGPL-3.0-or-later" files LICENSE
+@strudel/core@1.2.6 license "AGPL-3.0-or-later" files LICENSE
+@strudel/mini@1.2.6 license "AGPL-3.0-or-later" files LICENSE
+@strudel/tonal@1.2.6 license "AGPL-3.0-or-later" files LICENSE
+@strudel/transpiler@1.2.6 license "AGPL-3.0-or-later" files LICENSE
+@strudel/webaudio@1.3.0 license "AGPL-3.0-or-later" files LICENSE
+@strudel/draw@1.2.6 license "AGPL-3.0-or-later" files LICENSE
+superdough@1.3.0 license "AGPL-3.0-or-later" files LICENSE
+supradough@1.2.4 license "AGPL-3.0-or-later" files LICENSE
+@kabelsalat/web@0.4.1 license "AGPL-3.0-or-later" files LICENSE
+@kabelsalat/core@0.4.0 license "AGPL-3.0-or-later" files LICENSE
+@kabelsalat/lib@0.4.1 license "AGPL-3.0-or-later" files LICENSE
+fraction.js@5.3.4 license "MIT" files LICENSE
+@tonaljs/tonal@4.10.0 license "MIT" files LICENSE
+chord-voicings@0.0.1 license "ISC" files 
+webmidi@3.3.1 license "Apache-2.0" files LICENSE.txt
+jzz@1.9.6 license "MIT" files LICENSE.md
+jazz-midi@1.7.9 license "MIT" files 
+djipevents@2.0.7 license "Apache-2.0" files LICENSE.txt
+@babel/runtime@7.29.7 license "MIT" files LICENSE
+acorn@8.18.0 license "MIT" files LICENSE
+escodegen@2.1.0 license "BSD-2-Clause" files LICENSE.BSD
+esprima@4.0.1 license "BSD-2-Clause" files LICENSE.BSD
+estraverse@5.3.0 license "BSD-2-Clause" files LICENSE.BSD
+esutils@2.0.3 license "BSD-2-Clause" files LICENSE.BSD
+source-map@0.6.1 license "BSD-3-Clause" files LICENSE
+estree-walker@3.0.3 license "MIT" files LICENSE
+nanostores@0.11.4 license "MIT" files LICENSE
+dist/assets/index-Dqh8GbB8.js: 2097543 chars; legal comments 0; Copyright 0; @license 0
+dist files: assets, index.html, assets\index-Dqh8GbB8.js
+--- end ---

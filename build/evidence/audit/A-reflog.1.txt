@@ -1,0 +1,214 @@
+HUSH-EVIDENCE v1
+id: A-reflog
+phase: audit
+command: git reflog show --all --date=iso
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:40:04-05:00
+time-end: 2026-10-13T21:40:04-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+bbe7208 refs/heads/main@{2026-10-13 20:01:22 -0500}: commit: hush-verify: 560524fa19f920b5519167152fa451ebbcdbf065, X1 to X10 green on fresh evidence at digest 6c217e01 with X4 and X7 on the real GPU and audio, X11 and X12 open post-preview (Opus standing in for Fable)
+bbe7208 HEAD@{2026-10-13 20:01:22 -0500}: commit: hush-verify: 560524fa19f920b5519167152fa451ebbcdbf065, X1 to X10 green on fresh evidence at digest 6c217e01 with X4 and X7 on the real GPU and audio, X11 and X12 open post-preview (Opus standing in for Fable)
+560524f refs/heads/main@{2026-10-13 19:38:37 -0500}: commit: hush-spec: fixlog R6, the round recorded as cycle 1's ending PASS, its eight minors carried to the next cycle and its notes left, VERIFY next (Opus standing in for Fable)
+560524f HEAD@{2026-10-13 19:38:37 -0500}: commit: hush-spec: fixlog R6, the round recorded as cycle 1's ending PASS, its eight minors carried to the next cycle and its notes left, VERIFY next (Opus standing in for Fable)
+5b725e5 refs/heads/main@{2026-10-13 19:37:14 -0500}: commit: hush-review: R6, PASS 0 blockers 0 majors 8 minors, every R5 fix held and every area's core mutation caught, cycle 1 ended on a PASS after FIX R5, the minors carried (Opus standing in for Fable)
+5b725e5 HEAD@{2026-10-13 19:37:14 -0500}: commit: hush-review: R6, PASS 0 blockers 0 majors 8 minors, every R5 fix held and every area's core mutation caught, cycle 1 ended on a PASS after FIX R5, the minors carried (Opus standing in for Fable)
+8f007a3 refs/heads/main@{2026-10-13 17:37:30 -0500}: commit: hush-spec: fixlog R5, the calibration's pictures timed and its pages read in 2bd9d23, FIX R5 recorded with two fixed and both minors carried, review R6 next, the round the owner granted (Opus standing in for Fable)
+8f007a3 HEAD@{2026-10-13 17:37:30 -0500}: commit: hush-spec: fixlog R5, the calibration's pictures timed and its pages read in 2bd9d23, FIX R5 recorded with two fixed and both minors carried, review R6 next, the round the owner granted (Opus standing in for Fable)
+2bd9d23 refs/heads/main@{2026-10-13 17:35:54 -0500}: commit: hush-spec: amend the calibration check, review R5 every calibration frame bracketed and its rings, fills and frameTimes held to their windows, the pages' errors, origins and storage read, the reviewer's three mutants caught (Opus standing in for Fable)
+2bd9d23 HEAD@{2026-10-13 17:35:54 -0500}: commit: hush-spec: amend the calibration check, review R5 every calibration frame bracketed and its rings, fills and frameTimes held to their windows, the pages' errors, origins and storage read, the reviewer's three mutants caught (Opus standing in for Fable)
+ab131ac refs/heads/main@{2026-10-13 15:27:59 -0500}: commit: hush-spec: fixlog R5, the section's times set to the commits' own and the session's active time to the hook's count (Opus standing in for Fable)
+ab131ac HEAD@{2026-10-13 15:27:59 -0500}: commit: hush-spec: fixlog R5, the section's times set to the commits' own and the session's active time to the hook's count (Opus standing in for Fable)
+59159e8 refs/heads/main@{2026-10-13 14:52:04 -0500}: commit: hush-spec: amend the scene check, review R5 every frame's step and the ending's card held to the heard beat, the reviewer's two mutants caught, the calibration's pictures left to the next producer (Opus standing in for Fable)
+59159e8 HEAD@{2026-10-13 14:52:04 -0500}: commit: hush-spec: amend the scene check, review R5 every frame's step and the ending's card held to the heard beat, the reviewer's two mutants caught, the calibration's pictures left to the next producer (Opus standing in for Fable)
+0c71236 refs/heads/main@{2026-10-13 14:36:57 -0500}: commit: hush-spec: fixlog R5, four findings dispositioned, both majors producer amendments that time what is shown, the minors carried (Opus standing in for Fable)
+0c71236 HEAD@{2026-10-13 14:36:57 -0500}: commit: hush-spec: fixlog R5, four findings dispositioned, both majors producer amendments that time what is shown, the minors carried (Opus standing in for Fable)
+980e6c0 refs/heads/main@{2026-10-13 14:35:25 -0500}: commit: hush-spec: resolve R5-cycle1-round-cap, the owner's A, cycle 1 gets one more round, FIX R5 next (Opus standing in for Fable)
+980e6c0 HEAD@{2026-10-13 14:35:25 -0500}: commit: hush-spec: resolve R5-cycle1-round-cap, the owner's A, cycle 1 gets one more round, FIX R5 next (Opus standing in for Fable)
+9075318 refs/heads/main@{2026-10-13 14:06:10 -0500}: commit: hush-spec: escalate R5, cycle 1 at its five-round cap on a FAIL with two majors, the picture side of R4's timing class, both fixes designed and no product change, the owner's decision needed (Opus standing in for Fable)
+9075318 HEAD@{2026-10-13 14:06:10 -0500}: commit: hush-spec: escalate R5, cycle 1 at its five-round cap on a FAIL with two majors, the picture side of R4's timing class, both fixes designed and no product change, the owner's decision needed (Opus standing in for Fable)
+cc8dfdf refs/heads/main@{2026-10-13 14:04:05 -0500}: commit: hush-review: R5, FAIL 0 blockers 2 majors 2 minors, the calibration's pictures and the sim's step untimed against the heard music, cycle 1 at its fifth and last round (Opus standing in for Fable)
+cc8dfdf HEAD@{2026-10-13 14:04:05 -0500}: commit: hush-review: R5, FAIL 0 blockers 2 majors 2 minors, the calibration's pictures and the sim's step untimed against the heard music, cycle 1 at its fifth and last round (Opus standing in for Fable)
+bd16d95 refs/heads/main@{2026-10-13 11:53:35 -0500}: commit: hush-spec: fixlog R4, the blocker cleared on AC with RN1 to RN4 at 60 fps, FIX R4 recorded with three fixed and the deaths line carried, review R5 next, the cycle's last (Opus standing in for Fable)
+bd16d95 HEAD@{2026-10-13 11:53:35 -0500}: commit: hush-spec: fixlog R4, the blocker cleared on AC with RN1 to RN4 at 60 fps, FIX R4 recorded with three fixed and the deaths line carried, review R5 next, the cycle's last (Opus standing in for Fable)
+7c6ecd0 refs/heads/main@{2026-10-13 11:29:48 -0500}: commit: hush-spec: amend the av probe and the calibration check, review R4 every sound timed to an onset of its own layer and every click to its mark, the reviewer's two mutants and the rotated gates caught (Opus standing in for Fable)
+7c6ecd0 HEAD@{2026-10-13 11:29:48 -0500}: commit: hush-spec: amend the av probe and the calibration check, review R4 every sound timed to an onset of its own layer and every click to its mark, the reviewer's two mutants and the rotated gates caught (Opus standing in for Fable)
+bf70c77 refs/heads/main@{2026-10-13 03:55:28 -0500}: commit: hush-spec: fixlog R4, the section's times set to the commits' own, the X3 seed on digest 232b03a2 checked (Opus standing in for Fable)
+bf70c77 HEAD@{2026-10-13 03:55:28 -0500}: commit: hush-spec: fixlog R4, the section's times set to the commits' own, the X3 seed on digest 232b03a2 checked (Opus standing in for Fable)
+1d2ea62 refs/heads/main@{2026-10-13 03:54:37 -0500}: commit: hush-spec: amend the calibration controls, review R4 eleven of eleven with the retried run, the count-in-of-3 control allowing its second catch (Opus standing in for Fable)
+1d2ea62 HEAD@{2026-10-13 03:54:37 -0500}: commit: hush-spec: amend the calibration controls, review R4 eleven of eleven with the retried run, the count-in-of-3 control allowing its second catch (Opus standing in for Fable)
+d68cf9a refs/heads/main@{2026-10-13 03:34:11 -0500}: commit: hush-spec: fixlog R4, the calibration's retry and the run's cap fixed, the sound's starts and the blocker on AC left to the next producer with superdough's facts (Opus standing in for Fable)
+d68cf9a HEAD@{2026-10-13 03:34:11 -0500}: commit: hush-spec: fixlog R4, the calibration's retry and the run's cap fixed, the sound's starts and the blocker on AC left to the next producer with superdough's facts (Opus standing in for Fable)
+618ca0c refs/heads/main@{2026-10-13 03:33:26 -0500}: commit: hush-spec: amend CAL2 GAME1, review R4 the calibration's retry judged by its repeats and the run's 24-step cap pinned, the keep-the-first mutant caught (Opus standing in for Fable)
+618ca0c HEAD@{2026-10-13 03:33:26 -0500}: commit: hush-spec: amend CAL2 GAME1, review R4 the calibration's retry judged by its repeats and the run's 24-step cap pinned, the keep-the-first mutant caught (Opus standing in for Fable)
+fc32706 refs/heads/main@{2026-10-13 03:08:33 -0500}: commit: hush-spec: fixlog R4, the round blocked on battery, four findings routed as producer amendments, the sound's starts held to their onsets, the calibration's retry, then R5 the cycle's last (Opus standing in for Fable)
+fc32706 HEAD@{2026-10-13 03:08:33 -0500}: commit: hush-spec: fixlog R4, the round blocked on battery, four findings routed as producer amendments, the sound's starts held to their onsets, the calibration's retry, then R5 the cycle's last (Opus standing in for Fable)
+07cab73 refs/heads/main@{2026-10-13 03:06:23 -0500}: commit: hush-review: R4, BLOCKED 0 blockers 2 majors 2 minors, the perf probe refused on battery, the sound's timing and the calibration's repeat unchecked (Opus standing in for Fable)
+07cab73 HEAD@{2026-10-13 03:06:23 -0500}: commit: hush-review: R4, BLOCKED 0 blockers 2 majors 2 minors, the perf probe refused on battery, the sound's timing and the calibration's repeat unchecked (Opus standing in for Fable)
+c9f589c refs/heads/main@{2026-10-13 01:21:49 -0500}: commit: hush-spec: fixlog R3, eight of eight fixed and FIX R3 recorded, the scene check reads what is drawn, review R4 next (Opus standing in for Fable)
+c9f589c HEAD@{2026-10-13 01:21:49 -0500}: commit: hush-spec: fixlog R3, eight of eight fixed and FIX R3 recorded, the scene check reads what is drawn, review R4 next (Opus standing in for Fable)
+3c6bf58 refs/heads/main@{2026-10-13 01:20:39 -0500}: commit: hush-spec: amend the scene check, review R3 what is drawn, every frame replayed command for command, every bake's pixels, the ceiling and the card on the beat, eleven mutants caught (Opus standing in for Fable)
+3c6bf58 HEAD@{2026-10-13 01:20:39 -0500}: commit: hush-spec: amend the scene check, review R3 what is drawn, every frame replayed command for command, every bake's pixels, the ceiling and the card on the beat, eleven mutants caught (Opus standing in for Fable)
+326bb5e refs/heads/main@{2026-10-12 23:46:15 -0500}: commit: hush-spec: fixlog R3, five of eight fixed, the scene check reading what is drawn left to the next producer with its Phaser facts, FIX R3 then review R4 next (Opus standing in for Fable)
+326bb5e HEAD@{2026-10-12 23:46:15 -0500}: commit: hush-spec: fixlog R3, five of eight fixed, the scene check reading what is drawn left to the next producer with its Phaser facts, FIX R3 then review R4 next (Opus standing in for Fable)
+6a6a0ed refs/heads/main@{2026-10-12 23:43:14 -0500}: commit: hush-spec: amend the av probe, review R3 the mix read as the page built it, nothing that could sound bypasses the analyser, one minor (Opus standing in for Fable)
+6a6a0ed HEAD@{2026-10-12 23:43:14 -0500}: commit: hush-spec: amend the av probe, review R3 the mix read as the page built it, nothing that could sound bypasses the analyser, one minor (Opus standing in for Fable)
+2e40fab refs/heads/main@{2026-10-12 23:20:58 -0500}: commit: hush-spec: amend CAL2, review R3 Escape pressed and the count-in tapped, the tapper's spread shows a tap the scene should not count, two minors (Opus standing in for Fable)
+2e40fab HEAD@{2026-10-12 23:20:58 -0500}: commit: hush-spec: amend CAL2, review R3 Escape pressed and the count-in tapped, the tapper's spread shows a tap the scene should not count, two minors (Opus standing in for Fable)
+8d952df refs/heads/main@{2026-10-12 22:47:40 -0500}: commit: hush-spec: amend CL1 FX1, review R3 the stale-pair rule reached and the limiter's edge pinned, two minors (Opus standing in for Fable)
+8d952df HEAD@{2026-10-12 22:47:40 -0500}: commit: hush-spec: amend CL1 FX1, review R3 the stale-pair rule reached and the limiter's edge pinned, two minors (Opus standing in for Fable)
+b94a366 refs/heads/main@{2026-10-12 22:44:53 -0500}: commit: hush-spec: fixlog R3, eight findings routed, every one a producer amendment, the scene check to read what is drawn (Opus standing in for Fable)
+b94a366 HEAD@{2026-10-12 22:44:53 -0500}: commit: hush-spec: fixlog R3, eight findings routed, every one a producer amendment, the scene check to read what is drawn (Opus standing in for Fable)
+3d6c8bd refs/heads/main@{2026-10-12 22:34:11 -0500}: commit: hush-review: R3, FAIL 0 blockers 2 majors 6 minors (Opus standing in for Fable)
+3d6c8bd HEAD@{2026-10-12 22:34:11 -0500}: commit: hush-review: R3, FAIL 0 blockers 2 majors 6 minors (Opus standing in for Fable)
+81a66ae refs/heads/main@{2026-10-12 19:19:46 -0500}: commit: hush-spec: fixlog R2, the round fixed 9 of 9 by amendment and FIX R2 recorded, review R3 next (Opus standing in for Fable)
+81a66ae HEAD@{2026-10-12 19:19:46 -0500}: commit: hush-spec: fixlog R2, the round fixed 9 of 9 by amendment and FIX R2 recorded, review R3 next (Opus standing in for Fable)
+2af5356 refs/heads/main@{2026-10-12 19:19:15 -0500}: commit: hush-spec: amend GAME1 CAL2 END1 and the probes, review R2 the scene and keys checks, the tapped calibration judged by its own taps, the run after the hand-over (Opus standing in for Fable)
+2af5356 HEAD@{2026-10-12 19:19:15 -0500}: commit: hush-spec: amend GAME1 CAL2 END1 and the probes, review R2 the scene and keys checks, the tapped calibration judged by its own taps, the run after the hand-over (Opus standing in for Fable)
+d495056 refs/heads/main@{2026-10-12 18:15:42 -0500}: commit: hush-spec: amend RN1 RN4 GAME1 CAL1 CL1 END1, review R2 drawShapes, the run's calibration and track, the ring, the trim and two stale lines pinned by tests (Opus standing in for Fable)
+d495056 HEAD@{2026-10-12 18:15:42 -0500}: commit: hush-spec: amend RN1 RN4 GAME1 CAL1 CL1 END1, review R2 drawShapes, the run's calibration and track, the ring, the trim and two stale lines pinned by tests (Opus standing in for Fable)
+100e45f refs/heads/main@{2026-10-12 18:09:01 -0500}: commit: hush-spec: fixlog R2, nine findings routed, every one a producer amendment, no applier (Opus standing in for Fable)
+100e45f HEAD@{2026-10-12 18:09:01 -0500}: commit: hush-spec: fixlog R2, nine findings routed, every one a producer amendment, no applier (Opus standing in for Fable)
+b6935cd refs/heads/main@{2026-10-12 18:00:58 -0500}: commit: hush-spec: resolve HUSH-PHASE3-ESCALATE R2-count-not-dropping, the owner chose A, FIX R2 then review R3 (Opus standing in for Fable)
+b6935cd HEAD@{2026-10-12 18:00:58 -0500}: commit: hush-spec: resolve HUSH-PHASE3-ESCALATE R2-count-not-dropping, the owner chose A, FIX R2 then review R3 (Opus standing in for Fable)
+b6e399b refs/heads/main@{2026-10-12 17:54:18 -0500}: commit: hush-spec: escalate R2-count-not-dropping, review R2 found 9 again after FIX R1, the owner decides (Opus standing in for Fable)
+b6e399b HEAD@{2026-10-12 17:54:18 -0500}: commit: hush-spec: escalate R2-count-not-dropping, review R2 found 9 again after FIX R1, the owner decides (Opus standing in for Fable)
+f266a19 refs/heads/main@{2026-10-12 17:52:27 -0500}: commit: hush-review: R2, FAIL 0 blockers 5 majors 4 minors (Opus standing in for Fable)
+f266a19 HEAD@{2026-10-12 17:52:27 -0500}: commit: hush-review: R2, FAIL 0 blockers 5 majors 4 minors (Opus standing in for Fable)
+2f2b8a2 refs/heads/main@{2026-10-12 15:32:50 -0500}: commit: hush-spec: fixlog R1, the round fixed 9 of 9 and FIX R1 recorded, review R2 next (Opus standing in for Fable)
+2f2b8a2 HEAD@{2026-10-12 15:32:50 -0500}: commit: hush-spec: fixlog R1, the round fixed 9 of 9 and FIX R1 recorded, review R2 next (Opus standing in for Fable)
+df7c009 refs/heads/main@{2026-10-12 15:29:39 -0500}: commit: hush-fix: R1-MAJOR1
+df7c009 HEAD@{2026-10-12 15:29:39 -0500}: commit: hush-fix: R1-MAJOR1
+ace1641 refs/heads/main@{2026-10-12 15:23:23 -0500}: commit: hush-spec: amend AU2 GAME1, review R1 the engine reports its gauntlet mapping and the unlock check reads it (Opus standing in for Fable)
+ace1641 HEAD@{2026-10-12 15:23:23 -0500}: commit: hush-spec: amend AU2 GAME1, review R1 the engine reports its gauntlet mapping and the unlock check reads it (Opus standing in for Fable)
+d1b97eb refs/heads/main@{2026-10-12 15:17:38 -0500}: commit: hush-fix: R1-MINOR4
+d1b97eb HEAD@{2026-10-12 15:17:38 -0500}: commit: hush-fix: R1-MINOR4
+c35b1c4 refs/heads/main@{2026-10-12 15:12:13 -0500}: commit: hush-spec: amend GAME1, review R1 the run starts 0.25 s ahead so a room bake never drops its first sixteenth (Opus standing in for Fable)
+c35b1c4 HEAD@{2026-10-12 15:12:13 -0500}: commit: hush-spec: amend GAME1, review R1 the run starts 0.25 s ahead so a room bake never drops its first sixteenth (Opus standing in for Fable)
+ccaedaf refs/heads/main@{2026-10-12 15:10:47 -0500}: commit: hush-fix: R1-MAJOR3
+ccaedaf HEAD@{2026-10-12 15:10:47 -0500}: commit: hush-fix: R1-MAJOR3
+ba55c10 refs/heads/main@{2026-10-12 15:01:51 -0500}: commit: hush-spec: amend RN4, review R1 the play scene frame read from the sim it draws (Opus standing in for Fable)
+ba55c10 HEAD@{2026-10-12 15:01:51 -0500}: commit: hush-spec: amend RN4, review R1 the play scene frame read from the sim it draws (Opus standing in for Fable)
+524ef44 refs/heads/main@{2026-10-12 14:59:26 -0500}: commit: hush-fix: R1-MAJOR4
+524ef44 HEAD@{2026-10-12 14:59:26 -0500}: commit: hush-fix: R1-MAJOR4
+33ac8c3 refs/heads/main@{2026-10-12 14:53:05 -0500}: commit: hush-spec: amend END1, review R1 the ending frame and its beat of the bar from the run origin (Opus standing in for Fable)
+33ac8c3 HEAD@{2026-10-12 14:53:05 -0500}: commit: hush-spec: amend END1, review R1 the ending frame and its beat of the bar from the run origin (Opus standing in for Fable)
+020b7a7 refs/heads/main@{2026-10-12 14:50:28 -0500}: commit: hush-spec: amend GAME1 AU3 CAL2 and the verifiers, review R1 clear-time unlock check, tapped calibration, pinned thresholds and the digest seed (Opus standing in for Fable)
+020b7a7 HEAD@{2026-10-12 14:50:28 -0500}: commit: hush-spec: amend GAME1 AU3 CAL2 and the verifiers, review R1 clear-time unlock check, tapped calibration, pinned thresholds and the digest seed (Opus standing in for Fable)
+2e6aacd refs/heads/main@{2026-10-12 14:05:03 -0500}: commit: hush-spec: fixlog R1, nine findings routed, four amendments by the producer and four appliers (Opus standing in for Fable)
+2e6aacd HEAD@{2026-10-12 14:05:03 -0500}: commit: hush-spec: fixlog R1, nine findings routed, four amendments by the producer and four appliers (Opus standing in for Fable)
+10520b3 refs/heads/main@{2026-10-12 13:55:07 -0500}: commit: hush-review: R1, FAIL 0 blockers 4 majors 5 minors (Opus standing in for Fable)
+10520b3 HEAD@{2026-10-12 13:55:07 -0500}: commit: hush-review: R1, FAIL 0 blockers 4 majors 5 minors (Opus standing in for Fable)
+cb90b06 refs/heads/main@{2026-10-12 11:27:16 -0500}: commit: hush-spec: cycle 1, build-complete on 715cf12 (Opus standing in for Fable)
+cb90b06 HEAD@{2026-10-12 11:27:16 -0500}: commit: hush-spec: cycle 1, build-complete on 715cf12 (Opus standing in for Fable)
+715cf12 refs/heads/main@{2026-10-12 11:17:58 -0500}: commit: hush-build: complete
+715cf12 HEAD@{2026-10-12 11:17:58 -0500}: commit: hush-build: complete
+2a74c14 refs/heads/main@{2026-10-12 11:17:34 -0500}: commit: hush-build: END1
+2a74c14 HEAD@{2026-10-12 11:17:34 -0500}: commit: hush-build: END1
+c58fa64 refs/heads/main@{2026-10-12 11:10:33 -0500}: commit: hush-spec: reopen END1 (Opus standing in for Fable)
+c58fa64 HEAD@{2026-10-12 11:10:33 -0500}: commit: hush-spec: reopen END1 (Opus standing in for Fable)
+fdb139f refs/heads/main@{2026-10-12 11:09:08 -0500}: commit: hush-spec: amend END1, the playthrough reads the ending once its card is up (Opus standing in for Fable)
+fdb139f HEAD@{2026-10-12 11:09:08 -0500}: commit: hush-spec: amend END1, the playthrough reads the ending once its card is up (Opus standing in for Fable)
+b579e92 refs/heads/main@{2026-10-12 10:24:26 -0500}: commit: hush-build: complete
+b579e92 HEAD@{2026-10-12 10:24:26 -0500}: commit: hush-build: complete
+72e7195 refs/heads/main@{2026-10-12 10:23:44 -0500}: commit: hush-build: checkpoint END1
+72e7195 HEAD@{2026-10-12 10:23:44 -0500}: commit: hush-build: checkpoint END1
+1c2abae refs/heads/main@{2026-10-12 10:20:19 -0500}: commit: hush-build: checkpoint END1
+1c2abae HEAD@{2026-10-12 10:20:19 -0500}: commit: hush-build: checkpoint END1
+2286e88 refs/heads/main@{2026-10-12 10:15:13 -0500}: commit: hush-build: RN4
+2286e88 HEAD@{2026-10-12 10:15:13 -0500}: commit: hush-build: RN4
+b9eef55 refs/heads/main@{2026-10-12 10:06:56 -0500}: commit: hush-build: RN3
+b9eef55 HEAD@{2026-10-12 10:06:56 -0500}: commit: hush-build: RN3
+5f02d63 refs/heads/main@{2026-10-12 09:53:58 -0500}: commit: hush-build: RN2
+5f02d63 HEAD@{2026-10-12 09:53:58 -0500}: commit: hush-build: RN2
+7f04fdf refs/heads/main@{2026-10-12 09:45:43 -0500}: commit: hush-build: RN1
+7f04fdf HEAD@{2026-10-12 09:45:43 -0500}: commit: hush-build: RN1
+33f1235 refs/heads/main@{2026-10-12 09:36:43 -0500}: commit: hush-build: CAL2
+33f1235 HEAD@{2026-10-12 09:36:43 -0500}: commit: hush-build: CAL2
+f477989 refs/remotes/origin/main@{2026-10-12 01:15:34 -0500}: update by push
+f477989 refs/heads/main@{2026-10-12 01:15:12 -0500}: commit: hush-spec: reopen CAL2 RN1 RN2 RN3 RN4 END1 (Opus standing in for Fable)
+f477989 HEAD@{2026-10-12 01:15:12 -0500}: commit: hush-spec: reopen CAL2 RN1 RN2 RN3 RN4 END1 (Opus standing in for Fable)
+938c01b refs/heads/main@{2026-10-12 01:13:26 -0500}: commit: hush-spec: amend RN1 RN2 RN3 RN4 END1, the art reference and discriminating art acceptances (Opus standing in for Fable)
+938c01b HEAD@{2026-10-12 01:13:26 -0500}: commit: hush-spec: amend RN1 RN2 RN3 RN4 END1, the art reference and discriminating art acceptances (Opus standing in for Fable)
+28158f8 refs/heads/main@{2026-10-12 00:53:43 -0500}: commit: hush-spec: amend CAL2, the calibration check sees the four attempts (Opus standing in for Fable)
+28158f8 HEAD@{2026-10-12 00:53:43 -0500}: commit: hush-spec: amend CAL2, the calibration check sees the four attempts (Opus standing in for Fable)
+5b9832b refs/heads/main@{2026-10-12 00:07:55 -0500}: commit: hush-build: complete
+5b9832b HEAD@{2026-10-12 00:07:55 -0500}: commit: hush-build: complete
+4b418ae refs/heads/main@{2026-10-12 00:07:33 -0500}: commit: hush-build: checkpoint CAL2
+4b418ae HEAD@{2026-10-12 00:07:33 -0500}: commit: hush-build: checkpoint CAL2
+d043c4d refs/heads/main@{2026-10-12 00:01:49 -0500}: commit: hush-build: GAME1
+d043c4d HEAD@{2026-10-12 00:01:49 -0500}: commit: hush-build: GAME1
+fcc37b7 refs/heads/main@{2026-10-11 23:53:11 -0500}: commit: hush-build: FX1
+fcc37b7 HEAD@{2026-10-11 23:53:11 -0500}: commit: hush-build: FX1
+6a5a533 refs/heads/main@{2026-10-11 23:52:24 -0500}: commit: hush-build: AU3
+6a5a533 HEAD@{2026-10-11 23:52:24 -0500}: commit: hush-build: AU3
+590ee84 refs/heads/main@{2026-10-11 23:51:40 -0500}: commit: hush-build: AU2
+590ee84 HEAD@{2026-10-11 23:51:40 -0500}: commit: hush-build: AU2
+1ebb8c0 refs/heads/main@{2026-10-11 23:50:50 -0500}: commit: hush-build: AU1
+1ebb8c0 HEAD@{2026-10-11 23:50:50 -0500}: commit: hush-build: AU1
+4d5bb90 refs/heads/main@{2026-10-11 23:43:36 -0500}: commit: hush-build: CAL1
+4d5bb90 HEAD@{2026-10-11 23:43:36 -0500}: commit: hush-build: CAL1
+184f643 refs/heads/main@{2026-10-11 23:42:52 -0500}: commit: hush-build: IN1
+184f643 HEAD@{2026-10-11 23:42:52 -0500}: commit: hush-build: IN1
+8b1c431 refs/heads/main@{2026-10-11 23:42:03 -0500}: commit: hush-build: CL2
+8b1c431 HEAD@{2026-10-11 23:42:03 -0500}: commit: hush-build: CL2
+ec20e91 refs/heads/main@{2026-10-11 23:41:20 -0500}: commit: hush-build: CL1
+ec20e91 HEAD@{2026-10-11 23:41:20 -0500}: commit: hush-build: CL1
+b3fbcbc refs/heads/main@{2026-10-11 23:40:12 -0500}: commit: hush-build: W3
+b3fbcbc HEAD@{2026-10-11 23:40:12 -0500}: commit: hush-build: W3
+6f51c84 refs/heads/main@{2026-10-11 23:34:56 -0500}: commit: hush-build: W2
+6f51c84 HEAD@{2026-10-11 23:34:56 -0500}: commit: hush-build: W2
+7960ef0 refs/heads/main@{2026-10-11 23:31:02 -0500}: commit: hush-build: W1
+7960ef0 HEAD@{2026-10-11 23:31:02 -0500}: commit: hush-build: W1
+ec4a184 refs/heads/main@{2026-10-11 23:27:27 -0500}: commit: hush-build: SIM2
+ec4a184 HEAD@{2026-10-11 23:27:27 -0500}: commit: hush-build: SIM2
+8c68fbd refs/heads/main@{2026-10-11 23:25:50 -0500}: commit: hush-build: CT1
+8c68fbd HEAD@{2026-10-11 23:25:50 -0500}: commit: hush-build: CT1
+3672c51 refs/heads/main@{2026-10-11 23:25:05 -0500}: commit: hush-build: RM1
+3672c51 HEAD@{2026-10-11 23:25:05 -0500}: commit: hush-build: RM1
+6eb4a3d refs/heads/main@{2026-10-11 23:23:17 -0500}: commit: hush-build: SIM1
+6eb4a3d HEAD@{2026-10-11 23:23:17 -0500}: commit: hush-build: SIM1
+b238773 refs/heads/main@{2026-10-11 23:21:58 -0500}: commit: hush-build: S1
+b238773 HEAD@{2026-10-11 23:21:58 -0500}: commit: hush-build: S1
+ebf5940 refs/remotes/origin/main@{2026-10-11 23:18:29 -0500}: update by push
+ebf5940 refs/heads/main@{2026-10-11 23:18:27 -0500}: commit: hush-gate: JHON-GO (Opus standing in for Fable)
+ebf5940 HEAD@{2026-10-11 23:18:27 -0500}: commit: hush-gate: JHON-GO (Opus standing in for Fable)
+7a8bf49 refs/remotes/origin/main@{2026-10-11 23:15:26 -0500}: update by push
+7a8bf49 refs/heads/main@{2026-10-11 23:15:12 -0500}: commit: hush-spec: cut (Opus standing in for Fable)
+7a8bf49 HEAD@{2026-10-11 23:15:12 -0500}: commit: hush-spec: cut (Opus standing in for Fable)
+29fae72 refs/heads/main@{2026-10-11 23:05:10 -0500}: commit: hush-spec: audio, clock, render, flash, calibration, ending and interfaces settled, verifier table and 23 items (Opus standing in for Fable)
+29fae72 HEAD@{2026-10-11 23:05:10 -0500}: commit: hush-spec: audio, clock, render, flash, calibration, ending and interfaces settled, verifier table and 23 items (Opus standing in for Fable)
+885d05b refs/heads/main@{2026-10-11 22:52:50 -0500}: commit: hush-spec: product tests the items map, their references and mutation controls (Opus standing in for Fable)
+885d05b HEAD@{2026-10-11 22:52:50 -0500}: commit: hush-spec: product tests the items map, their references and mutation controls (Opus standing in for Fable)
+dfdd44c refs/heads/main@{2026-10-11 22:40:55 -0500}: commit: hush-spec: control page, probe API, browser probes, deploy, standing and every PF-CONTROLS control (Opus standing in for Fable)
+dfdd44c HEAD@{2026-10-11 22:40:55 -0500}: commit: hush-spec: control page, probe API, browser probes, deploy, standing and every PF-CONTROLS control (Opus standing in for Fable)
+1c3f4b7 refs/heads/main@{2026-10-11 19:25:29 -0500}: commit: hush-gate: caps residual (Opus standing in for Fable)
+1c3f4b7 HEAD@{2026-10-11 19:25:29 -0500}: commit: hush-gate: caps residual (Opus standing in for Fable)
+7c30367 refs/remotes/origin/main@{2026-10-11 19:24:52 -0500}: update by push
+7c30367 refs/heads/main@{2026-10-11 19:24:16 -0500}: commit: hush-spec: audio, clock, input, render, flash, calibration, ending and interfaces drafted (Opus standing in for Fable)
+7c30367 HEAD@{2026-10-11 19:24:16 -0500}: commit: hush-spec: audio, clock, input, render, flash, calibration, ending and interfaces drafted (Opus standing in for Fable)
+b1b1d7a refs/heads/main@{2026-10-11 19:21:34 -0500}: commit: hush-spec: ship gate with digest, playtest function and verdict controls (Opus standing in for Fable)
+b1b1d7a HEAD@{2026-10-11 19:21:34 -0500}: commit: hush-spec: ship gate with digest, playtest function and verdict controls (Opus standing in for Fable)
+4024c34 refs/heads/main@{2026-10-11 19:18:20 -0500}: commit: hush-spec: rooms, gauntlet and track byte-exact in the spec, spec-content verifier (Opus standing in for Fable)
+4024c34 HEAD@{2026-10-11 19:18:20 -0500}: commit: hush-spec: rooms, gauntlet and track byte-exact in the spec, spec-content verifier (Opus standing in for Fable)
+973f840 refs/heads/main@{2026-10-11 19:15:38 -0500}: commit: hush-spec: physics oracle, replay runner, solver, reach table, room and track hashes (Opus standing in for Fable)
+973f840 HEAD@{2026-10-11 19:15:38 -0500}: commit: hush-spec: physics oracle, replay runner, solver, reach table, room and track hashes (Opus standing in for Fable)
+d92a141 refs/heads/main@{2026-10-11 16:11:45 -0500}: commit: hush-spec: protect and gates verifiers with their controls, both manifests (Opus standing in for Fable)
+d92a141 HEAD@{2026-10-11 16:11:45 -0500}: commit: hush-spec: protect and gates verifiers with their controls, both manifests (Opus standing in for Fable)
+799a9bc refs/heads/main@{2026-10-11 15:59:30 -0500}: commit: hush-spec: resolve subagent-calls-uncounted, hook live proof green (Opus standing in for Fable)
+799a9bc HEAD@{2026-10-11 15:59:30 -0500}: commit: hush-spec: resolve subagent-calls-uncounted, hook live proof green (Opus standing in for Fable)
+bf2344f refs/heads/main@{2026-10-11 15:56:52 -0500}: commit: hush-spec: escalate subagent-calls-uncounted (Opus standing in for Fable)
+bf2344f HEAD@{2026-10-11 15:56:52 -0500}: commit: hush-spec: escalate subagent-calls-uncounted (Opus standing in for Fable)
+909b31e refs/heads/main@{2026-10-11 15:56:32 -0500}: commit: hush-spec: hook report reads ACL rules by SID (Opus standing in for Fable)
+909b31e HEAD@{2026-10-11 15:56:32 -0500}: commit: hush-spec: hook report reads ACL rules by SID (Opus standing in for Fable)
+064aede refs/heads/main@{2026-10-11 15:33:20 -0500}: commit: hush-gate: consent (Opus standing in for Fable)
+064aede HEAD@{2026-10-11 15:33:20 -0500}: commit: hush-gate: consent (Opus standing in for Fable)
+4540176 refs/remotes/origin/main@{2026-10-11 15:31:48 -0500}: update by push
+4540176 refs/heads/main@{2026-10-11 15:31:38 -0500}: commit: hush-spec: cap hook, its self-test and the install scripts (Opus standing in for Fable)
+4540176 HEAD@{2026-10-11 15:31:38 -0500}: commit: hush-spec: cap hook, its self-test and the install scripts (Opus standing in for Fable)
+198c7ba refs/remotes/origin/main@{2026-10-11 15:13:01 -0500}: update by push
+198c7ba refs/heads/main@{2026-10-11 15:12:31 -0500}: commit (initial): hush-spec: scaffold, ledgers, check-public and evidence (Opus standing in for Fable)
+198c7ba HEAD@{2026-10-11 15:12:31 -0500}: commit (initial): hush-spec: scaffold, ledgers, check-public and evidence (Opus standing in for Fable)
+--- end ---

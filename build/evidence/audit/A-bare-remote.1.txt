@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: A-bare-remote
+phase: audit
+command: git init --bare <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/9153f9a0-4938-429f-86d5-0c93ba3e5e95/scratchpad/audit-remote.git
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T22:00:15-05:00
+time-end: 2026-10-13T22:00:15-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+Initialized empty Git repository in <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/9153f9a0-4938-429f-86d5-0c93ba3e5e95/scratchpad/audit-remote.git/
+--- end ---

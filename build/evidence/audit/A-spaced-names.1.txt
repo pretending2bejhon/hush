@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: A-spaced-names
+phase: audit
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/9153f9a0-4938-429f-86d5-0c93ba3e5e95/scratchpad/audit/spaced-names.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T21:42:19-05:00
+time-end: 2026-10-13T21:42:19-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+spaced-names: 1 hashed name(s), 45662 joined candidates of matching length, 0 match(es)
+--- end ---

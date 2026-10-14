@@ -1,0 +1,110 @@
+HUSH-EVIDENCE v1
+id: A-identities
+phase: audit
+command: git log --all --format=%h%x09%an%x09%ae%x09%cn%x09%ce
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T22:19:49-05:00
+time-end: 2026-10-13T22:19:49-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+bbe7208	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+560524f	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+5b725e5	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+8f007a3	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+2bd9d23	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+ab131ac	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+59159e8	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+0c71236	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+980e6c0	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+9075318	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+cc8dfdf	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+bd16d95	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+7c6ecd0	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+bf70c77	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+1d2ea62	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+d68cf9a	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+618ca0c	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+fc32706	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+07cab73	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+c9f589c	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+3c6bf58	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+326bb5e	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+6a6a0ed	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+2e40fab	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+8d952df	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+b94a366	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+3d6c8bd	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+81a66ae	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+2af5356	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+d495056	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+100e45f	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+b6935cd	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+b6e399b	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+f266a19	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+2f2b8a2	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+df7c009	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+ace1641	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+d1b97eb	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+c35b1c4	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+ccaedaf	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+ba55c10	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+524ef44	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+33ac8c3	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+020b7a7	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+2e6aacd	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+10520b3	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+cb90b06	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+715cf12	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+2a74c14	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+c58fa64	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+fdb139f	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+b579e92	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+72e7195	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+1c2abae	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+2286e88	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+b9eef55	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+5f02d63	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+7f04fdf	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+33f1235	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+f477989	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+938c01b	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+28158f8	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+5b9832b	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+4b418ae	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+d043c4d	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+fcc37b7	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+6a5a533	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+590ee84	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+1ebb8c0	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+4d5bb90	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+184f643	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+8b1c431	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+ec20e91	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+b3fbcbc	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+6f51c84	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+7960ef0	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+ec4a184	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+8c68fbd	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+3672c51	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+6eb4a3d	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+b238773	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+ebf5940	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+7a8bf49	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+29fae72	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+885d05b	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+dfdd44c	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+1c3f4b7	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+7c30367	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+b1b1d7a	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+4024c34	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+973f840	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+d92a141	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+799a9bc	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+bf2344f	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+909b31e	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+064aede	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+4540176	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+198c7ba	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com	pretending2bejhon	135627942+pretending2bejhon@users.noreply.github.com
+--- end ---

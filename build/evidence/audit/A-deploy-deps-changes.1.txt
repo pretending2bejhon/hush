@@ -1,0 +1,15 @@
+HUSH-EVIDENCE v1
+id: A-deploy-deps-changes
+phase: audit
+command: git log --format=%h --name-only dfdd44c..HEAD -- tools/deploy.mjs tools/check-public.mjs tools/public-patterns.mjs tools/identity.mjs tools/ship-gate.mjs tools/protect.mjs tools/spec-content.mjs tests/controls/deploy.test.mjs tests/controls/control-copy.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T22:21:18-05:00
+time-end: 2026-10-13T22:21:18-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+020b7a7
+
+tools/ship-gate.mjs
+--- end ---

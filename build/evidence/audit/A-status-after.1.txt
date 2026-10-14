@@ -1,0 +1,56 @@
+HUSH-EVIDENCE v1
+id: A-status-after
+phase: audit
+command: git status --porcelain --untracked-files=all
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T22:23:52-05:00
+time-end: 2026-10-13T22:23:52-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+?? build/evidence/audit/A-ancestor.1.txt
+?? build/evidence/audit/A-bare-remote.1.txt
+?? build/evidence/audit/A-branches.1.txt
+?? build/evidence/audit/A-bundle-licenses.1.txt
+?? build/evidence/audit/A-check-public-history.1.txt
+?? build/evidence/audit/A-check-public-tree.1.txt
+?? build/evidence/audit/A-default-page.1.txt
+?? build/evidence/audit/A-deploy-control-dirty.1.txt
+?? build/evidence/audit/A-deploy-deps-changes.1.txt
+?? build/evidence/audit/A-deploy-dirty.1.txt
+?? build/evidence/audit/A-deploy-dry-run.1.txt
+?? build/evidence/audit/A-deploy-log.1.txt
+?? build/evidence/audit/A-digest-after.1.txt
+?? build/evidence/audit/A-digest.1.txt
+?? build/evidence/audit/A-gh-issues.1.txt
+?? build/evidence/audit/A-gh-prs.1.txt
+?? build/evidence/audit/A-gh-releases.1.txt
+?? build/evidence/audit/A-gh-repo.1.txt
+?? build/evidence/audit/A-head-after.1.txt
+?? build/evidence/audit/A-head.1.txt
+?? build/evidence/audit/A-history-extra.1.txt
+?? build/evidence/audit/A-hook-test.1.txt
+?? build/evidence/audit/A-identities.1.txt
+?? build/evidence/audit/A-inspect-remote.1.txt
+?? build/evidence/audit/A-ls-files.1.txt
+?? build/evidence/audit/A-ls-remote.1.txt
+?? build/evidence/audit/A-machine.1.txt
+?? build/evidence/audit/A-npm-audit-all.1.txt
+?? build/evidence/audit/A-npm-audit-signatures.1.txt
+?? build/evidence/audit/A-npm-audit.1.txt
+?? build/evidence/audit/A-npm-ls-prod.1.txt
+?? build/evidence/audit/A-probe-flash.1.txt
+?? build/evidence/audit/A-probe-play-network.1.txt
+?? build/evidence/audit/A-probe-supply.1.txt
+?? build/evidence/audit/A-reflog.1.txt
+?? build/evidence/audit/A-refs.1.txt
+?? build/evidence/audit/A-remote.1.txt
+?? build/evidence/audit/A-spaced-names.1.txt
+?? build/evidence/audit/A-status.1.txt
+?? build/evidence/audit/A-supply-extra.1.txt
+?? build/evidence/audit/A-tags.1.txt
+?? build/evidence/audit/A-utf16-gap.1.txt
+?? build/evidence/audit/deploy/deploy.json
+?? build/evidence/audit/deploy/ship-gate.json
+--- end ---

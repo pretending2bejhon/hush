@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: A-x10-controls
+phase: audit
+command: npx vitest run tests/controls/page-probes.test.mjs -t "network check|storage check|passes every check on the clean control page|planted sessionStorage write"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-13T22:24:43-05:00
+time-end: 2026-10-13T22:26:43-05:00
+head: bbe7208cbf92131618d1296286078a9b897b0122
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  7 passed | 19 skipped (26)
+   Start at  22:24:43
+   Duration  119.91s (tests 100%)
+
+--- end ---
