@@ -585,3 +585,27 @@ State at 2026-10-13T23:04-05:00, the end of this producer session, at about 3h25
   4. It runs review R7.
 - **The owner's hands, before that session:** delete build/evidence/audit/A-machine.1.txt (`Remove-Item build\evidence\audit\A-machine.1.txt` from the repo folder). It is an untracked file the hook lets no session remove. On the owner's word it is never committed.
 
+The next producer session opened at 2026-10-13T23:11-05:00 on a clean tree, with A-machine.1.txt gone, at digest 2894d541 (standing and smoke green in session).
+
+MINOR 3 fixed 2026-10-13T23:45:19-05:00 in `a41eb11` (hush-spec: amend the build's third-party notices ...), by the producer (Opus standing in for Fable). No product file changes and no applier: the bundle is byte for byte the same (index-Dqh8GbB8.js before and after), and the page's text is unchanged.
+- **How it landed:**
+  - tools/notices.mjs, a Vite plugin in vite.config.ts, writes dist/THIRD-PARTY-NOTICES.txt: 62 packages (55 names) under 19 licence texts, 68.5 KB.
+  - The tree is package.json's dependencies, followed by Node's lookup through each package's own dependencies and installed optional dependencies. That is exactly the lockfile's runtime set. The 59 measured before followed dependencies only and left out the three installed optional packages: jazz-midi, jzz and source-map.
+  - Three packages ship no licence file and get the standard text: chord-voicings (ISC, held by Felix Roos), jazz-midi (MIT, jazz-soft) and @tonaljs/progression (MIT). That last one's author field is a bare email, so its holder reads "the authors of @tonaljs/progression".
+  - The plugin also fails the build when a module in the bundle comes from a package outside the tree. Today the bundle's package files are Phaser's and @strudel/web's. The bundler's own injected helpers are virtual modules and are not listed; section 1.6 says so. They are Rolldown's runtime (348 bytes) and Vite's modulepreload polyfill (1205 bytes).
+  - X10 gains the row `notices`, read from the lockfile apart from the plugin's walk.
+  - nanostores 0.11.4's LICENSE carries its author's address, and check-public masks it by its sha256 (tools/public-patterns.mjs). check-public --root over the built dist finds nothing else.
+  - The deploy's first control wants the file on gh-pages. probe-supply's main now runs only as a script, so its rows can be tested in Node.
+- **Red:**
+  - A build without the file, and a file that leaves Phaser out, each fail X10 (build/evidence/AUDIT1-supply-controls.amend.1.txt).
+  - 11 planted faults in the walk, the texts, the holder, the bundle check, the emit, X10's row and the mask each fail tests/tools/notices.test.mjs in a scratch copy, on the tests named for them (AUDIT1-notices-mutants.amend.1.txt).
+- **Green:**
+  - tests/tools/notices.test.mjs, 14 of 14 (AUDIT1-notices-tests.amend.1.txt);
+  - the dist scan, clean (AUDIT1-notices-public.amend.1.txt);
+  - `npm run probe:supply`, PASS with 62 packages named (AUDIT1-supply.amend.1.txt), and tsc (AUDIT1-typecheck.amend.1.txt);
+  - the 8 deploy controls in 656 s, the notices on gh-pages (AUDIT1-deploy-controls.amend.2.txt);
+  - the verifier suite, 295 of 295 (AUDIT1-verifiers.amend.2.txt), and standing GREEN (AUDIT1-standing.amend.2.txt).
+- **The digest** is now a03cbf0a and X3's seed 2688335626. On it every witness clears: 04-thorns 18 of 20, 09-gates 19 of 20 and the other nine 20 of 20. The record is in phase session (build/evidence/session/X3-seed.2.txt), not committed, so the digest stays.
+
+FIX AUDIT-1 is recorded in build/HUSH-PROGRESS.md, `## Rounds`: fixed=3 (MAJOR 1, MINOR 4 and MINOR 3), rebutted=0, superseded=0. MINOR 1 and 2 stay carried, and so do R6-MINOR1 to 8. Review R7 is next: cycle 2's audit findings are fixed, so a PASS in R7 follows that FIX round and ends the cycle.
+

@@ -69,6 +69,7 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - A control that no suite runs rots unseen. D15's seven deploy cases ran once, at PF-CONTROLS. CT1 then made the copy's extraction collide with the tracked rooms, and nothing noticed until audit 1. tests/controls lies outside npm test, so VERIFY re-runs the control file of every verifier that copies or builds the tree, not only npm test (producer, audit 1).
 - Claude Code reads environment variables only from the settings' `env` object, and a top-level BASH_MAX_TIMEOUT_MS is ignored without a word. Moved into `env`, it reached the running session at once. A subagent's Bash description still says 600000 ms, so a dispatch whose agent runs a long call (the deploy dry run takes about 16 minutes) states the real limit beside the mandate (producer, audit 1).
 - A record under build/evidence/ outside the review, audit, verify and live folders is item evidence, and the digest counts it (D18). Committing a check of the digest's own X3 seed therefore re-rolls the seed it judged. Run such a check in phase `session`, which is never committed, and quote it in the ledger (producer, audit 1).
+- A file the build publishes beside the page is as public as the page. The licence texts in dist/THIRD-PARTY-NOTICES.txt carried one third-party email that no scan of the tree could see, so scan the built dist with `check-public --root dist` before a deploy does. Rolldown also leaves a module out of a chunk's `moduleIds` once it has inlined all the bundle uses from it, so a check over the bundle's modules sees only code that ships, and its fixture needs a side effect (producer, audit 1, MINOR 3).
 
 ## Rounds
 
@@ -86,6 +87,7 @@ FIX R5: 2026-10-13T17:36:33-05:00 | fixed=2 rebutted=0 superseded=0
 HUSH-REVIEW-R6: PASS (head=8f007a3bf705dede3599e764b36f45ccc6395510 digest=6c217e01ef418ee3d2664d310528567f0c56050f1b770e7d216da73486e414ac blockers=0 majors=0 minors=8)
 CYCLE 1: end | 2026-10-13T19:38:00-05:00 | R6
 CYCLE 2: start | 2026-10-13T22:40:35-05:00 | audit-fail 1 | head=1ef9158ff53024eaf44bac36aa664617d1e45981
+FIX AUDIT-1: 2026-10-13T23:45:19-05:00 | fixed=3 rebutted=0 superseded=0
 
 ## Checkpoint
 
