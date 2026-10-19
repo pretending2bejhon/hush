@@ -2,7 +2,8 @@
 // line, a playtest on an older rc and a JHON-SHIP for an older rc are refused, one friend playing three
 // times counts once, the digest survives record commits, and a dirty tree is not judged. Review R7: X11's
 // median window passes 10:00 and 15:00 and refuses 9:59 and 15:01, a friend's earliest first run counts by
-// its time (MAJOR 1), and X7's av record is held to the spec's 3 ms clock bound, never its own (MAJOR 2).
+// its time (MAJOR 1), and X7's av record is held to the spec's 3 ms clock bound, never its own (MAJOR 2). The
+// owner's ruling A (2026-10-19): a run with no line shown is read as -:-- and -, first-run: no, and never counted.
 import fs from 'node:fs';
 import path from 'node:path';
 import { describe, expect, it } from 'vitest';
@@ -215,6 +216,40 @@ describe('ship-gate.mjs X11 and --playtests', () => {
     const r = gate(dir, ['--playtests', 'rc1']);
     expect(r.out).toMatch(/playtests: PASS rc1: P1, P2, P3, median 11:00/);
     expect(r.code).toBe(0);
+  });
+
+  // The owner's ruling A (2026-10-19): a run whose line the page never showed is logged -:-- and -, first-run: no,
+  // and X11 never counts it.
+  const unshown = (k, who) => `RUN-${k} | ${who} | rc1 | ${T} | -:-- | - | first-run: no | "no line shown" | redacted: no`;
+  const friends = [row(1, 'P1', 1, '11:30', 'yes'), row(2, 'P2', 1, '12:10', 'yes'), row(3, 'P3', 1, '14:00', 'yes')];
+
+  it('reads a run with no line shown, and never counts it as the owner\'s full run or his Firefox run (owner ruling A)', () => {
+    const { dir } = greenRepo();
+    put(dir, 'build/PLAYTESTS.md', playRows([...friends, unshown(4, 'JHON'), unshown(5, 'JHON-FIREFOX')]));
+    const r = gate(dir, ['--playtests', 'rc1']);
+    expect(r.out).not.toMatch(/PLAYTESTS line/);
+    expect(r.out).toMatch(/playtests: no full run by the owner on rc1/);
+    expect(r.out).toMatch(/playtests: no Firefox smoke run by the owner on rc1/);
+    expect(r.code).toBe(1);
+    put(dir, 'build/PLAYTESTS.md', playRows([...friends, unshown(4, 'JHON'), unshown(5, 'JHON-FIREFOX'), row(6, 'JHON', 1, '9:00', 'no'), row(7, 'JHON-FIREFOX', 1, '3:00', 'no')]));
+    const ok = gate(dir, ['--playtests', 'rc1']);
+    expect(ok.out).toMatch(/playtests: PASS rc1: P1, P2, P3, median 12:10/);
+    expect(ok.code).toBe(0);
+  });
+
+  it('refuses a run with no line shown marked first-run: yes, and a row with only its time or only its deaths unknown (owner ruling A)', () => {
+    const { dir } = greenRepo();
+    for (const bad of [
+      unshown(4, 'P4').replace('first-run: no', 'first-run: yes'),
+      unshown(4, 'JHON').replace('| - |', '| 3 |'),
+      row(4, 'JHON', 1, '9:00', 'no').replace('| 4 |', '| - |'),
+    ]) {
+      put(dir, 'build/PLAYTESTS.md', playRows([...friends, ...owner, bad]));
+      const r = gate(dir, ['--playtests', 'rc1']);
+      expect(r.out).toMatch(/playtests: PLAYTESTS line 8: a run with no line shown has -:-- and - together, and first-run: no/);
+      expect(r.out).toMatch(/playtests: FAIL rc1/);
+      expect(r.code).toBe(1);
+    }
   });
 
   it('X11 refuses a missing gate line, and a JHON-SHIP for an rc that is not the newest', () => {

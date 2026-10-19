@@ -1,0 +1,31 @@
+HUSH-EVIDENCE v1
+id: RUN1-rows-mutants
+phase: amend
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/mut/harness.mjs <repo> <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/mut/run1 <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/mut/run1.json
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T14:36:59-05:00
+time-end: 2026-10-19T14:39:15-05:00
+head: 3339d22d09458602604de6d049d8fe0c68506bf6
+exit: 0
+--- output ---
+clean copy: ok: passes; Tests  21 passed (21) (run tests/tools/ship-gate.test.mjs)
+mutant grammar-cannot-read-unshown (tools/ship-gate.mjs): ok: caught (exit 1); Tests  2 failed | 19 passed (21)
+  failed: reads a run with no line shown, and never counts it as the owner's full run or his Firefox run (owner ruling A) 941ms
+  failed: refuses a run with no line shown marked first-run: yes, and a row with only its time or only its deaths unknown (owner ruling A) 948ms
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > reads a run with no line shown, and never counts it as the owner's full run or his Firefox run (owner ruling A)
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a run with no line shown marked first-run: yes, and a row with only its time or only its deaths unknown (owner ruling A)
+mutant unshown-first-run-yes-accepted (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 20 passed (21)
+  failed: refuses a run with no line shown marked first-run: yes, and a row with only its time or only its deaths unknown (owner ruling A) 943ms
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a run with no line shown marked first-run: yes, and a row with only its time or only its deaths unknown (owner ruling A)
+mutant unshown-time-alone-accepted (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 20 passed (21)
+  failed: refuses a run with no line shown marked first-run: yes, and a row with only its time or only its deaths unknown (owner ruling A) 1066ms
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > refuses a run with no line shown marked first-run: yes, and a row with only its time or only its deaths unknown (owner ruling A)
+mutant owner-full-run-counts-unshown (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 20 passed (21)
+  failed: reads a run with no line shown, and never counts it as the owner's full run or his Firefox run (owner ruling A) 960ms
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > reads a run with no line shown, and never counts it as the owner's full run or his Firefox run (owner ruling A)
+mutant owner-firefox-counts-unshown (tools/ship-gate.mjs): ok: caught (exit 1); Tests  1 failed | 20 passed (21)
+  failed: reads a run with no line shown, and never counts it as the owner's full run or his Firefox run (owner ruling A) 963ms
+  failed: tests/tools/ship-gate.test.mjs > ship-gate.mjs X11 and --playtests > reads a run with no line shown, and never counts it as the owner's full run or his Firefox run (owner ruling A)
+mutants: PASS (5 planted fault(s) and the clean copy)
+--- end ---

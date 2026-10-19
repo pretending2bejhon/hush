@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: RUN1-rows-mutants
+phase: amend
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/mut/harness.mjs <repo> <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/mut/run1 <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/mut/run1.json
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T14:33:37-05:00
+time-end: 2026-10-19T14:33:44-05:00
+head: 3339d22d09458602604de6d049d8fe0c68506bf6
+exit: 1
+--- output ---
+clean copy: FAIL: does not pass; Tests  no tests (run tests/tools/ship-gate.test.mjs)
+  failed: tests/tools/ship-gate.test.mjs [ tests/tools/ship-gate.test.mjs ]
+mutant grammar-cannot-read-unshown (tools/ship-gate.mjs): ok: caught (exit 1); Tests  no tests
+  failed: tests/tools/ship-gate.test.mjs [ tests/tools/ship-gate.test.mjs ]
+mutant unshown-first-run-yes-accepted (tools/ship-gate.mjs): ok: caught (exit 1); Tests  no tests
+  failed: tests/tools/ship-gate.test.mjs [ tests/tools/ship-gate.test.mjs ]
+mutant unshown-time-alone-accepted (tools/ship-gate.mjs): ok: caught (exit 1); Tests  no tests
+  failed: tests/tools/ship-gate.test.mjs [ tests/tools/ship-gate.test.mjs ]
+mutant owner-full-run-counts-unshown (tools/ship-gate.mjs): ok: caught (exit 1); Tests  no tests
+  failed: tests/tools/ship-gate.test.mjs [ tests/tools/ship-gate.test.mjs ]
+mutant owner-firefox-counts-unshown (tools/ship-gate.mjs): ok: caught (exit 1); Tests  no tests
+  failed: tests/tools/ship-gate.test.mjs [ tests/tools/ship-gate.test.mjs ]
+mutants: FAIL (5 planted fault(s) and the clean copy)
+--- end ---

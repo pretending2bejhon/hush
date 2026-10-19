@@ -72,7 +72,10 @@ export function dirtyBeyondGates(top) {
 
 // ---------------------------------------------------------------- playtests (X11)
 
-const RUN_RE = /^RUN-([1-9][0-9]{0,4}) \| (P[1-9][0-9]{0,2}|JHON|JHON-FIREFOX) \| rc([1-9][0-9]{0,3}) \| (\S+) \| ([0-9]{1,3}):([0-5][0-9]) \| (0|[1-9][0-9]{0,4}) \| first-run: (yes|no) \| ("(?:[^"\\\u0000-\u001f]|\\["\\/bfnrt]|\\u[0-9a-fA-F]{4})*") \| redacted: (yes|no)$/;
+// A run whose line the page never showed (the owner's ruling A, 2026-10-19: his rc1 run, played without
+// ?playtest) is logged with `-:--` for its time and `-` for its deaths, the two together, always first-run: no.
+// X11 never counts it: not as a friend's first run, not as the owner's full run, not as his Firefox run.
+const RUN_RE = /^RUN-([1-9][0-9]{0,4}) \| (P[1-9][0-9]{0,2}|JHON|JHON-FIREFOX) \| rc([1-9][0-9]{0,3}) \| (\S+) \| (?:([0-9]{1,3}):([0-5][0-9])|(-:--)) \| (0|[1-9][0-9]{0,4}|-) \| first-run: (yes|no) \| ("(?:[^"\\\u0000-\u001f]|\\["\\/bfnrt]|\\u[0-9a-fA-F]{4})*") \| redacted: (yes|no)$/;
 const ISO_RE = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,9})?)?(?:Z|[+-]\d{2}:\d{2})$/;
 
 export function parsePlaytests(text) {
@@ -83,10 +86,19 @@ export function parsePlaytests(text) {
     if (!line.startsWith('RUN-')) return;
     const m = RUN_RE.exec(line);
     if (!m || !ISO_RE.test(m[4]) || Number.isNaN(Date.parse(m[4]))) { errors.push(`PLAYTESTS line ${i + 1}: not the row grammar`); return; }
+    const unshown = m[7] === '-:--';
+    if (unshown !== (m[8] === '-') || (unshown && m[9] !== 'no')) {
+      errors.push(`PLAYTESTS line ${i + 1}: a run with no line shown has -:-- and - together, and first-run: no`);
+      return;
+    }
     const id = `RUN-${m[1]}`;
     if (seen.has(id)) { errors.push(`PLAYTESTS line ${i + 1}: ${id} repeats`); return; }
     seen.add(id);
-    rows.push({ id, who: m[2], rc: Number(m[3]), time: m[4], seconds: Number(m[5]) * 60 + Number(m[6]), deaths: Number(m[7]), firstRun: m[8] === 'yes', line: i + 1 });
+    rows.push({
+      id, who: m[2], rc: Number(m[3]), time: m[4], shown: !unshown,
+      seconds: unshown ? null : Number(m[5]) * 60 + Number(m[6]), deaths: unshown ? null : Number(m[8]),
+      firstRun: m[9] === 'yes', line: i + 1,
+    });
   });
   return { rows, errors };
 }
@@ -128,8 +140,10 @@ export function playtestVerdict(top, rc) {
   if (friends.length < N6_FRIENDS) problems.push(`${friends.length} distinct friend(s) with a first run on rc${rc}, need ${N6_FRIENDS}`);
   const med = friends.length ? median(friends.map((r) => r.seconds)) : null;
   if (med === null || med < MIN_FIRST_RUN || med > MAX_FIRST_RUN) problems.push(`median first run ${med === null ? 'none' : mmss(med)} is outside 10:00 to 15:00`);
-  if (!rows.some((r) => r.who === 'JHON' && bound(r))) problems.push(`no full run by the owner on rc${rc}`);
-  if (N7_FIREFOX && !rows.some((r) => r.who === 'JHON-FIREFOX' && bound(r))) problems.push(`no Firefox smoke run by the owner on rc${rc}`);
+  // A friend's run with no line shown is first-run: no by the grammar; the owner's two runs count only when shown.
+  const shown = rows.filter((r) => r.shown);
+  if (!shown.some((r) => r.who === 'JHON' && bound(r))) problems.push(`no full run by the owner on rc${rc}`);
+  if (N7_FIREFOX && !shown.some((r) => r.who === 'JHON-FIREFOX' && bound(r))) problems.push(`no Firefox smoke run by the owner on rc${rc}`);
   return { ok: problems.length === 0, problems, friends: friends.map((r) => r.who), median: med };
 }
 

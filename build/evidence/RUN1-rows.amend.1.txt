@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: RUN1-rows
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/tools/ship-gate.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T14:33:07-05:00
+time-end: 2026-10-19T14:33:31-05:00
+head: 3339d22d09458602604de6d049d8fe0c68506bf6
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  21 passed (21)
+   Start at  14:33:08
+   Duration  23.07s (tests 98%, import 1%, transform 1%)
+
+--- end ---
