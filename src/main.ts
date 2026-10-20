@@ -25,8 +25,11 @@ run = createRun({ world, engine, keys });
 // The values in use once the calibration screen is left, or null while it is up.
 let calibration: { avOffset: number; inputBias: number } | null = null;
 
-// Leaves the calibration screen with these values and starts the run at room 1.
+// Leaves the calibration screen with these values and starts the run at room 1. The calibration's page line goes first
+// (the owner's ruling N-F1 c, spec section 12), on the scene's onDone and on the probe's control alike, and nothing shows
+// it again: play again keeps the calibration.
 function skipCalibration(avOffset: number, inputBias: number): void {
+  document.getElementById('calibration')?.setAttribute('hidden', '');
   calibration = { avOffset, inputBias };
   run.setCalibration(avOffset, inputBias);
   if (game.scene.isActive('calibration')) game.scene.stop('calibration');

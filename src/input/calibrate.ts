@@ -24,9 +24,12 @@ export function judgePass(offsetsMs: number[]): PassResult {
   return { median: m, mad, taps, accepted: mad <= 35 };
 }
 
-// The audio and visual passes to the display shift and the input bias: a rejected pass takes 0.
+// The audio and visual passes to the display shift and the input bias, by the one-pass rule (the owner's ruling N-F1 c,
+// 2026-10-19): both passes accepted give avOffset a.median - v.median and inputBias v.median; a lone accepted pass gives
+// avOffset 0 and its median as inputBias, so it never shifts the picture by the player's tap lag; neither gives 0 and 0.
 export function calibrate(a: PassResult, v: PassResult): { avOffset: number; inputBias: number } {
-  const medianA = a.accepted ? a.median : 0;
-  const medianV = v.accepted ? v.median : 0;
-  return { avOffset: medianA - medianV, inputBias: medianV };
+  if (a.accepted && v.accepted) return { avOffset: a.median - v.median, inputBias: v.median };
+  if (a.accepted) return { avOffset: 0, inputBias: a.median };
+  if (v.accepted) return { avOffset: 0, inputBias: v.median };
+  return { avOffset: 0, inputBias: 0 };
 }
