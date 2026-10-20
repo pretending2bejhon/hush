@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: RUN1-F4
+phase: fix
+command: npx vitest run tests/input/keys.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T19:51:14-05:00
+time-end: 2026-10-19T19:51:15-05:00
+head: 7596f143060520f36c9dc1760512d7df77da94cd
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  6 passed (6)
+   Start at  19:51:15
+   Duration  248ms (transform 68%, import 17%, worker 8%, tests 6%)
+
+--- end ---

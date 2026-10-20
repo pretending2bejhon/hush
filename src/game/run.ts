@@ -98,9 +98,12 @@ export function createRun(opts: { world: World; engine: AudioEngine; keys: Keys 
     view: () => view,
     track: () => track,
     // A new sim at the room's entrance, the layers of every earlier room back, the track from cycle 0 on a fresh origin.
+    // The keys are flushed first (the owner's ruling N-F4 a, section 13): a run started again from the ending's card
+    // holds exactly the keys that are down, never an event stamped with the finished run's steps.
     startRoom(room: number): void {
       const ctx = engine.context();
       if (!ctx) return;
+      keys.flush();
       origin = ctx.currentTime + ORIGIN_LEAD;
       sim = createSim(world, { room, step: 0, layers: canonical(room) });
       track = createTrack();

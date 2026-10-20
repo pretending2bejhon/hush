@@ -1,6 +1,6 @@
 // The keyboard (spec sections 3 and 9.2): key codes to input bits, each event applied at the sim step it was
-// heard at, the bits held being the OR of the keys down. Phaser's input stays off (D1); these are plain window
-// listeners in the capture phase.
+// heard at, the bits held being the OR of the keys down, and the queue flushed whatever its steps when a run
+// starts again. Phaser's input stays off (D1); these are plain window listeners in the capture phase.
 export interface InputSource {
   next(step: number): number;
 }
@@ -17,7 +17,7 @@ interface QueuedKey {
 }
 
 export function createKeys(opts: { target: EventTarget; stepOf: (eventTimeStampMs: number) => number }):
-  InputSource & { attachSource(s: InputSource | null): void; held(): number; detach(): void } {
+  InputSource & { attachSource(s: InputSource | null): void; held(): number; detach(): void; flush(): void } {
   const { target, stepOf } = opts;
   let queue: QueuedKey[] = [];
   const held = new Set<string>();
@@ -50,6 +50,15 @@ export function createKeys(opts: { target: EventTarget; stepOf: (eventTimeStampM
       }
       queue = later;
       return source ? source.next(step) : bits();
+    },
+    // Applies every queued event in arrival order, whatever its step, and empties the queue (the owner's ruling
+    // N-F4 a): a run started again holds exactly the keys that are down, never an event stamped by the run before.
+    flush(): void {
+      for (const q of queue) {
+        if (q.down) held.add(q.code);
+        else held.delete(q.code);
+      }
+      queue = [];
     },
     attachSource(s: InputSource | null): void {
       source = s;

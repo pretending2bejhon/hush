@@ -34,12 +34,25 @@ function skipCalibration(avOffset: number, inputBias: number): void {
   run.startRoom(1);
 }
 
-// The calibration scene hands its two values over through skipCalibration once its passes are done. The ending reads
-// the page's `?playtest` flag, the one sanctioned read of a page flag (spec section 13).
+// Plays again from the ending's card (the owner's ruling N-F4 a, spec section 13): the run line loses its text and is
+// hidden again, the scene `ending` is left for `play` and a new run starts at room 1, with the calibration in use kept.
+function playAgain(): void {
+  const line = document.getElementById('playtest');
+  if (line) {
+    line.textContent = '';
+    line.setAttribute('hidden', '');
+  }
+  game.scene.stop('ending');
+  game.scene.start('play');
+  run.startRoom(1);
+}
+
+// The calibration scene hands its two values over through skipCalibration once its passes are done; the ending plays
+// again through playAgain. The product reads no page flag (spec section 13).
 const game = createGame([
   new CalibrationScene({ engine, onDone: skipCalibration }),
   new PlayScene(run),
-  new EndingScene({ engine, run, playtest: new URLSearchParams(window.location.search).has('playtest') }),
+  new EndingScene({ engine, run, onAgain: playAgain }),
 ]);
 
 // The first keydown that is not Escape starts the audio, inside that handler (a user gesture, CP V6).

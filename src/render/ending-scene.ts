@@ -12,36 +12,48 @@ const DEPTH_GRAPHICS = 1;
 
 // The scene `ending` (spec section 13). The gauntlet's finish leaves the track playing in full. Over 4 bars the
 // gauntlet's ceiling passes and the glimpse of the next area rises into the view; then the card: three dots on the
-// beat, until the tab closes. No text on the canvas. With `?playtest`, once the card is up, the run's time and deaths
-// go into the page's <output id="playtest"> outside the canvas.
+// beat and, under them, the key that plays again, filled on the bar's fourth beat. No text on the canvas. Once the
+// card is up, in every mode, the run's time and deaths go into the page's <output id="playtest"> outside the canvas,
+// and from then on a key that is neither Escape nor a repeat plays again through onAgain, once; a key during the rise
+// does nothing (the owner's ruling N-F4 a).
 export class EndingScene extends Phaser.Scene {
   private engine: AudioEngine;
   private run: Run;
-  private playtest: boolean;
+  private onAgain: () => void;
   private glimpse: Phaser.GameObjects.Image | null = null;
   private graphics!: Phaser.GameObjects.Graphics;
   private finishStep = 0;
   private t0: number | null = null;
-  private lineShown = false;
+  private cardUp = false;
+  private again = false;
 
-  constructor(opts: { engine: AudioEngine; run: Run; playtest: boolean }) {
+  constructor(opts: { engine: AudioEngine; run: Run; onAgain: () => void }) {
     super('ending');
     this.engine = opts.engine;
     this.run = opts.run;
-    this.playtest = opts.playtest;
+    this.onAgain = opts.onAgain;
   }
 
   create(): void {
     // The sim still counts steps after the finish: this is the step the ending began on.
     this.finishStep = this.run.sim ? this.run.sim.step : 0;
     this.t0 = null;
-    this.lineShown = false;
+    this.cardUp = false;
+    this.again = false;
     this.glimpse = null;
     if (this.bakeShapes(KEY_GLIMPSE, 1280, 720, glimpseShapes())) {
       this.glimpse = this.add.image(0, riseAt(0).glimpseY, KEY_GLIMPSE).setOrigin(0, 0).setDepth(DEPTH_GLIMPSE);
     }
     this.graphics = this.add.graphics().setDepth(DEPTH_GRAPHICS);
+    // Play again: once a frame has had the card, a key whose code is not Escape and that is not a repeat.
+    const onKey = (e: KeyboardEvent): void => {
+      if (!this.cardUp || this.again || e.code === 'Escape' || e.repeat) return;
+      this.again = true;
+      this.onAgain();
+    };
+    window.addEventListener('keydown', onKey, true);
     this.events.once('shutdown', () => {
+      window.removeEventListener('keydown', onKey, true);
       this.glimpse?.destroy();
       this.glimpse = null;
       this.textures.remove(KEY_GLIMPSE);
@@ -74,7 +86,7 @@ export class EndingScene extends Phaser.Scene {
   }
 
   // Every frame is endingFrame's alone: the rise from the first frame's heard time, then the card on the music's
-  // beat, counted from the run's origin.
+  // beat, counted from the run's origin. The first frame with the card shows the run line, in every mode.
   override update(): void {
     const clock = this.engine.clock();
     if (!clock) return;
@@ -84,8 +96,8 @@ export class EndingScene extends Phaser.Scene {
     if (this.glimpse) this.glimpse.y = f.glimpseY;
     this.graphics.clear();
     drawShapes(this.graphics, f.shapes);
-    if (f.card && this.playtest && !this.lineShown) {
-      this.lineShown = true;
+    if (f.card && !this.cardUp) {
+      this.cardUp = true;
       this.showRunLine();
     }
   }
