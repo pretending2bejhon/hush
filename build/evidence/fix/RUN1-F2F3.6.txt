@@ -1,0 +1,75 @@
+HUSH-EVIDENCE v1
+id: RUN1-F2F3
+phase: fix
+command: npm run accept:rooms
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T22:47:21-05:00
+time-end: 2026-10-19T22:51:25-05:00
+head: 9a10284f55169d5b80770d0398072b241f8eb8cf
+exit: 0
+--- output ---
+
+> hush@0.0.0 accept:rooms
+> node tools/replay.mjs --all --jitter --seed 1 --kick && node tools/cheese.mjs --all
+
+replays/01-wake.json: CLEAR clear at step 1607, checksum 5ac56108 (witness 5ac56108) OK
+replays/01-wake.json: kick: 5 presses, each within 12 steps of a kick ON
+replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: CLEAR clear at step 1532, checksum c4384313 (witness c4384313) OK
+replays/02-heartbeat.json: kick: 12 presses, each within 12 steps of a kick ON
+replays/02-heartbeat.json: jitter seed 1: 19/20 clear (need 18) [++++-+++++++++++++++] PASS
+replays/03-dash.json: CLEAR clear at step 1648, checksum 808a0990 (witness 808a0990) OK
+replays/03-dash.json: kick: 9 presses, each within 12 steps of a kick ON
+replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: CLEAR clear at step 1267, checksum 81204999 (witness 81204999) OK
+replays/04-thorns.json: kick: 2 presses, each within 12 steps of a kick ON
+replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/05-doors.json: CLEAR clear at step 2047, checksum b64441c0 (witness b64441c0) OK
+replays/05-doors.json: kick: 6 presses, each within 12 steps of a kick ON
+replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: CLEAR clear at step 1960, checksum 6760d1eb (witness 6760d1eb) OK
+replays/06-wave.json: kick: 5 presses, each within 12 steps of a kick ON
+replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: CLEAR clear at step 1955, checksum 40e2ed24 (witness 40e2ed24) OK
+replays/07-current.json: kick: 4 presses, each within 12 steps of a kick ON
+replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: CLEAR clear at step 1324, checksum 290b498c (witness 290b498c) OK
+replays/08-steps.json: kick: 8 presses, each within 12 steps of a kick ON
+replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/09-gates.json: CLEAR clear at step 2162, checksum eebb5fde (witness eebb5fde) OK
+replays/09-gates.json: kick: 1 presses, each within 12 steps of a kick ON
+replays/09-gates.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/10-crown.json: CLEAR clear at step 2348, checksum 862bbac8 (witness 862bbac8) OK
+replays/10-crown.json: kick: 9 presses, each within 12 steps of a kick ON
+replays/10-crown.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/11-gauntlet.json: CLEAR clear at step 14278, checksum b3715ef7 (witness b3715ef7) OK
+replays/11-gauntlet.json: kick: 62 presses, each within 12 steps of a kick ON
+replays/11-gauntlet.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 11 witness(es), every press on the kick
+cheese: 02-heartbeat section 1 (stones): free: clear in 923 steps (11260 nodes); shut (a floor, b floor): none (node budget, 100000 nodes): gated
+cheese: 02-heartbeat section 2 (climb): free: clear in 662 steps (13996 nodes); shut (a floor, b floor): none (node budget, 100000 nodes): gated
+cheese: 04-thorns section 1 (bar field): free: clear in 323 steps (7146 nodes); shut (a spike): none (node budget, 100000 nodes): gated
+cheese: 04-thorns section 2 (half-bar field): free: clear in 355 steps (3307 nodes); shut (b spike): none (node budget, 100000 nodes): gated
+cheese: 04-thorns section 3 (beat field): free: clear in 176 steps (44 nodes); shut (c spike): none (node budget, 100000 nodes): gated
+cheese: 05-doors section 1 (door 1): free: clear in 437 steps (10161 nodes); shut (a wall): none (node budget, 100000 nodes): gated
+cheese: 05-doors section 2 (door 2): free: clear in 268 steps (48 nodes); shut (b wall): none (node budget, 100000 nodes): gated
+cheese: 05-doors section 3 (door 3): free: clear in 443 steps (14506 nodes); shut (a wall): none (node budget, 100000 nodes): gated
+cheese: 05-doors section 4 (door 4): free: clear in 361 steps (26 nodes); shut (c wall): none (node budget, 100000 nodes): gated
+cheese: 05-doors section 5 (door 5): free: clear in 549 steps (55 nodes); shut (c wall): none (node budget, 100000 nodes): gated
+cheese: 07-current section 1 (clap): free: clear in 288 steps (1202 nodes); shut (a spike): none (node budget, 100000 nodes): gated
+cheese: 07-current section 2 (walls): free: clear in 1700 steps (439927 nodes); shut (b wall, c wall): none (node budget, 100000 nodes): gated
+cheese: 08-steps section 1 (climb): free: clear in 901 steps (11385 nodes); shut (a floor, b floor): none (node budget, 100000 nodes): gated
+cheese: 09-gates section 1 (gate 1): free: clear in 260 steps (698 nodes); shut (a wall): none (node budget, 100000 nodes): gated
+cheese: 09-gates section 2 (spikes 1): free: clear in 156 steps (5 nodes); shut (b spike): none (search space exhausted, 37042 nodes): gated
+cheese: 09-gates section 3 (spikes 2): free: clear in 312 steps (2351 nodes); shut (b spike): none (node budget, 100000 nodes): gated
+cheese: 09-gates section 4 (gate 2): free: clear in 262 steps (1157 nodes); shut (a wall): none (node budget, 100000 nodes): gated
+cheese: 09-gates section 5 (spikes 3): free: clear in 153 steps (5 nodes); shut (b spike): none (search space exhausted, 37042 nodes): gated
+cheese: 09-gates section 6 (gate 3): free: clear in 262 steps (1157 nodes); shut (a wall): none (search space exhausted, 88542 nodes): gated
+cheese: 10-crown section 1 (stones 1): free: clear in 623 steps (832 nodes); shut (a floor, b floor): none (node budget, 100000 nodes): gated
+cheese: 10-crown section 2 (clap): free: clear in 306 steps (250 nodes); shut (c spike): none (node budget, 100000 nodes): gated
+cheese: 10-crown section 3 (door 1): free: clear in 82 steps (3 nodes); shut (d wall): none (node budget, 100000 nodes): gated
+cheese: 10-crown section 4 (stones 2): free: clear in 507 steps (243 nodes); shut (a floor, b floor): none (node budget, 100000 nodes): gated
+cheese: 10-crown section 5 (door 2): free: clear in 107 steps (4 nodes); shut (d wall): none (node budget, 100000 nodes): gated
+cheese: PASS, 24 section(s) in 7 room(s), none crossed with its window shut within 100000 nodes a search
+--- end ---

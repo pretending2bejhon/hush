@@ -12,7 +12,7 @@ export interface Gauntlet {
   program: { form: 'rest' | 'base' | 'wave'; masks: { kick?: number[]; clap?: number[]; hat?: number[] } }[];
 }
 
-export const GAUNTLET = Object.freeze({ LEAD: 4, TAIL: 28, H: 18, CEIL: 2, FLOOR: 15, SPAWN_COL: 4, CENTRE: 12 } as const);
+export const GAUNTLET = Object.freeze({ LEAD: 4, TAIL: 28, H: 18, CEIL: 2, FLOOR: 15, SPAWN_COL: 4, LAG: 2, WAVE_HALF: 3 } as const);
 
 type Bar = Gauntlet['program'][number];
 type ObstacleLayer = 'kick' | 'clap' | 'hat';
@@ -52,10 +52,11 @@ export function parseGauntlet(fileName: string, text: string): Gauntlet {
 
 // The generator (spec section 6.1): one column per sixteenth, 4 tiles per beat, the creature centred on
 // column LEAD + n at gauntlet sixteenth n. Obstacle rules: clap, one floor spike; kick, two floor spikes
-// side by side; hat, one spike hanging at row FLOOR - 4. A form change puts a portal column two columns
-// before the bar starts. A wave bar is a corridor 5 tiles tall centred on row CENTRE - floor(degree / 2).
+// side by side; hat, one spike hanging at row FLOOR - 4; each LAG columns after the onset that makes it, so
+// the jump on the onset clears it (the owner's ruling N-F2 a). A form change puts a portal column two columns
+// before the bar starts. A wave bar is a corridor that follows the melody's contour on the kick (below).
 export function generateGauntlet(g: Gauntlet): { W: number; H: number; text: string; spawn: { col: number; row: number } } {
-  const { LEAD, TAIL, H, CEIL, FLOOR, SPAWN_COL, CENTRE } = GAUNTLET;
+  const { LEAD, TAIL, H, CEIL, FLOOR, SPAWN_COL, LAG, WAVE_HALF } = GAUNTLET;
   const W = LEAD + 16 * g.bars + TAIL;
   // Row-major, one character per tile.
   const grid: string[] = Array<string>(W * H).fill('.');
@@ -69,15 +70,22 @@ export function generateGauntlet(g: Gauntlet): { W: number; H: number; text: str
     const bar = g.program[b];
     if (!bar || bar.form === 'rest') continue;
     if (bar.form === 'wave') {
+      // The corridor follows the melody's contour on the kick (the owner's ruling N-F2 a): from the floor row
+      // (FLOOR - 1), where the creature runs, its centre moves one row a sixteenth, up through each beat whose last
+      // degree lies above its first and down through every other, WAVE_HALF rows open on each side of it.
+      let centre = FLOOR - 1;
       for (let s = 0; s < 16; s++) {
-        const centre = CENTRE - Math.floor((g.melody[s] ?? 0) / 2);
         const c = col(b, s);
-        for (let r = CEIL; r < FLOOR; r++) if (r < centre - 2 || r > centre + 2) grid[r * W + c] = '#';
+        for (let r = CEIL; r < FLOOR; r++) if (r < centre - WAVE_HALF || r > centre + WAVE_HALF) grid[r * W + c] = '#';
+        const q = Math.floor(s / 4);
+        const first = g.melody[4 * q];
+        const last = g.melody[4 * q + 3];
+        centre += first !== undefined && last !== undefined && last > first ? -1 : 1;
       }
     } else {
       for (const layer of OBSTACLE_LAYERS) {
         for (const s of bar.masks[layer] ?? []) {
-          const c = col(b, s);
+          const c = col(b, s) + LAG;
           if (layer === 'clap') grid[(FLOOR - 1) * W + c] = '^';
           else if (layer === 'kick') { grid[(FLOOR - 1) * W + c] = '^'; grid[(FLOOR - 1) * W + c + 1] = '^'; }
           else grid[(FLOOR - 4) * W + c] = 'v';

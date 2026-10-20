@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: RUN1-F2F3
+phase: fix
+command: node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1 --kick
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T22:47:08-05:00
+time-end: 2026-10-19T22:47:09-05:00
+head: 9a10284f55169d5b80770d0398072b241f8eb8cf
+exit: 0
+--- output ---
+replays/01-wake.json: CLEAR clear at step 1607, checksum 5ac56108 (witness 5ac56108) OK
+replays/01-wake.json: kick: 5 presses, each within 12 steps of a kick ON
+replays/01-wake.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/02-heartbeat.json: CLEAR clear at step 1532, checksum c4384313 (witness c4384313) OK
+replays/02-heartbeat.json: kick: 12 presses, each within 12 steps of a kick ON
+replays/02-heartbeat.json: jitter seed 1: 19/20 clear (need 18) [++++-+++++++++++++++] PASS
+replays/03-dash.json: CLEAR clear at step 1648, checksum 808a0990 (witness 808a0990) OK
+replays/03-dash.json: kick: 9 presses, each within 12 steps of a kick ON
+replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/04-thorns.json: CLEAR clear at step 1267, checksum 81204999 (witness 81204999) OK
+replays/04-thorns.json: kick: 2 presses, each within 12 steps of a kick ON
+replays/04-thorns.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 4 witness(es), every press on the kick
+--- end ---

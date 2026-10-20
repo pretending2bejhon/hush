@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: RUN1-F2F3
+phase: fix
+command: npx vitest run tests/sim/oracle-base.test.mjs tests/sim/oracle-dash.test.mjs tests/sim/oracle-beat.test.mjs tests/sim/oracle-wave.test.mjs tests/sim/oracle-gauntlet.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T22:47:00-05:00
+time-end: 2026-10-19T22:47:03-05:00
+head: 9a10284f55169d5b80770d0398072b241f8eb8cf
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  5 passed (5)
+      Tests  19 passed (19)
+   Start at  22:47:01
+   Duration  1.83s (tests 75%, transform 18%, import 7%, worker 1%)
+
+--- end ---
