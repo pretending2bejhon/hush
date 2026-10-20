@@ -1,0 +1,28 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-more
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/batch-more.json
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T12:49:09-05:00
+time-end: 2026-10-20T12:49:19-05:00
+head: 627318043f924347d30231a9308cb020154fd5b9
+exit: 0
+--- output ---
+mut: clone clone at 627318043f924347d30231a9308cb020154fd5b9, clean
+M01 [8.5 / 9 the clock line's fallback after 4 s] KILLED by vitest tests/sim tests/rooms ... (exit 1) in 5 s: src/clock/output-clock.ts: "const CLOCK_FALLBACK = 3000;" -> "const CLOCK_FALLBACK = 4000;"
+    ❯ tests/clock/output-clock.test.mjs (14 tests | 2 failed) 274ms
+    × agrees: a lead of three render quanta 20ms
+    × agrees on an engine without output timestamps, and on one that never trusts a pair 14ms
+    Test Files  1 failed | 24 passed (25)
+    Tests  2 failed | 143 passed (145)
+    ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+M02 [8.3 the track: a label starting with _ captured] KILLED by vitest tests/sim tests/rooms ... (exit 1) in 5 s: src/audio/track.ts: "if (!key.startsWith('_') && !names.includes(key)) {" -> "if (!names.includes(key)) {"
+    ❯ tests/audio/track.test.mjs (2 tests | 1 failed) 65ms
+    × numbers $ labels, mutes _ labels, and ignores the tempo call 11ms
+    Test Files  1 failed | 24 passed (25)
+    Tests  1 failed | 144 passed (145)
+    ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+    FAIL  tests/audio/track.test.mjs > AU1 track layers > numbers $ labels, mutes _ labels, and ignores the tempo call
+mut: 2 killed, 0 survived, 0 skipped; the clone is clean
+--- end ---

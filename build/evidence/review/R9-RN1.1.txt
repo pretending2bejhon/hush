@@ -1,0 +1,47 @@
+HUSH-EVIDENCE v1
+id: R9-RN1
+phase: review
+command: npm run accept:rn1
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T10:09:04-05:00
+time-end: 2026-10-20T10:14:43-05:00
+head: 627318043f924347d30231a9308cb020154fd5b9
+exit: 1
+--- output ---
+
+> hush@0.0.0 accept:rn1
+> vitest run tests/render/room-art.test.mjs tests/render/draw-shapes.test.mjs && npm run check:art
+
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  2 passed (2)
+      Tests  6 passed (6)
+   Start at  10:09:04
+   Duration  367ms (transform 57%, tests 21%, import 19%, worker 3%)
+
+
+> hush@0.0.0 check:art
+> vite build && node tools/probe-flash.mjs && node tools/probe-perf.mjs --headed
+
+[36mvite v8.3.1 [32mbuilding client environment for production...[36m[39m
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.12 kB │ gzip:   0.72 kB
+dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+dist/assets/index-BuxHFNVv.js  2,101.93 kB │ gzip: 596.75 kB
+
+[32m✓ built in 706ms[39m
+flash: 8956 frames over 149.3 s, median 15.75 ms; general max 6468 px, red max 0 px (limit 25600)
+flash: PASS
+perf: 14.44 fps mean, 94.36% of 869 intervals <= 20 ms, p99 1016.6 ms, over 60.2 s (headed, ANGLE (Intel, Intel(R) Graphics (0x00007D45) Direct3D11 vs_5_0 ps_5_0, D3D11))
+perf: machine: power ac, saver off (Balanced), refresh [60], heavy apps none
+perf: mean 14.4 fps, under 58
+perf: 94.36% of intervals at 20 ms or less, under 99%
+perf: 11-gauntlet: never reached the busy window
+perf: FAIL
+--- end ---

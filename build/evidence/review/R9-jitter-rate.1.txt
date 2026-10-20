@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: R9-jitter-rate
+phase: review
+command: node tools/replay.mjs --all --jitter --seed 1651709956 --runs 1000 --need 0 --kick
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T12:34:12-05:00
+time-end: 2026-10-20T12:34:12-05:00
+head: 627318043f924347d30231a9308cb020154fd5b9
+exit: 2
+--- output ---
+replay: bad --runs or --need
+--- end ---

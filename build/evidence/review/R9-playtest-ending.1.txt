@@ -1,0 +1,18 @@
+HUSH-EVIDENCE v1
+id: R9-playtest-ending
+phase: review
+command: node tools/probe-play.mjs --query playtest --check console,text,again --rooms <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/sub11/rooms --replays <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/sub11/replays
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T12:38:06-05:00
+time-end: 2026-10-20T12:39:18-05:00
+head: 627318043f924347d30231a9308cb020154fd5b9
+exit: 0
+--- output ---
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 9907 ms into it
+play: chrome headless: console: ok: zero console and page errors
+play: chrome headless: text: ok: title, link and notice only, and once the card is up "run 0:59 · deaths 0"; nothing over the canvas; no text object
+play: chrome headless: again: ok: a key half-way through the rise left the ending up (3495 ms in); a key at the card started a new run at room 1 and hid the run line
+play: chrome headless: PASS (console,text,again)
+--- end ---

@@ -785,3 +785,4 @@ RUN1-F1 amended 2026-10-20 by the producer (Opus standing in for Fable), in the 
 
 Round RUN-1 closed 2026-10-20T09:52-05:00: 8 fixed, 0 rebutted, 0 superseded. That is RUN-1's four findings (F4 in 7320a73, F2 and F3 in e9c9b46, F1 in 554c10b) and R8's carried MINOR 4, 8, 9 and 10, which landed with F1's amendment (ad445dd). R8-MINOR1, 2, 3, 5, 6, 7, 11, 12, 13 and 14 stay carried with their designs. The next step is review R9 on cycle 3 (re-entry row 7, then row 8 or 10 by its verdict).
 
+RESOLVED: HUSH-PHASE3-ESCALATE: cap-hit ALERT#3 | 2026-10-20T12:55:00-05:00 | 62731804 | 2026-10-20T15:17:26-05:00 | "A, run R9 again here" | next: producer

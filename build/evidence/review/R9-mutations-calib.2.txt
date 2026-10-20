@@ -1,0 +1,53 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-calib
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/batch-calib.json C01 C02 C03 C04 C05 C06 C07 C08 C09
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T12:05:15-05:00
+time-end: 2026-10-20T12:18:25-05:00
+head: 627318043f924347d30231a9308cb020154fd5b9
+exit: 0
+--- output ---
+mut: clone clone at 627318043f924347d30231a9308cb020154fd5b9, clean
+C01 [12 the waiting key pressed for an eighth (F1)] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 81 s: src/render/calibration-scene.ts: "frameMs % (BEAT * 1000) < SIXTEENTH * 1000 ? 'pressed' : 'plain'" -> "frameMs % (BEAT * 1000) < 2 * SIXTEENTH * 1000 ? 'pressed' : 'plain'"
+    flash: calibration frames: a waiting frame +151.5 ms from a beat line shows the key pressed (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 33 more like it)
+    flash: tapped calibration frames: a waiting frame +121.4 ms from a beat line shows the key pressed (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 6 more like it)
+    flash: fallback calibration frames: a waiting frame +116.5 ms from a beat line shows the key pressed (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 5 more like it)
+    flash: FAIL
+C02 [12 the pressed key not drawn lower (F1)] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 81 s: src/render/calibration-scene.ts: "const y = state === 'pressed' ? 324 : 320;" -> "const y = 320;"
+    flash: calibration frames: a waiting frame +7.7 ms from a beat line shows the key filled (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 24 more like it)
+    flash: calibration frames: 0 waiting frames judged with the key pressed (want at least 4)
+    flash: tapped calibration frames: a waiting frame +58.8 ms from a beat line shows the key filled (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 8 more like it)
+    flash: fallback calibration frames: a waiting frame +8.7 ms from a beat line shows the key filled (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 9 more like it)
+    flash: FAIL
+C03 [12 pass A's row a beat late (F1)] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 81 s: src/render/calibration-scene.ts: "if (heard >= a.t0 + (COUNT_IN + j) * BEAT) dots = j + 1;" -> "if (heard >= a.t0 + (COUNT_IN + j + 1) * BEAT) dots = j + 1;"
+    flash: calibration frames: A1: a frame heard +8.7 ms from click 4 shows 0 dots filled (want 1: a dot fills once its click has passed) (and 500 more like it)
+    flash: tapped calibration frames: A1: a frame heard +12.5 ms from click 4 shows 0 dots filled (want 1: a dot fills once its click has passed) (and 500 more like it)
+    flash: fallback calibration frames: A1: a frame heard +2.6 ms from click 4 shows 0 dots filled (want 1: a dot fills once its click has passed) (and 501 more like it)
+    flash: FAIL
+C04 [12 pass B after an accepted A (F1)] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 96 s: src/render/calibration-scene.ts: "if (a.pass === 'A' && !result.accepted) this.queue.push('B');" -> "if (a.pass === 'A') this.queue.push('B');"
+    flash: tapped calibration left after 22.4 s (want 10 to 15 s: A1 accepted, and no pass B)
+    flash: tapped calibration: the scene ran A, B with A1 accepted (want A1 accepted, and no pass B: B only after a rejected A, no repeat)
+    flash: FAIL
+C05 [12 pass B ended half a beat early (R8 MINOR 4)] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 97 s: src/render/calibration-scene.ts: "ended = frameMs >= a.p0 + (23 * BEAT + TAIL) * 1000;" -> "ended = frameMs >= a.p0 + (23 * BEAT) * 1000;"
+    flash: calibration frames: B1: the attempt ended in a frame -182.7 ms from its end (want it up until 23 beats and a half past its first click)
+    flash: fallback calibration frames: B1: the attempt ended in a frame -182.5 ms from its end (want it up until 23 beats and a half past its first click)
+    flash: FAIL
+C06 [12 key repeats counted as taps (R8 MINOR 10)] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 92 s: src/render/calibration-scene.ts: "if (e.code === 'Escape' || e.repeat) return;" -> "if (e.code === 'Escape') return;"
+    flash: tapped calibration values 0.0 47.9, the taps' own 0.0 40.4 (want equal within 0.5 ms)
+    flash: FAIL
+C07 [12 pass B's taps timed by the handler (R8 MINOR 9)] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 89 s: src/render/calibration-scene.ts: "} else if (e.timeStamp >= a.p0 + (COUNT_IN - 0.5) * BEAT * 1000) a.taps.push(e.timeStamp);" -> "} else if (performance.now() >= a.p0 + (COUNT_IN - 0.5) * BEAT * 1000) a.taps.push(performance.now());"
+    flash: fallback calibration values 0.0 48.4, the taps' own 0.0 35.1 (want equal within 0.5 ms)
+    flash: FAIL
+C08 [12 the calibration line kept after the hand-over (F1)] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 86 s: src/main.ts: "  document.getElementById('calibration')?.setAttribute('hidden', '');\n" -> ""
+    flash: FAIL
+C09 [12 a row of 19 dots (F1)] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 87 s: src/render/calibration-scene.ts: "const ROW = 20;" -> "const ROW = 19;"
+    flash: calibration frames: A1: 0 frames judged (want at least 200)
+    flash: calibration frames: B1: 0 frames judged (want at least 200)
+    flash: tapped calibration frames: A1: 0 frames judged (want at least 200)
+    flash: fallback calibration frames: A1: 0 frames judged (want at least 200)
+    flash: fallback calibration frames: B1: 0 frames judged (want at least 200)
+    flash: FAIL
+mut: 9 killed, 0 survived, 0 skipped; the clone is clean
+--- end ---

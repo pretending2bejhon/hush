@@ -1,0 +1,53 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-ending
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/batch-ending.json
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T12:20:25-05:00
+time-end: 2026-10-20T12:30:40-05:00
+head: 627318043f924347d30231a9308cb020154fd5b9
+exit: 0
+--- output ---
+mut: clone clone at 627318043f924347d30231a9308cb020154fd5b9, clean
+E00 [control: the playthrough's text and again checks on the gauntlet's witness alone] CONTROL PASSES in 75 s
+    play: chrome headless: console: ok: zero console and page errors
+    play: chrome headless: text: ok: title, link and notice only, and once the card is up "run 0:59 · deaths 0"; nothing over the canvas; no text object
+    play: chrome headless: again: ok: a key half-way through the rise left the ending up (3480 ms in); a key at the card started a new run at room 1 and hid the run line
+    play: chrome headless: PASS (console,text,again)
+E01 [13 the run line only under ?playtest (F4)] KILLED by node tools/probe-play.mjs --check ... (exit 1) in 78 s: src/render/ending-scene.ts: "      this.cardUp = true;\n      this.showRunLine();" -> "      this.cardUp = true;\n      if (location.search.includes('playtest')) this.showRunLine();"
+    play: chrome headless: console: ok: zero console and page errors
+    play: chrome headless: text: FAIL: the card wants one run line, found []
+    play: chrome headless: again: FAIL: again: the card showed no run line before the key (found [])
+    play: chrome headless: FAIL (console,text,again)
+E02 [13 Escape plays again from the card (F4)] SURVIVED in 74 s: src/render/ending-scene.ts: "if (!this.cardUp || this.again || e.code === 'Escape' || e.repeat) return;" -> "if (!this.cardUp || this.again || e.repeat) return;"
+    play: chrome headless: again: ok: a key half-way through the rise left the ending up (3466 ms in); a key at the card started a new run at room 1 and hid the run line
+    play: chrome headless: PASS (console,text,again)
+E03 [13 a key repeat plays again from the card (F4)] SURVIVED in 74 s: src/render/ending-scene.ts: "if (!this.cardUp || this.again || e.code === 'Escape' || e.repeat) return;" -> "if (!this.cardUp || this.again || e.code === 'Escape') return;"
+    play: chrome headless: again: ok: a key half-way through the rise left the ending up (3487 ms in); a key at the card started a new run at room 1 and hid the run line
+    play: chrome headless: PASS (console,text,again)
+E05 [13 play again starts room 2 (F4)] KILLED by node tools/probe-play.mjs --check ... (exit 1) in 76 s: src/main.ts: "  game.scene.start('play');\n  run.startRoom(1);\n}" -> "  game.scene.start('play');\n  run.startRoom(2);\n}"
+    play: chrome headless: console: ok: zero console and page errors
+    play: chrome headless: text: ok: title, link and notice only, and once the card is up "run 0:59 · deaths 0"; nothing over the canvas; no text object
+    play: chrome headless: again: FAIL: again: no new run at room 1 within 3 s of a key at the card (scenes ["play"], room 2, origin new)
+    play: chrome headless: FAIL (console,text,again)
+E06 [13 a key during the rise plays again (F4)] KILLED by node tools/probe-play.mjs --check ... (exit 1) in 79 s: src/render/ending-scene.ts: "if (!this.cardUp || this.again || e.code === 'Escape' || e.repeat) return;" -> "if (this.again || e.code === 'Escape' || e.repeat) return;"
+    play: chrome headless: console: ok: zero console and page errors
+    play: chrome headless: text: FAIL: the card wants one run line, found []
+    play: chrome headless: again: FAIL: again: a key 3484 ms into the rise left the ending (scenes ["play"]); again: the card showed no run line before the key (found []); again: no new run at room 1 within 3 s of a key at the card (scenes ["play"], room 1, origin unchanged)
+    play: chrome headless: FAIL (console,text,again)
+E09 [13 play again drops the calibration in use (F4)] SURVIVED in 73 s: src/main.ts: "  game.scene.stop('ending');\n" -> "  run.setCalibration(0, 0);\n  game.scene.stop('ending');\n"
+    play: chrome headless: again: ok: a key half-way through the rise left the ending up (3495 ms in); a key at the card started a new run at room 1 and hid the run line
+    play: chrome headless: PASS (console,text,again)
+C08g [12 the calibration line kept after the hand-over (F1), its reason] KILLED by node tools/probe-flash.mjs --calibration ... (exit 1) in 81 s: src/main.ts: "  document.getElementById('calibration')?.setAttribute('hidden', '');\n" -> ""
+    flash: calibration up 22.2 s: clicks 24, count-in fills 4, rings 24, values 0 0, Escape ignored (1285 frames, 1102 analyser samples); click starts 24 of 24 on their marks; frames 1284 timed (26 filled, 153 with the ring, 1283 with the row; 26 of 133 waiting frames pressed)
+    flash: tapped calibration up 11.5 s: values 0.0 40.0 (the taps' own 0.0 40.0; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 648 timed (25 filled, 0 with the ring, 648 with the row; 14 of 35 w
+    flash: fallback calibration up 22.1 s: values 0.0 34.5 (the taps' own 0.0 34.5; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; frames 1282 timed (26 filled, 154 with the
+    flash: 2497 frames over 41.9 s, median 15.84 ms; general max 353 px, red max 0 px (limit 25600)
+    flash: calibration line: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]
+    flash: tapped calibration line: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]
+    flash: fallback calibration line: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]
+    flash: FAIL
+K01 [9.2 the key queue applied newest first in next() (R8 MINOR 3)] SURVIVED in 7 s: src/input/keys.ts: "      for (const q of queue) {\n        if (q.step <= step) {" -> "      for (const q of [...queue].reverse()) {\n        if (q.step <= step) {"
+mut: 4 killed, 4 survived, 0 skipped; the clone is clean
+--- end ---

@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: R9-AU1
+phase: review
+command: npx vitest run tests/audio/track.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T09:57:43-05:00
+time-end: 2026-10-20T09:57:44-05:00
+head: 627318043f924347d30231a9308cb020154fd5b9
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  09:57:44
+   Duration  419ms (transform 61%, import 26%, tests 12%, worker 1%)
+
+--- end ---

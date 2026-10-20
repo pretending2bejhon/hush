@@ -1,0 +1,39 @@
+HUSH-EVIDENCE v1
+id: R9-axisb-sim
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/axisb-sim.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T12:33:22-05:00
+time-end: 2026-10-20T12:33:32-05:00
+head: 627318043f924347d30231a9308cb020154fd5b9
+exit: 0
+--- output ---
+axisb: HEAD 627318043f924347d30231a9308cb020154fd5b9; seeds (HEAD's sha words) 1651709956 1066550087 3540136361 814526496 357553593
+axisb: 01-wake: run twice, 1607 steps, every save() equal: true; equal to the oracle at every step: true; end checksums 5ac56108 5ac56108 (witness 5ac56108)
+axisb: 02-heartbeat: run twice, 1532 steps, every save() equal: true; equal to the oracle at every step: true; end checksums c4384313 c4384313 (witness c4384313)
+axisb: 03-dash: run twice, 1648 steps, every save() equal: true; equal to the oracle at every step: true; end checksums 808a0990 808a0990 (witness 808a0990)
+axisb: 04-thorns: run twice, 1267 steps, every save() equal: true; equal to the oracle at every step: true; end checksums 81204999 81204999 (witness 81204999)
+axisb: 05-doors: run twice, 2047 steps, every save() equal: true; equal to the oracle at every step: true; end checksums b64441c0 b64441c0 (witness b64441c0)
+axisb: 06-wave: run twice, 1960 steps, every save() equal: true; equal to the oracle at every step: true; end checksums 6760d1eb 6760d1eb (witness 6760d1eb)
+axisb: 07-current: run twice, 1955 steps, every save() equal: true; equal to the oracle at every step: true; end checksums 40e2ed24 40e2ed24 (witness 40e2ed24)
+axisb: 08-steps: run twice, 1324 steps, every save() equal: true; equal to the oracle at every step: true; end checksums 290b498c 290b498c (witness 290b498c)
+axisb: 09-gates: run twice, 2162 steps, every save() equal: true; equal to the oracle at every step: true; end checksums eebb5fde eebb5fde (witness eebb5fde)
+axisb: 10-crown: run twice, 2348 steps, every save() equal: true; equal to the oracle at every step: true; end checksums 862bbac8 862bbac8 (witness 862bbac8)
+axisb: 11-gauntlet: run twice, 14278 steps, every save() equal: true; equal to the oracle at every step: true; end checksums b3715ef7 b3715ef7 (witness b3715ef7)
+axisb: room 1: cleared by the tick at step 1606, layer changes [{"at":2058,"added":2}]; want bit 2 at nextBarStep 2058 (bar 5, 4.39 beats after the clear): ok
+axisb: room 2: cleared by the tick at step 1531, layer changes [{"at":1646,"added":4}]; want bit 4 at nextBarStep 1646 (bar 4, 1.12 beats after the clear): ok
+axisb: room 3: cleared by the tick at step 1647, layer changes [{"at":2058,"added":8}]; want bit 8 at nextBarStep 2058 (bar 5, 4.00 beats after the clear): ok
+axisb: room 4: cleared by the tick at step 1266, layer changes [{"at":1646,"added":16}]; want bit 16 at nextBarStep 1646 (bar 4, 3.69 beats after the clear): ok
+axisb: room 5: cleared by the tick at step 2046, layer changes [{"at":2469,"added":32}]; want bit 32 at nextBarStep 2469 (bar 6, 4.11 beats after the clear): ok
+axisb: room 6: cleared by the tick at step 1959, layer changes [{"at":2469,"added":64}]; want bit 64 at nextBarStep 2469 (bar 6, 4.96 beats after the clear): ok
+axisb: room 7: cleared by the tick at step 1954, layer changes [{"at":2058,"added":128}]; want bit 128 at nextBarStep 2058 (bar 5, 1.01 beats after the clear): ok
+axisb: room 8: cleared by the tick at step 1323, layer changes [{"at":1646,"added":256}]; want bit 256 at nextBarStep 1646 (bar 4, 3.14 beats after the clear): ok
+axisb: room 9: cleared by the tick at step 2161, layer changes [{"at":2469,"added":512}]; want bit 512 at nextBarStep 2469 (bar 6, 2.99 beats after the clear): ok
+axisb: room 10: cleared by the tick at step 2347, layer changes [{"at":2469,"added":1024}]; want bit 1024 at nextBarStep 2469 (bar 6, 1.19 beats after the clear): ok
+axisb: the gauntlet: finished true with 0 layer changes: ok
+axisb: wave: 1111 runs; base to wave 505 times, every one on a W cell: true; wave to base 504 times, every one on a B cell: true; rooms that turned to the wave 6,7,9,10,11; rooms with W cells 6,7,9,10,11, the first 6
+axisb: the sim's import closure: src/rooms/codes.ts, src/rooms/compile.ts, src/rooms/gauntlet.ts, src/sim/beat.ts, src/sim/constants.ts, src/sim/headless.ts, src/sim/sim.ts, src/sim/types.ts; outside src/sim and src/rooms: none; DOM, timer, clock, storage, audio or render names: none; Math calls abs, ceil, floor, imul, max, min
+axisb: 32128 product steps run twice, 32128 oracle steps
+axisb: PASS
+--- end ---

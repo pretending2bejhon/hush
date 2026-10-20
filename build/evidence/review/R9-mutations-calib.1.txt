@@ -1,0 +1,19 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-calib
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/863ac09c-c7cb-42a1-ae49-e5e949df62d0/scratchpad/batch-calib.json C00
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T12:03:46-05:00
+time-end: 2026-10-20T12:05:07-05:00
+head: 627318043f924347d30231a9308cb020154fd5b9
+exit: 0
+--- output ---
+mut: clone clone at 627318043f924347d30231a9308cb020154fd5b9, clean
+C00 [control: CAL2's probe on room 1's witness alone] CONTROL PASSES in 81 s
+    flash: calibration up 22.5 s: clicks 24, count-in fills 4, rings 24, values 0 0, Escape ignored (1284 frames, 1110 analyser samples); click starts 24 of 24 on their marks; frames 1283 timed (25 filled, 155 with the ring, 1283 with the row; 32 of 140 waiting fr
+    flash: tapped calibration up 11.5 s: values 0.0 40.1 (the taps' own 0.0 40.1; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 648 timed (26 filled, 0 wit
+    flash: fallback calibration up 22.1 s: values 0.0 34.5 (the taps' own 0.0 34.5; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; fr
+    flash: PASS
+mut: 0 killed, 0 survived, 0 skipped; the clone is clean
+--- end ---
