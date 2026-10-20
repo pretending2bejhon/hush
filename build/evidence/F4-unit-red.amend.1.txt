@@ -1,0 +1,102 @@
+HUSH-EVIDENCE v1
+id: F4-unit-red
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/input/keys.test.mjs tests/game/run.test.mjs tests/render/ending-art.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T19:22:59-05:00
+time-end: 2026-10-19T19:23:01-05:00
+head: 768e64acdb01541529f4cb2888c7504e5a113caa
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/input/keys.test.mjs (6 tests | 1 failed) 14ms
+   ❯ IN1 keys (6)
+     × flushes every queued event in arrival order, whatever its step, and queues later events as before 5ms
+ ❯ tests/render/ending-art.test.mjs (5 tests | 2 failed) 47ms
+   ❯ END1 ending art (5)
+     × lights one dot a beat, rests on the fourth and fills the key there 11ms
+     × draws each frame of the ending: the rise, then the card on the music's beat 13ms
+ ❯ tests/game/run.test.mjs (19 tests | 1 failed) 392ms
+   ❯ GAME1 the run starts again holding exactly the keys that are down (the owner's ruling N-F4 a) (1)
+     × flushes the keys on every start: a key still down is held on the first step, a key pressed and released is not 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/game/run.test.mjs > GAME1 the run starts again holding exactly the keys that are down (the owner's ruling N-F4 a) > flushes the keys on every start: a key still down is held on the first step, a key pressed and released is not
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ tests/game/run.test.mjs:272:56
+    270|     run.frame((run.origin + 0.5 / 240) * 1000);
+    271|     expect(run.sim.step).toBe(1);
+    272|     expect(run.sim.save()[O.FIELDS.indexOf('prevIn')]).toBe(2);
+       |                                                        ^
+    273|   });
+    274| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  tests/input/keys.test.mjs > IN1 keys > flushes every queued event in arrival order, whatever its step, and queues later events as before
+TypeError: keys.flush is not a function
+ ❯ tests/input/keys.test.mjs:81:10
+     79|     send('keyup', 'KeyX', 90040);
+     80|     send('keydown', 'KeyX', 90050);
+     81|     keys.flush();
+       |          ^
+     82|     expect(keys.held()).toBe(34);
+     83|     expect(keys.next(0)).toBe(34);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  tests/render/ending-art.test.mjs > END1 ending art > lights one dot a beat, rests on the fourth and fills the key there
+AssertionError: expected {} to deeply equal { x: 612, y: 432, w: 56, lw: 3 }
+
+- Expected
++ Received
+
+- {
+-   "lw": 3,
+-   "w": 56,
+-   "x": 612,
+-   "y": 432,
+- }
++ {}
+
+ ❯ tests/render/ending-art.test.mjs:29:28
+     27|   // The owner's ruling N-F4 a (2026-10-19): under the dots the key th…
+     28|   it('lights one dot a beat, rests on the fourth and fills the key the…
+     29|     expect({ ...P.AGAIN }).toEqual({ ...REF.AGAIN });
+       |                            ^
+     30|     for (let b = 0; b < 4; b++) sameShapes(P.cardShapes(b), REF.cardSh…
+     31|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  tests/render/ending-art.test.mjs > END1 ending art > draws each frame of the ending: the rise, then the card on the music's beat
+AssertionError: ending 65 71.86810000000233: 3 shapes, want 5
+ ❯ sameShapes tests/render/same.mjs:73:17
+     71| export function sameShapes(got, want, label = 'shapes') {
+     72|   const d = shapeDiff(got, want);
+     73|   if (d) expect.fail(`${label}: ${d}`);
+       |                 ^
+     74| }
+     75|
+ ❯ tests/render/ending-art.test.mjs:52:9
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  3 failed (3)
+      Tests  4 failed | 26 passed (30)
+   Start at  19:23:00
+   Duration  971ms (transform 45%, tests 40%, import 13%, worker 2%)
+
+--- end ---

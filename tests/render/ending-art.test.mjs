@@ -1,7 +1,7 @@
 // END1: the ending's art (src/render/ending-art.ts, HUSH-SPEC section 13) equals the reference
 // (tests/fixtures/reference/art.mjs): the glimpse, the rise over four bars with the passing ceiling, the card's
-// three dots on every beat of the bar, and (review R1, MAJOR 4) the beat of the bar counted from the run's origin
-// and every frame of the scene (endingFrame).
+// three dots on every beat of the bar with the key that plays again (the owner's ruling N-F4 a), and (review R1,
+// MAJOR 4) the beat of the bar counted from the run's origin and every frame of the scene (endingFrame).
 import { describe, expect, it } from 'vitest';
 import * as REF from '../fixtures/reference/art.mjs';
 import { load } from '../helpers/load.mjs';
@@ -24,7 +24,9 @@ describe('END1 ending art', () => {
     }
   });
 
-  it('lights one dot a beat and rests on the fourth', () => {
+  // The owner's ruling N-F4 a (2026-10-19): under the dots the key that plays again, filled on the fourth beat.
+  it('lights one dot a beat, rests on the fourth and fills the key there', () => {
+    expect({ ...P.AGAIN }).toEqual({ ...REF.AGAIN });
     for (let b = 0; b < 4; b++) sameShapes(P.cardShapes(b), REF.cardShapes(b), `card ${b}`);
   });
 

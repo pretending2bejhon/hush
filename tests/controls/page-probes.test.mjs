@@ -1,8 +1,9 @@
 // PF-CONTROLS for the headless browser probes, on the control page (tests/fixtures/control-page) built under
 // /hush/: the smoke probe (X1) against a wrong Vite base, an uncentred canvas and another background (review R7,
 // MINOR 4; R6, MINOR 5), the playthrough (X5, X10's browser rows, D3, D8, D16)
-// against every planted fault, the ending's included (no hand-over, no run line under ?playtest, a run line
-// without it, one before the card, one from the wrong step), the supply probe (X10) against a loose pin, an
+// against every planted fault, the ending's included (no hand-over, no run line at the card, one before the card,
+// one from the wrong step; and, for the owner's ruling N-F4 a, no play again, play again during the rise, the run
+// line kept after it), the supply probe (X10) against a loose pin, an
 // audit finding, a planted write, a build without its third-party notices and notices that leave a runtime
 // package out (audit 1, MINOR 3), and the live probe (X12) against a 404, a wrong build hash, a commit
 // absent from origin's main, a console error and a page that never boots. Each probe must also pass the clean
@@ -74,7 +75,8 @@ describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
   it('passes every check on the clean control page', () => {
     const r = tool('probe-play.mjs', ['--dist', dist, ...FIX]);
     expect(r.out).toMatch(/unlock: ok: 4 rooms cleared, each layer's gate closed until its bar line and open after it/);
-    expect(r.out).toMatch(/play: chrome headless: PASS \(console,play,text,network,storage,unlock\)/);
+    expect(r.out).toMatch(/again: ok: a key half-way through the rise left the ending up \(\d+ ms in\); a key at the card started a new run at room 1 and hid the run line/);
+    expect(r.out).toMatch(/play: chrome headless: PASS \(console,play,text,network,storage,unlock,again\)/);
     expect(r.code).toBe(0);
   }, T);
 
@@ -115,23 +117,29 @@ describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
     }, T);
   }
 
-  it('passes the ?playtest run line on the clean control page once the card is up', () => {
-    const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--query', 'playtest', '--check', 'text']);
-    expect(r.out).toMatch(/text: ok: title, link and notice only, and once the card is up "run 0:0\d · deaths 0"/);
-    expect(r.code).toBe(0);
-  }, T);
+  // The owner's ruling N-F4 a (2026-10-19): the run line shows once the card is up in every mode, ?playtest or not.
+  for (const query of ['', 'playtest']) {
+    it(`passes the run line on the clean control page once the card is up${query ? ` with ?${query}` : ''}`, () => {
+      const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, ...(query ? ['--query', query] : []), '--check', 'text']);
+      expect(r.out).toMatch(/text: ok: title, link and notice only, and once the card is up "run 0:0\d · deaths 0"/);
+      expect(r.code).toBe(0);
+    }, T);
+  }
 
   const endings = [
-    ['ending=none', /text: FAIL: the run never handed over to the scene "ending"/],
-    ['playtest&ending=never', /text: FAIL: \?playtest wants one run line, found \[\]/],
-    ['ending=always', /text: FAIL: extra page text \["run 0:0\d · deaths 0"\]/],
-    ['playtest&ending=early', /text: FAIL: a page text before the ending card: \["run 0:0\d · deaths 0"\]/],
-    ['playtest&ending=late', /text: FAIL: the run line says \d+ s, want \d+ to \d+ s/],
-    ['playtest&ending=mid', /text: FAIL: a page text before the ending card: \["run 0:0\d · deaths 0"\] \d+ ms into the ending/],
+    ['ending=none', 'text', /text: FAIL: .*the run never handed over to the scene "ending"/],
+    ['ending=never', 'text', /text: FAIL: the card wants one run line, found \[\]/],
+    ['ending=early', 'text', /text: FAIL: a page text before the ending card: \["run 0:0\d · deaths 0"\]/],
+    ['ending=late', 'text', /text: FAIL: the run line says \d+ s, want \d+ to \d+ s/],
+    ['ending=mid', 'text', /text: FAIL: a page text before the ending card: \["run 0:0\d · deaths 0"\] \d+ ms into the ending/],
+    // The owner's ruling N-F4 a: play again never, during the rise, and with the run line left shown.
+    ['ending=noagain', 'again', /again: FAIL: again: no new run at room 1 within 3 s of a key at the card/],
+    ['ending=againearly', 'again', /again: FAIL: again: a key \d+ ms into the rise left the ending/],
+    ['ending=linekept', 'again', /again: FAIL: again: the run line still shows after play again: \["run 0:0\d · deaths 0"\]/],
   ];
-  for (const [query, line] of endings) {
-    it(`fails ?${query} on its text check`, () => {
-      const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--query', query, '--check', 'text']);
+  for (const [query, check, line] of endings) {
+    it(`fails ?${query} on its ${check} check`, () => {
+      const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--query', query, '--check', check]);
       expect(r.out).toMatch(line);
       expect(r.code).toBe(1);
     }, T);

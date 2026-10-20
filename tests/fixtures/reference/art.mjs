@@ -526,9 +526,16 @@ export function ceilingShapes(y) {
 }
 
 // The card: three dots 6 world px across, 24 world px apart, in the centre; dot i at full alpha on beat i
-// of the bar (0 to 2), every dot at 0.3 otherwise (beat 3 rests all three).
+// of the bar (0 to 2), every dot at 0.3 otherwise (beat 3 rests all three). Under them (amended for the owner's
+// ruling N-F4 a, 2026-10-19) the key that plays again: a square AGAIN.w canvas px wide, outlined in the accent at
+// 0.8, filled at 0.6 under its outline on beat 3, when the dots rest. Any key but Escape then plays again
+// (HUSH-SPEC section 13). 3,136 px, a small area (section 11).
+export const AGAIN = Object.freeze({ x: 612, y: 432, w: 56, lw: 3 });
 export function cardShapes(beatOfBar) {
-  return [0, 1, 2].map((i) => ({ k: 'ellipse', x: 640 + (i - 1) * 24 * ZOOM, y: 360, rx: 3 * ZOOM, ry: 3 * ZOOM, c: COLOR.SHELL, a: beatOfBar === i ? 1 : 0.3 }));
+  const dots = [0, 1, 2].map((i) => ({ k: 'ellipse', x: 640 + (i - 1) * 24 * ZOOM, y: 360, rx: 3 * ZOOM, ry: 3 * ZOOM, c: COLOR.SHELL, a: beatOfBar === i ? 1 : 0.3 }));
+  const key = beatOfBar === 3 ? [{ k: 'rect', x: AGAIN.x, y: AGAIN.y, w: AGAIN.w, h: AGAIN.w, c: COLOR.ACCENT, a: 0.6 }] : [];
+  key.push({ k: 'frame', x: AGAIN.x, y: AGAIN.y, w: AGAIN.w, h: AGAIN.w, lw: AGAIN.lw, c: COLOR.ACCENT, a: 0.8 });
+  return [...dots, ...key];
 }
 
 // The beat of the bar heard at context time `heard` (0 to 3): the music's bars begin on the run's origin, the
@@ -540,7 +547,7 @@ export function beatOfBar(heard, origin) {
 // One frame of the scene `ending` at heard time `heard` (amended for review R1, MAJOR 4): t0 is the heard time of
 // its first frame and run the run, whose origin carries the music's bars. Returns the glimpse image's y, the
 // shapes its Graphics draws (the passing ceiling during the rise, then the card on the beat) and whether the card
-// is up (the moment of the ?playtest line).
+// is up (the moment of the run line, and from which any key plays again: the owner's ruling N-F4 a).
 export function endingFrame(heard, t0, run) {
   const r = riseAt(heard - t0);
   if (r.u < 1) return { glimpseY: r.glimpseY, card: false, shapes: ceilingShapes(r.ceilingY) };

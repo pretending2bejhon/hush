@@ -51,7 +51,7 @@ async function main(argv) {
       const hex = `#${[0, 1, 2].map((k) => shot.data[(2 * shot.width + 2) * 4 + k].toString(16).padStart(2, '0')).join('')}`;
       add('background', hex === '#07080d', hex === '#07080d' ? 'an undrawn canvas pixel reads #07080d' : `an undrawn canvas pixel reads ${hex}, want #07080d`);
       const texts = await page.evaluate(() => window.__hush.pageTexts());
-      const tp = textProblems(texts, { playtest: false });
+      const tp = textProblems(texts, { runLine: false });
       const objects = await page.evaluate(() => window.__hush.textObjects());
       add('text', tp.length === 0 && objects === 0, tp.length || objects !== 0 ? [...tp, `text objects ${objects}`].join('; ') : 'title, link and notice only; no text object');
     }

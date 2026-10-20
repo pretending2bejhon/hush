@@ -8,6 +8,8 @@
 // step by inputLagSec(avOffset, inputBias) (section 9; MAJOR 4), and the run steps the creature's track after every
 // tick, as RN2's trackStep over the sim's state (section 10.6; MINOR 2). Review R4 (MINOR 2): a frame far behind the
 // heard time ticks at most 24 steps (section 9.1), the cap pinned in the run itself, not only in driver.ts.
+// The owner's ruling N-F4 a (2026-10-19): every start flushes the keys, so a run started again from the ending's card
+// holds exactly the keys that are down.
 // HUSH_RUN_MODULE points the test at another run module (the controls: the reference passes, a broken copy fails).
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -16,6 +18,7 @@ import { load } from '../helpers/load.mjs';
 import * as O from '../fixtures/oracle/index.mjs';
 import * as ART from '../fixtures/reference/art.mjs';
 import * as D from '../fixtures/reference/driver.mjs';
+import * as KREF from '../fixtures/reference/keys.mjs';
 import { ALL_ROOMS, roomFiles } from '../sim/compare.mjs';
 import { readWitness } from '../../tools/replay.mjs';
 
@@ -59,7 +62,7 @@ function harness({ offset = 0 } = {}) {
     unlockAt: (layer, bar) => calls.push(['unlockAt', layer, bar, run.sim.step]),
     gauntlet: (bar) => calls.push(['gauntlet', bar, run.sim.step]),
   };
-  const keys = { next: (s) => (attached ? attached.next(s) : 0), attachSource: (s) => { attached = s; } };
+  const keys = { next: (s) => (attached ? attached.next(s) : 0), attachSource: (s) => { attached = s; }, flush: () => {} };
   run = R.createRun({ world, engine, keys });
   // Frames that bring the sim to step `to`: each frame's heard time lies half a step before its target, so the
   // driver ticks up to it (one step past the heard time), at most 24 steps a frame.
@@ -234,5 +237,38 @@ describe('GAME1 the run keeps the creature\'s track (review R2, MINOR 2)', () =>
       }
       expect(want[end].ringAt, `room ${k}: the layer's return was stepped`).toBeGreaterThan(0);
     }
+  });
+});
+
+// The owner's ruling N-F4 a (2026-10-19): any key at the ending's card plays again, a new run at room 1 while the keys
+// still hold events stamped with the finished run's steps. Every start flushes them first, so the new run holds
+// exactly the keys that are down on its first step, never a key the run before stamped thousands of steps ahead.
+class Key extends Event {
+  constructor(type, code, t) {
+    super(type, { cancelable: true });
+    Object.defineProperties(this, { code: { value: code }, repeat: { value: false }, timeStamp: { value: t } });
+  }
+}
+
+describe('GAME1 the run starts again holding exactly the keys that are down (the owner\'s ruling N-F4 a)', () => {
+  it('flushes the keys on every start: a key still down is held on the first step, a key pressed and released is not', () => {
+    const target = new EventTarget();
+    const ctx = { state: 'running', currentTime: 5 };
+    const clock = { offset: 0, valid: true, resyncs: 0, sample: () => clock };
+    const engine = { context: () => ctx, clock: () => clock, restart: () => {}, unlockAt: () => {}, gauntlet: () => {} };
+    let run = null;
+    const keys = KREF.createKeys({ target, stepOf: (t) => run.stepOf(t) });
+    run = R.createRun({ world, engine, keys });
+    const send = (type, code, sec) => target.dispatchEvent(new Key(type, code, (run.origin + sec) * 1000));
+    run.startRoom(1);
+    // A minute into the first run: Space tapped, then ArrowRight held, each stamped about 14,400 steps in.
+    send('keydown', 'Space', 60);
+    send('keyup', 'Space', 60.05);
+    send('keydown', 'ArrowRight', 60.1);
+    ctx.currentTime = run.origin + 60.2;
+    run.startRoom(1);
+    run.frame((run.origin + 0.5 / 240) * 1000);
+    expect(run.sim.step).toBe(1);
+    expect(run.sim.save()[O.FIELDS.indexOf('prevIn')]).toBe(2);
   });
 });

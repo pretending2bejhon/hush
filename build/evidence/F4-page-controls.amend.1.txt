@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: F4-page-controls
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/controls/page-probes.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T19:28:00-05:00
+time-end: 2026-10-19T19:39:04-05:00
+head: 768e64acdb01541529f4cb2888c7504e5a113caa
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  35 passed (35)
+   Start at  19:28:01
+   Duration  663.23s (tests 100%)
+
+--- end ---

@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: F4-verifiers
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/tools
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T19:26:33-05:00
+time-end: 2026-10-19T19:27:51-05:00
+head: 768e64acdb01541529f4cb2888c7504e5a113caa
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  16 passed (16)
+      Tests  308 passed (308)
+   Start at  19:26:33
+   Duration  77.90s (tests 97%, import 2%, transform 1%)
+
+--- end ---

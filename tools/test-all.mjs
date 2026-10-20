@@ -40,7 +40,7 @@ async function main() {
   ];
   const built = results[2][1];
   results.push(['smoke', built && step('smoke', [path.join(REPO, 'tools', 'probe-smoke.mjs')])]);
-  results.push(['play', built && step('play', [path.join(REPO, 'tools', 'probe-play.mjs'), '--check', 'console,play,text,network,storage,unlock,scene,keys'])]);
+  results.push(['play', built && step('play', [path.join(REPO, 'tools', 'probe-play.mjs'), '--check', 'console,play,text,network,storage,unlock,again,scene,keys'])]);
   const failed = results.filter(([, ok]) => !ok).map(([n]) => n);
   process.stdout.write(`test: ${failed.length ? `FAIL (${failed.join(', ')})` : 'PASS (unit, replay, e2e)'}\n`);
   return failed.length ? 1 : 0;

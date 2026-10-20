@@ -10,10 +10,11 @@
 //   text     no Phaser text object at the end of any room or at the card, nothing over the canvas, and the
 //            page texts exactly the title, link and notice. The run must hand over to the scene `ending`
 //            within ENDING_WAIT_MS of the last room; no other text may show before its rise ends (RISE_MS of
-//            heard time, less SKEW_MS for the probe's polling); the final read comes AFTER_RISE_MS after the rise, and in ?playtest
-//            mode it waits up to LINE_WAIT_MS after the rise for exactly one run line `run m:ss · deaths n`,
-//            whose time lies between the last room's clear step and the step read when the ending was seen
-//            (section 13 keeps the step at the finish) and whose deaths are the sim's
+//            heard time, less SKEW_MS for the probe's polling); the final read comes AFTER_RISE_MS after the rise, and
+//            it waits up to LINE_WAIT_MS after the rise for exactly one run line `run m:ss · deaths n` (in every mode
+//            since the owner's ruling N-F4 a, 2026-10-19; before it, only under ?playtest), whose time lies between the
+//            last room's clear step and the step read when the ending was seen (section 13 keeps the step at the
+//            finish) and whose deaths are the sim's
 //   network  every request goes to the page's own origin (data: and blob: URLs included)
 //   storage  no cookie, localStorage, sessionStorage, IndexedDB or Cache Storage entry at the end
 //   unlock   X7's clear-time half in the live run (review R1, MAJOR 1): room k (each room up to the page's layer
@@ -35,8 +36,11 @@
 //   keys     (only when named; review R2, MAJOR 4 and 5) on a page of its own: the hand-over skipCalibration(KEYS_AV_MS,
 //            KEYS_BIAS_MS) starts a run at room 1, then real keys pressed through the browser must reach the sim on
 //            the steps stepOf names for them (keyReplayProblems)
+//   again    (the owner's ruling N-F4 a, 2026-10-19) a key pressed half-way through the rise leaves the ending up; once
+//            the card and its run line are up, a key the game ignores (AGAIN_KEY) starts a new run at room 1 within
+//            AGAIN_WAIT_MS: the scene `play` up and `ending` gone, a new origin, the sim running, the run line hidden
 // Exit 0 every check passes, 1 a check fails, 2 usage, a missing dist or a page that never boots.
-// (Default checks: console, play, text, network, storage and unlock.)
+// (Default checks: console, play, text, network, storage, unlock and again.)
 import fs from 'node:fs';
 import path from 'node:path';
 import { compileWorld } from '../tests/fixtures/oracle/index.mjs';
@@ -48,7 +52,7 @@ import { endingDrawnProblems, endingTimingProblems, frameLogProblems, glimpseBak
 // Review R5 (MAJOR 2): the fewest play-scene frames the scene check must hold to the heard time over a playthrough.
 const MIN_TIMED_FRAMES = 300;
 
-const ALL = ['console', 'play', 'text', 'network', 'storage', 'unlock'];
+const ALL = ['console', 'play', 'text', 'network', 'storage', 'unlock', 'again'];
 const OPTIONAL = ['visibility', 'scene', 'keys'];
 
 // The key check's hand-over (review R2): with avOffset 100 and inputBias -60 the sim runs 0.1 s behind the heard time
@@ -67,6 +71,9 @@ const SKEW_MS = 400;
 const ENDING_WAIT_MS = 15000;
 const AFTER_RISE_MS = 3000;
 const LINE_WAIT_MS = 6000;
+// The play-again check (the owner's ruling N-F4 a): a key the game ignores, so it plays nothing in the new run.
+const AGAIN_KEY = 'KeyQ';
+const AGAIN_WAIT_MS = 3000;
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -191,8 +198,9 @@ async function readBake(page, bake) {
 // the last read, and the sim when the ending was seen and at the last read. With `layouts`, every read also takes
 // the ending's display list (the scene check, review R2), marked early while the rise is surely in its first half
 // and final at the last read, and (review R3) its Graphics' commands with the heard time; once the card is up the
-// glimpse bake's pixels are read at `glimpse`'s points.
-async function watchEnding(page, { playtest, layouts = null, glimpse = null }) {
+// glimpse bake's pixels are read at `glimpse`'s points. With `riseKey` (the again check) AGAIN_KEY is pressed once half-way
+// through the rise, and the scenes up at the next read are kept.
+async function watchEnding(page, { layouts = null, glimpse = null, riseKey = false }) {
   const texts = () => page.evaluate(() => window.__hush.pageTexts());
   const sim = () => page.evaluate(() => window.__hush.sim());
   const begun = Date.now();
@@ -206,8 +214,10 @@ async function watchEnding(page, { playtest, layouts = null, glimpse = null }) {
   const hard = seen + RISE_MS + LINE_WAIT_MS;
   let early = null;
   let final;
+  let pressed = null;
   for (;;) {
     const read = await page.evaluate((withLayout) => ({
+      scenes: window.__hush.scenes(),
       texts: window.__hush.pageTexts(),
       layout: withLayout ? window.__hush.layout('ending') : null,
       drawn: withLayout ? window.__hush.drawn('ending') : null,
@@ -217,13 +227,18 @@ async function watchEnding(page, { playtest, layouts = null, glimpse = null }) {
     const now = Date.now();
     const extra = extraTexts(final);
     if (extra.length && !early && now - seen < RISE_MS - SKEW_MS) early = { ms: now - seen, texts: extra };
-    const last = now >= hard || (now >= soft && (!playtest || extra.length));
+    if (pressed && !pressed.scenes) pressed.scenes = read.scenes;
+    const last = now >= hard || (now >= soft && extra.length > 0);
     if (layouts) layouts.push({ layout: read.layout, drawn: read.drawn, heard: read.heard, early: now - seen < RISE_MS / 2 - SKEW_MS, final: last });
     if (last) break;
+    if (riseKey && !pressed && now - seen >= RISE_MS / 2) {
+      await page.keyboard.press(AGAIN_KEY);
+      pressed = { ms: Date.now() - seen, scenes: null };
+    }
     await sleep(100);
   }
   const glimpsePixels = glimpse ? await readBake(page, glimpse) : null;
-  return { started: true, early, final, atStart, atEnd: await sim(), ms: Date.now() - seen, glimpsePixels };
+  return { started: true, early, final, atStart, atEnd: await sim(), ms: Date.now() - seen, glimpsePixels, riseKey: pressed };
 }
 
 // The key check (review R2, MAJOR 4 and 5), on a page of its own: the probe's hand-over with a calibration, a run at
@@ -279,14 +294,14 @@ async function keysProblems(browser, url, { query, world }) {
   return problems;
 }
 
-// The ending's part of the text check: the hand-over, nothing before the card, and in ?playtest mode the run
-// line's values against the run the probe played.
-function endingProblems(ending, { playtest, clearStep }) {
+// The ending's part of the text check: the hand-over, nothing before the card, and the run line's values against the
+// run the probe played (in every mode: the owner's ruling N-F4 a).
+function endingProblems(ending, { clearStep }) {
   if (!ending.started) return [`the run never handed over to the scene "ending" (${ENDING_WAIT_MS / 1000} s after the last room)`];
   const problems = [];
   if (ending.early) problems.push(`a page text before the ending card: ${JSON.stringify(ending.early.texts.map((t) => t.slice(0, 60)))} ${ending.early.ms} ms into the ending (want none in its first ${Math.round(RISE_MS - SKEW_MS)} ms)`);
   const extra = extraTexts(ending.final);
-  const m = playtest && extra.length === 1 ? PLAYTEST_TEXT.exec(extra[0]) : null;
+  const m = extra.length === 1 ? PLAYTEST_TEXT.exec(extra[0]) : null;
   if (m) {
     const seconds = Number(m[1]) * 60 + Number(m[2]);
     const lo = clearStep === null ? 0 : Math.floor(clearStep / 240);
@@ -298,11 +313,42 @@ function endingProblems(ending, { playtest, clearStep }) {
   return problems;
 }
 
+// The play-again check (the owner's ruling N-F4 a, 2026-10-19), once the card and its run line are up: the key pressed
+// half-way through the rise must have left the ending up; then AGAIN_KEY must start a new run at room 1 within
+// AGAIN_WAIT_MS (the scene `play` up and `ending` gone, a new origin, the sim's step advancing between two reads) with
+// the run line hidden again.
+async function againProblems(page, ending) {
+  if (!ending.started) return ['again: the ending never started'];
+  const problems = [];
+  if (!ending.riseKey || !ending.riseKey.scenes) problems.push('again: no key was pressed and read during the rise');
+  else if (!ending.riseKey.scenes.includes('ending') || ending.riseKey.scenes.includes('play')) problems.push(`again: a key ${ending.riseKey.ms} ms into the rise left the ending (scenes ${JSON.stringify(ending.riseKey.scenes)})`);
+  const shown = extraTexts(ending.final);
+  if (shown.length !== 1 || !PLAYTEST_TEXT.test(shown[0])) problems.push(`again: the card showed no run line before the key (found ${JSON.stringify(shown)})`);
+  const before = await page.evaluate(() => window.__hush.audio().origin);
+  await page.keyboard.press(AGAIN_KEY);
+  const begun = Date.now();
+  let prev = null;
+  for (;;) {
+    await sleep(100);
+    const r = await page.evaluate(() => ({ scenes: window.__hush.scenes(), sim: window.__hush.sim(), origin: window.__hush.audio().origin, texts: window.__hush.pageTexts() }));
+    const fresh = r.scenes.includes('play') && !r.scenes.includes('ending') && r.sim !== null && r.sim.status.room === 1 && r.origin !== before;
+    if (fresh && prev && r.sim.step > prev.sim.step) {
+      const extra = extraTexts(r.texts);
+      if (extra.length) problems.push(`again: the run line still shows after play again: ${JSON.stringify(extra)}`);
+      return problems;
+    }
+    prev = fresh ? r : null;
+    if (Date.now() - begun > AGAIN_WAIT_MS) {
+      problems.push(`again: no new run at room 1 within ${AGAIN_WAIT_MS / 1000} s of a key at the card (scenes ${JSON.stringify(r.scenes)}, room ${r.sim ? r.sim.status.room : 'none'}, origin ${r.origin === before ? 'unchanged' : 'new'})`);
+      return problems;
+    }
+  }
+}
+
 async function main(argv) {
   const o = parseOptions(argv, { dist: 'dist', rooms: 'rooms', replays: 'replays', channel: 'chrome', headed: false, query: '', check: ALL.join(','), json: false });
   const want = o.check.split(',').filter(Boolean);
   if (!want.length || want.some((c) => !ALL.includes(c) && !OPTIONAL.includes(c))) throw new Error(`--check takes ${[...ALL, ...OPTIONAL].join(', ')}`);
-  const playtest = /(^|&)playtest(=|&|$)/.test(o.query);
   const dist = requireDist(o.dist);
   const roomFiles = fs.readdirSync(path.resolve(REPO, o.rooms)).filter((f) => /^\d\d-[a-z-]+\.txt$/.test(f)).sort();
   const witnesses = loadWitnesses(path.resolve(REPO, o.replays));
@@ -383,7 +429,7 @@ async function main(argv) {
     // beat heard while the scene drew it. The log started with the last room (review R6, MINOR 3); with no witness it
     // starts here.
     if (want.includes('scene') && !witnesses.length) await page.evaluate(() => window.__hush.endingLogStart());
-    const ending = await watchEnding(page, { playtest, layouts: scene.endingReads, glimpse });
+    const ending = await watchEnding(page, { layouts: scene.endingReads, glimpse, riseKey: want.includes('again') });
     const endingLog = want.includes('scene') ? await page.evaluate(() => window.__hush.endingLogTake()) : null;
     if (want.includes('scene') && witnesses.length) {
       scene.logs.push({ w: witnesses[witnesses.length - 1], log: await page.evaluate(() => window.__hush.frameLogTake()) });
@@ -402,6 +448,11 @@ async function main(argv) {
       if (scene.timed < MIN_TIMED_FRAMES) scene.problems.push(`${scene.timed} frames timed against the heard music, want at least ${MIN_TIMED_FRAMES}`);
     }
     process.stdout.write(`play: ${label}: ending ${ending.started ? `seen, texts read ${ending.ms} ms into it` : 'never started'}\n`);
+    // The play-again check comes after the ending's logs are taken, so the new run touches none of them.
+    if (want.includes('again')) {
+      const ap = await againProblems(page, ending);
+      checks.again = { ok: ap.length === 0, detail: ap.slice(0, 3).join('; ') || `a key half-way through the rise left the ending up (${ending.riseKey.ms} ms in); a key at the card started a new run at room 1 and hid the run line` };
+    }
     if (want.includes('visibility')) {
       const vp = await visibilityProblems(page);
       checks.visibility = { ok: vp.length === 0, detail: vp.join('; ') || 'hidden: audio suspended, sim frozen; visible: both run on' };
@@ -436,8 +487,8 @@ async function main(argv) {
     ];
     if (!witnesses.length) roomProblems.push('no witnesses');
     const tp = [
-      ...textProblems(ending.final, { playtest }),
-      ...endingProblems(ending, { playtest, clearStep: last ? last.clearStep : null }),
+      ...textProblems(ending.final, { runLine: true }),
+      ...endingProblems(ending, { clearStep: last ? last.clearStep : null }),
     ];
     if (objects !== 0) tp.push(`text objects ${objects}`);
     const runLine = extraTexts(ending.final).find((t) => PLAYTEST_TEXT.test(t)) || null;

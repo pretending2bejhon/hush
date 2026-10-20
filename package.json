@@ -31,7 +31,7 @@
     "accept:rn2": "vitest run tests/render/creature.test.mjs && npm run check:art",
     "accept:rn3": "vitest run tests/render/beat-art.test.mjs && npm run check:art",
     "accept:rn4": "vitest run tests/render/depth-art.test.mjs tests/render/play-frame.test.mjs && npm run check:art",
-    "accept:ending": "vitest run tests/render/ending-art.test.mjs && vite build && node tools/probe-play.mjs --query playtest --check console,play,text,scene",
+    "accept:ending": "vitest run tests/render/ending-art.test.mjs && vite build && node tools/probe-play.mjs --check console,play,text,scene,again",
     "check:art": "vite build && node tools/probe-flash.mjs && node tools/probe-perf.mjs --headed",
     "standing": "node tools/standing.mjs",
     "deploy": "node tools/deploy.mjs --release",

@@ -4,8 +4,9 @@
 // run's bar) and a fresh creature's track; every frame ticks the sim up to one step past the heard time less the
 // calibration's display offset, at most 24 steps; after the tick of step s, the track takes the sim's state, a new
 // pending layer k calls engine.unlockAt(k, unlockBar(s)) and, in room 11, a new gBeat calls engine.gauntlet(gBeat /
-// 4). stepOf stamps an input event with the step heard at its time less the calibration's input lag. The view is
-// the render's and is left out.
+// 4). stepOf stamps an input event with the step heard at its time less the calibration's input lag. Every start
+// first flushes the keys (the owner's ruling N-F4 a: play again), so the new run holds exactly the keys that are
+// down. The view is the render's and is left out.
 import { createSim, FIELDS, gauntletStartBeat, unlockBar } from '../oracle/index.mjs';
 import { createTrack, trackStep } from './art.mjs';
 import { displaySec, inputLagSec, stepsDue, targetStep } from './driver.mjs';
@@ -39,6 +40,7 @@ export function createRun({ world, engine, keys }) {
     startRoom(room) {
       const ctx = engine.context();
       if (!ctx) return;
+      keys.flush();
       origin = ctx.currentTime + ORIGIN_LEAD;
       sim = createSim(world, { room, step: 0, layers: canonical(room) });
       track = createTrack();

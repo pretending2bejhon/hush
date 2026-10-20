@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: F4-product-controls
+phase: amend
+command: node node_modules/vitest/vitest.mjs run tests/controls/product-tests.test.mjs -t keys.test|run.test|ending-art
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T19:25:55-05:00
+time-end: 2026-10-19T19:26:25-05:00
+head: 768e64acdb01541529f4cb2888c7504e5a113caa
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  15 passed | 34 skipped (49)
+   Start at  19:25:55
+   Duration  30.32s (tests 100%)
+
+--- end ---

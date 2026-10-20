@@ -121,6 +121,11 @@ const cases = [
   // Review R6 (MINOR 1), carried as review R7's MINOR 6: X8's edge, a calibrator that keeps 35.5 ms and one that drops 35 ms.
   ['tests/input/calibrate.test.ts', { HUSH_CALIBRATE_MODULE: 'tests/fixtures/calibration/reference.mjs' }, () => ({ HUSH_CALIBRATE_MODULE: calibMutant('accepted: mad <= 35', 'accepted: mad < 36') }), 'MAD under 36'],
   ['tests/input/calibrate.test.ts', { HUSH_CALIBRATE_MODULE: 'tests/fixtures/calibration/reference.mjs' }, () => ({ HUSH_CALIBRATE_MODULE: calibMutant('accepted: mad <= 35', 'accepted: mad < 35') }), 'MAD under 35'],
+  // The owner's ruling N-F4 a (2026-10-19): play again. The keys' flush dropping the queue instead of applying it, a run
+  // that starts without flushing the keys, and the card's key filled on the first beat instead of the fourth.
+  ['tests/input/keys.test.mjs', { HUSH_KEYS_MODULE: `${REF}/keys.mjs` }, () => ({ HUSH_KEYS_MODULE: refMutant('keys.mjs', 'for (const ev of queue) { if (ev.down) held.add(ev.code); else held.delete(ev.code); }', '') }), 'flush'],
+  ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('keys.flush();', '') }), 'flush'],
+  ['tests/render/ending-art.test.mjs', { HUSH_ENDING_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_ENDING_ART_MODULE: refMutant('art.mjs', 'const key = beatOfBar === 3 ?', 'const key = beatOfBar === 0 ?') }), 'again key'],
 ];
 
 describe('product tests: green on the reference, red on one planted fault', () => {

@@ -1,6 +1,7 @@
 // IN1: the keys (src/input/keys.ts, HUSH-SPEC sections 3 and 9.2): the code-to-bit table, repeats skipped,
 // unmapped keys untouched, mapped keys kept from the page (preventDefault), each event applied at its own step
-// (or the current one when late), bits held as the OR of the keys down, and an attached source replacing them.
+// (or the current one when late), bits held as the OR of the keys down, an attached source replacing them, and
+// (the owner's ruling N-F4 a) the queue flushed whatever its steps when a run starts again.
 import { describe, expect, it } from 'vitest';
 import { load } from '../helpers/load.mjs';
 
@@ -65,6 +66,24 @@ describe('IN1 keys', () => {
     expect(keys.next(50)).toBe(0);
     send('keydown', 'KeyA', 100);
     expect(keys.next(51)).toBe(1);
+  });
+
+  // The owner's ruling N-F4 a (2026-10-19): a run that starts again flushes the queue, so an event stamped by the run
+  // before never waits for a step the new run reaches only much later.
+  it('flushes every queued event in arrival order, whatever its step, and queues later events as before', () => {
+    const { keys, send } = setup();
+    send('keydown', 'ArrowRight', 90000);
+    send('keydown', 'Space', 90010);
+    send('keyup', 'Space', 90020);
+    send('keydown', 'KeyX', 90030);
+    send('keyup', 'KeyX', 90040);
+    send('keydown', 'KeyX', 90050);
+    keys.flush();
+    expect(keys.held()).toBe(34);
+    expect(keys.next(0)).toBe(34);
+    send('keyup', 'ArrowRight', 30);
+    expect(keys.next(2)).toBe(34);
+    expect(keys.next(3)).toBe(32);
   });
 
   it('gives an attached source the last word, and the keys back when detached', () => {

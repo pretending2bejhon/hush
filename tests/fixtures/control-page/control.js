@@ -34,13 +34,16 @@
 //                 its mark (review R4, MAJOR 1), and (review R5, MAJOR 1) every ring drawn 0.1 s after its window while
 //                 frameTimes keep the window, every count-in fill 0.1 s after its click, every frameTime 0.1 s after the
 //                 frame that drew its ring
-//   ?ending=none|never|always|early|late|mid  the ending's planted faults (the playthrough's text check): the
-//                 run never hands over to the scene `ending`; no run line under ?playtest; the run line without
-//                 ?playtest; the run line at once, before the card; the run line from the step at the card
-//                 instead of the step kept at the finish; the run line at 60% of the rise, before the card
+//   ?ending=none|never|early|late|mid|noagain|againearly|linekept  the ending's planted faults (the playthrough's
+//                 text and again checks): the run never hands over to the scene `ending`; no run line at the card;
+//                 the run line at once, before the card; the run line from the step at the card instead of the step
+//                 kept at the finish; the run line at 60% of the rise, before the card; and (the owner's ruling N-F4 a,
+//                 2026-10-19) no key ever plays again; a key during the rise plays again; play again leaves the run
+//                 line shown
 // Without ?calib the calibration scene is HUSH-SPEC section 12 itself, the reference the product follows.
 // Clearing the last toy room finishes the run and starts the scene `ending`: section 13 at small scale (the
-// rise, then the card, and under ?playtest the run line in <output id="playtest">).
+// rise, then the card with the run line in <output id="playtest"> in every mode, and from the card any key but
+// Escape plays again: a new run at toy room 1 with the line hidden; the owner's ruling N-F4 a).
 import * as Phaser from 'phaser';
 import { installProbe } from '../../../src/probe/api.ts';
 import { calibrate, judgePass } from '../calibration/reference.mjs';
@@ -305,8 +308,10 @@ class Play extends Phaser.Scene {
 }
 
 // HUSH-SPEC section 13 at small scale. create() keeps the step at the finish; the first frame keeps the heard
-// time; RISE_S of heard time later the card shows (three small dots, still), and under ?playtest the run line
-// `run m:ss · deaths n` goes into <output id="playtest">, which loses its hidden attribute.
+// time; RISE_S of heard time later the card shows (three small dots, still) and the run line `run m:ss · deaths n`
+// goes into <output id="playtest">, which loses its hidden attribute (in every mode: the owner's ruling N-F4 a). From
+// the card on, a keydown that is neither Escape nor a repeat plays again: the line hidden, the scene `play` and a run
+// at toy room 1.
 const RISE_S = 16 * BEAT;
 const endingFault = params.get('ending') || '';
 
@@ -315,6 +320,12 @@ function showRunLine(step) {
   const out = document.getElementById('playtest');
   out.textContent = `run ${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')} · deaths ${sim ? sim.status().deaths : 0}`;
   out.hidden = false;
+}
+
+function hideRunLine() {
+  const out = document.getElementById('playtest');
+  out.textContent = '';
+  out.hidden = true;
 }
 
 class Ending extends Phaser.Scene {
@@ -327,6 +338,16 @@ class Ending extends Phaser.Scene {
     this.card = false;
     this.mid = false;
     if (endingFault === 'early') showRunLine(this.finishStep);
+    const onKey = (e) => {
+      if (e.code === 'Escape' || e.repeat || endingFault === 'noagain') return;
+      if (!this.card && endingFault !== 'againearly') return;
+      window.removeEventListener('keydown', onKey, true);
+      if (endingFault !== 'linekept') hideRunLine();
+      this.scene.start('play');
+      startRoom(1);
+    };
+    window.addEventListener('keydown', onKey, true);
+    this.events.once('shutdown', () => window.removeEventListener('keydown', onKey, true));
   }
   update() {
     frameStart();
@@ -344,8 +365,7 @@ class Ending extends Phaser.Scene {
     this.card = true;
     this.dots.fillStyle(0x7fd6ff, 0.6);
     for (let i = -1; i <= 1; i++) this.dots.fillCircle(640 + i * 60, 360, 7.5);
-    const line = endingFault === 'always' || (params.has('playtest') && endingFault !== 'never' && endingFault !== 'early');
-    if (line) showRunLine(endingFault === 'late' ? sim.step : this.finishStep);
+    if (endingFault !== 'never' && endingFault !== 'early') showRunLine(endingFault === 'late' ? sim.step : this.finishStep);
   }
 }
 

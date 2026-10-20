@@ -27,6 +27,12 @@ export function createKeys({ target, stepOf }) {
       queue = later;
       return source ? source.next(step) : bits();
     },
+    // Applies every queued event in arrival order, whatever its step, and empties the queue (the owner's ruling
+    // N-F4 a: a run started again holds exactly the keys that are down, never an event stamped by the run before).
+    flush() {
+      for (const ev of queue) { if (ev.down) held.add(ev.code); else held.delete(ev.code); }
+      queue = [];
+    },
     attachSource(s) { source = s; },
     held: bits,
     detach() {
