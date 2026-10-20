@@ -105,6 +105,7 @@ FIX R7: 2026-10-14T03:40:16-05:00 | fixed=9 rebutted=0 superseded=0
 HUSH-REVIEW-R8: PASS (head=e6468ae318a153c83b0c5f936e4e16c82f428363 digest=81a1d6cc2560d24e1f8b93daf725980262ada7b898d9552af9b9cafa6e3a9d58 blockers=0 majors=0 minors=14)
 CYCLE 2: end | 2026-10-14T12:56:35-05:00 | R8
 CYCLE 3: start | 2026-10-19T19:39:40-05:00 | playtest RUN-1 | head=632decdcd3a465a1109e324eaa8f5b9b4b4cafcc
+FIX RUN-1: 2026-10-20T09:52:59-05:00 | fixed=8 rebutted=0 superseded=0
 
 ## Checkpoint
 

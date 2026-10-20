@@ -777,3 +777,11 @@ RUN1-F1 amended 2026-10-20 by the producer (Opus standing in for Fable), in the 
 - Controls and reds: section 1.6's entry names every record. Standing is RED only on test:calibration, the X8 test's one-pass cases, until the applier (build/evidence/F1-standing.amend.1.txt).
 - The applier is next: src/input/calibrate.ts (CAL1), src/render/calibration-scene.ts and src/main.ts (CAL2). Then CAL1's and CAL2's acceptances, the playthrough's text check, smoke and standing, then `FIX RUN-1` and review R9.
 
+- **RUN1-F1 fixed** by the applier's 554c10b (`hush-fix: RUN1-F1`), 2026-10-20. It changed only the three named product files, each against its reference. The producer read each record and the diff before this line:
+  - CAL1's acceptance: `Tests  9 passed (9)` (build/evidence/fix/RUN1-F1.1.txt).
+  - CAL2's acceptance: `flash: PASS`. The untouched run was up 22.6 s with clicks 24, fills 4, rings 24 and values 0 0; 33 of 143 waiting frames were pressed. The tapped run was up 11.5 s with values 0.0 40.1, the taps' own. The fallback run was up 22.1 s with values 0.0 34.5, the taps' own (RUN1-F1.2.txt).
+  - GAME1's acceptance: `PASS (console,play,text,visibility,unlock,keys)` with tsc and eslint clean. The line was gone right after the hand-over (RUN1-F1.3.txt).
+  - Standing GREEN (RUN1-F1.4.txt).
+
+Round RUN-1 closed 2026-10-20T09:52-05:00: 8 fixed, 0 rebutted, 0 superseded. That is RUN-1's four findings (F4 in 7320a73, F2 and F3 in e9c9b46, F1 in 554c10b) and R8's carried MINOR 4, 8, 9 and 10, which landed with F1's amendment (ad445dd). R8-MINOR1, 2, 3, 5, 6, 7, 11, 12, 13 and 14 stay carried with their designs. The next step is review R9 on cycle 3 (re-entry row 7, then row 8 or 10 by its verdict).
+
