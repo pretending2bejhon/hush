@@ -1,0 +1,39 @@
+HUSH-EVIDENCE v1
+id: R9-axisb-sim
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/axisb-sim.mjs .
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T16:12:21-05:00
+time-end: 2026-10-20T16:12:43-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+closure: src/rooms/codes.ts, src/rooms/compile.ts, src/rooms/gauntlet.ts, src/sim/beat.ts, src/sim/constants.ts, src/sim/headless.ts, src/sim/sim.ts, src/sim/types.ts; packages: none
+globals: none outside the sim's own; Math calls: abs, ceil, floor, imul, max, min
+determinism: 01-wake: clear at 1607, checksum 5ac56108 twice = witness 5ac56108; 1607 steps equal to the oracle
+determinism: 02-heartbeat: clear at 1532, checksum c4384313 twice = witness c4384313; 1532 steps equal to the oracle
+determinism: 03-dash: clear at 1648, checksum 808a0990 twice = witness 808a0990; 1648 steps equal to the oracle
+determinism: 04-thorns: clear at 1267, checksum 81204999 twice = witness 81204999; 1267 steps equal to the oracle
+determinism: 05-doors: clear at 2047, checksum b64441c0 twice = witness b64441c0; 2047 steps equal to the oracle
+determinism: 06-wave: clear at 1960, checksum 6760d1eb twice = witness 6760d1eb; 1960 steps equal to the oracle
+determinism: 07-current: clear at 1955, checksum 40e2ed24 twice = witness 40e2ed24; 1955 steps equal to the oracle
+determinism: 08-steps: clear at 1324, checksum 290b498c twice = witness 290b498c; 1324 steps equal to the oracle
+determinism: 09-gates: clear at 2162, checksum eebb5fde twice = witness eebb5fde; 2162 steps equal to the oracle
+determinism: 10-crown: clear at 2348, checksum 862bbac8 twice = witness 862bbac8; 2348 steps equal to the oracle
+determinism: 11-gauntlet: clear at 14278, checksum b3715ef7 twice = witness b3715ef7; 14278 steps equal to the oracle
+determinism: 32128 steps equal run to run and to the oracle
+layers: 01-wake: cleared on step 1606, layer 1 back on step 2058 (bar 5, 4.39 beats after; tick offset into bar 6)
+layers: 02-heartbeat: cleared on step 1531, layer 2 back on step 1646 (bar 4, 1.12 beats after; tick offset into bar 2)
+layers: 03-dash: cleared on step 1647, layer 3 back on step 2058 (bar 5, 4.00 beats after; tick offset into bar 6)
+layers: 04-thorns: cleared on step 1266, layer 4 back on step 1646 (bar 4, 3.69 beats after; tick offset into bar 2)
+layers: 05-doors: cleared on step 2046, layer 5 back on step 2469 (bar 6, 4.11 beats after; tick offset into bar 3)
+layers: 06-wave: cleared on step 1959, layer 6 back on step 2469 (bar 6, 4.96 beats after; tick offset into bar 3)
+layers: 07-current: cleared on step 1954, layer 7 back on step 2058 (bar 5, 1.01 beats after; tick offset into bar 6)
+layers: 08-steps: cleared on step 1323, layer 8 back on step 1646 (bar 4, 3.14 beats after; tick offset into bar 2)
+layers: 09-gates: cleared on step 2161, layer 9 back on step 2469 (bar 6, 2.99 beats after; tick offset into bar 3)
+layers: 10-crown: cleared on step 2347, layer 10 back on step 2469 (bar 6, 1.19 beats after; tick offset into bar 3)
+layers: 11-gauntlet: finished at step 14278, no layer change
+wave: 1111 runs (each witness and 20 jittered on each of HEAD's 5 sha words), 3299928 steps: base to wave 505, every one on a W cell; wave to base 505, every one on a B cell; 0 wave-to-base by a respawn at the spawn; W cells in rooms 6, 7, 9, 10, 11
+axisb-sim: PASS
+--- end ---

@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: R9-playtest-dom
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/playtest-dom.mjs .
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T17:50:52-05:00
+time-end: 2026-10-20T17:57:22-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+default 1280x720: line shown canvas 1219.5x686.0 footer h 34.0; hidden canvas 1219.5x686.0 footer h 34.0
+default 800x450: line shown canvas 739.5x416.0 footer h 34.0; hidden canvas 739.5x416.0 footer h 34.0
+default 900x1200: line shown canvas 900.0x506.3 footer h 34.0; hidden canvas 900.0x506.3 footer h 34.0
+default 1920x1080: line shown canvas 1859.5x1046.0 footer h 34.0; hidden canvas 1859.5x1046.0 footer h 34.0
+default: 59 reads; the line hidden 22.198 s after the key; distinct text sets "Press any key, then tap along with the beat to set your timing. | Source (AGPL-3.0) | Music engine: Strudel, AGPL-3.0-or-later" ; "Source (AGPL-3.0) | Music engine: Strudel, AGPL-3.0-or-later"
+?playtest 1280x720: line shown canvas 1219.5x686.0 footer h 34.0; hidden canvas 1219.5x686.0 footer h 34.0
+?playtest 800x450: line shown canvas 739.5x416.0 footer h 34.0; hidden canvas 739.5x416.0 footer h 34.0
+?playtest 900x1200: line shown canvas 900.0x506.3 footer h 34.0; hidden canvas 900.0x506.3 footer h 34.0
+?playtest 1920x1080: line shown canvas 1859.5x1046.0 footer h 34.0; hidden canvas 1859.5x1046.0 footer h 34.0
+?playtest: 59 reads; the line hidden 22.199 s after the key; distinct text sets "Press any key, then tap along with the beat to set your timing. | Source (AGPL-3.0) | Music engine: Strudel, AGPL-3.0-or-later" ; "Source (AGPL-3.0) | Music engine: Strudel, AGPL-3.0-or-later"
+?probe&playtest: 11 rooms cleared 11; ending 104 reads over 12 s; run line "run 0:59 · deaths 0" first seen 6881 ms after the ending was seen (last read without it 6762 ms; RISE_S 6857 ms); text objects 0; after play again scenes ["play"], calibration {"avOffset":0,"inputBias":0}, line {"hidden":true,"text":""}
+?probe: 11 rooms cleared 11; ending 104 reads over 12 s; run line "run 0:59 · deaths 0" first seen 6892 ms after the ending was seen (last read without it 6779 ms; RISE_S 6857 ms); text objects 0; after play again scenes ["play"], calibration {"avOffset":0,"inputBias":0}, line {"hidden":true,"text":""}
+playtest-dom: PASS
+--- end ---

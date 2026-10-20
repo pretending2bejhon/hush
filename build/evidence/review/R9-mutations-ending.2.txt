@@ -1,0 +1,24 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-ending
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/batch-browser.mjs eb-escape eb-repeat eb-rise eb-calib k-flushkeep-page
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T17:36:19-05:00
+time-end: 2026-10-20T17:49:07-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+MUTANT eb-escape [13] Escape at the card plays again: SURVIVED vite build --logLevel error exit 0 (1 s); tools/probe-play.mjs --check console,play,text,again exit 0 (151 s)
+MUTANT eb-repeat [13] a key repeat at the card plays again: SURVIVED vite build --logLevel error exit 0 (1 s); tools/probe-play.mjs --check console,play,text,again exit 0 (151 s)
+MUTANT eb-rise [13] a key during the rise plays again: KILLED by tools/probe-play.mjs --check console,play,text,again (exit 1)
+    | play: chrome headless: room 01-wake done
+    | play: chrome headless: room 02-heartbeat done
+    | play: chrome headless: room 03-dash done
+    | play: chrome headless: room 04-thorns done
+    | play: chrome headless: room 05-doors done
+    | play: chrome headless: room 06-wave done
+MUTANT eb-calib [13] play again drops the calibration in use (0 and 0): SURVIVED vite build --logLevel error exit 0 (1 s); tools/probe-play.mjs --check console,play,text,again exit 0 (151 s)
+MUTANT k-flushkeep-page [9.2/13] flush applies the queue but keeps it, against GAME1's keys and END1's again: SURVIVED vite build --logLevel error exit 0 (1 s); tools/probe-play.mjs --check console,play,text,keys,again exit 0 (153 s)
+mut: 1 killed, 4 survived; clone clean
+--- end ---

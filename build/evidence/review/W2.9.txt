@@ -1,0 +1,25 @@
+HUSH-EVIDENCE v1
+id: W2
+phase: review
+command: node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1 --kick
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T15:21:08-05:00
+time-end: 2026-10-20T15:21:09-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+replays/05-doors.json: CLEAR clear at step 2047, checksum b64441c0 (witness b64441c0) OK
+replays/05-doors.json: kick: 6 presses, each within 12 steps of a kick ON
+replays/05-doors.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/06-wave.json: CLEAR clear at step 1960, checksum 6760d1eb (witness 6760d1eb) OK
+replays/06-wave.json: kick: 5 presses, each within 12 steps of a kick ON
+replays/06-wave.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/07-current.json: CLEAR clear at step 1955, checksum 40e2ed24 (witness 40e2ed24) OK
+replays/07-current.json: kick: 4 presses, each within 12 steps of a kick ON
+replays/07-current.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replays/08-steps.json: CLEAR clear at step 1324, checksum 290b498c (witness 290b498c) OK
+replays/08-steps.json: kick: 8 presses, each within 12 steps of a kick ON
+replays/08-steps.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+replay: PASS, 4 witness(es), every press on the kick
+--- end ---

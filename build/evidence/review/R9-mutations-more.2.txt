@@ -1,0 +1,75 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-more
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/batch-more.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T17:57:53-05:00
+time-end: 2026-10-20T18:01:34-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+MUTANT clk-jump [8.5/9] CLOCK_JUMP 5 ms: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/clock/output-clock.test.mjs (14 tests | 1 failed) 433ms
+    | × agrees: a glitch moves the line down 4.5 ms 22ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~310ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT clk-stale [8.5/9] CLOCK_STALE 5000: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/clock/output-clock.test.mjs (14 tests | 1 failed) 332ms
+    | × agrees: stale pairs after a resume 19ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~299ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT trk-anon [8.3] anonymous labels numbered from 0: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | Test Files  1 failed | 24 passed (25)
+    | at least ~290ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+    | FAIL  tests/audio/track.test.mjs [ tests/audio/track.test.mjs ]
+    | Error: Transform failed with 1 error:
+MUTANT key-z [3] KeyZ mapped to DASH: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/input/keys.test.mjs (6 tests | 1 failed) 20ms
+    | × maps the codes of section 3 13ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~301ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT draw-ellipse [10.6] drawShapes draws ellipses at half size: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/render/draw-shapes.test.mjs (3 tests | 2 failed) 24ms
+    | × draws each shape kind by its style call and its draw call, offset by (dx, dy) 18ms
+    | × draws at the shapes' own place without an offset, in list order 3ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  2 failed | 143 passed (145)
+    | at least ~303ms faster with isolate: false — reuses workers across files instead of one per file
+MUTANT band-factor [10.4] the near band at factor 0.8: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/render/depth-art.test.mjs (4 tests | 1 failed) 125ms
+    | × draws the four bands of every room 17ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~306ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT trail [10.3] TRAIL 7: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/game/run.test.mjs (19 tests | 1 failed) 750ms
+    | × steps the track after every tick, as trackStep over the sim's states, through landings, the wave and a layer's return 61ms
+    | ❯ tests/render/play-frame.test.mjs (3 tests | 3 failed) 2345ms
+    | × draws every frame of the rooms' witness runs as the reference does 1686ms
+    | × draws the layer's ring as the reference does, past a room's clear until the ring has run out 322ms
+    | × draws the gauntlet's witness run as the reference does 334ms
+MUTANT cfg-bg [10.1/10.2] backgroundColor #000000: KILLED by tools/probe-smoke.mjs (exit 1)
+    | smoke: page: ok: GET /hush/ 200
+    | smoke: boot: ok: scenes ["calibration"]
+    | smoke: canvas: ok: not blank (1220 by 686)
+    | smoke: layout: ok: the canvas centred in #game (left 30.0, right 30.5, top 0.0, bottom 0.0)
+    | smoke: background: FAIL: an undrawn canvas pixel reads #000000, want #07080d
+    | smoke: requests: ok: every request answered below 400
+MUTANT scene-chunks [10.6] the room's chunks placed 2 px right of the camera: KILLED by tools/probe-play.mjs --check console,play,scene (exit 1)
+    | play: chrome headless: room 01-wake done
+    | play: chrome headless: room 02-heartbeat done
+    | play: chrome headless: room 03-dash done
+    | play: chrome headless: room 04-thorns done
+    | play: chrome headless: room 05-doors done
+    | play: chrome headless: room 06-wave done
+mut: 9 killed, 0 survived; clone clean
+--- end ---

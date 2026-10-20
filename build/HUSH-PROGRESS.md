@@ -82,6 +82,7 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - Phaser 4.2.1 builds a Graphics with a default line and fill style in its command buffer, `[6, 1, 0, 0, 7, 0, 0]`, until its first clear(). A check that reads buffers must take a buffer of style commands alone as nothing, or a Graphics not drawn yet reads as a foreign picture (producer, RUN-1 F1).
 - A scene that hands over inside its own update is stopped before Phaser's poststep, so a probe that logs at poststep never sees its last frame. Log that frame once from the prestep's record, with no Graphics, or the last attempt's end is never judged (producer, RUN-1 F1).
 - tests/tools runs in no acceptance and in neither standing nor npm test. An applier that re-solves witnesses or re-cuts rooms can turn a verifier's own test red unseen, as e9c9b46 did to scene-check. Run `npm run test:verifiers` after any such applier, before the review (producer, RUN-1 F1).
+- A reviewer dispatched in the foreground costs the producer about twice its wall time: the hook charges the Agent call's whole run and every one of the reviewer's own calls. R9's 2 h 48 min review took 5 h 40 min of the 6 h cap, and the first R9 dispatch ended in ALERT#3. Start each review in a fresh producer session, and record it in that session (producer, R9).
 
 ## Rounds
 
@@ -106,6 +107,8 @@ HUSH-REVIEW-R8: PASS (head=e6468ae318a153c83b0c5f936e4e16c82f428363 digest=81a1d
 CYCLE 2: end | 2026-10-14T12:56:35-05:00 | R8
 CYCLE 3: start | 2026-10-19T19:39:40-05:00 | playtest RUN-1 | head=632decdcd3a465a1109e324eaa8f5b9b4b4cafcc
 FIX RUN-1: 2026-10-20T09:52:59-05:00 | fixed=8 rebutted=0 superseded=0
+HUSH-REVIEW-R9: PASS (head=6e963503bddf22696776bb710173cd2c16bbad57 digest=aa2bbe57898bf9a1276731927a2c7a9722937ac6bd7df0a1ca1800b83c18f947 blockers=0 majors=0 minors=14)
+CYCLE 3: end | 2026-10-20T18:12:00-05:00 | R9
 
 ## Checkpoint
 

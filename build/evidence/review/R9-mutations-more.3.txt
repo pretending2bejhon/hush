@@ -1,0 +1,20 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-more
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/batch-more.mjs trk-anon
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T18:01:49-05:00
+time-end: 2026-10-20T18:01:54-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+MUTANT trk-anon [8.3] anonymous labels numbered from 0: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/audio/track.test.mjs (2 tests | 1 failed) 60ms
+    | × numbers $ labels, mutes _ labels, and ignores the tempo call 8ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~302ms faster with isolate: false — reuses workers across files instead of one per file
+    | cannot use window: not in browser?
+mut: 1 killed, 0 survived; clone clean
+--- end ---

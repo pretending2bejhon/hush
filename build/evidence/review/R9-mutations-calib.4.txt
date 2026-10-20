@@ -1,0 +1,40 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-calib
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/batch-browser.mjs cb-repeat cb-endA cb-endB cb-handler
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T17:21:57-05:00
+time-end: 2026-10-20T17:36:07-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+MUTANT cb-repeat [12] key repeats taken as taps (R8 MINOR 10): KILLED by tools/probe-flash.mjs --calibration (exit 1)
+    | flash: calibration up 22.1 s: clicks 23, count-in fills 4, rings 24, values 0 0, Escape ignored (1283 frames, 1096 analyser samples); click starts 24 of 24 on their marks; frames 1283 timed (26 filled, 155 with the ring, 1282 with the row; 33 of 125 waiting fr
+    | flash: tapped calibration up 11.5 s: values 0.0 45.0 (the taps' own 0.0 43.3; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 648 timed (25 filled, 0 wit
+    | flash: fallback calibration up 22.1 s: values 0.0 36.0 (the taps' own 0.0 34.5; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; fr
+    | flash: tapped calibration values 0.0 45.0, the taps' own 0.0 43.3 (want equal within 0.5 ms)
+    | flash: fallback calibration values 0.0 36.0, the taps' own 0.0 34.5 (want equal within 0.5 ms)
+    | flash: FAIL
+MUTANT cb-endA [12] pass A ended a beat early (R8 MINOR 4): KILLED by tools/probe-flash.mjs --calibration (exit 1)
+    | flash: calibration up 21.6 s: clicks 23, count-in fills 4, rings 24, values 0 0, Escape ignored (1258 frames, 1073 analyser samples); click starts 24 of 24 on their marks; frames 1255 timed (26 filled, 152 with the ring, 1255 with the row; 33 of 125 waiting fr
+    | flash: tapped calibration up 11 s: values 0.0 43.1 (the taps' own 0.0 43.1; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 622 timed (25 filled, 0 with 
+    | flash: fallback calibration up 21.7 s: values 0.0 34.5 (the taps' own 0.0 34.5; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; fr
+    | flash: calibration frames: A1: the attempt ended in a frame heard -421.2 ms from its end (want it up until 23 beats and a half past its first click)
+    | flash: tapped calibration frames: A1: the attempt ended in a frame heard -414.5 ms from its end (want it up until 23 beats and a half past its first click)
+    | flash: fallback calibration frames: A1: the attempt ended in a frame heard -423.1 ms from its end (want it up until 23 beats and a half past its first click)
+MUTANT cb-endB [12] pass B ended a beat early: KILLED by tools/probe-flash.mjs --calibration (exit 1)
+    | flash: calibration up 21.7 s: clicks 24, count-in fills 4, rings 23, values 0 0, Escape ignored (1258 frames, 1079 analyser samples); click starts 24 of 24 on their marks; frames 1259 timed (26 filled, 149 with the ring, 1258 with the row; 31 of 130 waiting fr
+    | flash: tapped calibration up 11.5 s: values 0.0 43.2 (the taps' own 0.0 43.2; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 648 timed (25 filled, 0 wit
+    | flash: fallback calibration up 21.7 s: values 0.0 34.1 (the taps' own 0.0 34.1; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; fr
+    | flash: calibration frames: B1: the attempt ended in a frame -405.5 ms from its end (want it up until 23 beats and a half past its first click)
+    | flash: fallback calibration frames: B1: the attempt ended in a frame -406.7 ms from its end (want it up until 23 beats and a half past its first click)
+    | flash: FAIL
+MUTANT cb-handler [12] pass A's taps timed by the handler's clock (R8 MINOR 9): KILLED by tools/probe-flash.mjs --calibration (exit 1)
+    | flash: calibration up 22.1 s: clicks 23, count-in fills 4, rings 24, values 0 0, Escape ignored (1283 frames, 1098 analyser samples); click starts 24 of 24 on their marks; frames 1284 timed (25 filled, 153 with the ring, 1283 with the row; 31 of 131 waiting fr
+    | flash: tapped calibration up 11.5 s: values 0.0 56.0 (the taps' own 0.0 42.3; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 648 timed (26 filled, 0 wit
+    | flash: fallback calibration up 22.1 s: values 0.0 34.6 (the taps' own 0.0 34.6; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; fr
+    | flash: tapped calibration values 0.0 56.0, the taps' own 0.0 42.3 (want equal within 0.5 ms)
+    | flash: FAIL
+mut: 4 killed, 0 survived; clone clean
+--- end ---

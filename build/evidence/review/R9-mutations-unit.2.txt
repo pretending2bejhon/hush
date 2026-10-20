@@ -1,0 +1,276 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-unit
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/batch-unit.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T16:17:13-05:00
+time-end: 2026-10-20T17:04:29-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+MUTANT c-gravity [4.1] GRAVITY 8 to 9: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/oracle-dash.test.mjs (2 tests | 2 failed) 31ms
+    | × agrees in an open room on dashes in every direction 15ms
+    | × agrees in 03-dash 3ms
+    | ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 2 failed) 32ms
+    | × agrees from the start: the wait for the bar, the first obstacles, deaths and restarts 23ms
+    | × agrees in mid-run, into and out of the wave bars and to the finish 5ms
+MUTANT c-jumpvy [4.1] JUMP_VY -224 to -223: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/oracle-dash.test.mjs (2 tests | 2 failed) 19ms
+    | × agrees in an open room on dashes in every direction 12ms
+    | × agrees in 03-dash 3ms
+    | ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 2 failed) 36ms
+    | × agrees from the start: the wait for the bar, the first obstacles, deaths and restarts 31ms
+    | × agrees in mid-run, into and out of the wave bars and to the finish 3ms
+MUTANT c-dashsteps [4.1] DASH_STEPS 40 to 39: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/oracle-dash.test.mjs (2 tests | 2 failed) 30ms
+    | × agrees in an open room on dashes in every direction 25ms
+    | × agrees in 03-dash 2ms
+    | ❯ tests/sim/oracle-beat.test.mjs (6 tests | 4 failed) 976ms
+    | × agrees in room 2 with its layers back, and with none back (rest states) 21ms
+    | × agrees in room 4 with its layers back, and with none back (rest states) 7ms
+MUTANT c-wave [4.1] WAVE_SPEED 160 to 161: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/oracle-wave.test.mjs (5 tests | 4 failed) 323ms
+    | × agrees in room 6 through its wave portal 15ms
+    | × agrees in room 7 through its wave portal 3ms
+    | × agrees in room 9 through its wave portal 2ms
+    | × agrees on the way from the spawn to the portal in 06-wave and on through it 6ms
+    | ❯ tests/game/run.test.mjs (19 tests | 3 failed) 927ms
+MUTANT s-crush [4.3] the crush rule removed: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/oracle-wave.test.mjs (5 tests | 2 failed) 1411ms
+    | × agrees in room 9 through its wave portal 60ms
+    | × agrees in room 10 through its wave portal 2ms
+    | ❯ tests/sim/oracle-beat.test.mjs (6 tests | 2 failed) 3070ms
+    | × agrees in room 2 with its layers back, and with none back (rest states) 272ms
+    | × agrees on the crush: a block that comes on over the creature 32ms
+MUTANT s-clear [4.3] the clear at > the right edge: SURVIVED vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game exit 0 (7 s); tools/replay.mjs --all --jitter --seed 1 --kick exit 0 (0 s); tools/spec-content.mjs --tree exit 0 (0 s)
+MUTANT s-gwall [4.3/6.2] the gauntlet's base form survives a wall (R8 MINOR 1): KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 1 failed) 897ms
+    | × agrees in mid-run, into and out of the wave bars and to the finish 196ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~346ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT b-on [4.4] an entity on one beat-tick longer (<=): KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/beat.test.mjs (3 tests | 1 failed) 248ms
+    | × turns entities on and off as the oracle does, at rest while their layer is not back 30ms
+    | ❯ tests/sim/progression.test.mjs (12 tests | 2 failed) 223ms
+    | ❯ X7 progression: a layer returns on the bar line (12)
+    | × room 1: layer 1 back on the bar line, its hazards at rest until then 16ms
+    | × room 3: layer 3 back on the bar line, its hazards at rest until then 5ms
+MUTANT b-phase [4.4] the phase a sixteenth late: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/beat.test.mjs (3 tests | 1 failed) 115ms
+    | × turns entities on and off as the oracle does, at rest while their layer is not back 12ms
+    | ❯ tests/sim/progression.test.mjs (12 tests | 6 failed) 244ms
+    | ❯ X7 progression: a layer returns on the bar line (12)
+    | × room 1: layer 1 back on the bar line, its hazards at rest until then 15ms
+    | × room 3: layer 3 back on the bar line, its hazards at rest until then 24ms
+MUTANT b-rest [4.4] rest inverted: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/beat.test.mjs (3 tests | 1 failed) 280ms
+    | × turns entities on and off as the oracle does, at rest while their layer is not back 11ms
+    | ❯ tests/sim/progression.test.mjs (12 tests | 6 failed) 305ms
+    | ❯ X7 progression: a layer returns on the bar line (12)
+    | × room 1: layer 1 back on the bar line, its hazards at rest until then 13ms
+    | × room 3: layer 3 back on the bar line, its hazards at rest until then 2ms
+MUTANT p-nextbar [4.5] the layer back one step after the bar line: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/progression.test.mjs (12 tests | 11 failed) 93ms
+    | ❯ X7 progression: a layer returns on the bar line (12)
+    | × computes the bar line as the oracle does 14ms
+    | × room 1: layer 1 back on the bar line, its hazards at rest until then 21ms
+    | × room 2: layer 2 back on the bar line, its hazards at rest until then 1ms
+    | × room 3: layer 3 back on the bar line, its hazards at rest until then 1ms
+MUTANT p-glead [4.5] the gauntlet's run with no beat of lead: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/progression.test.mjs (12 tests | 1 failed) 212ms
+    | ❯ X7 progression: a layer returns on the bar line (12)
+    | × computes the bar line as the oracle does 13ms
+    | ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 2 failed) 442ms
+    | × agrees from the start: the wait for the bar, the first obstacles, deaths and restarts 12ms
+    | × agrees in mid-run, into and out of the wave bars and to the finish 426ms
+MUTANT r-tile-sha [5.3] a spike cell of 04-thorns' c field removed (a room tile), content first: KILLED by tools/spec-content.mjs --tree (exit 1)
+    | rooms/04-thorns.txt: 801bdbeb41f3 is not the spec's 4dba19353f6e (byte drift: line endings, spaces or tiles)
+    | spec-content: FAIL, 1 file(s)
+MUTANT r-tile-behaviour [5.3] the same room tile, judged by the replays and the cheese check alone: SURVIVED tools/replay.mjs --all --jitter --seed 1 --kick exit 0 (0 s); tools/cheese.mjs --all exit 0 (340 s)
+MUTANT r-tile-01 [5.3] a one-tile bump on the running row of 01-wake (a room tile), judged by the replays alone: KILLED by tools/replay.mjs --all --jitter --seed 1 --kick (exit 1)
+    | replays/01-wake.json: FAIL died at step 1830, checksum 2fcd71f6 (witness 5ac56108) MISMATCH
+    | replays/02-heartbeat.json: CLEAR clear at step 1532, checksum c4384313 (witness c4384313) OK
+    | replays/02-heartbeat.json: jitter seed 1: 19/20 clear (need 18) [++++-+++++++++++++++] PASS
+    | replays/03-dash.json: CLEAR clear at step 1648, checksum 808a0990 (witness 808a0990) OK
+    | replays/03-dash.json: jitter seed 1: 20/20 clear (need 18) [++++++++++++++++++++] PASS
+    | replays/04-thorns.json: CLEAR clear at step 1267, checksum 81204999 (witness 81204999) OK
+MUTANT r-upspike [5.1] '^' read as a down spike: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 2 failed) 46ms
+    | × agrees from the start: the wait for the bar, the first obstacles, deaths and restarts 36ms
+    | × agrees in mid-run, into and out of the wave bars and to the finish 8ms
+    | ❯ tests/sim/oracle-dash.test.mjs (2 tests | 1 failed) 306ms
+    | × agrees in 03-dash 15ms
+    | ❯ tests/sim/oracle-base.test.mjs (4 tests | 1 failed) 493ms
+MUTANT g-lag [6.1] obstacles one column after the onset (LAG used as 1): KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 2 failed) 57ms
+    | × agrees from the start: the wait for the bar, the first obstacles, deaths and restarts 50ms
+    | × agrees in mid-run, into and out of the wave bars and to the finish 5ms
+    | ❯ tests/rooms/compile.test.mjs (5 tests | 2 failed) 253ms
+    | × compiles the world in file order and refuses a gap 129ms
+    | × parses the program and generates the oracle grid, byte for byte 5ms
+MUTANT g-centre [6.1] the corridor starting a row higher: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/rooms/compile.test.mjs (5 tests | 2 failed) 261ms
+    | × compiles the world in file order and refuses a gap 171ms
+    | × parses the program and generates the oracle grid, byte for byte 4ms
+    | ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 1 failed) 929ms
+    | × agrees in mid-run, into and out of the wave bars and to the finish 118ms
+    | Test Files  2 failed | 23 passed (25)
+MUTANT g-half [6.1] WAVE_HALF 3 to 4: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/rooms/compile.test.mjs (5 tests | 2 failed) 274ms
+    | × compiles the world in file order and refuses a gap 177ms
+    | × parses the program and generates the oracle grid, byte for byte 4ms
+    | ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 1 failed) 1145ms
+    | × agrees in mid-run, into and out of the wave bars and to the finish 196ms
+    | Test Files  2 failed | 23 passed (25)
+MUTANT g-turn [6.1] the corridor turning on the second sixteenth of each beat: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/rooms/compile.test.mjs (5 tests | 2 failed) 233ms
+    | × compiles the world in file order and refuses a gap 135ms
+    | × parses the program and generates the oracle grid, byte for byte 4ms
+    | ❯ tests/sim/oracle-gauntlet.test.mjs (2 tests | 1 failed) 1144ms
+    | × agrees in mid-run, into and out of the wave bars and to the finish 215ms
+    | Test Files  2 failed | 23 passed (25)
+MUTANT t-clap [7] the clap moved to the off-eighths: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/rooms/gauntlet-pattern.test.mjs (2 tests | 1 failed) 975ms
+    | × puts every obstacle on an onset of its layer 951ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~325ms faster with isolate: false — reuses workers across files instead of one per file
+    | cannot use window: not in browser?
+MUTANT a-lookahead [8.3] LOOKAHEAD 0.2: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/audio/scheduler.test.mjs (8 tests | 4 failed) 626ms
+    | × has the constants of section 8 13ms
+    | × hands every onset over once, on time, at most 0.12 s ahead 162ms
+    | × shifts a note up to 50 ms late and drops one later than that, counting both 39ms
+    | × restarts from cycle 0 at a new origin 102ms
+    | Test Files  1 failed | 24 passed (25)
+MUTANT a-ramp [8.3] the gate's ramp from t - 30 ms: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/audio/gates.test.mjs (2 tests | 1 failed) 17ms
+    | × opens a gate on its bar line with a 5 ms ramp 14ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~321ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT a-unlock [8.4] the run asks for the layer's bar one bar late: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/game/run.test.mjs (19 tests | 11 failed) 1091ms
+    | × room 1: unlockAt(1, unlockBar(clear step)) once, right after the clearing tick 74ms
+    | × room 2: unlockAt(2, unlockBar(clear step)) once, right after the clearing tick 35ms
+    | × room 3: unlockAt(3, unlockBar(clear step)) once, right after the clearing tick 78ms
+    | × room 4: unlockAt(4, unlockBar(clear step)) once, right after the clearing tick 65ms
+    | × room 5: unlockAt(5, unlockBar(clear step)) once, right after the clearing tick 29ms
+MUTANT a-origin [8.4] ORIGIN_LEAD 0.3: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/game/run.test.mjs (19 tests | 1 failed) 813ms
+    | × puts step 0 at 0.25 s past the context time when a run starts 12ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~320ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT d-target [9.1] targetStep without its + 1: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 4294967295)
+    | ❯ tests/clock/driver.test.mjs (4 tests | 1 failed) 16ms
+    | × takes the target step from the heard time, the origin and the display shift: one step past the time 10ms
+MUTANT d-display [9.1] displaySec with its sign flipped: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/game/run.test.mjs (19 tests | 1 failed) 680ms
+    | × ends every frame one step past the heard time less displaySec(avOffset) 37ms
+    | ❯ tests/clock/driver.test.mjs (4 tests | 1 failed) 12ms
+    | × turns the calibration into a display shift and an input lag, both clamped 6ms
+    | Test Files  2 failed | 23 passed (25)
+    | Tests  2 failed | 143 passed (145)
+MUTANT k-flushnone [9.2] flush drops the queue without applying it: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/input/keys.test.mjs (6 tests | 1 failed) 18ms
+    | × flushes every queued event in arrival order, whatever its step, and queues later events as before 9ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~333ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT k-flushrev [9.2] flush applies the queue newest first: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/input/keys.test.mjs (6 tests | 1 failed) 17ms
+    | × flushes every queued event in arrival order, whatever its step, and queues later events as before 8ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~329ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT k-flushkeep [9.2] flush applies the queue but keeps it: SURVIVED vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game exit 0 (7 s)
+MUTANT k-noflush [9.2/13] startRoom never flushes: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/game/run.test.mjs (19 tests | 1 failed) 702ms
+    | × flushes the keys on every start: a key still down is held on the first step, a key pressed and released is not 17ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~330ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT k-order [9.2] next() applies the due events newest first (R8 MINOR 3): SURVIVED vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game exit 0 (6 s)
+MUTANT art-block [10.3] BLOCK_ALPHA 0.8: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/render/beat-art.test.mjs (4 tests | 2 failed) 426ms
+    | × models the fill's luminance as the reference does 14ms
+    | × draws frame after frame through the limiter as the reference does 5ms
+    | ❯ tests/render/play-frame.test.mjs (3 tests | 2 failed) 1926ms
+    | × draws every frame of the rooms' witness runs as the reference does 417ms
+    | × draws the layer's ring as the reference does, past a room's clear until the ring has run out 251ms
+MUTANT art-squash [10.3] SQUASH_STEPS 5: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/render/play-frame.test.mjs (3 tests | 3 failed) 407ms
+    | × draws every frame of the rooms' witness runs as the reference does 108ms
+    | × draws the layer's ring as the reference does, past a room's clear until the ring has run out 88ms
+    | × draws the gauntlet's witness run as the reference does 207ms
+    | ❯ tests/render/creature.test.mjs (14 tests | 10 failed) 1508ms
+    | × tracks and draws the creature through 01-wake 120ms
+MUTANT art-motes [10.4] MOTES 59: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/render/depth-art.test.mjs (4 tests | 1 failed) 96ms
+    | × drifts the dust of every room 34ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~355ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT pf-dead [10.6] playFrame passes dead 0 and lock 0 (R8 MINOR 2): SURVIVED vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game exit 0 (6 s)
+MUTANT l-edge [11] the limiter's >= as >: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/fx/flash-limiter.test.mjs (4 tests | 1 failed) 11ms
+    | × holds a change whose area reaches the limit exactly, and passes one just under it 6ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~395ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT cal-lonea [12] a lone pass A taken as the display shift: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/input/calibrate.test.ts (9 tests | 1 failed) 27ms
+    | × gives a lone accepted pass A as the input bias, with no display shift 7ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~387ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT cal-lonev [12] a lone pass B taken as the display shift: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/input/calibrate.test.ts (9 tests | 1 failed) 28ms
+    | × gives a lone accepted pass B as the input bias, with no display shift 8ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~361ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT cal-mad [12] MAD < 35: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/input/calibrate.test.ts (9 tests | 1 failed) 33ms
+    | × keeps a pass whose deviation is exactly 35 ms and rejects one of 35.5 ms 10ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  1 failed | 144 passed (145)
+    | at least ~381ms faster with isolate: false — reuses workers across files instead of one per file
+    | ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+MUTANT e-keybeat [13] the card's key filled on beat 2: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/render/ending-art.test.mjs (5 tests | 2 failed) 48ms
+    | × lights one dot a beat, rests on the fourth and fills the key there 8ms
+    | × draws each frame of the ending: the rise, then the card on the music's beat 13ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  2 failed | 143 passed (145)
+    | at least ~387ms faster with isolate: false — reuses workers across files instead of one per file
+MUTANT e-keysize [13] the card's key 60 px wide: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/render/ending-art.test.mjs (5 tests | 2 failed) 86ms
+    | × lights one dot a beat, rests on the fourth and fills the key there 14ms
+    | × draws each frame of the ending: the rise, then the card on the music's beat 41ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  2 failed | 143 passed (145)
+    | at least ~386ms faster with isolate: false — reuses workers across files instead of one per file
+MUTANT e-beat [13] BEAT_S 60 / 141: KILLED by vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game (exit 1)
+    | ❯ tests/render/ending-art.test.mjs (5 tests | 3 failed) 27ms
+    | × rises over four bars 7ms
+    | × counts the beat of the bar from the run's origin 10ms
+    | × draws each frame of the ending: the rise, then the card on the music's beat 2ms
+    | Test Files  1 failed | 24 passed (25)
+    | Tests  3 failed | 142 passed (145)
+mut: 38 killed, 5 survived; clone clean
+--- end ---

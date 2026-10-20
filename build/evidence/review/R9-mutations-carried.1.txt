@@ -1,0 +1,15 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-carried
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/batch-carried.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T18:03:16-05:00
+time-end: 2026-10-20T18:03:28-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+MUTANT alpha [9.1] the view's alpha held at 1 (R8 MINOR 12): SURVIVED vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game exit 0 (6 s)
+MUTANT note-len [8.3] a note's duration a sixteenth short (R8 MINOR 13): SURVIVED vitest run tests/sim tests/rooms tests/audio tests/clock tests/input tests/fx tests/render tests/game exit 0 (5 s)
+mut: 0 killed, 2 survived; clone clean
+--- end ---

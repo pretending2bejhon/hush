@@ -1,0 +1,14 @@
+HUSH-EVIDENCE v1
+id: R9-reach-clear
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/reach-clear.mjs .
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T18:03:42-05:00
+time-end: 2026-10-20T18:04:05-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+jittered: 21754 clears, 254 with the right edge exactly on the room's (01-wake seed 1855337731 run 192, clear on step 1621; 01-wake seed 1855337731 run 393, clear on step 1616; 01-wake seed 1855337731 run 730, clear on step 1616; 01-wake seed 1855337731 run 973, clear on step 1616; 01-wake seed 3185517161 run 268, clear on step 1616)
+driven on: 17546 clears, 20 with the right edge exactly on the room's (02-heartbeat from 210 steps before the clear, wait 21; 02-heartbeat from 240 steps before the clear, wait 21; 04-thorns from 210 steps before the clear, wait 5; 04-thorns from 240 steps before the clear, wait 35; 08-steps from 30 steps before the clear, wait 4)
+--- end ---

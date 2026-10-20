@@ -1,0 +1,57 @@
+HUSH-EVIDENCE v1
+id: R9-status
+phase: review
+command: git status --porcelain
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T18:02:19-05:00
+time-end: 2026-10-20T18:02:19-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+?? build/evidence/review/AU1.9.txt
+?? build/evidence/review/AU2.9.txt
+?? build/evidence/review/AU3.9.txt
+?? build/evidence/review/CAL1.9.txt
+?? build/evidence/review/CAL2.10.txt
+?? build/evidence/review/CL1.9.txt
+?? build/evidence/review/CL2.9.txt
+?? build/evidence/review/CT1.9.txt
+?? build/evidence/review/END1.9.txt
+?? build/evidence/review/FX1.9.txt
+?? build/evidence/review/GAME1.9.txt
+?? build/evidence/review/IN1.9.txt
+?? build/evidence/review/R9-av-head.2.txt
+?? build/evidence/review/R9-axisb-sim.3.txt
+?? build/evidence/review/R9-console.2.txt
+?? build/evidence/review/R9-digest.3.txt
+?? build/evidence/review/R9-head.3.txt
+?? build/evidence/review/R9-jitter-rate.3.txt
+?? build/evidence/review/R9-jitter-rate.4.txt
+?? build/evidence/review/R9-jitter.10.txt
+?? build/evidence/review/R9-jitter.6.txt
+?? build/evidence/review/R9-jitter.7.txt
+?? build/evidence/review/R9-jitter.8.txt
+?? build/evidence/review/R9-jitter.9.txt
+?? build/evidence/review/R9-mutations-calib.3.txt
+?? build/evidence/review/R9-mutations-calib.4.txt
+?? build/evidence/review/R9-mutations-ending.2.txt
+?? build/evidence/review/R9-mutations-more.2.txt
+?? build/evidence/review/R9-mutations-more.3.txt
+?? build/evidence/review/R9-mutations-unit.2.txt
+?? build/evidence/review/R9-npm-test.2.txt
+?? build/evidence/review/R9-playtest-dom.2.txt
+?? build/evidence/review/R9-verifiers.2.txt
+?? build/evidence/review/RM1.9.txt
+?? build/evidence/review/RN1.11.txt
+?? build/evidence/review/RN2.10.txt
+?? build/evidence/review/RN3.10.txt
+?? build/evidence/review/RN4.10.txt
+?? build/evidence/review/S1.9.txt
+?? build/evidence/review/SIM1.9.txt
+?? build/evidence/review/SIM2.9.txt
+?? build/evidence/review/W1.9.txt
+?? build/evidence/review/W2.9.txt
+?? build/evidence/review/W3.9.txt
+?? build/evidence/review/standing.9.txt
+--- end ---

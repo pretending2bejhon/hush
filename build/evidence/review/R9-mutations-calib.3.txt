@@ -1,0 +1,41 @@
+HUSH-EVIDENCE v1
+id: R9-mutations-calib
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/mut.mjs <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/batch-browser.mjs cb-press cb-row cb-bafter cb-line
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T17:07:27-05:00
+time-end: 2026-10-20T17:21:50-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+MUTANT cb-press [12] the waiting key pressed for two sixteenths of each beat: KILLED by tools/probe-flash.mjs --calibration (exit 1)
+    | flash: calibration up 22 s: clicks 24, count-in fills 5, rings 24, values 0 0, Escape ignored (1285 frames, 1095 analyser samples); click starts 24 of 24 on their marks; frames 1284 timed (26 filled, 154 with the ring, 1283 with the row; 64 of 125 waiting fram
+    | flash: tapped calibration up 11.5 s: values 0.0 44.0 (the taps' own 0.0 44.0; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 648 timed (25 filled, 0 wit
+    | flash: fallback calibration up 22.1 s: values 0.0 34.7 (the taps' own 0.0 34.7; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; fr
+    | flash: calibration frames: a waiting frame +131.1 ms from a beat line shows the key pressed (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 30 more like it)
+    | flash: tapped calibration frames: a waiting frame +114.7 ms from a beat line shows the key pressed (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 5 more like it)
+    | flash: fallback calibration frames: a waiting frame +119.9 ms from a beat line shows the key pressed (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 5 more like it)
+MUTANT cb-row [12] pass A's dots filled 20 ms after their clicks: KILLED by tools/probe-flash.mjs --calibration (exit 1)
+    | flash: calibration up 22 s: clicks 24, count-in fills 5, rings 24, values 0 0, Escape ignored (1285 frames, 1094 analyser samples); click starts 24 of 24 on their marks; frames 1282 timed (26 filled, 155 with the ring, 1282 with the row; 33 of 127 waiting fram
+    | flash: tapped calibration up 11.5 s: values 0.0 42.1 (the taps' own 0.0 42.1; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 647 timed (26 filled, 0 wit
+    | flash: fallback calibration up 22.1 s: values 0.0 34.5 (the taps' own 0.0 34.5; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; fr
+    | flash: calibration frames: A1: a frame heard +3.9 ms from click 4 shows 0 dots filled (want 1: a dot fills once its click has passed) (and 22 more like it)
+    | flash: tapped calibration frames: A1: a frame heard +8.4 ms from click 4 shows 0 dots filled (want 1: a dot fills once its click has passed) (and 22 more like it)
+    | flash: fallback calibration frames: A1: a frame heard +11.8 ms from click 4 shows 0 dots filled (want 1: a dot fills once its click has passed) (and 22 more like it)
+MUTANT cb-bafter [12] pass B run after an accepted pass A: KILLED by tools/probe-flash.mjs --calibration (exit 1)
+    | flash: calibration up 22 s: clicks 23, count-in fills 4, rings 24, values 0 0, Escape ignored (1282 frames, 1096 analyser samples); click starts 24 of 24 on their marks; frames 1284 timed (26 filled, 154 with the ring, 1283 with the row; 33 of 125 waiting fram
+    | flash: tapped calibration up 22.1 s: values 9.6 34.5 (the taps' own 9.6 34.5; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 1277 timed (26 filled, 154 
+    | flash: fallback calibration up 22.1 s: values 0.0 34.5 (the taps' own 0.0 34.5; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; fr
+    | flash: tapped calibration left after 22.1 s (want 10 to 15 s: A1 accepted, and no pass B)
+    | flash: tapped calibration: the scene ran A, B with A1 accepted (want A1 accepted, and no pass B: B only after a rejected A, no repeat)
+    | flash: FAIL
+MUTANT cb-line [12] the calibration line never hidden: KILLED by tools/probe-flash.mjs --calibration (exit 1)
+    | flash: calibration up 22.1 s: clicks 24, count-in fills 4, rings 24, values 0 0, Escape ignored (1284 frames, 1095 analyser samples); click starts 24 of 24 on their marks; frames 1284 timed (26 filled, 153 with the ring, 1284 with the row; 32 of 124 waiting fr
+    | flash: tapped calibration up 11.5 s: values 0.0 40.7 (the taps' own 0.0 40.7; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 647 timed (25 filled, 0 wit
+    | flash: fallback calibration up 22.1 s: values 0.0 35.0 (the taps' own 0.0 35.0; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; fr
+    | flash: calibration line: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]
+    | flash: tapped calibration line: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]
+    | flash: fallback calibration line: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]
+mut: 4 killed, 0 survived; clone clean
+--- end ---

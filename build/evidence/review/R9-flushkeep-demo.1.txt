@@ -1,0 +1,14 @@
+HUSH-EVIDENCE v1
+id: R9-flushkeep-demo
+phase: review
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/65da3030-111e-429b-a19b-3c6ec45693c4/scratchpad/flushkeep-demo.mjs .
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T18:04:06-05:00
+time-end: 2026-10-20T18:04:06-05:00
+head: 6e963503bddf22696776bb710173cd2c16bbad57
+exit: 0
+--- output ---
+product: Space held from step null of the new run, on 0 of steps 0 to 20000
+mutant (flush keeps the queue): Space held from step 16000 of the new run (66.7 s in), on 4001 of steps 0 to 20000
+--- end ---
