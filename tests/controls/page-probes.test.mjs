@@ -1,7 +1,8 @@
 // PF-CONTROLS for the headless browser probes, on the control page (tests/fixtures/control-page) built under
 // /hush/: the smoke probe (X1) against a wrong Vite base, an uncentred canvas and another background (review R7,
-// MINOR 4; R6, MINOR 5), the playthrough (X5, X10's browser rows, D3, D8, D16)
-// against every planted fault, the ending's included (no hand-over, no run line at the card, one before the card,
+// MINOR 4; R6, MINOR 5) and (the owner's ruling N-F1 c) a page without the calibration's line, the playthrough (X5,
+// X10's browser rows, D3, D8, D16) against every planted fault, the calibration's line kept after the hand-over and the
+// ending's included (no hand-over, no run line at the card, one before the card,
 // one from the wrong step; and, for the owner's ruling N-F4 a, no play again, play again during the rise, the run
 // line kept after it), the supply probe (X10) against a loose pin, an
 // audit finding, a planted write, a build without its third-party notices and notices that leave a runtime
@@ -69,6 +70,16 @@ describe('smoke probe (X1)', () => {
     expect(bg.out).toMatch(/smoke: layout: ok/);
     expect(bg.code).toBe(1);
   }, T);
+
+  // The owner's ruling N-F1 c (2026-10-19): the calibration's line under the canvas while it waits for its first key.
+  it('wants the calibration line at boot', () => {
+    const ok = tool('probe-smoke.mjs', ['--dist', dist]);
+    expect(ok.out).toMatch(/smoke: text: ok: title, link, notice and the calibration line only; no text object/);
+    const none = tool('probe-smoke.mjs', ['--dist', dist, '--query', 'calib=noline']);
+    expect(none.out).toMatch(/smoke: text: FAIL: the calibration wants its one line "Press any key, then tap along with the beat to set your timing\.", found \[\]/);
+    expect(none.out).toMatch(/smoke: layout: ok/);
+    expect(none.code).toBe(1);
+  }, T);
 });
 
 describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
@@ -107,7 +118,11 @@ describe('playthrough probe (X5, X10, D3, D8, D16)', () => {
     ['ws=ws://127.0.0.2:9/x', 'network', /network: FAIL: other origins: ws:\/\/127\.0\.0\.2:9/],
     ['rtc', 'network', /network: FAIL: other origins: 1 RTCPeerConnection attempt\(s\)/],
     ['text', 'text', /text: FAIL: text objects 1/],
-    ['domtext', 'text', /text: FAIL: text over the canvas/],
+    // Planted 200 ms after the page boots, the text is first seen by the read right after the hand-over (the owner's
+    // ruling N-F1 c).
+    ['domtext', 'text', /text: FAIL: after the hand-over: text over the canvas: "planted"/],
+    // The owner's ruling N-F1 c (2026-10-19): the calibration's line left shown after the hand-over.
+    ['calib=linekept', 'text', /text: FAIL: after the hand-over: extra page text \["Press any key, then tap along with the beat to set your timing\."\]/],
   ];
   for (const [query, check, line] of faults) {
     it(`fails ?${query} on its ${check} check`, () => {

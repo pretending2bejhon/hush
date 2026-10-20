@@ -1,0 +1,49 @@
+HUSH-EVIDENCE v1
+id: F1-calibration-controls
+phase: amend
+command: npx vitest run tests/controls/calibration-probe.test.mjs -t "counts taps during|without its count-in|pass B after an accepted|repeats a rejected|never pressed|draws no row|row fills|line kept|lone pass|handler|key repeats|end a beat early"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T08:46:17-05:00
+time-end: 2026-10-20T09:00:47-05:00
+head: 296b43403266a1345f5ed18d6bf82b8af6ab2b10
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/calibration-probe.test.mjs (24 tests | 1 failed | 12 skipped) 867675ms
+   ❯ flash probe --calibration (section 12) (24)
+     × fails a page line kept after the hand-over, and a page with no line 69792ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/calibration-probe.test.mjs > flash probe --calibration (section 12) > fails a page line kept after the hand-over, and a page with no line
+AssertionError: expected 'flash: calibration up 22.1 s: clicks …' to match /flash: calibration line: after the ha…/
+
+- Expected:
+/flash: calibration line: after the hand-over: extra page text \["Press any key, then tap along with the beat to set your timing\."\]/
+
++ Received:
+"flash: calibration up 22.1 s: clicks 24, count-in fills 4, rings 24, values 0 0, Escape ignored (1283 frames, 1098 analyser samples); click starts 24 of 24 on their marks; frames 1282 timed (25 filled, 155 with the ring, 1282 with the row; 33 of 130 waiting frames pressed)
+flash: tapped calibration up 11.5 s: values 0.0 41.4 (the taps' own 0.0 41.4; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 648 timed (26 filled, 0 with the ring, 648 with the row; 10 of 34 waiting frames pressed)
+flash: fallback calibration up 22.1 s: values 0.0 34.8 (the taps' own 0.0 34.8; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; frames 1284 timed (25 filled, 154 with the ring, 1283 with the row; 13 of 35 waiting frames pressed)
+flash: 1798 frames over 30.6 s, median 15.71 ms; general max 0 px, red max 0 px (limit 25600)
+flash: calibration line: after the hand-over: extra page text [\"Press any key, then tap along with the beat to set your timi\"]
+flash: tapped calibration line: after the hand-over: extra page text [\"Press any key, then tap along with the beat to set your timi\"]
+flash: fallback calibration line: after the hand-over: extra page text [\"Press any key, then tap along with the beat to set your timi\"]
+flash: FAIL
+"
+
+ ❯ tests/controls/calibration-probe.test.mjs:251:47
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed | 12 skipped (24)
+   Start at  08:46:19
+   Duration  868.35s (tests 100%)
+
+--- end ---

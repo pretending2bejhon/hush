@@ -126,6 +126,10 @@ const cases = [
   ['tests/input/keys.test.mjs', { HUSH_KEYS_MODULE: `${REF}/keys.mjs` }, () => ({ HUSH_KEYS_MODULE: refMutant('keys.mjs', 'for (const ev of queue) { if (ev.down) held.add(ev.code); else held.delete(ev.code); }', '') }), 'flush'],
   ['tests/game/run.test.mjs', { HUSH_RUN_MODULE: `${REF}/run.mjs` }, () => ({ HUSH_RUN_MODULE: runMutant('keys.flush();', '') }), 'flush'],
   ['tests/render/ending-art.test.mjs', { HUSH_ENDING_ART_MODULE: `${REF}/art.mjs` }, () => ({ HUSH_ENDING_ART_MODULE: refMutant('art.mjs', 'const key = beatOfBar === 3 ?', 'const key = beatOfBar === 0 ?') }), 'again key'],
+  // The owner's ruling N-F1 c (2026-10-19): the one-pass rule. A lone pass A taken as the display shift, as before the
+  // ruling, and a lone pass B taken as one.
+  ['tests/input/calibrate.test.ts', { HUSH_CALIBRATE_MODULE: 'tests/fixtures/calibration/reference.mjs' }, () => ({ HUSH_CALIBRATE_MODULE: calibMutant('if (a.accepted) return { avOffset: 0, inputBias: a.median };', 'if (a.accepted) return { avOffset: a.median, inputBias: 0 };') }), 'one pass A'],
+  ['tests/input/calibrate.test.ts', { HUSH_CALIBRATE_MODULE: 'tests/fixtures/calibration/reference.mjs' }, () => ({ HUSH_CALIBRATE_MODULE: calibMutant('if (v.accepted) return { avOffset: 0, inputBias: v.median };', 'if (v.accepted) return { avOffset: -v.median, inputBias: v.median };') }), 'one pass B'],
 ];
 
 describe('product tests: green on the reference, red on one planted fault', () => {

@@ -8,7 +8,8 @@
 //   play     every room file under --rooms has a witness; each one's in-page headless replay ends on the
 //            witness's checksum, and each live run clears its room with no death
 //   text     no Phaser text object at the end of any room or at the card, nothing over the canvas, and the
-//            page texts exactly the title, link and notice. The run must hand over to the scene `ending`
+//            page texts exactly the title, link and notice: read once right after the hand-over, so the calibration's
+//            line must be gone (the owner's ruling N-F1 c, 2026-10-19), and through the ending. The run must hand over to the scene `ending`
 //            within ENDING_WAIT_MS of the last room; no other text may show before its rise ends (RISE_MS of
 //            heard time, less SKEW_MS for the probe's polling); the final read comes AFTER_RISE_MS after the rise, and
 //            it waits up to LINE_WAIT_MS after the rise for exactly one run line `run m:ss · deaths n` (in every mode
@@ -367,6 +368,8 @@ async function main(argv) {
       for (const err of [...log.pageErrors, ...log.consoleErrors].slice(0, 5)) process.stdout.write(`play:   ${err}\n`);
       return 2;
     }
+    // The owner's ruling N-F1 c (2026-10-19): the calibration's line goes with the hand-over.
+    const handedOver = textProblems(await page.evaluate(() => window.__hush.pageTexts())).map((p) => `after the hand-over: ${p}`);
     // Text objects are counted at the end of every room, while the play scene is up (a stopped scene's
     // objects are destroyed), and again at the card. With the unlock check, every room that returns a layer is
     // then watched up to that layer's bar line before the next room starts.
@@ -487,6 +490,7 @@ async function main(argv) {
     ];
     if (!witnesses.length) roomProblems.push('no witnesses');
     const tp = [
+      ...handedOver,
       ...textProblems(ending.final, { runLine: true }),
       ...endingProblems(ending, { clearStep: last ? last.clearStep : null }),
     ];

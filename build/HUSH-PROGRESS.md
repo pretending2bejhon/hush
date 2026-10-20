@@ -79,6 +79,9 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - The solver's jitter score swings by up to 30 points on a one-tile change, because its search returns a different and often fragile path. Judge a re-cut by more than one variant, and give a mechanic timing slack before moving geometry (producer, RUN-1 F2).
 - A test that hard-codes a witness's numbers breaks when the witnesses are solved again. Derive them from the witness: the bar-line edge tests now compute room 1's delay from its own clearing tick (producer, RUN-1 F2).
 - The cap hook refuses a shell call that names a product folder next to a write form even inside a JSON string, a sed over scratch files or a printf. Write such files with the Write tool (producer, RUN-1).
+- Phaser 4.2.1 builds a Graphics with a default line and fill style in its command buffer, `[6, 1, 0, 0, 7, 0, 0]`, until its first clear(). A check that reads buffers must take a buffer of style commands alone as nothing, or a Graphics not drawn yet reads as a foreign picture (producer, RUN-1 F1).
+- A scene that hands over inside its own update is stopped before Phaser's poststep, so a probe that logs at poststep never sees its last frame. Log that frame once from the prestep's record, with no Graphics, or the last attempt's end is never judged (producer, RUN-1 F1).
+- tests/tools runs in no acceptance and in neither standing nor npm test. An applier that re-solves witnesses or re-cuts rooms can turn a verifier's own test red unseen, as e9c9b46 did to scene-check. Run `npm run test:verifiers` after any such applier, before the review (producer, RUN-1 F1).
 
 ## Rounds
 

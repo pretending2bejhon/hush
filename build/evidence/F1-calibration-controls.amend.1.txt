@@ -1,0 +1,57 @@
+HUSH-EVIDENCE v1
+id: F1-calibration-controls
+phase: amend
+command: npx vitest run tests/controls/calibration-probe.test.mjs -t "passes the control page|rings show|count-in fills show|log an error|frameTimes sit|handed over|sign flipped|count-in of three|leaves at once|without its clicks|without its rings|Escape as a key"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T08:29:59-05:00
+time-end: 2026-10-20T08:44:38-05:00
+head: 296b43403266a1345f5ed18d6bf82b8af6ab2b10
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/calibration-probe.test.mjs (24 tests | 1 failed | 12 skipped) 877397ms
+   ❯ flash probe --calibration (section 12) (24)
+     × fails a scene whose frameTimes sit 0.1 s after the frames that drew their rings (review R5, MAJOR 1) 179503ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/calibration-probe.test.mjs > flash probe --calibration (section 12) > fails a scene whose frameTimes sit 0.1 s after the frames that drew their rings (review R5, MAJOR 1)
+AssertionError: expected 'flash: calibration up 130.5 s: clicks…' not to match /flash: calibration (left after|clicks…/
+
+- Expected:
+/flash: calibration (left after|clicks|fills|rings|values|click starts|line)/
+
++ Received:
+"flash: calibration up 130.5 s: clicks 22, count-in fills 4, rings 7, values 0 0, Escape ignored (783 frames, 755 analyser samples); click starts 22 of 24 on their marks; frames 797 timed (26 filled, 41 with the ring, 796 with the row; 33 of 131 waiting frames pressed)
+flash: tapped calibration up 11.5 s: values 0.0 42.0 (the taps' own 0.0 42.0; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 648 timed (26 filled, 0 with the ring, 648 with the row; 13 of 35 waiting frames pressed)
+flash: fallback calibration up 22.1 s: values 0.0 34.6 (the taps' own 0.0 34.6; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 24 of 24 on their marks; frames 1281 timed (26 filled, 153 with the ring, 1281 with the row; 11 of 35 waiting frames pressed)
+flash: 1245 frames over 139.0 s, median 16.85 ms; general max 0 px, red max 0 px (limit 25600)
+flash: the calibration scene was still up after 120 s
+flash: calibration rings 7 (want 20 to 28)
+flash: calibration click starts: A1 has 22 of 24 clicks started on their marks and 0 off them (want each click started within 1 ms of t0 + i x BEAT)
+flash: calibration frames: B1: frameTimes[0] is +117.1 ms from its due time, but the first frame that drew ring 0 ran +17.0 ms to +17.1 ms from it (want that frame's frameMs) (and 7 more like it)
+flash: calibration frames: B1: 194 frames judged (want at least 200)
+flash: fallback calibration frames: B1: frameTimes[0] is +116.3 ms from its due time, but the first frame that drew ring 0 ran +16.3 ms to +16.4 ms from it (want that frame's frameMs) (and 23 more like it)
+flash: FAIL
+"
+
+ ❯ tests/controls/calibration-probe.test.mjs:112:23
+    110|     expect(r.out).toMatch(/flash: fallback calibration frames: B1: fra…
+    111|     expect(r.out).not.toMatch(/shows (no ring|the ring|the key)/);
+    112|     expect(r.out).not.toMatch(/flash: calibration (left after|clicks|f…
+       |                       ^
+    113|     expect(r.out).toMatch(/flash: FAIL/);
+    114|     expect(r.code).toBe(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 11 passed | 12 skipped (24)
+   Start at  08:30:00
+   Duration  877.95s (tests 100%)
+
+--- end ---

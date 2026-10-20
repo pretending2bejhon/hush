@@ -4,8 +4,9 @@
 // answered below 400 and none fails (a wrong Vite base 404s every asset); the probe API reports the first
 // scene within 20 s; the canvas is not blank (two colours or more in its screenshot); it sits centred in #game, its
 // margins equal within 1 px on each axis (review R7, MINOR 4), and an undrawn corner pixel reads #07080d (review R6,
-// MINOR 5); no text object exists and the page shows exactly its title, link and notice, none over the canvas; zero
-// console and page errors over the load and 3 s after it. Exit 0 PASS, 1 FAIL, 2 usage or a missing dist.
+// MINOR 5); no text object exists and the page shows exactly its title, link and notice and, while the calibration waits
+// for its first key, its line (the owner's ruling N-F1 c, 2026-10-19), none over the canvas; zero console and page errors
+// over the load and 3 s after it. Exit 0 PASS, 1 FAIL, 2 usage or a missing dist.
 import { decodePng } from './png.mjs';
 import { emitJson, launch, openGame, openPage, parseOptions, requireDist, serveDir, textProblems, withQuery } from './probe-lib.mjs';
 
@@ -51,9 +52,9 @@ async function main(argv) {
       const hex = `#${[0, 1, 2].map((k) => shot.data[(2 * shot.width + 2) * 4 + k].toString(16).padStart(2, '0')).join('')}`;
       add('background', hex === '#07080d', hex === '#07080d' ? 'an undrawn canvas pixel reads #07080d' : `an undrawn canvas pixel reads ${hex}, want #07080d`);
       const texts = await page.evaluate(() => window.__hush.pageTexts());
-      const tp = textProblems(texts, { runLine: false });
+      const tp = textProblems(texts, { calibrationLine: true });
       const objects = await page.evaluate(() => window.__hush.textObjects());
-      add('text', tp.length === 0 && objects === 0, tp.length || objects !== 0 ? [...tp, `text objects ${objects}`].join('; ') : 'title, link and notice only; no text object');
+      add('text', tp.length === 0 && objects === 0, tp.length || objects !== 0 ? [...tp, `text objects ${objects}`].join('; ') : 'title, link, notice and the calibration line only; no text object');
     }
     add('requests', log.badStatus.length === 0 && log.failed.length === 0, log.badStatus.length || log.failed.length ? [...log.badStatus, ...log.failed].slice(0, 5).join(' | ') : 'every request answered below 400');
     add('console', log.consoleErrors.length === 0 && log.pageErrors.length === 0,

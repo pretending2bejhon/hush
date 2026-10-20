@@ -23,17 +23,23 @@
 //                 layer 1's voices played but not counted; drop, layer 1's notes of each run's second bar dropped late)
 //   ?unlock=late|early|none  the playthrough's unlock check (X7's clear-time half): a cleared room's layer
 //                 returns a bar late, a bar early, or never
-//   ?calib=skip|norepeat|silent|noring|nofill|flip|count3|escape|nowindow|first|clicklate|ringlate|filllate|frametime
+//   ?calib=skip|silent|noring|nofill|flip|count3|escape|nowindow|clicklate|ringlate|filllate|frametime|bafter|arepeat|
+//          nopress|norow|rowlate|linekept|noline|twopass|handlertime|repeat|endearly
 //                 the calibration scene's planted faults
 //                 (the flash probe's --calibration check): the first key leaves at once (the shortcut that stood in
-//                 for the passes), a rejected pass is not repeated, pass A plays no click, pass B draws no ring, the
-//                 count-in never fills the key, pass A's tap offsets have their sign flipped (the tapped run),
-//                 the count-in is 3 beats, Escape is a key like any other (it starts the audio and taps; review R3,
-//                 MINOR 5), taps during the count-in are counted (review R3, MINOR 6), a pass keeps its first result
-//                 instead of its last (the retried run; review R4, MAJOR 2), every click is handed over 0.1 s after
-//                 its mark (review R4, MAJOR 1), and (review R5, MAJOR 1) every ring drawn 0.1 s after its window while
-//                 frameTimes keep the window, every count-in fill 0.1 s after its click, every frameTime 0.1 s after the
-//                 frame that drew its ring
+//                 for the passes), pass A plays no click, pass B draws no ring, the count-in never fills the key, pass
+//                 A's tap offsets have their sign flipped (the tapped run), the count-in is 3 beats, Escape is a key like
+//                 any other (it starts the audio and taps; review R3, MINOR 5), taps during the count-in are counted
+//                 (review R3, MINOR 6), every click is handed over 0.1 s after its mark (review R4, MAJOR 1), and (review
+//                 R5, MAJOR 1) every ring drawn 0.1 s after its window while frameTimes keep the window, every count-in
+//                 fill 0.1 s after its click, every frameTime 0.1 s after the frame that drew its ring; and (the owner's
+//                 ruling N-F1 c, 2026-10-19) pass B run after an accepted pass A, a rejected pass A repeated once, the
+//                 waiting key never pressed, no row, the row's dots filled 0.1 s after their clicks and rings, the page
+//                 line left shown after the hand-over, no page line at all, the two-pass rule for a lone pass (avOffset
+//                 medianA - medianV with the other median 0), taps timed by the handler's clock instead of the event's
+//                 time stamp (review R7, MINOR 3), key repeats taken as taps (review R6, MINOR 2) and every attempt
+//                 ended a beat early (review R8, MINOR 4). Before the ruling, `norepeat` (no repeat of a rejected
+//                 pass) and `first` (a pass keeping its first result) were faults; section 12 now repeats nothing.
 //   ?ending=none|never|early|late|mid|noagain|againearly|linekept  the ending's planted faults (the playthrough's
 //                 text and again checks): the run never hands over to the scene `ending`; no run line at the card;
 //                 the run line at once, before the card; the run line from the step at the card instead of the step
@@ -87,6 +93,9 @@ function startRoom(r) {
 }
 
 function skipCalibration(avOffset, inputBias) {
+  // The owner's ruling N-F1 c (2026-10-19): the page line goes with the calibration screen, and nothing shows it again.
+  const line = document.getElementById('calibration');
+  if (line && calibFault !== 'linekept') line.setAttribute('hidden', '');
   calibration = { avOffset, inputBias };
   if (game.scene.isActive('calibration')) game.scene.stop('calibration');
   if (!game.scene.isActive('play')) game.scene.start('play');
@@ -124,10 +133,12 @@ class Boot extends Phaser.Scene {
   create() { if (!params.has('noboot')) this.scene.start('calibration'); }
 }
 
-// HUSH-SPEC section 12: the key shape, then pass A (24 clicks, a count-in of 4 fills, taps heard against
-// clicks 5 to 24) and pass B (24 silent rings, taps against the frames that drew rings 5 to 24), each
-// repeated once when rejected, then calibrate() and the run at room 1. Every decision is taken in update()
-// from one performance.now() read and the heard time through the device-clock line.
+// HUSH-SPEC section 12 (amended for the owner's ruling N-F1 c, 2026-10-19): the key shape pressed for a sixteenth from
+// each beat line while the scene waits, then pass A (24 clicks, a count-in of 4 fills of the key, taps heard against
+// clicks 5 to 24) and, only when it is rejected, pass B (24 silent rings, taps against the frames that drew rings 5 to
+// 24), neither repeated, each attempt with a row of 20 dots that fill as its counted clicks or rings pass; then
+// calibrate() (its one-pass rule) and the run at room 1, the page line hidden. Every decision is taken in update() from
+// one performance.now() read and the heard time through the device-clock line.
 const calibFault = params.get('calib') || '';
 const BEAT = 60 / 140;
 const SIXTEENTH = BEAT / 4;
@@ -136,6 +147,19 @@ const CLICKS = 24;
 const COUNT_IN = calibFault === 'count3' ? 3 : 4;
 const TAIL = BEAT / 2;
 const LOOKAHEAD = 0.12;
+const ROW = 20;
+const END_BEATS = calibFault === 'endearly' ? 22 : 23;
+const ROW_LATE = calibFault === 'rowlate' ? 0.1 : 0;
+if (calibFault === 'noline') document.getElementById('calibration')?.remove();
+
+// A pass that never ran counts as rejected with no taps.
+const NO_PASS = { median: 0, mad: 0, taps: 0, accepted: false };
+// ?calib=twopass: the rule before the owner's ruling N-F1 c, which shifts the picture by a lone pass's median.
+function calibrateTwoPass(a, v) {
+  const medianA = a.accepted ? a.median : 0;
+  const medianV = v.accepted ? v.median : 0;
+  return { avOffset: medianA - medianV, inputBias: medianV };
+}
 
 // The nearest value of xs to v (ties to the earlier), skipping holes; null when there is none.
 function nearest(xs, v) {
@@ -149,16 +173,19 @@ class Calibration extends Phaser.Scene {
   create() {
     this.keyShape = this.add.graphics();
     this.ringShape = this.add.graphics();
-    this.drawKey(false);
+    this.rowShape = this.add.graphics();
+    this.drawKey('plain');
     this.keyed = false;
     this.ready = false;
     this.left = false;
+    this.begun = false;
     this.attempt = null;
     this.queue = ['A'];
     this.results = { A: null, B: null };
     this.tries = { A: 0, B: 0 };
     const onKey = (e) => {
-      if ((e.code === 'Escape' && calibFault !== 'escape') || e.repeat) return;
+      if ((e.code === 'Escape' && calibFault !== 'escape') || (e.repeat && calibFault !== 'repeat')) return;
+      const at = calibFault === 'handlertime' ? performance.now() : e.timeStamp;
       if (!this.keyed) {
         this.keyed = true;
         engine.start().then(() => {
@@ -171,9 +198,9 @@ class Calibration extends Phaser.Scene {
       if (!a) return;
       if (a.pass === 'A') {
         const c = engine.clock();
-        const h = c ? audibleSec(c, e.timeStamp) : -Infinity;
+        const h = c ? audibleSec(c, at) : -Infinity;
         if (calibFault === 'nowindow' || h >= a.t0 + (COUNT_IN - 0.5) * BEAT) a.taps.push(h);
-      } else if (calibFault === 'nowindow' || e.timeStamp >= a.p0 + (COUNT_IN - 0.5) * BEAT * 1000) a.taps.push(e.timeStamp);
+      } else if (calibFault === 'nowindow' || at >= a.p0 + (COUNT_IN - 0.5) * BEAT * 1000) a.taps.push(at);
     };
     window.addEventListener('keydown', onKey, true);
     this.events.once('shutdown', () => {
@@ -185,26 +212,52 @@ class Calibration extends Phaser.Scene {
     window.setTimeout(planted, 200);
   }
 
-  drawKey(filled) {
+  // The key shape: plain, filled for a count-in sixteenth, or pressed (filled, 4 px lower) while the scene waits.
+  drawKey(state) {
     const g = this.keyShape;
+    const y = state === 'pressed' ? 324 : 320;
     g.clear();
-    if (filled) {
+    if (state !== 'plain') {
       g.fillStyle(0x7fd6ff, 0.6);
-      g.fillRoundedRect(600, 320, 80, 80, 14);
+      g.fillRoundedRect(600, y, 80, 80, 14);
     }
     g.lineStyle(3, 0x7fd6ff, 0.8);
-    g.strokeRoundedRect(600, 320, 80, 80, 14);
+    g.strokeRoundedRect(600, y, 80, 80, 14);
+  }
+
+  // The row: dot j filled once click or ring COUNT_IN + j has passed (the first n), the others open; null draws none.
+  drawRow(n) {
+    const g = this.rowShape;
+    g.clear();
+    if (n === null || calibFault === 'norow') return;
+    for (let j = 0; j < ROW; j++) {
+      const x = 488 + 16 * j;
+      if (j < n) {
+        g.fillStyle(0x7fd6ff, 0.8);
+        g.fillCircle(x, 440, 4);
+      } else {
+        g.lineStyle(2, 0x7fd6ff, 0.25);
+        g.strokeCircle(x, 440, 4);
+      }
+    }
   }
 
   update() {
     const frameMs = performance.now();
-    if (this.left || !this.ready) return;
+    if (this.left) return;
     const ctx = engine.context();
     const clock = engine.clock();
-    if (!ctx || ctx.state !== 'running' || !clock || !clock.valid) return;
+    const live = this.ready && ctx && ctx.state === 'running' && clock && clock.valid;
+    if (!this.begun && !live) {
+      // Waiting for the first key, or for the audio it starts: the key pressed for a sixteenth from each beat line.
+      this.drawKey(calibFault !== 'nopress' && frameMs % (BEAT * 1000) < SIXTEENTH * 1000 ? 'pressed' : 'plain');
+      return;
+    }
+    if (!live) return;
     const heard = audibleSec(clock, frameMs);
     if (!this.attempt) {
       const pass = this.queue.shift();
+      this.begun = true;
       this.tries[pass] += 1;
       this.attempt = pass === 'A'
         ? { pass, t0: ctx.currentTime + LEAD, sent: 0, taps: [] }
@@ -214,6 +267,7 @@ class Calibration extends Phaser.Scene {
     let fill = false;
     let ring = false;
     let ended = false;
+    let dots = 0;
     if (a.pass === 'A') {
       while (a.sent < CLICKS && a.t0 + a.sent * BEAT < ctx.currentTime + LOOKAHEAD) {
         if (calibFault !== 'silent') engine.click(a.t0 + a.sent * BEAT + (calibFault === 'clicklate' ? 0.1 : 0));
@@ -223,7 +277,8 @@ class Calibration extends Phaser.Scene {
         const t = a.t0 + i * BEAT + (calibFault === 'filllate' ? 0.1 : 0);
         if (heard >= t && heard < t + SIXTEENTH) fill = true;
       }
-      ended = heard >= a.t0 + 23 * BEAT + TAIL;
+      for (let j = 0; j < ROW; j++) if (heard >= a.t0 + (COUNT_IN + j) * BEAT + ROW_LATE) dots = j + 1;
+      ended = heard >= a.t0 + END_BEATS * BEAT + TAIL;
     } else {
       for (let i = 0; i < CLICKS; i++) {
         const d = a.p0 + i * BEAT * 1000;
@@ -233,14 +288,16 @@ class Calibration extends Phaser.Scene {
         }
         if (calibFault === 'ringlate' && frameMs >= d + 100 && frameMs < d + 100 + SIXTEENTH * 1000) ring = true;
       }
-      ended = frameMs >= a.p0 + (23 * BEAT + TAIL) * 1000;
+      for (let j = 0; j < ROW; j++) if (frameMs >= a.p0 + ((COUNT_IN + j) * BEAT + ROW_LATE) * 1000) dots = j + 1;
+      ended = frameMs >= a.p0 + (END_BEATS * BEAT + TAIL) * 1000;
     }
-    this.drawKey(fill && calibFault !== 'nofill');
+    this.drawKey(fill && calibFault !== 'nofill' ? 'filled' : 'plain');
     this.ringShape.clear();
     if (ring && calibFault !== 'noring') {
       this.ringShape.lineStyle(3, 0x7fd6ff, 1);
       this.ringShape.strokeCircle(640, 360, 50);
     }
+    this.drawRow(dots);
     if (!ended) return;
     let offsets;
     if (a.pass === 'A') {
@@ -252,16 +309,18 @@ class Calibration extends Phaser.Scene {
       offsets = a.taps.map((t) => ({ t, f: nearest(drawn, t) })).filter((x) => x.f !== null).map((x) => x.t - x.f);
     }
     const result = judgePass(offsets);
-    if (calibFault === 'first') this.results[a.pass] ??= result;
-    else this.results[a.pass] = result;
+    this.results[a.pass] = result;
     this.attempt = null;
-    this.drawKey(false);
+    this.drawKey('plain');
     this.ringShape.clear();
-    if (!result.accepted && this.tries[a.pass] < 2 && calibFault !== 'norepeat') this.queue.push(a.pass);
-    else if (a.pass === 'A') this.queue.push('B');
+    this.drawRow(null);
+    if (a.pass === 'A') {
+      if (!result.accepted && calibFault === 'arepeat' && this.tries.A < 2) this.queue.push('A');
+      else if (!result.accepted || calibFault === 'bafter') this.queue.push('B');
+    }
     if (this.queue.length) return;
     this.left = true;
-    const values = calibrate(this.results.A, this.results.B);
+    const values = (calibFault === 'twopass' ? calibrateTwoPass : calibrate)(this.results.A ?? NO_PASS, this.results.B ?? NO_PASS);
     skipCalibration(values.avOffset, values.inputBias);
   }
 }

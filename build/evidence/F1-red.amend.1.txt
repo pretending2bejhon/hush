@@ -1,0 +1,56 @@
+HUSH-EVIDENCE v1
+id: F1-red
+phase: amend
+command: npm run probe:flash
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T09:24:57-05:00
+time-end: 2026-10-20T09:29:15-05:00
+head: 296b43403266a1345f5ed18d6bf82b8af6ab2b10
+exit: 1
+--- output ---
+
+> hush@0.0.0 probe:flash
+> vite build && node tools/probe-flash.mjs --calibration
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.12 kB │ gzip:   0.72 kB
+dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+dist/assets/index-B-FSNYWq.js  2,101.32 kB │ gzip: 596.56 kB
+
+✓ built in 1.07s
+flash: calibration up 43.6 s: clicks 48, count-in fills 8, rings 48, values 0 0, Escape ignored (2557 frames, 2166 analyser samples); click starts 48 of 48 on their marks; frames 2568 timed (52 filled, 307 with the ring, 2566 with the row; 0 of 131 waiting frames pressed)
+flash: tapped calibration up 22.2 s: values 6.6 34.5 (the taps' own 6.6 34.5; taps 21 to 59 ms after each click, the count-in's too, and Escape and a key repeat 3 times each; marks 0 40); click starts 24 of 24 on their marks; frames 1283 timed (26 filled, 152 with the ring, 1282 with the row; 0 of 34 waiting frames pressed)
+flash: fallback calibration up 32.9 s: values -34.6 34.6 (the taps' own 0.0 34.6; A1 untapped, B1 tapped 25 to 44 ms after each ring, the count-in's too, and Escape and a key repeat 3 times in each attempt; marks 0 34.5); click starts 48 of 48 on their marks; frames 1930 timed (50 filled, 154 with the ring, 1928 with the row; 0 of 34 waiting frames pressed)
+flash: 11590 frames over 195.9 s, median 15.91 ms; general max 6715 px, red max 0 px (limit 25600)
+flash: calibration clicks 48 (want 20 to 28)
+flash: calibration fills 8 (want 3 to 5)
+flash: calibration rings 48 (want 20 to 28)
+flash: calibration: the scene ran A, A, B, B (want A1, then B1 after its rejection, and no repeat)
+flash: calibration frames: a waiting frame +10.2 ms from a beat line shows the key plain (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 31 more like it)
+flash: calibration frames: A1: a frame shows 0 rows (want the row of 20 dots in every frame of an attempt) (and 648 more like it)
+flash: calibration frames: A2: a frame shows 0 rows (want the row of 20 dots in every frame of an attempt) (and 646 more like it)
+flash: calibration frames: B1: a frame shows 0 rows (want the row of 20 dots in every frame of an attempt) (and 634 more like it)
+flash: calibration frames: B2: a frame shows 0 rows (want the row of 20 dots in every frame of an attempt) (and 634 more like it)
+flash: calibration frames: 0 waiting frames judged with the key pressed (want at least 4)
+flash: calibration line: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]
+flash: tapped calibration left after 22.2 s (want 10 to 15 s: A1 accepted, and no pass B)
+flash: tapped calibration: the scene ran A, B with A1 accepted (want A1 accepted, and no pass B: B only after a rejected A, no repeat)
+flash: tapped calibration frames: a waiting frame +83.6 ms from a beat line shows the key plain (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 8 more like it)
+flash: tapped calibration frames: A1: a frame shows 0 rows (want the row of 20 dots in every frame of an attempt) (and 647 more like it)
+flash: tapped calibration frames: B1: a frame shows 0 rows (want the row of 20 dots in every frame of an attempt) (and 633 more like it)
+flash: tapped calibration line: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]
+flash: fallback calibration left after 32.9 s (want 19.7 to 30 s: A1 rejected, then B1 accepted)
+flash: fallback calibration: the scene ran A, A, B with A1 rejected (want A1 rejected untapped, then B1: B only after a rejected A, no repeat)
+flash: fallback calibration values -34.6 34.6, the taps' own 0.0 34.6 (want equal within 0.5 ms)
+flash: fallback calibration frames: a waiting frame +3.2 ms from a beat line shows the key plain (want it pressed for a sixteenth from each beat line, and plain otherwise, until the first attempt) (and 12 more like it)
+flash: fallback calibration frames: A1: a frame shows 0 rows (want the row of 20 dots in every frame of an attempt) (and 647 more like it)
+flash: fallback calibration frames: A2: a frame shows 0 rows (want the row of 20 dots in every frame of an attempt) (and 646 more like it)
+flash: fallback calibration frames: B1: a frame shows 0 rows (want the row of 20 dots in every frame of an attempt) (and 632 more like it)
+flash: fallback calibration line: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]
+flash: FAIL
+--- end ---

@@ -1,0 +1,26 @@
+HUSH-EVIDENCE v1
+id: F1-red-text
+phase: amend
+command: node tools/probe-play.mjs --check text
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T09:29:25-05:00
+time-end: 2026-10-20T09:31:58-05:00
+head: 296b43403266a1345f5ed18d6bf82b8af6ab2b10
+exit: 1
+--- output ---
+play: chrome headless: room 01-wake done
+play: chrome headless: room 02-heartbeat done
+play: chrome headless: room 03-dash done
+play: chrome headless: room 04-thorns done
+play: chrome headless: room 05-doors done
+play: chrome headless: room 06-wave done
+play: chrome headless: room 07-current done
+play: chrome headless: room 08-steps done
+play: chrome headless: room 09-gates done
+play: chrome headless: room 10-crown done
+play: chrome headless: room 11-gauntlet done
+play: chrome headless: ending seen, texts read 9885 ms into it
+play: chrome headless: text: FAIL: after the hand-over: extra page text ["Press any key, then tap along with the beat to set your timing."]; the card wants one run line, found ["Press any key, then tap along with the beat to set your timing.","run 0:59 · deaths 0"]; a page text before the ending card: ["Press any key, then tap along with the beat to set your timi"] 7 ms into the ending (want none in its first 6457 ms)
+play: chrome headless: FAIL (text)
+--- end ---

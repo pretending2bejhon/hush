@@ -1,0 +1,54 @@
+HUSH-EVIDENCE v1
+id: F1-page-controls
+phase: amend
+command: npx vitest run tests/controls/page-probes.test.mjs -t "smoke probe|passes every check on the clean control page|calib=linekept|passes the run line|domtext"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T09:04:27-05:00
+time-end: 2026-10-20T09:06:57-05:00
+head: 296b43403266a1345f5ed18d6bf82b8af6ab2b10
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/page-probes.test.mjs (37 tests | 1 failed | 29 skipped) 147981ms
+   ❯ playthrough probe (X5, X10, D3, D8, D16) (30)
+     × fails ?domtext on its text check 17146ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/page-probes.test.mjs > playthrough probe (X5, X10, D3, D8, D16) > fails ?domtext on its text check
+AssertionError: expected 'play: chrome headless: room 01-toy-a …' to match /text: FAIL: text over the canvas/
+
+- Expected:
+/text: FAIL: text over the canvas/
+
++ Received:
+"play: chrome headless: room 01-toy-a done
+play: chrome headless: room 02-toy-b done
+play: chrome headless: room 03-toy-c done
+play: chrome headless: room 04-toy-d done
+play: chrome headless: room 05-toy-e done
+play: chrome headless: ending seen, texts read 9895 ms into it
+play: chrome headless: text: FAIL: after the hand-over: text over the canvas: \"planted\"; text over the canvas: \"planted\"; a page text before the ending card: [\"planted\"] 5 ms into the ending (want none in its first 6457 ms)
+play: chrome headless: FAIL (text)
+"
+
+ ❯ tests/controls/page-probes.test.mjs:127:21
+    125|     it(`fails ?${query} on its ${check} check`, () => {
+    126|       const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--que…
+    127|       expect(r.out).toMatch(line);
+       |                     ^
+    128|       expect(r.code).toBe(1);
+    129|     }, T);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed | 29 skipped (37)
+   Start at  09:04:29
+   Duration  148.77s (tests 100%)
+
+--- end ---

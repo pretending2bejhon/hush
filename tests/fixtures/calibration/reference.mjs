@@ -15,8 +15,12 @@ export function judgePass(offsetsMs) {
   return { median: m, mad, taps, accepted: mad <= 35 };
 }
 
+// The owner's ruling N-F1 c (2026-10-19), the one-pass rule: both passes accepted give the display shift and the input
+// bias as before; a lone accepted pass gives the input bias alone, so it never shifts the picture by the player's tap
+// lag; neither gives 0 and 0.
 export function calibrate(a, v) {
-  const medianA = a.accepted ? a.median : 0;
-  const medianV = v.accepted ? v.median : 0;
-  return { avOffset: medianA - medianV, inputBias: medianV };
+  if (a.accepted && v.accepted) return { avOffset: a.median - v.median, inputBias: v.median };
+  if (a.accepted) return { avOffset: 0, inputBias: a.median };
+  if (v.accepted) return { avOffset: 0, inputBias: v.median };
+  return { avOffset: 0, inputBias: 0 };
 }

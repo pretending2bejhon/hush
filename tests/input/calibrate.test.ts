@@ -97,15 +97,38 @@ describe('calibration (X8)', () => {
     expect(p.accepted).toBe(true);
   });
 
-  it('takes 0 for a rejected pass', () => {
+  // The owner's ruling N-F1 c (2026-10-19): the scene runs pass B only when pass A is rejected, so a lone accepted pass
+  // gives the input bias alone and never shifts the picture by the player's tap lag (the one-pass rule).
+  it('gives a lone accepted pass A as the input bias, with no display shift', () => {
     const good = mod.judgePass(taps(24, 30, 4, 3));
     const bad = mod.judgePass(taps(24, 30, 200, 4));
+    expect(good.accepted).toBe(true);
     expect(bad.accepted).toBe(false);
-    const r1 = mod.calibrate(bad, good);
-    expect(r1.avOffset).toBeCloseTo(-good.median, 6);
-    expect(r1.inputBias).toBeCloseTo(good.median, 6);
-    const r2 = mod.calibrate(good, bad);
-    expect(r2.avOffset).toBeCloseTo(good.median, 6);
-    expect(r2.inputBias).toBe(0);
+    const r = mod.calibrate(good, bad);
+    expect(r.avOffset).toBeCloseTo(0, 6);
+    expect(r.inputBias).toBeCloseTo(good.median, 6);
+    const none = mod.calibrate(good, mod.judgePass([]));
+    expect(none.avOffset).toBeCloseTo(0, 6);
+    expect(none.inputBias).toBeCloseTo(good.median, 6);
+  });
+
+  it('gives a lone accepted pass B as the input bias, with no display shift', () => {
+    const good = mod.judgePass(taps(24, 45, 4, 5));
+    const bad = mod.judgePass(taps(24, 45, 200, 6));
+    expect(good.accepted).toBe(true);
+    expect(bad.accepted).toBe(false);
+    const r = mod.calibrate(bad, good);
+    expect(r.avOffset).toBeCloseTo(0, 6);
+    expect(r.inputBias).toBeCloseTo(good.median, 6);
+  });
+
+  it('takes 0 and 0 when neither pass is accepted', () => {
+    const bad = mod.judgePass(taps(24, 30, 200, 4));
+    const none = mod.judgePass([]);
+    for (const [a, v] of [[bad, none], [none, bad], [bad, bad], [none, none]]) {
+      const r = mod.calibrate(a, v);
+      expect(r.avOffset).toBeCloseTo(0, 6);
+      expect(r.inputBias).toBeCloseTo(0, 6);
+    }
   });
 });

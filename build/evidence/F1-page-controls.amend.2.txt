@@ -1,0 +1,21 @@
+HUSH-EVIDENCE v1
+id: F1-page-controls
+phase: amend
+command: npx vitest run tests/controls/page-probes.test.mjs -t "playthrough probe"
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T09:07:27-05:00
+time-end: 2026-10-20T09:17:14-05:00
+head: 296b43403266a1345f5ed18d6bf82b8af6ab2b10
+exit: 0
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+
+ Test Files  1 passed (1)
+      Tests  30 passed | 7 skipped (37)
+   Start at  09:07:28
+   Duration  585.69s (tests 100%)
+
+--- end ---

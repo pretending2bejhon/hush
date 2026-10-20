@@ -48,16 +48,20 @@ describe('encodeShapes: drawShapes in Phaser 4.2.1\'s command buffer', () => {
 
 // A frame log of room 2's run (two stones on layer 1, each at the limiter's edge) drawn by a scene that does what
 // section 10.6 says, or with `fault`: frames every 4 steps, a full record every 4th frame, the view tweened at alpha 0.5.
+// At most `frames` frames, and none from the step the witness leaves its room on: the witnesses are solved again with
+// every re-cut (the owner's rulings N-F2 a and N-F3 a), so the clear's step is read from the replay, never assumed.
 function drawnLog(room, frames, fault = {}) {
   const w = readWitness(path.join(REPO, 'replays', `${String(room).padStart(2, '0')}-${room === 2 ? 'heartbeat' : 'thorns'}.json`));
   const { states, tracks } = replayRun(world, room, w.changes, frames * 4);
+  const out = states.findIndex((s) => s[FIELDS.indexOf('room')] !== room);
+  const n = out < 0 ? frames : Math.min(frames, Math.floor((out - 1) / 4) + 1);
   const limiter = createFlashLimiter(1280, 720);
   const r = world.rooms[room - 1];
   const field = ART.moteField(r);
   let levels = [];
   const light = [];
   const full = [];
-  for (let i = 0; i < frames; i++) {
+  for (let i = 0; i < n; i++) {
     const step = i * 4;
     const state = states[step];
     if (!fault.noBeginFrame || i === 0) limiter.beginFrame();
@@ -81,18 +85,19 @@ function drawnLog(room, frames, fault = {}) {
       });
     }
   }
-  return { log: { light, full, dropped: 0 }, changes: w.changes };
+  return { log: { light, full, dropped: 0 }, changes: w.changes, frames: n };
 }
 const judgeLog = (room, frames, fault) => {
-  const { log, changes } = drawnLog(room, frames, fault);
-  return frameLogProblems({ world, room, changes, log, label: `room ${room}` });
+  const { log, changes, frames: n } = drawnLog(room, frames, fault);
+  return { ...frameLogProblems({ world, room, changes, log, label: `room ${room}` }), frames: n };
 };
 
 describe('frameLogProblems: the play scene\'s frames against the reference', () => {
   it('passes a run drawn as section 10.6 draws it, its held changes included', () => {
     const r = judgeLog(2, 400);
     expect(r.problems).toEqual([]);
-    expect(r.compared).toBe(100);
+    expect(r.frames).toBeGreaterThan(200);
+    expect(r.compared).toBe(Math.ceil(r.frames / 4));
     expect(r.held).toBeGreaterThan(0);
   });
 

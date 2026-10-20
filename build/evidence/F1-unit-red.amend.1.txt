@@ -1,0 +1,56 @@
+HUSH-EVIDENCE v1
+id: F1-unit-red
+phase: amend
+command: npm run test:calibration
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T09:24:55-05:00
+time-end: 2026-10-20T09:24:57-05:00
+head: 296b43403266a1345f5ed18d6bf82b8af6ab2b10
+exit: 1
+--- output ---
+
+> hush@0.0.0 test:calibration
+> vitest run tests/input/calibrate.test.ts
+
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/input/calibrate.test.ts (9 tests | 2 failed) 26ms
+   ❯ calibration (X8) (9)
+     × gives a lone accepted pass A as the input bias, with no display shift 7ms
+     × gives a lone accepted pass B as the input bias, with no display shift 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/input/calibrate.test.ts > calibration (X8) > gives a lone accepted pass A as the input bias, with no display shift
+AssertionError: expected 29.87163996975869 to be close to +0, received difference is 29.87163996975869, but expected 5e-7
+ ❯ tests/input/calibrate.test.ts:108:24
+    106|     expect(bad.accepted).toBe(false);
+    107|     const r = mod.calibrate(good, bad);
+    108|     expect(r.avOffset).toBeCloseTo(0, 6);
+       |                        ^
+    109|     expect(r.inputBias).toBeCloseTo(good.median, 6);
+    110|     const none = mod.calibrate(good, mod.judgePass([]));
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  tests/input/calibrate.test.ts > calibration (X8) > gives a lone accepted pass B as the input bias, with no display shift
+AssertionError: expected -45.86137504968792 to be close to +0, received difference is 45.86137504968792, but expected 5e-7
+ ❯ tests/input/calibrate.test.ts:121:24
+    119|     expect(bad.accepted).toBe(false);
+    120|     const r = mod.calibrate(bad, good);
+    121|     expect(r.avOffset).toBeCloseTo(0, 6);
+       |                        ^
+    122|     expect(r.inputBias).toBeCloseTo(good.median, 6);
+    123|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 7 passed (9)
+   Start at  09:24:56
+   Duration  313ms (transform 54%, tests 24%, import 17%, worker 5%)
+
+--- end ---

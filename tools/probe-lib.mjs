@@ -16,11 +16,13 @@ import { canonicalLayers, readWitness, roomNumber } from './replay.mjs';
 export const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const BASE = '/hush/';
 
-// The page around the canvas (HUSH-SPEC Handoff, D16): the title, the source link and the music notice, and once the
-// ending's card is up one more text, the run line, in every mode (the owner's ruling N-F4 a, 2026-10-19; before it,
-// only under ?playtest). Nothing may sit over the canvas.
+// The page around the canvas (HUSH-SPEC Handoff, D16): the title, the source link and the music notice; while the
+// calibration is up one more text, its line (the owner's ruling N-F1 c, 2026-10-19, in his words of 2026-10-20); and once
+// the ending's card is up one more, the run line, in every mode (the owner's ruling N-F4 a, 2026-10-19; before it, only
+// under ?playtest). Nothing may sit over the canvas.
 export const PAGE_TITLE = 'The Hush';
 export const PAGE_TEXTS = ['Source (AGPL-3.0)', 'Music engine: Strudel, AGPL-3.0-or-later'];
+export const CALIBRATION_TEXT = 'Press any key, then tap along with the beat to set your timing.';
 export const PLAYTEST_TEXT = /^run (\d+):([0-5]\d) · deaths (\d+)$/;
 
 // The texts a page shows beyond the link and the notice, any text over the canvas included.
@@ -28,7 +30,9 @@ export function extraTexts(report) {
   return report.texts.filter((t) => t.inside || !PAGE_TEXTS.includes(t.text)).map((t) => t.text);
 }
 
-export function textProblems(report, { runLine = false } = {}) {
+// With `calibrationLine` the page must show the calibration's line beside the title, link and notice, and nothing
+// else; with `runLine` exactly one run line; with neither, nothing beyond the title, link and notice.
+export function textProblems(report, { runLine = false, calibrationLine = false } = {}) {
   const problems = [];
   if (report.title !== PAGE_TITLE) problems.push(`page title is ${JSON.stringify(report.title)}`);
   for (const t of report.texts) if (t.inside) problems.push(`text over the canvas: ${JSON.stringify(t.text.slice(0, 60))}`);
@@ -37,7 +41,9 @@ export function textProblems(report, { runLine = false } = {}) {
   for (const want of PAGE_TEXTS) if (!outside.includes(want)) problems.push(`missing page text ${JSON.stringify(want)}`);
   if (runLine) {
     if (extra.length !== 1 || !PLAYTEST_TEXT.test(extra[0])) problems.push(`the card wants one run line, found ${JSON.stringify(extra)}`);
-  } else if (extra.length) problems.push(`extra page text ${JSON.stringify(extra.map((t) => t.slice(0, 60)))}`);
+  } else if (calibrationLine) {
+    if (extra.length !== 1 || extra[0] !== CALIBRATION_TEXT) problems.push(`the calibration wants its one line ${JSON.stringify(CALIBRATION_TEXT)}, found ${JSON.stringify(extra.map((t) => t.slice(0, 80)))}`);
+  } else if (extra.length) problems.push(`extra page text ${JSON.stringify(extra.map((t) => t.slice(0, 80)))}`);
   if (outside.length !== new Set(outside).size) problems.push('a page text repeats');
   return problems;
 }
