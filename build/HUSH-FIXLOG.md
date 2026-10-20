@@ -751,3 +751,8 @@ DISPOSITION: RUN1-F3 | obstacles skipped with the up-dash (RUN-1's third quote) 
 
 R8-MINOR1 to R8-MINOR14 stay carried with their designs. R8-MINOR4, 9 and 10 (the calibration's tapper and its attempt end) land with RUN1-F1, which rewrites the calibration's course and its check.
 
+Progress, 2026-10-19, same producer session:
+- **RUN1-F4 fixed** by the applier's 7320a73 (`hush-fix: RUN1-F4`). It changed only the five named product files. END1's, IN1's and GAME1's acceptances and standing passed (build/evidence/fix/RUN1-F4.1.txt to .4.txt), each read by the producer before this line.
+- **RUN1-F2 and RUN1-F3 amended together** in the commit after this one's base (`hush-spec: amend playtest RUN-1 F2 F3`; HUSH-SPEC section 1.6). The no-cheese rule became one search per section with every gate shut at once (section 5.4). The per-entity form of the first survey flagged stones that only offered a second route, and a door held shut could hide spikes behind it, so sections now hold one lesson each. Rooms 02, 04, 07, 08, 09 and 10 are re-cut. The gauntlet's generator puts obstacles two columns after their onsets and runs the wave corridor on the melody's contour. Their applier is next: the six room files extracted again, the generator ported to src/rooms/gauntlet.ts, all eleven witnesses solved with `--kick`, then CT1's, RM1's and W1 to W3's acceptances (W3's is `npm run accept:rooms`) and standing.
+- **RUN1-F1** follows its design above, then review R9 on cycle 3.
+

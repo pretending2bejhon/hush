@@ -1,0 +1,43 @@
+{
+  "format": "hush-sections-1",
+  "rooms": {
+    "02-heartbeat": [
+      {"name":"stones","from":[2,13],"to":42,"gates":{"a":"floor","b":"floor"}},
+      {"name":"climb","from":[43,13],"to":70,"gates":{"a":"floor","b":"floor"}}
+    ],
+    "04-thorns": [
+      {"name":"bar field","from":[6,15],"to":23,"gates":{"a":"spike"}},
+      {"name":"half-bar field","from":[24,15],"to":33,"gates":{"b":"spike"}},
+      {"name":"beat field","from":[34,15],"to":40,"gates":{"c":"spike"}}
+    ],
+    "05-doors": [
+      {"name":"door 1","from":[2,15],"to":15,"gates":{"a":"wall"}},
+      {"name":"door 2","from":[15,15],"to":27,"gates":{"b":"wall"}},
+      {"name":"door 3","from":[27,15],"to":41,"gates":{"a":"wall"}},
+      {"name":"door 4","from":[41,15],"to":57,"gates":{"c":"wall"}},
+      {"name":"door 5","from":[57,15],"to":80,"gates":{"c":"wall"}}
+    ],
+    "07-current": [
+      {"name":"clap","from":[2,15],"to":10,"gates":{"a":"spike"}},
+      {"name":"walls","from":[10,15],"to":70,"gates":{"b":"wall","c":"wall"}}
+    ],
+    "08-steps": [
+      {"name":"climb","from":[2,14],"to":41,"gates":{"a":"floor","b":"floor"}}
+    ],
+    "09-gates": [
+      {"name":"gate 1","from":[9,15],"to":16,"gates":{"a":"wall"}},
+      {"name":"spikes 1","from":[15,15],"to":23,"gates":{"b":"spike"}},
+      {"name":"spikes 2","from":[49,15],"to":57,"gates":{"b":"spike"}},
+      {"name":"gate 2","from":[57,15],"to":60,"gates":{"a":"wall"}},
+      {"name":"spikes 3","from":[59,15],"to":66,"gates":{"b":"spike"}},
+      {"name":"gate 3","from":[66,15],"to":69,"gates":{"a":"wall"}}
+    ],
+    "10-crown": [
+      {"name":"stones 1","from":[2,13],"to":29,"gates":{"a":"floor","b":"floor"}},
+      {"name":"clap","from":[29,13],"to":40,"gates":{"c":"spike"}},
+      {"name":"door 1","from":[39,13],"to":43,"gates":{"d":"wall"}},
+      {"name":"stones 2","from":[65,13],"to":87,"gates":{"a":"floor","b":"floor"}},
+      {"name":"door 2","from":[87,13],"to":92,"gates":{"d":"wall"}}
+    ]
+  }
+}

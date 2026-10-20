@@ -72,7 +72,7 @@ describe('RM2 gauntlet generator', () => {
     expect(g).toEqual(O.generateGauntlet(O.parseGauntlet('11-gauntlet.txt', text)));
     expect(crypto.createHash('sha256').update(g.text).digest('hex')).toBe(readList().get('rooms/11-gauntlet.grid'));
     expect(P.compileGauntlet('11-gauntlet.txt', text)).toEqual(O.compileGauntlet('11-gauntlet.txt', text));
-    expect(P.GAUNTLET).toEqual({ LEAD: 4, TAIL: 28, H: 18, CEIL: 2, FLOOR: 15, SPAWN_COL: 4, CENTRE: 12 });
+    expect(P.GAUNTLET).toEqual({ LEAD: 4, TAIL: 28, H: 18, CEIL: 2, FLOOR: 15, SPAWN_COL: 4, LAG: 2, WAVE_HALF: 3 });
   });
 
   it('refuses a malformed program', () => {

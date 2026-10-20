@@ -1,8 +1,9 @@
 // npm test (X2): every unit, replay and e2e suite of the product, in that order, each run even when an earlier
 // one fails; exit non-zero when any fails.
 //   unit    vitest on tests/sim, tests/rooms, tests/audio, tests/clock, tests/input, tests/fx, tests/render, tests/game
-//   replay  node tools/replay.mjs --all --jitter --seed <first 8 hex of the verdict digest> (the X3 seed rule,
-//           tools/ship-gate.mjs x3Seed; review R1, MINOR 5)
+//   replay  node tools/replay.mjs --all --jitter --seed <first 8 hex of the verdict digest> --kick (the X3 seed rule,
+//           tools/ship-gate.mjs x3Seed; review R1, MINOR 5; every press on the kick: the owner's ruling N-F2 a)
+//   cheese  node tools/cheese.mjs --all: no section crossed with its window shut (the owner's ruling N-F3 a)
 //   e2e     vite build, then tools/probe-smoke.mjs and tools/probe-play.mjs (every check, the optional scene and keys
 //           of review R2 included; headless Chrome)
 // The verifiers' own tests are not here: npm run test:verifiers.
@@ -35,14 +36,15 @@ async function main() {
   const dirs = UNIT_DIRS.filter((d) => fs.existsSync(path.join(REPO, d)));
   const results = [
     ['unit', dirs.length ? step('unit', [bin('vitest'), 'run', ...dirs]) : (process.stdout.write('test: unit: no unit test folder\n'), false)],
-    ['replay', step('replay', [path.join(REPO, 'tools', 'replay.mjs'), '--all', '--jitter', '--seed', String(seedOf(verdict))])],
+    ['replay', step('replay', [path.join(REPO, 'tools', 'replay.mjs'), '--all', '--jitter', '--seed', String(seedOf(verdict)), '--kick'])],
+    ['cheese', step('cheese', [path.join(REPO, 'tools', 'cheese.mjs'), '--all'])],
     ['build', step('build', [bin('vite'), 'build'])],
   ];
-  const built = results[2][1];
+  const built = results.find(([n]) => n === 'build')[1];
   results.push(['smoke', built && step('smoke', [path.join(REPO, 'tools', 'probe-smoke.mjs')])]);
   results.push(['play', built && step('play', [path.join(REPO, 'tools', 'probe-play.mjs'), '--check', 'console,play,text,network,storage,unlock,again,scene,keys'])]);
   const failed = results.filter(([, ok]) => !ok).map(([n]) => n);
-  process.stdout.write(`test: ${failed.length ? `FAIL (${failed.join(', ')})` : 'PASS (unit, replay, e2e)'}\n`);
+  process.stdout.write(`test: ${failed.length ? `FAIL (${failed.join(', ')})` : 'PASS (unit, replay, cheese, e2e)'}\n`);
   return failed.length ? 1 : 0;
 }
 

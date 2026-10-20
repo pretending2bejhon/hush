@@ -1,0 +1,39 @@
+HUSH-EVIDENCE v1
+id: F2-red-rooms
+phase: amend
+command: npm run accept:rooms
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T22:33:41-05:00
+time-end: 2026-10-19T22:33:42-05:00
+head: 7320a737dc872a4c2b60ced30212524596143f81
+exit: 1
+--- output ---
+
+> hush@0.0.0 accept:rooms
+> node tools/replay.mjs --all --jitter --seed 1 --kick && node tools/cheese.mjs --all
+
+replays/01-wake.json: CLEAR clear at step 1618, checksum 6001f0f9 (witness 6001f0f9) OK
+replays/01-wake.json: kick: 4 of 5 presses off the kick (step 385, 26.4 steps; step 583, 34.1 steps; step 1173, 41.6 steps; step 1361, 23.9 steps) OFF
+replays/02-heartbeat.json: CLEAR clear at step 1684, checksum 04febedf (witness 04febedf) OK
+replays/02-heartbeat.json: kick: 7 of 9 presses off the kick (step 142, 39.1 steps; step 437, 25.6 steps; step 541, 26.7 steps; step 672, 48 steps; step 1063, 34.4 steps; step 1198, 36.3 steps) OFF
+replays/03-dash.json: CLEAR clear at step 1588, checksum 593d0787 (witness 593d0787) OK
+replays/03-dash.json: kick: 6 of 9 presses off the kick (step 230, 24.3 steps; step 348, 39.4 steps; step 570, 47.1 steps; step 974, 48.3 steps; step 1070, 41.4 steps; step 1559, 16.1 steps) OFF
+replays/04-thorns.json: CLEAR clear at step 1408, checksum 123057cb (witness 123057cb) OK
+replays/04-thorns.json: kick: 6 of 8 presses off the kick (step 455, 43.6 steps; step 588, 29.1 steps; step 648, 30.9 steps; step 1010, 18.6 steps; step 1105, 26.4 steps; step 1187, 47.3 steps) OFF
+replays/05-doors.json: CLEAR clear at step 2222, checksum d181a484 (witness d181a484) OK
+replays/05-doors.json: kick: 6 of 11 presses off the kick (step 592, 25.1 steps; step 1011, 17.6 steps; step 1501, 41.9 steps; step 1662, 16.3 steps; step 1732, 16.6 steps; step 1801, 50.4 steps) OFF
+replays/06-wave.json: CLEAR clear at step 1920, checksum f3496b90 (witness f3496b90) OK
+replays/06-wave.json: kick: 4 of 5 presses off the kick (step 180, 25.7 steps; step 861, 38.1 steps; step 1178, 46.6 steps; step 1902, 50.6 steps) OFF
+replays/07-current.json: CLEAR clear at step 1943, checksum 1c7b52e9 (witness 1c7b52e9) OK
+replays/07-current.json: kick: 3 of 4 presses off the kick (step 54, 48.9 steps; step 239, 33.3 steps; step 754, 34 steps) OFF
+replays/08-steps.json: CLEAR clear at step 1494, checksum e6a8f7ba (witness e6a8f7ba) OK
+replays/08-steps.json: kick: 8 of 10 presses off the kick (step 243, 37.3 steps; step 382, 29.4 steps; step 545, 30.7 steps; step 655, 37.9 steps; step 734, 14 steps; step 1100, 31.4 steps) OFF
+replays/09-gates.json: CLEAR clear at step 1905, checksum 9498a96d (witness 9498a96d) OK
+replays/09-gates.json: kick: 3 of 3 presses off the kick (step 361, 50.4 steps; step 560, 45.7 steps; step 1577, 34.1 steps) OFF
+replays/10-crown.json: CLEAR clear at step 2388, checksum 5b909a19 (witness 5b909a19) OK
+replays/10-crown.json: kick: 6 of 8 presses off the kick (step 147, 44.1 steps; step 502, 12.3 steps; step 947, 21.3 steps; step 1270, 35.7 steps; step 1626, 19.7 steps; step 1911, 43.3 steps) OFF
+replays/11-gauntlet.json: CLEAR clear at step 14278, checksum b3715ef7 (witness b3715ef7) OK
+replays/11-gauntlet.json: kick: 62 of 62 presses off the kick (step 859, 36.1 steps; step 1064, 35.4 steps; step 1273, 38.7 steps; step 1473, 33 steps; step 1683, 37.3 steps; step 1889, 37.6 steps) OFF
+replay: FAIL, 11 witness(es) short
+--- end ---

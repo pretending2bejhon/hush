@@ -272,7 +272,7 @@ function xRows(top, current, ids, rc) {
   const defs = {
     X1: () => runCmd(top, 'npm', ['run', 'smoke']),
     X2: () => runCmd(top, 'npm', ['test']),
-    X3: () => runCmd(top, 'node', [path.join(TOOLS, 'replay.mjs'), '--all', '--jitter', '--seed', String(seed)]),
+    X3: () => runCmd(top, 'node', [path.join(TOOLS, 'replay.mjs'), '--all', '--jitter', '--seed', String(seed), '--kick']),
     X4: () => jsonEvidence(top, 'verify', 'perf', PERF_OK(current)),
     X5: () => runCmd(top, 'npm', ['run', 'probe:console']),
     X6: () => runCmd(top, 'npm', ['run', 'probe:flash']),

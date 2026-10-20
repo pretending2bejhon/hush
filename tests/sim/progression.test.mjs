@@ -18,6 +18,19 @@ const P = await load('HUSH_SIM_MODULE', new URL('../../src/sim/headless.ts', imp
 const w = worlds();
 const canonical = (room) => (room <= 1 ? 0 : ((1 << Math.min(room, 11)) - 2) & 0x7fe);
 
+// The step whose tick clears room 1 on the oracle under a witness's changes.
+function oracleClearTick(changes) {
+  const o = O.createSim(w.oracle, { room: 1, step: 0, layers: 0, stopAtClear: true });
+  let k = 0;
+  let bits = 0;
+  for (let s = 0; s < 4000; s++) {
+    while (k < changes.length && changes[k][0] <= s) { bits = changes[k][1]; k += 1; }
+    o.tick(bits);
+    if (o.status().cleared > 0) return s;
+  }
+  throw new Error('room 1 witness does not clear on the oracle');
+}
+
 // A spot two columns from the exit: both columns empty on that row, solid under the first.
 function exitRow(room) {
   const { W, H, tiles } = room;
@@ -38,11 +51,14 @@ describe('X7 progression: a layer returns on the bar line', () => {
   });
 
   // Review R7 (MINOR 1): a clear on the one step per bar whose next step lies past the bar line's edge. Room 1's witness,
-  // delayed 337 steps, clears on the tick of step 1954, where unlockBar is 5 and one step later 6: the layer comes back
-  // on bar 5's first step, nextBarStep(1954), not nextBarStep(1955).
+  // delayed D steps, clears on the tick of step 1954, where unlockBar is 5 and one step later 6: the layer comes back
+  // on bar 5's first step, nextBarStep(1954), not nextBarStep(1955). Room 1 has no beat entity, so every change D steps
+  // later clears D steps later: D comes from the witness's own clearing tick on the oracle, whatever witness the solver
+  // found (amended for the owner's ruling N-F2 a, which re-solved every witness on the kick).
   it('room 1 cleared on the bar line\'s edge step: layer 1 back on that step\'s bar line', () => {
-    const D = 337;
-    const changes = readWitness(path.join(REPO, 'replays', '01-wake.json')).changes.map(([s, b]) => [s + D, b]);
+    const raw = readWitness(path.join(REPO, 'replays', '01-wake.json')).changes;
+    const D = 1954 - oracleClearTick(raw);
+    const changes = raw.map(([s, b]) => [s + D, b]);
     const sim = P.createSim(w.product, { room: 1, step: 0, layers: canonical(1), stopAtClear: false });
     let k = 0;
     let bits = 0;

@@ -26,6 +26,8 @@ The Hush is a free-movement vector metroidvania with Hollow Knight's mood. Trave
 | N8, N8b | the cap hook under managed settings, Administrators-only files, Claude Code 2.1.295 or later, and a JHON-CAPS-RESIDUAL line | caps (section 1.5) |
 | N9 | Codex only under a JHON-CODEX line accepting advisory caps | executor model |
 | N10 | pretending2bejhon/hush private from the start, pushed after each phase, visibility checked before every push | backups |
+| N-F2 a | RUN-1, finding 2 ("every jump and movement you need to do, has to be aligned with the kick of the beat"), the same message of 2026-10-19 | every required jump and dash lands on a kick: every press of every witness within 12 steps (50 ms) of a kick onset, the rooms and the gauntlet re-cut to fit at the jitter bar (sections 5.4 and 6) |
+| N-F3 a | RUN-1, finding 3 ("some easy obstacles to pass by with the up dash"), the same message | a no-cheese verifier: no section of a room can be crossed with the beat-gated window it teaches shut; every room it flagged re-cut (section 5.4) |
 | N-F4 a | after his rc1 run (build/PLAYTESTS.md, RUN-1, finding 4: he read the ending's card as a stalled load), 2026-10-19: "Rulings: N-F1 c, N-F4 a, N-F2 a, N-F3 a, and I replay on rc2 with ?playtest." N-F4 a: the run line shows by default once the ending's card is up, not only with `?playtest`, with a wordless pulse that any key plays again | amends D16: the run line is page text in every mode, the card shows a key that fills on the bar's fourth beat, any key but Escape then starts a new run at room 1, and the product reads no page flag at all (sections 13 and 18) |
 
 ### 1.3 Build scope
@@ -159,6 +161,14 @@ N8b (a) holds: the cap hook is installed under managed settings with Administrat
   - Verifiers: the art reference's `AGAIN` and `cardShapes` (tests/render/ending-art.test.mjs wants `AGAIN` and the key, so the scene check holds every card frame to them too); the key reference's `flush` and the run reference's call (tests/input/keys.test.mjs, 6 tests; tests/game/run.test.mjs, a key held through a start and one tapped before it); tools/probe-lib.mjs `textProblems` wants the run line at the card whatever the query; tools/probe-play.mjs gains `again` (in the default set, END1's acceptance and npm test); the control page plays again and plants `?ending=noagain`, `againearly` and `linekept`, and `?ending=always` is no longer a fault.
   - Controls: in tests/controls/product-tests.test.mjs, a flush that drops the queue, a run that never flushes and the key filled on the first beat each fail their test, while the references pass [VL: build/evidence/F4-product-controls.amend.1.txt]. In tests/controls/page-probes.test.mjs, the clean control page passes every check, `again` included, and its run line with and without ?playtest, and each of the eight ending faults fails its check [VL: build/evidence/F4-page-controls.amend.1.txt]. The verifiers' own tests [VL: build/evidence/F4-verifiers.amend.1.txt].
   - Red on the product before its applier: the three unit tests [VL: build/evidence/F4-unit-red.amend.1.txt], and the playthrough's text and again checks [VL: build/evidence/F4-red.amend.1.txt].
+- 2026-10-19, RUN-1 findings 2 and 3, the kick and the cheese (the owner's rulings N-F2 a and N-F3 a, 2026-10-19; section 1.2). His words: "i would like te obstacles and the game to be more aligned with the music, that every jump and movement you need to do, has to be aligned with the kick of the beat" and "there are some easy obstacles to pass by with the up dash". On rc1 no witness pressed on the kick (the gauntlet's 62 presses all lay 33 to 41 steps before one), and a section-by-section search crossed eleven windows shut.
+  - The kick (section 5.4): every press of every witness within 12 steps of a kick onset, checked by tools/replay.mjs `--kick` (in W1 to W3, X3 and npm test); tools/solve.mjs `--kick` presses only there and centres a press only inside its kick's window. A kick-only search found no witness for rc1's gauntlet at all, and rooms 02 (73 of 100), 04 (20), 08 (45) and 10 (86) fell short of the jitter bar.
+  - The cheese (section 5.4): tools/cheese.mjs over tests/data/sections.json, every section crossed free and never with its window shut. A coyote jump with a late diagonal dash crosses 13.3 tiles, so a shut pit is at least 20 tiles wide (section 4.2).
+  - The re-cuts (section 5.3). 02-heartbeat: two runs of stones over long pits that overlap around the kick that hands one to the next. 04-thorns: three spike fields in a sealed tunnel, dropping on a kick, for a bar, two beats and one. 07-current: the clap field moved into a tunnel. 08-steps: an eight-stone climb that hands on at the kick. 09-gates: full-height gates and every lead field in a tunnel. 10-crown: three-stone runs over 20-tile pits, a clap tunnel and full-height doors, its sub block gone. Rooms 01, 03, 05 and 06 keep their grids.
+  - The gauntlet (section 6): each obstacle two columns after its onset, so the jump made on the onset clears it, and the wave corridor 7 rows tall on the melody's contour from the floor row, turning on the kick. Its file is unchanged; its grid's sha256 changes.
+  - Re-solved kick-only on the oracle, every room and the gauntlet clears 98 to 100 of 100 jittered runs on seeds 1 to 5, the gauntlet 20 of 20 on each of seeds 6 to 13 [VL: build/evidence/F2-kick-witnesses.amend.1.txt]. All 24 sections of the 7 rooms with beat entities hold shut [VL: build/evidence/F3-cheese.amend.1.txt].
+  - Tests: tests/tools/solve-replay.test.mjs (a press 12 steps off a kick kept and 13 refused, on both sides of a beat line, a dash press refused, a kick-only toy solve), tests/tools/cheese.test.mjs (7 tests on fixture rooms), the bar-line edge tests of tests/sim/progression.test.mjs and tests/game/run.test.mjs now derive room 1's delay from its witness, and tests/rooms/compile.test.mjs holds the new `GAUNTLET`. In a scratch copy, 15 planted faults each fail them: the kick window at 11 and 13 steps, a one-sided distance, jump-only presses, the check skipped, the solver pressing anywhere, a floor held present, a wall held open, the free search skipped, the columns and the roles unchecked, and four changes to the generator caught by the grid's sha256 [VL: build/evidence/F2-mutants.amend.1.txt]. The verifiers' own tests, 317 of 317 [VL: build/evidence/F2-verifiers.amend.1.txt].
+  - Red on the product before its applier: the old witnesses off the kick [VL: build/evidence/F2-red-rooms.amend.1.txt], six room files off the spec [VL: build/evidence/F2-red-tree.amend.1.txt] and the old generator [VL: build/evidence/F2-red-compile.amend.1.txt].
 
 ## 2. Units and time (D3)
 
@@ -219,7 +229,7 @@ The oracle in `tests/fixtures/oracle/` (constants.mjs, world.mjs, sim.mjs) is th
 | wave | 9.375 tiles/s, slope 1 |
 | gauntlet auto-run | 4 tiles a beat (9.333 tiles/s) |
 
-Rooms are authored inside this table with a margin: no required jump is higher than 3 tiles or longer than 5.5 tiles at the same height; no required jump-and-dash is longer than 9 tiles; no required climb is higher than 4 tiles with a dash. Every room is also proven by its witness under the jitter test (section 5.4).
+Rooms are authored inside this table with a margin: no required jump is higher than 3 tiles or longer than 5.5 tiles at the same height; no required jump-and-dash is longer than 9 tiles; no required climb is higher than 4 tiles with a dash. Every room is also proven by its witness under the jitter test (section 5.4). The table's longest move is not the longest crossing: the no-cheese search (section 5.4) found a coyote jump with a late diagonal dash crossing 13.3 tiles at one height, so a pit that must stay shut without its stones is 20 tiles wide or more, with its spikes right under the stones' row where it is narrower (amended for the owner's ruling N-F3 a).
 
 ### 4.3 The step (sim.mjs `tick`)
 
@@ -274,7 +284,7 @@ Each room file is the fenced block below it, every line ending with LF (the file
 - Teaches: run, jump, and the full jump held to the apex. Returns layer 1. Width 72 tiles. First-run par 30 s.
 - Beat entities: none (no layer is back yet: the room is still).
 - Intended solution: hold right; jump each spiked pit from its edge; hold jump to the apex for the 3-tile ledge; then the two pits in a row and the 2-tile step.
-- Oracle witness: clear at step 1618 (6.7 s), 11 input changes, 100 of 100 jittered runs on seeds 1 to 5.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 1607 (6.7 s), 13 input changes, 5 presses each within 12 steps of a kick, 100 of 100 jittered runs on seeds 1 to 5.
 - sha256 `365143b5dd4fede44bd66eb9526b475080f546c766105e638893657a7f5f2abf`
 
 ```text
@@ -307,39 +317,39 @@ grid
 
 #### 02-heartbeat
 
-- Teaches: platforms come and go on the beat. Returns layer 2. Width 80 tiles. First-run par 50 s.
-- Beat entities: a and b: blocks on layer 1 (kick), period 2 beats, on 6 of 8 sixteenths, phases 0 and 4, rest on.
-- Intended solution: wait on a stone until the next one is there, then hop; the second section climbs.
-- Oracle witness: clear at step 1684 (7.0 s), 21 input changes, 100 of 100 jittered runs on seeds 1 to 5.
-- sha256 `07c9ad95a4bafdabd1e028ac3c0fe1b0a1d721933d2800b7579729e57e7bb35a`
+- Teaches: platforms come and go on the beat, and the hop is made on the kick that hands one stone to the next. Returns layer 2. Width 80 tiles. First-run par 40 s. Re-cut for the owner's rulings N-F2 a and N-F3 a (section 1.6).
+- Beat entities: a and b: stones on layer 1 (kick), period 4 beats, rest on. a shows from a sixteenth before each bar's first beat to a sixteenth after its second (on 10 of 16, phase 15), b from a sixteenth before its third beat to a sixteenth after the next bar's first (on 10, phase 7): the two overlap for two sixteenths around each kick that hands one to the other.
+- Intended solution: wait on a stone until the kick that brings the next, then hop; five stones over the first pit, a rest, then three rising to the ledge.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 1532 (6.4 s), 29 input changes, 12 presses each within 12 steps of a kick, 98 of 100 jittered runs on seeds 1 to 5.
+- sha256 `cd610f0dafbd7ca9594d5502cf254073345bcef6f9a8dcf75009e75ad0b1d4e9`
 
 ```text
 hush-room 1
 name 02-heartbeat
 size 80 18
-spawn 2 15
+spawn 2 13
 layer 2
-par 50
-entity a block layer 1 period 2 phase 0 on 6 rest on
-entity b block layer 1 period 2 phase 4 on 6 rest on
+par 40
+entity a block layer 1 period 4 phase 15 on 10 rest on
+entity b block layer 1 period 4 phase 7 on 10 rest on
 grid
 ################################################################################
-#..............................................................................#
-#..............................................................................#
-#..............................................................................#
-#..............................................................................#
-#..............................................................................#
-#..............................................................................#
-#..............................................................................#
-#..............................................................................#
-#..............................................................................#
-..............................................................aaaa..............
+################################################################################
+################################################################################
+################################################################################
+################################################################################
+#...............................................................................
+#...............................................................................
+#...............................................................................
+#...............................................................................
+#...............................................................................
 ................................................................................
-........................................................bbbb........bbbb........
-#...........................................................................####
-#...........aaaa..bbbb..aaaa..bbbb................aaaa......................####
-#...........................................................................####
-##########^^^^^^^^^^^^^^^^^^^^^^^^^^^^##########^^^^^^^^^^^^^^^^^^^^^^^^^^^^####
+.....................................................................###########
+...............................................................bbbb..###########
+.........................................................aaaa........###########
+#########..aaaa..bbbb..aaaa..bbbb..aaaa..########..bbbb..............###########
+#########................................########....................###########
+#########^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^########^^^^^^^^^^^^^^^^^^^^###########
 ################################################################################
 ```
 
@@ -348,7 +358,7 @@ grid
 - Teaches: the dash: a gap a jump cannot cross, a wall a jump cannot climb. Returns layer 3. Width 80 tiles. First-run par 45 s.
 - Beat entities: none (static).
 - Intended solution: run, jump, dash right at the apex over each spiked gap; jump then dash up at the wall.
-- Oracle witness: clear at step 1588 (6.6 s), 22 input changes, 100 of 100 jittered runs on seeds 1 to 5.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 1648 (6.9 s), 21 input changes, 9 presses each within 12 steps of a kick, 100 of 100 jittered runs on seeds 1 to 5.
 - sha256 `41346b87980073b0e78029f3805f8bbec1abfa3b18d826f164a9229b260f46c4`
 
 ```text
@@ -381,41 +391,41 @@ grid
 
 #### 04-thorns
 
-- Teaches: spikes that rise on the beat. Returns layer 4. Width 72 tiles. First-run par 50 s.
-- Beat entities: a and b: floor spikes on layer 1 (kick), period 2, on 2 of 8, phases 0 and 4, rest off; c: spikes on layer 3 (hat), period 1, on 1 of 4, rest off.
-- Intended solution: in the low tunnel, wait beside each patch and cross it while its spikes are down; then hop the pillars between hat pricks.
-- Oracle witness: clear at step 1408 (5.9 s), 25 input changes, 97 of 100 jittered runs on seeds 1 to 5.
-- sha256 `cef55f078e4ecf5e36911d4c23326c1c10b0e46e9a0e22b6d2ac029f7d3f2ce0`
+- Teaches: spikes that rise and fall on the beat, crossed on the kick that drops them. Returns layer 4. Width 48 tiles. First-run par 35 s. Re-cut for the owner's rulings N-F2 a and N-F3 a (section 1.6).
+- Beat entities, each a field of floor spikes in a one-tile tunnel, so no jump or dash passes over it, rest off: a: 10 tiles on layer 1 (kick), period 4, up for each bar's last beat (on 4 of 16, phase 12), down from the bar's first kick; b: 5 tiles on layer 1, period 2, up for the last eighth of every second beat (on 2 of 8, phase 6); c: 2 tiles on layer 3 (hat), period 1, up for each beat's last sixteenth (on 1 of 4, phase 3).
+- Intended solution: drop down the shaft; at each field wait for the kick that drops its spikes and run across: a bar, then two beats, then one.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 1267 (5.3 s), 10 input changes, 2 presses each within 12 steps of a kick, 100 of 100 jittered runs on seeds 1 to 5.
+- sha256 `4dba19353f6e6df97feae1c69587798b9338987140873a68a92826c5fdaaf908`
 
 ```text
 hush-room 1
 name 04-thorns
-size 72 18
+size 48 18
 spawn 2 8
 layer 4
-par 50
-entity a spike up layer 1 period 2 phase 0 on 2 rest off
-entity b spike up layer 1 period 2 phase 4 on 2 rest off
-entity c spike up layer 3 period 1 phase 0 on 1 rest off
+par 35
+entity a spike up layer 1 period 4 phase 12 on 4 rest off
+entity b spike up layer 1 period 2 phase 6 on 2 rest off
+entity c spike up layer 3 period 1 phase 3 on 1 rest off
 grid
-########################################################################
-#.......#################################..............................#
-#.......#################################..............................#
-#.......#################################..............................#
-#.......#################################..............................#
-#.......#################################..............................#
-........#################################..............................#
-........#################################..............................#
-........#################################..............................#
-######..#################################..............................#
-######..#################################................ccc...........#
-######..#################################................###...........#
-######..#################################.........ccc....###....ccc.....
-######..#################################.........###....###....###.....
-######..#################################.........###....###....###.....
-######.....aaa.....bbb.....aaa.....bbb............###....###....###.....
-########################################################################
-########################################################################
+################################################
+#.......##################################.....#
+#.......##################################.....#
+#.......##################################.....#
+#.......##################################.....#
+#.......##################################.....#
+........##################################.....#
+........##################################.....#
+........##################################.....#
+######..##################################.....#
+######..##################################.....#
+######..##################################.....#
+######..##################################......
+######..##################################......
+######..##################################......
+######......aaaaaaaaaa.....bbbbb.....cc.........
+################################################
+################################################
 ```
 
 #### 05-doors
@@ -423,7 +433,7 @@ grid
 - Teaches: doors that open on the beat, and waiting for them. Returns layer 5. Width 80 tiles. First-run par 65 s.
 - Beat entities: a and b: doors on layer 2 (pad), period 8, on 16 of 32, phases 0 and 16, rest on; c: doors on layer 1 (kick), period 2, on 4 of 8, rest on.
 - Intended solution: wait at each door, run through as it opens, jump the pits between.
-- Oracle witness: clear at step 2222 (9.3 s), 30 input changes, 99 of 100 jittered runs on seeds 1 to 5.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 2047 (8.5 s), 22 input changes, 6 presses each within 12 steps of a kick, 100 of 100 jittered runs on seeds 1 to 5.
 - sha256 `135d5c5fb5700a6f8bc47d0c2d3c52cd8292dd2f31eb1ff37a78bd2f580f07ee`
 
 ```text
@@ -462,7 +472,7 @@ grid
 - Teaches: the evolution: the wave portal, rising while jump is held and falling when it is not. Returns layer 6. Width 80 tiles. First-run par 50 s.
 - Beat entities: none (static).
 - Intended solution: run into the portal; hold to rise over each floor pillar, release to dive under each ceiling pillar; the base portal returns the creature before the exit.
-- Oracle witness: clear at step 1920 (8.0 s), 12 input changes, 100 of 100 jittered runs on seeds 1 to 5.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 1960 (8.2 s), 13 input changes, 5 presses each within 12 steps of a kick, 100 of 100 jittered runs on seeds 1 to 5.
 - sha256 `4e8f3bb7b662f3b87edfe97a6bcb0cda83843c2ad5ccf322cade83affefc642f`
 
 ```text
@@ -495,11 +505,11 @@ grid
 
 #### 07-current
 
-- Teaches: the wave against walls that close on the beat. Returns layer 7. Width 80 tiles. First-run par 60 s.
-- Beat entities: a: floor spikes on layer 5 (clap), period 2, on 3 of 8, phase 4, rest off; b: walls on layer 4 (bass), period 4, on 8 of 16, rest on; c: wall on layer 6 (arp), period 2, on 4 of 8, phase 4, rest on.
-- Intended solution: cross the clap spikes while they are down; enter the portal on the beat that brings each wall down as the wave reaches it.
-- Oracle witness: clear at step 1943 (8.1 s), 10 input changes, 100 of 100 jittered runs on seeds 1 to 5.
-- sha256 `a5144f3788c192e1deb474d14b10e43fdbbc62b31ba7960c7566dd3859625851`
+- Teaches: the wave against walls that close on the beat. Returns layer 7. Width 80 tiles. First-run par 60 s. Re-cut for the owner's ruling N-F3 a: the clap field moved into a one-tile tunnel (section 1.6).
+- Beat entities: a: a 2-tile field of floor spikes on layer 5 (clap), period 2, up from each clap to the next kick (on 4 of 8, phase 4), rest off, in a one-tile tunnel; b: walls on layer 4 (bass), period 4, on 8 of 16, rest on; c: wall on layer 6 (arp), period 2, on 4 of 8, phase 4, rest on.
+- Intended solution: cross the clap tunnel on the kick that drops its spikes; enter the portal on the beat that brings each wall down as the wave reaches it.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 1955 (8.1 s), 12 input changes, 4 presses each within 12 steps of a kick, 100 of 100 jittered runs on seeds 1 to 5.
+- sha256 `5bc9c09f41582a9a9b3ec152cba1d97643b5fa59bf6a81c509a8831c5e4b7060`
 
 ```text
 hush-room 1
@@ -508,75 +518,75 @@ size 80 18
 spawn 2 15
 layer 7
 par 60
-entity a spike up layer 5 period 2 phase 4 on 3 rest off
+entity a spike up layer 5 period 2 phase 4 on 4 rest off
 entity b block layer 4 period 4 phase 0 on 8 rest on
 entity c block layer 6 period 2 phase 4 on 4 rest on
 grid
 ################################################################################
 ################################################################################
-#........................##.....b............##.....c...........b......B.......#
-#........................##.....b............##.....c...........b......B.......#
-#........................##.....b............##.....c...........b......B.......#
-#........................##.....b............##.....c...........b......B.......#
-#........................##.....b............##.....c...........b......B.......#
-#...............................b............##.....c...........b......B.......#
-#...............................b...................c...........b......B.......#
-#...............................b...................c...........b......B.......#
-#...........W...................b...................c...........b......B.......#
-#...........W...................b...................c.....##....b......B.......#
-............W.....##............b.....##............c.....##....b......B........
-............W.....##............b.....##............c.....##....b......B........
-............W.....##............b.....##............c.....##....b......B........
-.....aaa....W.....##............b.....##............c.....##....b......B........
+#...#####................##.....b............##.....c...........b......B.......#
+#...#####................##.....b............##.....c...........b......B.......#
+#...#####................##.....b............##.....c...........b......B.......#
+#...#####................##.....b............##.....c...........b......B.......#
+#...#####................##.....b............##.....c...........b......B.......#
+#...#####.......................b............##.....c...........b......B.......#
+#...#####.......................b...................c...........b......B.......#
+#...#####.......................b...................c...........b......B.......#
+#...#####...W...................b...................c...........b......B.......#
+#...#####...W...................b...................c.....##....b......B.......#
+....#####...W.....##............b.....##............c.....##....b......B........
+....#####...W.....##............b.....##............c.....##....b......B........
+....#####...W.....##............b.....##............c.....##....b......B........
+......aa....W.....##............b.....##............c.....##....b......B........
 ################################################################################
 ################################################################################
 ```
 
 #### 08-steps
 
-- Teaches: climbing on platforms that blink to two layers. Returns layer 8. Width 72 tiles. First-run par 50 s.
-- Beat entities: a: blocks on layer 4 (bass), period 2, on 6 of 8, rest on; b: blocks on layer 7 (perc), period 4, on 10 of 16, phase 8, rest on.
-- Intended solution: climb the stones as each appears, dashing up where the step is too high; descend the second set over the spikes.
-- Oracle witness: clear at step 1494 (6.2 s), 22 input changes, 100 of 100 jittered runs on seeds 1 to 5.
-- sha256 `c0c2d604394178ca965304cca592424856dfd1b0541056901ea84c37ba33cae6`
+- Teaches: a climb on stones that blink to two layers, hop by hop on the kick. Returns layer 8. Width 64 tiles. First-run par 45 s. Re-cut for the owner's rulings N-F2 a and N-F3 a (section 1.6).
+- Beat entities: a: stones on layer 4 (bass), b: stones on layer 7 (perc), period 4, rest on. a shows from two sixteenths before each bar's first beat to two after its second (on 12 of 16, phase 14), b from two before its third beat to two after the next bar's first (on 12, phase 6): a beat of overlap around each kick that hands one to the other.
+- Intended solution: climb the eight stones, one row up each, hopping on each kick that brings the next; the last stands level with the ledge.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 1324 (5.5 s), 18 input changes, 8 presses each within 12 steps of a kick, 99 of 100 jittered runs on seeds 1 to 5.
+- sha256 `74e7716348ade0d6f25657c2e2d4bea3cfaaa8ea9f3019dc450a0c0272b26025`
 
 ```text
 hush-room 1
 name 08-steps
-size 72 18
-spawn 2 15
+size 64 18
+spawn 2 14
 layer 8
-par 50
-entity a block layer 4 period 2 phase 0 on 6 rest on
-entity b block layer 7 period 4 phase 8 on 10 rest on
+par 45
+entity a block layer 4 period 4 phase 14 on 12 rest on
+entity b block layer 7 period 4 phase 6 on 12 rest on
 grid
-########################################################################
-#......................................................................#
-#......................................................................#
-#......................................................................#
-#......................................................................#
-#.......................................########.......................#
-#.......................................########.......................#
-#..................................aaa..########.......................#
-#.......................aaa.............########..bbb..................#
-#.......................................########........................
-#.......................................########........aaa.............
-#.................bbb.........bbb.......########........................
-........................................########..............bbb...####
-............aaa.........................########....................####
-........................................########....................####
-........................................########....................####
-##########^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^########^^^^^^^^^^^^^^^^^^^^^^^^
-########################################################################
+################################################################
+################################################################
+################################################################
+#...............................................................
+#...............................................................
+#...............................................................
+#...............................................................
+#...................................bbb.########################
+#...............................aaa.....########################
+#...........................bbb.........########################
+#.......................aaa.............########################
+....................bbb.................########################
+................aaa.....................########################
+............bbb.........................########################
+........aaa.............................########################
+#######.................................########################
+#######^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^########################
+################################################################
 ```
 
 #### 09-gates
 
-- Teaches: gates, spikes and the wave in one room. Returns layer 9. Width 80 tiles. First-run par 65 s.
-- Beat entities: a: gates on layer 7 (perc), period 4, on 8 of 16, rest on; b: floor spikes on layer 8 (lead), period 2, on 3 of 8, rest off.
-- Intended solution: pass the gate when it opens and the spikes while they are down; wave through the pillars; then gates and spikes again.
-- Oracle witness: clear at step 1905 (7.9 s), 9 input changes, 100 of 100 jittered runs on seeds 1 to 5.
-- sha256 `a69c4e3e341d485d2157c086905e076786d005d50a4f988d631fe575878604b3`
+- Teaches: gates, spikes and the wave in one room. Returns layer 9. Width 80 tiles. First-run par 65 s. Re-cut for the owner's ruling N-F3 a: full-height gates, every spike field in a one-tile tunnel (section 1.6).
+- Beat entities: a: full-height gates on layer 7 (perc), period 4, on 8 of 16, rest on; b: 3-tile fields of floor spikes on layer 8 (lead), period 2, up for the three sixteenths before every second kick (on 3 of 8, phase 5), rest off, each in a one-tile tunnel.
+- Intended solution: pass the gate when it opens and the spike tunnel on the kick that drops it; wave through the pillars; then spikes, gate, spikes, gate.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 2162 (9.0 s), 6 input changes, 1 press each within 12 steps of a kick, 100 of 100 jittered runs on seeds 1 to 5.
+- sha256 `edf20d698800e3a6291ba64f190d0baaaf3cc936b878596b597addcb71996f93`
 
 ```text
 hush-room 1
@@ -586,66 +596,65 @@ spawn 2 11
 layer 9
 par 65
 entity a block layer 7 period 4 phase 0 on 8 rest on
-entity b spike up layer 8 period 2 phase 0 on 3 rest off
+entity b spike up layer 8 period 2 phase 5 on 3 rest off
 grid
 ################################################################################
-#.............................##..........##....B..............................#
-#.............................##..........##....B..............................#
-#.............................##..........##....B..............................#
-#.............................##..........##....B..............................#
-#.............a...............##..........##....B.........a........a...........#
-#.............a...............##..........##....B.........a........a...........#
-#.............a...............##..........##....B.........a........a...........#
-#.............a...........................##....B.........a........a...........#
-..............a.........W.......................B.........a........a...........#
-..............a.........W...........##..........B.........a........a...........#
-..............a.........W...........##..........B.........a........a...........#
-########......a.........W...........##..........B.........a........a............
-########......a.........W...........##..........B.........a........a............
-########......a.........W...........##..........B.........a........a............
-########......a..bbbb...W...........##..........B...bbbb..a..bbbb..a............
+#.............a.######........##..........##....B..######.a.######.a...........#
+#.............a.######........##..........##....B..######.a.######.a...........#
+#.............a.######........##..........##....B..######.a.######.a...........#
+#.............a.######........##..........##....B..######.a.######.a...........#
+#.............a.######........##..........##....B..######.a.######.a...........#
+#.............a.######........##..........##....B..######.a.######.a...........#
+#.............a.######........##..........##....B..######.a.######.a...........#
+#.............a.######....................##....B..######.a.######.a...........#
+..............a.######..W.......................B..######.a.######.a...........#
+..............a.######..W...........##..........B..######.a.######.a...........#
+..............a.######..W...........##..........B..######.a.######.a...........#
+########......a.######..W...........##..........B..######.a.######.a............
+########......a.######..W...........##..........B..######.a.######.a............
+########......a.######..W...........##..........B..######.a.######.a............
+########......a..bbb....W...........##..........B...bbb...a..bbb...a............
 ################################################################################
 ################################################################################
 ```
 
 #### 10-crown
 
-- Teaches: everything once more, the last room before the gauntlet. Returns layer 10. Width 96 tiles. First-run par 90 s.
-- Beat entities: a and b: blocks on layer 1 (kick), period 2, on 6 of 8, phases 0 and 4; c: floor spikes on layer 5 (clap), period 2, on 3 of 8, phase 4, rest off; d: doors on layer 9 (open hat), period 4, on 8 of 16, phase 8, rest on; e: blocks on layer 10 (sub), period 4, on 8 of 16, rest on, so solid throughout this room (layer 10 returns only when it is cleared).
-- Intended solution: stones over spikes, clap spikes, the door, the wave through pillars, then the stone over the last pit, the clap spikes on the ledge and the last door.
-- Oracle witness: clear at step 2388 (9.9 s), 18 input changes, 100 of 100 jittered runs on seeds 1 to 5.
-- sha256 `27fe4dce39213e763eac7ce67bed587d69d25d23a57fcec2d41fbe0dc7c1bfdc`
+- Teaches: everything once more, the last room before the gauntlet. Returns layer 10. Width 96 tiles. First-run par 75 s. Re-cut for the owner's rulings N-F2 a and N-F3 a (section 1.6).
+- Beat entities: a and b: stones on layer 1 (kick), as in 02-heartbeat; c: a 2-tile field of floor spikes on layer 5 (clap), period 2, up for three sixteenths from each clap (on 3 of 8, phase 4), rest off, in a one-tile tunnel; d: full-height doors on layer 9 (open hat), period 4, closed for each bar's second half (on 8 of 16, phase 8), rest on.
+- Intended solution: three stones over the first pit, the clap tunnel, the door, the wave through three pillars, three stones over the last pit, the last door.
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 2348 (9.8 s), 20 input changes, 9 presses each within 12 steps of a kick, 100 of 100 jittered runs on seeds 1 to 5.
+- sha256 `952fb36a9c17d445c0a3ad0b4a4a2ef88ab2388cf7ef805b7395c4e68579af04`
 
 ```text
 hush-room 1
 name 10-crown
 size 96 18
-spawn 2 15
+spawn 2 13
 layer 10
-par 90
-entity a block layer 1 period 2 phase 0 on 6 rest on
-entity b block layer 1 period 2 phase 4 on 6 rest on
+par 75
+entity a block layer 1 period 4 phase 15 on 10 rest on
+entity b block layer 1 period 4 phase 7 on 10 rest on
 entity c spike up layer 5 period 2 phase 4 on 3 rest off
 entity d block layer 9 period 4 phase 8 on 8 rest on
-entity e block layer 10 period 4 phase 0 on 8 rest on
 grid
 ################################################################################################
 ################################################################################################
-#...............................d..............##........B...........................d.........#
-#...............................d..............##........B...........................d.........#
-#...............................d..............##........B...........................d.........#
-#...............................d..............##........B...........................d.........#
-#...............................d..............##........B...........................d.........#
-#...............................d........................B...........................d.........#
-#...............................d........................B...........................d.........#
-#...............................d........................B...........................d.........#
-#...............................d...W....................B...........................d.........#
-#...............................d...W...............##...B...........................d..........
-................................d...W....##.........##...B...................cccc....d..........
-................................d...W....##.........##...B........eee....######################.
-............aaaa..bbbb..........d...W....##.........##...B...............######################.
-.........................cccc...d...W....##.........##...#######.........#######################
-##########^^^^^^^^^^^^^^########################################^^^^^^^^^#######################
+#...............................#######..d..W...........##......B.........................d....#
+#...............................#######..d..W...........##......B.........................d....#
+#...............................#######..d..W...........##......B.........................d....#
+#...............................#######..d..W...........##......B.........................d....#
+#...............................#######..d..W...........##......B.........................d....#
+#...............................#######..d..W...................B.........................d....#
+#...............................#######..d..W...................B.........................d....#
+#...............................#######..d..W...................B.........................d....#
+................................#######..d..W...............##..B.........................d.....
+................................#######..d..W......##.......##..B.........................d.....
+................................#######..d..W......##.......##..B.........................d.....
+...................................cc....d..W......##.......##..B.........................d.....
+########..aaaa..bbbb..aaaa..######################################..aaaa..bbbb..aaaa..##########
+########^^^^^^^^^^^^^^^^^^^^######################################^^^^^^^^^^^^^^^^^^^^##########
+################################################################################################
 ################################################################################################
 ```
 
@@ -653,42 +662,46 @@ grid
 
 Every room was solved on the oracle by `node tools/solve.mjs <name> --sim tests/fixtures/oracle/index.mjs`, and every witness was replayed by `node tools/replay.mjs` with the jitter test on seeds 1 to 13: each cleared at least 97 of 100 runs on seeds 1 to 5 and at least 19 of 20 on each of seeds 6 to 13 (build/evidence/session/PF-ROOMS-witnesses.1.txt records seed 9). Authoring rules held: the entrance of every room is safe ground from which the player can wait for the beat; every beat hazard is shown one beat ahead by the art (section 10).
 
+The kick (the owner's ruling N-F2 a, 2026-10-19). Every press of every witness, a step on which JUMP, UP or DASH goes down, lies within 12 steps (50 ms) of a kick onset. The kick plays every beat, so its onsets are the beat lines: a press on step s is on the kick when min(7s mod 720, 720 - 7s mod 720) <= 84, integer math only (tools/replay.mjs `--kick`, `onKick`). `node tools/solve.mjs <stem> --kick` tries a press only on a decision step on the kick and keeps it there while it centres the witness. The rooms were re-cut so that the beat entities hand the creature on at the kick: stones overlap around the kick that passes one to the next, spike fields drop on a kick and stay down long enough to cross, walls and doors open on a beat. Re-solved kick-only on the oracle, every room and the gauntlet clears at least 98 of 100 jittered runs on seeds 1 to 5 (the witness line of each room; the gauntlet 20 of 20 on each of seeds 6 to 13 too) [VL: build/evidence/F2-kick-witnesses.amend.1.txt].
+
+The windows shut (the owner's ruling N-F3 a, 2026-10-19). Every beat entity of a room is a gate of one of its sections (tests/data/sections.json): a stretch of the room with its start (an empty tile on a static solid one), its end column and the gates whose window it teaches, each with its role: a floor shuts when absent, a wall when present, a spike when up. `node tools/cheese.mjs --all` holds every gate of a section shut and every other entity at rest, so nothing moves, and the solver must find no way across within 100,000 nodes, while with every entity free it must find one (within 1,000,000), or the section is broken. Every entity with cells in a section's columns must be one of its gates, so no lesson inside a section goes untested. The first survey of rc1's rooms found the windows of 02-heartbeat's climb, 04-thorns' hat pillars, 07-current's clap spikes, 08-steps' descent, 09-gates' lead spikes and 10-crown's stones, clap spikes and sub block crossable shut. The re-cut rooms hold all 24 sections of 7 rooms shut; 01-wake, 03-dash and 06-wave have no beat entity [VL: build/evidence/F3-cheese.amend.1.txt].
+
 ### 5.5 Pacing [I]
 
 First-run time per room is modelled as: clean clear time + deaths x (half the clean clear + 0.3 s respawn + 1.5 s reorientation) + a look-and-learn pause (15 s in rooms that introduce a mechanic, 2 to 6; 10 s elsewhere). With deaths 2, 5, 5, 6, 6, 5, 7, 7, 8 and 10 in rooms 1 to 10:
 
 | room | clean clear | deaths | first run |
 |---|---|---|---|
-| 01-wake | 6.7 s | 2 | 27.1 s |
-| 02-heartbeat | 7.0 s | 5 | 48.6 s |
-| 03-dash | 6.6 s | 5 | 47.2 s |
-| 04-thorns | 5.9 s | 6 | 49.3 s |
-| 05-doors | 9.3 s | 6 | 62.8 s |
-| 06-wave | 8.0 s | 5 | 52.0 s |
-| 07-current | 8.1 s | 7 | 59.0 s |
-| 08-steps | 6.2 s | 7 | 50.6 s |
-| 09-gates | 7.9 s | 8 | 64.1 s |
-| 10-crown | 9.9 s | 10 | 87.7 s |
+| 01-wake | 6.7 s | 2 | 27.0 s |
+| 02-heartbeat | 6.4 s | 5 | 46.4 s |
+| 03-dash | 6.9 s | 5 | 48.2 s |
+| 04-thorns | 5.3 s | 6 | 47.0 s |
+| 05-doors | 8.5 s | 6 | 59.8 s |
+| 06-wave | 8.2 s | 5 | 52.7 s |
+| 07-current | 8.1 s | 7 | 59.1 s |
+| 08-steps | 5.5 s | 7 | 47.4 s |
+| 09-gates | 9.0 s | 8 | 69.4 s |
+| 10-crown | 9.8 s | 10 | 86.8 s |
 
-Rooms: 548 s. The gauntlet: one clean pass is 59.5 s; five failed attempts dying halfway on average, each with up to 1.8 s to the restart bar, then one clean pass: 217 s. Calibration about 25 s and the ending to its card about 20 s. Total about 13.5 minutes, inside 10 to 15. The par lines in the room files sum to 555 s. X11 measures the real number on the friends' first runs.
+Rooms: 544 s (amended for the owner's rulings N-F2 a and N-F3 a: the clean clears are the kick-only witnesses of section 5.3). The gauntlet: one clean pass is 59.5 s; five failed attempts dying halfway on average, each with up to 1.8 s to the restart bar, then one clean pass: 217 s. Calibration about 25 s and the ending to its card about 20 s. Total about 13.4 minutes, inside 10 to 15. The par lines in the room files sum to 510 s. X11 measures the real number on the friends' first runs.
 
 ## 6. The gauntlet (`hush-gauntlet 1`)
 
 ### 6.1 Format and generator (normative source: world.mjs `parseGauntlet`, `generateGauntlet`)
 
 - Line 1 `hush-gauntlet 1`, line 2 `name 11-gauntlet`, line 3 `bars 32`, line 4 `melody` and 16 scale degrees (the arp layer's `n` values), then one line per bar, `bar <b> <rest|base|wave>`, b counting up from 0 to 31. A base bar may carry `kick=`, `clap=` and `hat=` masks of 16 characters (`x` an obstacle on that sixteenth, `.` none).
-- The grid is 4 + 16 x 32 + 28 = 544 columns by 18 rows: rows 0 and 1 and rows 15 to 17 solid, column 4 + 16b + s for sixteenth s of bar b. Obstacles: clap, one floor spike `^` at row 14; kick, two floor spikes side by side at row 14; hat, one hanging spike `v` at row 11. A wave bar is a corridor 5 rows tall centred on row 12 - floor(degree / 2) for each sixteenth, solid above and below between rows 2 and 14. When a bar's form differs from the previous non-rest bar, a portal column (`W` into a wave bar, `B` out of it) fills rows 2 to 14 two columns before the bar starts. The spawn is column 4, row 14.
+- The grid is 4 + 16 x 32 + 28 = 544 columns by 18 rows: rows 0 and 1 and rows 15 to 17 solid, column 4 + 16b + s for sixteenth s of bar b. Obstacles, each `LAG` = 2 columns after the onset that makes it (column 4 + 16b + s + 2), so the jump made on the onset clears it (amended for the owner's ruling N-F2 a): clap, one floor spike `^` at row 14; kick, two floor spikes side by side at row 14; hat, one hanging spike `v` at row 11. A wave bar is a corridor that follows the melody's contour on the kick (amended for the owner's ruling N-F2 a; before it, 5 rows centred on row 12 - floor(degree / 2)): its centre starts on the floor row 14 at the bar's start and moves one row a sixteenth, up through each beat whose last degree lies above its first and down through every other, with `WAVE_HALF` = 3 rows open on each side, solid above and below between rows 2 and 14. So the wave turns on the kick. When a bar's form differs from the previous non-rest bar, a portal column (`W` into a wave bar, `B` out of it) fills rows 2 to 14 two columns before the bar starts. The spawn is column 4, row 14.
 - Every mask bit is an onset of its layer in the track, and the melody is the arp layer's degree sequence: tests/rooms/gauntlet-pattern.test.mjs proves both on music/area1.strudel through tools/strudel-node.mjs, so the obstacles are built from the pattern.
 
 ### 6.2 Run rules
 
-- The run starts on the first bar line at least one beat after the creature enters or respawns; the track restarts its pattern at cycle 0 on that bar line (the audio maps cycle = bar - start bar while the gauntlet runs), so obstacle n meets the music's sixteenth n.
+- The run starts on the first bar line at least one beat after the creature enters or respawns; the track restarts its pattern at cycle 0 on that bar line (the audio maps cycle = bar - start bar while the gauntlet runs), so the jump for an obstacle made on sixteenth n falls on the music's sixteenth n, two sixteenths before the creature meets it (amended for the owner's ruling N-F2 a).
 - The creature auto-runs 4 tiles a beat; JUMP jumps (base form) or rises (wave); there is no dash and no steering; a horizontal collision kills. At the right edge the run is finished and the ending begins.
 
 ### 6.3 The file, byte-exact
 
-- sha256 of the file `a36b5857995fd76a18753c5f5f7cb6b68b00a668c6e506c728b9d778b831db49`; sha256 of the generated grid (the 18 rows joined by LF with a final LF) `47afe44931b2d2d5efe21e68b380edaffda62807e02aecea9da858f29aeb5944`.
-- Oracle witness: clear at step 14278 (59.5 s), 125 input changes, 100 of 100 jittered runs on seeds 1 to 5.
+- sha256 of the file `a36b5857995fd76a18753c5f5f7cb6b68b00a668c6e506c728b9d778b831db49`; sha256 of the generated grid (the 18 rows joined by LF with a final LF) `f967be14370258eedaf9c4f6d7522de7cfb04e146072489425d5c46e7e7901dd` (amended for the owner's ruling N-F2 a; the file is unchanged).
+- Oracle witness, kick-only (the owner's ruling N-F2 a): clear at step 14278 (59.5 s), 125 input changes, 62 presses each within 12 steps of a kick, 100 of 100 jittered runs on seeds 1 to 5 and 20 of 20 on each of seeds 6 to 13. Before the re-cut no kick-only witness existed: the search space was exhausted.
 
 ```text
 hush-gauntlet 1
@@ -1025,7 +1038,7 @@ export function compileWorld(files: { name: string; text: string }[]): World;
 // src/rooms/gauntlet.ts
 export interface Gauntlet { name: string; bars: number; melody: number[];
   program: { form: 'rest' | 'base' | 'wave'; masks: { kick?: number[]; clap?: number[]; hat?: number[] } }[] }
-export const GAUNTLET: Readonly<{ LEAD: 4; TAIL: 28; H: 18; CEIL: 2; FLOOR: 15; SPAWN_COL: 4; CENTRE: 12 }>;
+export const GAUNTLET: Readonly<{ LEAD: 4; TAIL: 28; H: 18; CEIL: 2; FLOOR: 15; SPAWN_COL: 4; LAG: 2; WAVE_HALF: 3 }>;   // owner ruling N-F2 a
 export function parseGauntlet(fileName: string, text: string): Gauntlet;
 export function generateGauntlet(g: Gauntlet): { W: number; H: number; text: string; spawn: { col: number; row: number } };
 export function compileGauntlet(fileName: string, text: string): Room & { grid: string; program: Gauntlet };
@@ -1109,8 +1122,9 @@ export function drawShapes(g: Phaser.GameObjects.Graphics, shapes: Shape[], dx?:
 | tools/probe-live.mjs | `npm run probe:live` | X12 | a 404, a wrong build hash, a commit off main, a console error, no boot: each fails |
 | tools/probe-supply.mjs | `npm run probe:supply` | X10; and (audit 1, MINOR 3) the row `notices`: the build's THIRD-PARTY-NOTICES.txt names every runtime package of the lockfile with the lockfile's licence id | a loose pin, a high audit finding, an untracked lockfile, a planted write: each fails; (audit 1, MINOR 3) a build without the notices file and notices that leave Phaser out each fail, and the repo's build passes [VL: build/evidence/AUDIT1-supply-controls.amend.1.txt]; the row's predicate in Node (tests/tools/notices.test.mjs) |
 | tools/notices.mjs (in vite.config.ts) | `npm run build` | audit 1, MINOR 3: dist/THIRD-PARTY-NOTICES.txt, the licence notices of the runtime dependency tree (section 1.6); the build fails on a package with no licence text, a dependency not installed, or a bundled package outside the tree | tests/tools/notices.test.mjs, 14 tests: fixture trees (nested versions, optional dependencies, shared and CRLF texts, NOTICE files, the standard MIT and ISC texts without an email), the Vite plugin in a fixture project, and the repo's own file against the lockfile and check-public; red on 11 planted faults in a scratch copy, each caught by the tests named for it [VL: build/evidence/AUDIT1-notices-tests.amend.1.txt, AUDIT1-notices-mutants.amend.1.txt] |
-| tools/test-all.mjs | `npm test` | X2: unit (tests/game included), replay and e2e suites | a planted failing suite reaches npm test and the gate |
-| tools/replay.mjs, tools/solve.mjs | `node tools/replay.mjs --all --jitter --seed <n>` | X3, its seed the first 8 hex of the verdict digest in the gate and in npm test (tools/ship-gate.mjs `x3Seed`; review R1), so a record commit never re-rolls it | the toy rooms (tests/tools/solve-replay.test.mjs); the seed kept across a record commit (tests/tools/ship-gate.test.mjs) |
+| tools/test-all.mjs | `npm test` | X2: unit (tests/game included), replay (with `--kick`), cheese (the owner's ruling N-F3 a) and e2e suites | a planted failing suite reaches npm test and the gate |
+| tools/replay.mjs, tools/solve.mjs | `node tools/replay.mjs --all --jitter --seed <n> --kick` | X3, its seed the first 8 hex of the verdict digest in the gate and in npm test (tools/ship-gate.mjs `x3Seed`; review R1), so a record commit never re-rolls it; and (the owner's ruling N-F2 a) every press of every witness within 12 steps of a kick (section 5.4), `solve.mjs --kick` pressing only there | the toy rooms (tests/tools/solve-replay.test.mjs), and for the kick a toy witness with a press 13 steps off refused and one 12 off kept, on both sides of a beat line, and a kick-only solve; the seed kept across a record commit (tests/tools/ship-gate.test.mjs) [VL: build/evidence/F2-verifiers.amend.1.txt, F2-mutants.amend.1.txt] |
+| tools/cheese.mjs, tests/data/sections.json | `node tools/cheese.mjs --all` (in W3's acceptance and npm test) | the owner's ruling N-F3 a: no section can be crossed with its window shut, every section can be crossed free, every beat entity a gate of a section and every entity in a section's columns one of its gates (section 5.4) | tests/tools/cheese.test.mjs on fixture rooms: a door a jump clears, stones over a pit a jump and a dash cross, a spike field with open air above, each crossed shut; a full-height door, a sealed spike tunnel and a wide pit held; a broken start, a section no clear reaches, an entity no section names, an entity in a section's columns left out and a role that does not fit its entity each refused [VL: build/evidence/F2-verifiers.amend.1.txt, F2-mutants.amend.1.txt] |
 | tests/input/calibrate.test.ts | `npm run test:calibration` | X8, its edge included: a deviation of exactly 35 ms kept and one of 35.5 ms rejected (review R6, MINOR 1, carried as R7's MINOR 6) | a biased, a never-rejecting and an untrimmed calibrator fail (the last: review R2, MINOR 1) [VL: build/evidence/R2-calibrator-controls.amend.1.txt]; and calibrators accepting under 36 ms and under 35 ms (tests/controls/product-tests.test.mjs) [VL: build/evidence/R7-product-controls.amend.1.txt] |
 | tests/audio, tests/sim/progression.test.mjs, tests/game/run.test.mjs | `npm run test:av` | X7 in the sim, the transport and the run's wiring: the run calls engine.unlockAt(k, unlockBar(s)) once for the clear of room k on step s, and engine.gauntlet(gBeat / 4) on every new gBeat in room 11 (review R1); and (review R2) the run's calibration moves the sim's target by displaySec(avOffset) and an event's step by inputLagSec(avOffset, inputBias), and its track follows trackStep over every tick; and (review R4) a frame far behind the heard time ticks at most 24 steps | mutation controls (tests/controls/product-tests.test.mjs; the run's against tests/fixtures/reference/run.mjs: a layer a bar late, none, no gauntlet mapping, and (review R2) displaySec(0), inputLagSec(0, 0), no track step, and (review R4) no cap) [VL: build/evidence/R2-product-controls.amend.1.txt, 36 of 36; build/evidence/R4-run-controls.amend.1.txt, 8 of 8]; and (review R7, MINOR 1) a clear on the bar line's edge, room 1's witness delayed 337 steps to clear on step 1954, where unlockBar is 5 and one step later 6, held in the sim (tests/sim/progression.test.mjs) and in the run (tests/game/run.test.mjs), its layer's bar taken one step late failing each [VL: build/evidence/R7-product-controls.amend.1.txt] |
 | tests/sim, tests/rooms, tests/clock, tests/input, tests/fx | the items' acceptances | the product equals the oracle and the references | each green on its reference, red on one planted fault; the clock line also on its jump tolerance, its trust rule and its resync rule, and the transport on its 5 ms shift (review R1) [VL: build/evidence/fix/R1-product-controls.1.txt, 26 of 26]; and (review R3) the clock line on its stale-pair rule (CLOCK_STALE 5000) and the limiter on its edge (`>` for `>=`) [VL: build/evidence/R3-product-controls.amend.1.txt]; and (review R7, MINOR 2) the clock line's jump tolerance from both sides, a 3.5 ms drop with no resync and a 4.5 ms drop with one (controls CLOCK_JUMP 3 and 5 ms), and its 50 ms agreement burst, valid at 210 ms on a device with baseLatency 0 sampled every 10 ms (control: a 30 ms floor) [VL: build/evidence/R7-product-controls.amend.1.txt] |
@@ -1153,7 +1167,7 @@ Strictly in this order; an item starts only when every item it names under Pendi
 - **Module:** rooms · **Interface change:** yes (new)
 - **Pending-dep:** SIM1
 - **Targets:** `src/rooms/codes.ts` (new), `src/rooms/compile.ts` (new), `src/rooms/gauntlet.ts` (new)
-- **Action:** port tests/fixtures/oracle/world.mjs: `CODE`, the character table and `class RoomError extends Error` into `codes.ts`; `compileRoom` and `compileWorld` into `compile.ts` (re-exporting `CODE` and `RoomError`; `compileWorld` calls `compileGauntlet` for `11-gauntlet.txt`); `GAUNTLET`, `parseGauntlet`, `generateGauntlet` and `compileGauntlet` into `gauntlet.ts`. Same checks, same messages' meaning, same structures (`toEqual` the oracle's); every refusal throws `RoomError`.
+- **Action:** port tests/fixtures/oracle/world.mjs: `CODE`, the character table and `class RoomError extends Error` into `codes.ts`; `compileRoom` and `compileWorld` into `compile.ts` (re-exporting `CODE` and `RoomError`; `compileWorld` calls `compileGauntlet` for `11-gauntlet.txt`); `GAUNTLET`, `parseGauntlet`, `generateGauntlet` and `compileGauntlet` into `gauntlet.ts`. Same checks, same messages' meaning, same structures (`toEqual` the oracle's); every refusal throws `RoomError`. Amended for the owner's ruling N-F2 a: the generator of section 6.1 as the oracle now has it, `GAUNTLET` with `LAG` and `WAVE_HALF` and without `CENTRE`, each obstacle `LAG` columns after its onset, and the wave corridor on the melody's contour from the floor row.
 - **Acceptance:** `npx vitest run tests/rooms/compile.test.mjs` → exit 0, `Tests  5 passed (5)`
 - **Tests mapped:** `tests/rooms/compile.test.mjs`
 - **Out of scope:** the room files themselves.
@@ -1163,7 +1177,7 @@ Strictly in this order; an item starts only when every item it names under Pendi
 - **Module:** content (rooms/, music/) · **Interface change:** no
 - **Pending-dep:** RM1
 - **Targets:** `rooms/01-wake.txt`, `rooms/02-heartbeat.txt`, `rooms/03-dash.txt`, `rooms/04-thorns.txt`, `rooms/05-doors.txt`, `rooms/06-wave.txt`, `rooms/07-current.txt`, `rooms/08-steps.txt`, `rooms/09-gates.txt`, `rooms/10-crown.txt`, `rooms/11-gauntlet.txt`, `music/area1.strudel` (all new)
-- **Action:** write each file from its block in sections 5.3, 6.3 and 7 with `node tools/spec-content.mjs --extract <name> <path>` (names `01-wake` to `10-crown`, `11-gauntlet`, `area1`); the tool refuses a block whose sha256 differs and never overwrites a file. Do not open the files in an editor that rewrites line endings.
+- **Action:** write each file from its block in sections 5.3, 6.3 and 7 with `node tools/spec-content.mjs --extract <name> <path>` (names `01-wake` to `10-crown`, `11-gauntlet`, `area1`); the tool refuses a block whose sha256 differs and never overwrites a file. Do not open the files in an editor that rewrites line endings. Amended for the owner's rulings N-F2 a and N-F3 a: rooms 02, 04, 07, 08, 09 and 10 are re-cut; each of those six files is removed (`git rm`) and extracted again from its block; the others are unchanged.
 - **Acceptance:** `node tools/spec-content.mjs --tree` → exit 0, `spec-content: tree clean, 12 file(s)`
 - **Tests mapped:** `node tools/spec-content.mjs --tree`, `tests/rooms/gauntlet-pattern.test.mjs`
 - **Out of scope:** any edit of a room or of the track (a design change is the producer's amendment).
@@ -1183,9 +1197,9 @@ Strictly in this order; an item starts only when every item it names under Pendi
 - **Module:** replays · **Interface change:** no
 - **Pending-dep:** SIM2
 - **Targets:** `replays/01-wake.json`, `replays/02-heartbeat.json`, `replays/03-dash.json`, `replays/04-thorns.json` (new)
-- **Action:** for each room run `node tools/solve.mjs <stem>` (one solve per call; it writes `replays/<stem>.json` and prints `solve: FOUND`). A room that exits 3 is `blocked (needs-design)`; a witness short of 18 of 20 on the acceptance seed is `blocked (needs-design)`. Never hand-edit a witness.
-- **Acceptance:** `node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1` → exit 0, `replay: PASS, 4 witness(es)`
-- **Tests mapped:** `node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1`
+- **Action:** for each room run `node tools/solve.mjs <stem> --kick` (one solve per call; it writes `replays/<stem>.json` and prints `solve: FOUND`; `--kick` amended for the owner's ruling N-F2 a, with `--force` to replace a witness the re-cut made stale). A room that exits 3 is `blocked (needs-design)`; a witness short of 18 of 20 on the acceptance seed is `blocked (needs-design)`. Never hand-edit a witness.
+- **Acceptance:** `node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1 --kick` → exit 0, `replay: PASS, 4 witness(es), every press on the kick` (`--kick` amended for the owner's ruling N-F2 a)
+- **Tests mapped:** `node tools/replay.mjs replays/01-wake.json replays/02-heartbeat.json replays/03-dash.json replays/04-thorns.json --jitter --seed 1 --kick`
 - **Out of scope:** room edits.
 
 #### W2 Witnesses for rooms 05 to 08
@@ -1194,8 +1208,8 @@ Strictly in this order; an item starts only when every item it names under Pendi
 - **Pending-dep:** W1
 - **Targets:** `replays/05-doors.json`, `replays/06-wave.json`, `replays/07-current.json`, `replays/08-steps.json` (new)
 - **Action:** as W1, for these rooms.
-- **Acceptance:** `node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1` → exit 0, `replay: PASS, 4 witness(es)`
-- **Tests mapped:** `node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1`
+- **Acceptance:** `node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1 --kick` → exit 0, `replay: PASS, 4 witness(es), every press on the kick` (`--kick` amended for the owner's ruling N-F2 a)
+- **Tests mapped:** `node tools/replay.mjs replays/05-doors.json replays/06-wave.json replays/07-current.json replays/08-steps.json --jitter --seed 1 --kick`
 - **Out of scope:** room edits.
 
 #### W3 Witnesses for rooms 09, 10 and the gauntlet
@@ -1204,8 +1218,8 @@ Strictly in this order; an item starts only when every item it names under Pendi
 - **Pending-dep:** W2
 - **Targets:** `replays/09-gates.json`, `replays/10-crown.json`, `replays/11-gauntlet.json` (new)
 - **Action:** as W1, for these rooms. Then every room has its witness (X3).
-- **Acceptance:** `node tools/replay.mjs --all --jitter --seed 1` → exit 0, `replay: PASS, 11 witness(es)`
-- **Tests mapped:** `node tools/replay.mjs --all --jitter --seed 1`
+- **Acceptance:** `npm run accept:rooms` → exit 0, `replay: PASS, 11 witness(es), every press on the kick` then `cheese: PASS, 24 section(s) in 7 room(s), none crossed with its window shut within 100000 nodes a search` (amended for the owner's rulings N-F2 a and N-F3 a: `--kick` and the no-cheese check of section 5.4)
+- **Tests mapped:** `node tools/replay.mjs --all --jitter --seed 1 --kick`
 - **Out of scope:** room edits.
 
 #### CL1 The device-clock line

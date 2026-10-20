@@ -1,6 +1,7 @@
 // PF-CONTROLS for tools/solve.mjs and tools/replay.mjs on the toy sim: a witness for a clearable room and
 // for a room whose only route waits on a 4-beat door, exit 3 on an unclearable room, a 17-of-20 witness
-// reported short, a broken witness refused, and determinism.
+// reported short, a broken witness refused, and determinism. The owner's ruling N-F2 a: with --kick the runner refuses
+// a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line, and solve --kick presses only on it.
 import fs from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
@@ -95,6 +96,44 @@ describe('solve.mjs and replay.mjs on the toy sim', () => {
     const a = replay(dir, ['01-toy-walk.json']).out;
     const b = replay(dir, ['01-toy-walk.json']).out;
     expect(a).toBe(b);
+  });
+
+  // The owner's ruling N-F2 a (2026-10-19): every press of a witness within 12 steps of a kick onset. Beat 1's line lies
+  // at step 102.857: a press on step 91 is 11.9 steps before it and one on 90 is 12.9; 114 is 11.1 after it and 115 12.1.
+  it('with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line', () => {
+    const dir = toyDir({ '01-toy-kick.txt': 'toy-room 1\nlength 40\ngap 20 22\n' });
+    const put = (name, changes, end, checksum) => fs.writeFileSync(path.join(dir, 'replays', name), JSON.stringify({ format: 'hush-replay-1', room: '01-toy-kick', changes, end, checksum }));
+    put('before-on.json', [[0, 0], [19, 2], [91, 18], [131, 2]], 400, 'c6a788cc');
+    put('before-off.json', [[0, 0], [19, 2], [90, 18], [130, 2]], 400, 'c6a788cc');
+    put('after-on.json', [[0, 0], [42, 2], [114, 18], [154, 2]], 400, '6d36b435');
+    put('after-off.json', [[0, 0], [43, 2], [115, 18], [155, 2]], 400, '28109e54');
+    for (const name of ['before-on.json', 'after-on.json']) {
+      const r = replay(dir, [name], ['--kick']);
+      expect(r.out).toMatch(/kick: 1 presses, each within 12 steps of a kick ON/);
+      expect(r.out).toMatch(/replay: PASS, 1 witness\(es\), every press on the kick/);
+      expect(r.code).toBe(0);
+    }
+    const before = replay(dir, ['before-off.json'], ['--kick']);
+    expect(before.out).toMatch(/kick: 1 of 1 presses off the kick \(step 90, 12\.9 steps\) OFF/);
+    expect(before.code).toBe(1);
+    const after = replay(dir, ['after-off.json'], ['--kick']);
+    expect(after.out).toMatch(/kick: 1 of 1 presses off the kick \(step 115, 12\.1 steps\) OFF/);
+    expect(after.code).toBe(1);
+    put('dash-off.json', [[0, 0], [19, 2], [91, 18], [131, 2], [230, 34], [240, 2]], 400, 'c6a788cc');
+    const dash = replay(dir, ['dash-off.json'], ['--kick']);
+    expect(dash.out).toMatch(/kick: 1 of 2 presses off the kick \(step 230, 24\.3 steps\) OFF/);
+    expect(dash.code).toBe(1);
+    expect(replay(dir, ['before-off.json']).code).toBe(0);
+  });
+
+  it('solve --kick finds a witness whose every press is on the kick, and replay --kick passes it', () => {
+    const dir = toyDir({ '01-toy-walk.txt': 'toy-room 1\nlength 40\ngap 20 22\n' });
+    const s = solve(dir, '01-toy-walk', ['--kick']);
+    expect(s.out).toMatch(/solve: FOUND 01-toy-walk: .*presses each within 12 steps of a kick/);
+    expect(s.code).toBe(0);
+    const r = replay(dir, ['01-toy-walk.json'], ['--kick', '--jitter', '--seed', '7']);
+    expect(r.out).toMatch(/kick: \d+ presses, each within 12 steps of a kick ON/);
+    expect(r.code).toBe(0);
   });
 
   it('--all fails when a room has no witness', () => {

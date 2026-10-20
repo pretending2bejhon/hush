@@ -1,0 +1,56 @@
+HUSH-EVIDENCE v1
+id: F2-mutants
+phase: amend
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/mut/harness.mjs <repo> <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/mut/f2 <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/mut/f2.json
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T21:51:22-05:00
+time-end: 2026-10-19T22:30:10-05:00
+head: 7320a737dc872a4c2b60ced30212524596143f81
+exit: 0
+--- output ---
+clean copy: ok: passes; Tests  17 passed (17) (run tests/tools/solve-replay.test.mjs tests/tools/cheese.test.mjs)
+clean copy: ok: passes; spec-content: spec clean, 13 entries (--check)
+mutant kick-window-13 (tools/replay.mjs): ok: caught (exit 1); Tests  2 failed | 15 passed (17)
+  failed: with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line 128ms
+  failed: solve --kick finds a witness whose every press is on the kick, and replay --kick passes it 252ms
+  failed: tests/tools/solve-replay.test.mjs > solve.mjs and replay.mjs on the toy sim > with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line
+  failed: tests/tools/solve-replay.test.mjs > solve.mjs and replay.mjs on the toy sim > solve --kick finds a witness whose every press is on the kick, and replay --kick passes it
+mutant kick-window-11 (tools/replay.mjs): ok: caught (exit 1); Tests  2 failed | 15 passed (17)
+  failed: with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line 135ms
+  failed: solve --kick finds a witness whose every press is on the kick, and replay --kick passes it 273ms
+  failed: tests/tools/solve-replay.test.mjs > solve.mjs and replay.mjs on the toy sim > with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line
+  failed: tests/tools/solve-replay.test.mjs > solve.mjs and replay.mjs on the toy sim > solve --kick finds a witness whose every press is on the kick, and replay --kick passes it
+mutant kick-one-side (tools/replay.mjs): ok: caught (exit 1); Tests  1 failed | 16 passed (17)
+  failed: with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line 132ms
+  failed: tests/tools/solve-replay.test.mjs > solve.mjs and replay.mjs on the toy sim > with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line
+mutant kick-jump-only (tools/replay.mjs): ok: caught (exit 1); Tests  1 failed | 16 passed (17)
+  failed: with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line 514ms
+  failed: tests/tools/solve-replay.test.mjs > solve.mjs and replay.mjs on the toy sim > with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line
+mutant kick-check-skipped (tools/replay.mjs): ok: caught (exit 1); Tests  1 failed | 16 passed (17)
+  failed: with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line 295ms
+  failed: tests/tools/solve-replay.test.mjs > solve.mjs and replay.mjs on the toy sim > with --kick refuses a press 13 steps off a kick and keeps one 12 off, on both sides of a beat line
+mutant solve-presses-anywhere (tools/solve.mjs): ok: caught (exit 1); Tests  1 failed | 16 passed (17)
+  failed: solve --kick finds a witness whose every press is on the kick, and replay --kick passes it 158ms
+  failed: tests/tools/solve-replay.test.mjs > solve.mjs and replay.mjs on the toy sim > solve --kick finds a witness whose every press is on the kick, and replay --kick passes it
+mutant cheese-floor-held-present (tools/cheese.mjs): ok: caught (exit 1); Tests  1 failed | 16 passed (17)
+  failed: passes a full-height door, a sealed spike tunnel and a pit wider than any crossing 22341ms
+  failed: tests/tools/cheese.test.mjs > cheese.mjs: windows that hold > passes a full-height door, a sealed spike tunnel and a pit wider than any crossing
+mutant cheese-wall-held-open (tools/cheese.mjs): ok: caught (exit 1); Tests  1 failed | 16 passed (17)
+  failed: passes a full-height door, a sealed spike tunnel and a pit wider than any crossing 135ms
+  failed: tests/tools/cheese.test.mjs > cheese.mjs: windows that hold > passes a full-height door, a sealed spike tunnel and a pit wider than any crossing
+mutant cheese-no-free-control (tools/cheese.mjs): ok: caught (exit 1); Tests  1 failed | 16 passed (17)
+  failed: refuses a start that is no standing tile, and a section no clear reaches 225177ms
+  failed: tests/tools/cheese.test.mjs > cheese.mjs: sections it refuses > refuses a start that is no standing tile, and a section no clear reaches
+mutant cheese-columns-unchecked (tools/cheese.mjs): ok: caught (exit 1); Tests  1 failed | 16 passed (17)
+  failed: refuses an entity no section names, an entity in a section's columns left out, and a role that does not fit 226ms
+  failed: tests/tools/cheese.test.mjs > cheese.mjs: sections it refuses > refuses an entity no section names, an entity in a section's columns left out, and a role that does not fit
+mutant cheese-roles-unchecked (tools/cheese.mjs): ok: caught (exit 1); Tests  1 failed | 16 passed (17)
+  failed: refuses an entity no section names, an entity in a section's columns left out, and a role that does not fit 487ms
+  failed: tests/tools/cheese.test.mjs > cheese.mjs: sections it refuses > refuses an entity no section names, an entity in a section's columns left out, and a role that does not fit
+mutant generator-lag-1 (tests/fixtures/oracle/world.mjs): ok: caught (exit 1); rooms/11-gauntlet.grid: generated grid f8bdfa627d13 is not f967be143702 | spec-content: FAIL, 1 problem(s)
+mutant generator-corridor-5 (tests/fixtures/oracle/world.mjs): ok: caught (exit 1); rooms/11-gauntlet.grid: generated grid 06113477afd8 is not f967be143702 | spec-content: FAIL, 1 problem(s)
+mutant generator-corridor-from-12 (tests/fixtures/oracle/world.mjs): ok: caught (exit 1); rooms/11-gauntlet.grid: generated grid 23a82346a13e is not f967be143702 | spec-content: FAIL, 1 problem(s)
+mutant generator-contour-on-degree (tests/fixtures/oracle/world.mjs): ok: caught (exit 1); rooms/11-gauntlet.grid: generated grid 28a69337cb66 is not f967be143702 | spec-content: FAIL, 1 problem(s)
+mutants: PASS (15 planted fault(s) and the clean copy)
+--- end ---

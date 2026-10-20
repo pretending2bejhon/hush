@@ -1,0 +1,24 @@
+HUSH-EVIDENCE v1
+id: F2-kick-witnesses
+phase: amend
+command: node <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/proto/kick-evidence.mjs <repo> <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/proto/rooms2 <home>/AppData/Local/Temp/claude/C--Users-<redacted>-code-hush/4b356313-4bbe-4cb0-9493-4b334a2b5f2d/scratchpad/proto/w2
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-19T21:46:55-05:00
+time-end: 2026-10-19T21:46:56-05:00
+head: 7320a737dc872a4c2b60ced30212524596143f81
+exit: 0
+--- output ---
+01-wake: clear at step 1607, 13 changes, 5 presses, 0 off the kick; seeds 1 to 5: 100/100 OK
+02-heartbeat: clear at step 1532, 29 changes, 12 presses, 0 off the kick; seeds 1 to 5: 98/100 OK
+03-dash: clear at step 1648, 21 changes, 9 presses, 0 off the kick; seeds 1 to 5: 100/100 OK
+04-thorns: clear at step 1267, 10 changes, 2 presses, 0 off the kick; seeds 1 to 5: 100/100 OK
+05-doors: clear at step 2047, 22 changes, 6 presses, 0 off the kick; seeds 1 to 5: 100/100 OK
+06-wave: clear at step 1960, 13 changes, 5 presses, 0 off the kick; seeds 1 to 5: 100/100 OK
+07-current: clear at step 1955, 12 changes, 4 presses, 0 off the kick; seeds 1 to 5: 100/100 OK
+08-steps: clear at step 1324, 18 changes, 8 presses, 0 off the kick; seeds 1 to 5: 99/100 OK
+09-gates: clear at step 2162, 6 changes, 1 presses, 0 off the kick; seeds 1 to 5: 100/100 OK
+10-crown: clear at step 2348, 20 changes, 9 presses, 0 off the kick; seeds 1 to 5: 100/100 OK
+11-gauntlet: clear at step 14278, 125 changes, 62 presses, 0 off the kick; seeds 1 to 5: 100/100; seeds 6 to 13: 20/20 20/20 20/20 20/20 20/20 20/20 20/20 20/20 OK
+kick witnesses: PASS, every room kick-only at 98 of 100 or more
+--- end ---

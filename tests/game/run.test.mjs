@@ -100,10 +100,12 @@ describe('GAME1 the run returns a layer on the bar line of its clear', () => {
     });
   }
 
-  // Review R7 (MINOR 1): the clear on the bar line's edge. Room 1's witness, delayed 337 steps, clears on the tick of
+  // Review R7 (MINOR 1): the clear on the bar line's edge. Room 1's witness, delayed D steps, clears on the tick of
   // step 1954: unlockBar(1954) is 5 and unlockBar(1955) is 6, so the run must ask for bar 5, where the sim returns it.
+  // Room 1 has no beat entity, so D comes from the witness's own clearing tick, whatever witness the solver found
+  // (amended for the owner's ruling N-F2 a).
   it('room 1 cleared on the bar line\'s edge step: unlockAt(1, 5), the clearing tick\'s bar', () => {
-    const D = 337;
+    const D = 1954 - clearStep(1);
     const changes = witness(1).changes.map(([s, b]) => [s + D, b]);
     const o = O.createSim(world, { room: 1, step: 0, layers: canonical(1), stopAtClear: true });
     const src = source(() => o, 1, changes);

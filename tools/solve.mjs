@@ -1,6 +1,6 @@
 // The bounded witness solver (D3): a best-first search over the sim interface for a room's witness.
 //   node tools/solve.mjs <room-stem> [--out <file>] [--force] [--sim <module>] [--rooms <dir>]
-//                        [--nodes <n>] [--seconds <s>] [--interval <steps>]
+//                        [--nodes <n>] [--seconds <s>] [--interval <steps>] [--kick]
 // Macro-actions hold one input for `interval` steps (default 12, 50 ms), plus two 48-step holds for
 // waiting on a beat. States are keyed by the sim's key(P): quantised position and speed, dash, form, the
 // progression flags and step mod P, where P is the least common multiple of the 4-beat bar (2880 steps)
@@ -10,12 +10,15 @@
 // time budget. Every clearing path is turned into input changes, each change is moved to the middle of
 // the window (+-48 steps) in which the room still clears (two passes), and scored by the jitter test on
 // seeds 1, 2 and 3; the first witness that clears 19 of 20 on all three wins, else the best one found.
+// With --kick (the owner's ruling N-F2 a, 2026-10-19), an action that presses JUMP, UP or DASH is tried only on a
+// decision step within KICK_WINDOW steps of a kick onset (tools/replay.mjs onKick), and centring moves a press only
+// inside the window of the kick it was found on, so every press of the witness lands on the kick.
 // Exit 0: a candidate witness written (its worst jitter score printed). Exit 3: none within the node or
 // time budget (confidence: approximate). Exit 2: usage, an unknown room, or a sim that will not load.
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { canonicalLayers, jitterChanges, loadModule, loadRoomFiles, roomNumber, runOnce, runSeed } from './replay.mjs';
+import { canonicalLayers, jitterChanges, KICK_WINDOW, loadModule, loadRoomFiles, offKickPresses, onKick, pressesOf, PRESS_BITS, roomNumber, runOnce, runSeed } from './replay.mjs';
 
 const L = 1; const R = 2; const U = 4; const D = 8; const J = 16; const DASH = 32;
 // Each input change and each dash add this many steps of priority, so held inputs and few dashes win:
@@ -140,11 +143,11 @@ class Heap {
 
 // `accept(path)` judges each clearing path: {done, path, score} to stop, or {done: false, best} to go on.
 // Without it the first clearing path is returned. After `maxCandidates` paths the best one is returned.
-export function search(mod, world, roomNo, { nodes = 400000, seconds = 120, interval = 12, accept = null, maxCandidates = 4, changeCost = 48, dashCost = 160, clearCost = 24, hWeight = 1 } = {}) {
+export function search(mod, world, roomNo, { nodes = 400000, seconds = 120, interval = 12, accept = null, maxCandidates = 4, changeCost = 48, dashCost = 160, clearCost = 24, hWeight = 1, kick = false, period = null } = {}) {
   let candidates = 0;
   const room = roomNo === 11 ? world.gauntlet : world.rooms[roomNo - 1];
   if (!room) throw new Error(`no room ${roomNo}`);
-  const P = hazardPeriod(room);
+  const P = period || hazardPeriod(room);
   const h = heuristic(room);
   const tight = tightness(room);
   const sim = mod.createSim(world, { room: roomNo, step: 0, layers: canonicalLayers(roomNo), stopAtClear: true });
@@ -163,7 +166,9 @@ export function search(mod, world, roomNo, { nodes = 400000, seconds = 120, inte
     const node = nodesArr[idx];
     expanded++;
     sim.load(node.state);
+    const pressOk = !kick || onKick(sim.step);
     for (const act of actionsFor(sim.status(), room)) {
+      if (!pressOk && (act[0] & ~node.last & PRESS_BITS)) continue;
       sim.load(node.state);
       const inputs = [];
       let died = false;
@@ -218,13 +223,13 @@ export function jitterScore(mod, world, roomNo, changes, end) {
 
 // The acceptance used by the command line: centre the changes, keep the best-scoring candidate, stop at
 // a witness that clears at least 98 of the 100 jittered runs.
-export function robustAccept(mod, world, roomNo) {
+export function robustAccept(mod, world, roomNo, { kick = false } = {}) {
   let best = null;
   return (path) => {
     if (path === null) return { done: false, best };
     const end = path.length + 2400;
     // Inputs after the clear change nothing: the witness ends with the clearing step.
-    const changes = centre(mod, world, roomNo, toChanges(path).filter((c) => c[0] < path.length), end);
+    const changes = centre(mod, world, roomNo, toChanges(path).filter((c) => c[0] < path.length), end, { kick });
     const score = runOnce(mod, world, roomNo, changes, end).ok ? jitterScore(mod, world, roomNo, changes, end) : -1;
     const cand = { path: changes, score };
     if (!best || score > best.score) best = cand;
@@ -288,16 +293,21 @@ function trialOk(mod, world, roomNo, cur, i, t, base, end) {
 }
 
 // Moves each change to the middle of the shift window (+-48 steps) in which the room still clears: the
-// interval around 0, scanned outward one step at a time until the first shift that fails on each side.
-export function centre(mod, world, roomNo, changes, end) {
+// interval around 0, scanned outward one step at a time until the first shift that fails on each side. With
+// `kick`, a press stays within KICK_WINDOW steps of the kick it was found on.
+export function centre(mod, world, roomNo, changes, end, { kick = false } = {}) {
   let cur = changes.map((c) => [...c]);
+  const kickOf = (t) => Math.round((7 * t) / 720);
   for (let pass = 0; pass < 2; pass++) {
     for (let i = 1; i < cur.length; i++) {
       const base = baseline(mod, world, roomNo, cur, end);
       if (!base.ok) return cur;
+      const press = kick && (cur[i][1] & ~cur[i - 1][1] & PRESS_BITS) !== 0;
+      const beat = kickOf(changes[i][0]);
       const okAt = (d) => {
         const t = cur[i][0] + d;
         if (t <= cur[i - 1][0] || (i + 1 < cur.length && t >= cur[i + 1][0])) return false;
+        if (press && (kickOf(t) !== beat || !onKick(t))) return false;
         return d === 0 || trialOk(mod, world, roomNo, cur, i, t, base, end);
       };
       const edge = (sign) => {
@@ -315,7 +325,7 @@ export function centre(mod, world, roomNo, changes, end) {
 }
 
 function parseArgs(argv) {
-  const o = { stem: null, out: null, force: false, sim: 'src/sim/headless.ts', rooms: 'rooms', nodes: 300000, seconds: 480, interval: 12 };
+  const o = { stem: null, out: null, force: false, sim: 'src/sim/headless.ts', rooms: 'rooms', nodes: 300000, seconds: 480, interval: 12, kick: false };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--out') o.out = argv[++i];
@@ -325,7 +335,8 @@ function parseArgs(argv) {
     else if (a === '--nodes') o.nodes = Number(argv[++i]);
     else if (a === '--seconds') o.seconds = Number(argv[++i]);
     else if (a === '--interval') o.interval = Number(argv[++i]);
-    else if (a.startsWith('--') || o.stem) return { error: 'usage: solve.mjs <room-stem> [--out <file>] [--force] [--sim <m>] [--rooms <dir>] [--nodes n] [--seconds s] [--interval k]' };
+    else if (a === '--kick') o.kick = true;
+    else if (a.startsWith('--') || o.stem) return { error: 'usage: solve.mjs <room-stem> [--out <file>] [--force] [--sim <m>] [--rooms <dir>] [--nodes n] [--seconds s] [--interval k] [--kick]' };
     else o.stem = a;
   }
   if (!o.stem) return { error: 'usage: solve.mjs <room-stem> ...' };
@@ -349,7 +360,7 @@ export async function main(argv, log = (s) => process.stdout.write(`${s}\n`)) {
   let reason = '';
   for (const stage of STAGES) {
     const r = search(mod, world, roomNo, {
-      ...o, ...stage, seconds: Math.max(1, o.seconds - (Date.now() - started) / 1000), accept: robustAccept(mod, world, roomNo),
+      ...o, ...stage, seconds: Math.max(1, o.seconds - (Date.now() - started) / 1000), accept: robustAccept(mod, world, roomNo, { kick: o.kick }),
     });
     expanded += r.expanded;
     reason = r.reason || reason;
@@ -369,7 +380,9 @@ export async function main(argv, log = (s) => process.stdout.write(`${s}\n`)) {
   const witness = { format: 'hush-replay-1', room: o.stem, changes, end: run.step + 2400, checksum: run.checksum };
   fs.mkdirSync(path.dirname(path.resolve(o.out)), { recursive: true });
   fs.writeFileSync(o.out, `${JSON.stringify(witness)}\n`);
-  log(`solve: FOUND ${o.stem}: clear at step ${run.step}, ${changes.length} changes, ${res.expanded} nodes, jitter seeds 1-5: ${res.score}/100 ->${o.out.split(path.sep).join('/')}`);
+  if (o.kick && offKickPresses(changes).length) { log(`solve: NONE for ${o.stem}: a press left the kick in centring; confidence: approximate`); return 3; }
+  const kickNote = o.kick ? `, ${pressesOf(changes).length} presses each within ${KICK_WINDOW} steps of a kick` : '';
+  log(`solve: FOUND ${o.stem}: clear at step ${run.step}, ${changes.length} changes${kickNote}, ${res.expanded} nodes, jitter seeds 1-5: ${res.score}/100 ->${o.out.split(path.sep).join('/')}`);
   return 0;
 }
 

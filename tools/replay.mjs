@@ -1,9 +1,13 @@
 // The headless replay runner (D3, X3): drives a sim from a room's entrance with a witness's input changes.
-//   node tools/replay.mjs <replay.json>... [--jitter --seed <n>] [--runs 20] [--need 18] [--sim <module>] [--rooms <dir>]
-//   node tools/replay.mjs --all [--jitter --seed <n>]   every room file under rooms/ needs replays/<stem>.json
+//   node tools/replay.mjs <replay.json>... [--jitter --seed <n>] [--kick] [--runs 20] [--need 18] [--sim <module>] [--rooms <dir>]
+//   node tools/replay.mjs --all [--jitter --seed <n>] [--kick]   every room file under rooms/ needs replays/<stem>.json
 // A run passes when the start room is cleared before `end` with zero deaths, and (unjittered) the clear-state
 // checksum equals the witness's. The jitter test shifts every input-change time by its own seeded uniform
 // offset of -6 to +6 steps (25 ms at 240 steps/s), keeps the order, and needs `need` of `runs` clears.
+// With --kick (the owner's ruling N-F2 a, 2026-10-19; HUSH-SPEC section 5.4): every press of the witness, a step on
+// which JUMP, UP or DASH goes down, lies within KICK_WINDOW steps of a kick onset. The kick plays every beat, so its
+// onsets are the beat lines, 720 beat-ticks apart, 7 beat-ticks a step: a press on step s is on the kick when
+// min(7s mod 720, 720 - 7s mod 720) <= 7 * KICK_WINDOW, integer math only.
 // Exit 0 all pass; 1 a run failed; 2 usage, a malformed witness or a sim that will not load.
 import fs from 'node:fs';
 import path from 'node:path';
@@ -11,6 +15,33 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const REPO = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 export const JITTER = 6;
+// The kick rule (the owner's ruling N-F2 a): a press within 12 steps (50 ms) of a kick onset, before or after it.
+export const KICK_WINDOW = 12;
+export const PRESS_BITS = 16 | 4 | 32;
+
+// Beat-ticks from step `step` to the nearest beat line, the kick's onsets (0 to 360).
+export function kickTicks(step) {
+  const d = (((7 * step) % 720) + 720) % 720;
+  return Math.min(d, 720 - d);
+}
+export const onKick = (step) => kickTicks(step) <= 7 * KICK_WINDOW;
+
+// The witness's presses: [step, bits that went down], the first change measured against nothing held.
+export function pressesOf(changes) {
+  const out = [];
+  let prev = 0;
+  for (const [t, bits] of changes) {
+    const down = bits & ~prev & PRESS_BITS;
+    if (down) out.push([t, down]);
+    prev = bits;
+  }
+  return out;
+}
+
+// The presses that lie off the kick, each with its distance in steps (rounded to 0.1).
+export function offKickPresses(changes) {
+  return pressesOf(changes).filter(([t]) => !onKick(t)).map(([t, bits]) => ({ step: t, bits, steps: Math.round((kickTicks(t) / 7) * 10) / 10 }));
+}
 
 export function mulberry32(seed) {
   let a = seed >>> 0;
@@ -97,11 +128,12 @@ export async function loadModule(modPath) {
 }
 
 function parseArgs(argv) {
-  const o = { files: [], all: false, jitter: false, seed: null, runs: 20, need: 18, sim: 'src/sim/headless.ts', rooms: 'rooms', replays: 'replays' };
+  const o = { files: [], all: false, jitter: false, kick: false, seed: null, runs: 20, need: 18, sim: 'src/sim/headless.ts', rooms: 'rooms', replays: 'replays' };
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === '--all') o.all = true;
     else if (a === '--jitter') o.jitter = true;
+    else if (a === '--kick') o.kick = true;
     else if (a === '--seed') o.seed = Number(argv[++i]);
     else if (a === '--runs') o.runs = Number(argv[++i]);
     else if (a === '--need') o.need = Number(argv[++i]);
@@ -113,7 +145,7 @@ function parseArgs(argv) {
   }
   if (o.jitter && !Number.isInteger(o.seed)) return { error: '--jitter needs --seed <integer>' };
   if (!Number.isInteger(o.runs) || o.runs < 1 || !Number.isInteger(o.need) || o.need < 1 || o.need > o.runs) return { error: 'bad --runs or --need' };
-  if (!o.all && !o.files.length) return { error: 'usage: replay.mjs <replay.json>... | --all  [--jitter --seed <n>]' };
+  if (!o.all && !o.files.length) return { error: 'usage: replay.mjs <replay.json>... | --all  [--jitter --seed <n>] [--kick]' };
   return o;
 }
 
@@ -151,6 +183,16 @@ export async function main(argv, log = (s) => process.stdout.write(`${s}\n`)) {
     const ok = base.ok && sumOk;
     log(`${label}: ${base.ok ? 'CLEAR' : 'FAIL'} ${base.why}, checksum ${base.checksum} (witness ${w.checksum}) ${ok ? 'OK' : 'MISMATCH'}`);
     if (!ok) { failed++; continue; }
+    if (o.kick) {
+      const presses = pressesOf(w.changes);
+      const off = offKickPresses(w.changes);
+      if (off.length) {
+        failed++;
+        log(`${label}: kick: ${off.length} of ${presses.length} presses off the kick (${off.slice(0, 6).map((p) => `step ${p.step}, ${p.steps} steps`).join('; ')}) OFF`);
+        continue;
+      }
+      log(`${label}: kick: ${presses.length} presses, each within ${KICK_WINDOW} steps of a kick ON`);
+    }
     if (o.jitter) {
       let wins = 0;
       const marks = [];
@@ -164,7 +206,7 @@ export async function main(argv, log = (s) => process.stdout.write(`${s}\n`)) {
       if (!pass) failed++;
     }
   }
-  log(failed ? `replay: FAIL, ${failed} witness(es) short` : `replay: PASS, ${files.length} witness(es)`);
+  log(failed ? `replay: FAIL, ${failed} witness(es) short` : `replay: PASS, ${files.length} witness(es)${o.kick ? ', every press on the kick' : ''}`);
   return failed ? 1 : 0;
 }
 
