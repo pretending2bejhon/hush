@@ -1,5 +1,5 @@
 {
-  "digest": "81a1d6cc2560d24e1f8b93daf725980262ada7b898d9552af9b9cafa6e3a9d58",
+  "digest": "aa2bbe57898bf9a1276731927a2c7a9722937ac6bd7df0a1ca1800b83c18f947",
   "rows": [
     {
       "id": "X1",
@@ -14,12 +14,12 @@
     {
       "id": "X3",
       "ok": true,
-      "detail": "node <home>\\AppData\\Local\\Temp\\hush-release-SRIp5r\\release\\tools\\replay.mjs --all --jitter --seed 2174867148 exit 0"
+      "detail": "node <home>\\AppData\\Local\\Temp\\hush-release-zbDyNn\\release\\tools\\replay.mjs --all --jitter --seed 2854993495 --kick exit 0"
     },
     {
       "id": "X4",
       "ok": true,
-      "detail": "build/evidence/verify/perf-55831ccf49d300802334db24b1cd8f52c1f2b596.json"
+      "detail": "build/evidence/verify/perf-d1d8c2906ee066cdbbda554bfefadcff3fa39b08.json"
     },
     {
       "id": "X5",
@@ -34,7 +34,7 @@
     {
       "id": "X7",
       "ok": true,
-      "detail": "build/evidence/verify/av-55831ccf49d300802334db24b1cd8f52c1f2b596.json"
+      "detail": "build/evidence/verify/av-d1d8c2906ee066cdbbda554bfefadcff3fa39b08.json"
     },
     {
       "id": "X8",
@@ -44,7 +44,7 @@
     {
       "id": "X9",
       "ok": true,
-      "detail": "node <home>\\AppData\\Local\\Temp\\hush-release-SRIp5r\\release\\tools\\check-public.mjs --history exit 0"
+      "detail": "node <home>\\AppData\\Local\\Temp\\hush-release-zbDyNn\\release\\tools\\check-public.mjs --history exit 0"
     },
     {
       "id": "X10",

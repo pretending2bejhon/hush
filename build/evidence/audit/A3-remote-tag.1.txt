@@ -1,0 +1,18 @@
+HUSH-EVIDENCE v1
+id: A3-remote-tag
+phase: audit
+command: git -C <home>\AppData\Local\Temp\hush-audit3-remote.git cat-file -p refs/tags/hush-dryrun-2055e5b2
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:41:43-05:00
+time-end: 2026-10-20T23:41:43-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+object 2055e5b22a468f6050fae0faf4022a7c4f593074
+type commit
+tag hush-dryrun-2055e5b2
+tagger pretending2bejhon <135627942+pretending2bejhon@users.noreply.github.com> 1792556609 -0500
+
+deploy dry run of 2055e5b22a46
+--- end ---

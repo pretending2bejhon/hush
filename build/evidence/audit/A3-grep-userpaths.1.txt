@@ -1,0 +1,13 @@
+HUSH-EVIDENCE v1
+id: A3-grep-userpaths
+phase: audit
+command: git grep -n -I -i -E -e [a-z]:[\\/]+users[\\/]+[a-z]|/users/[a-z]|/home/[a-z]
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:06:31-05:00
+time-end: 2026-10-20T23:06:31-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 1
+--- output ---
+
+--- end ---

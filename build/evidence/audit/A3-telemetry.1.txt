@@ -1,0 +1,80 @@
+HUSH-EVIDENCE v1
+id: A3-telemetry
+phase: audit
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\414bfd0d-3b56-4ab2-94e4-aa07d6549ae1\scratchpad\telemetry.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-21T00:05:58-05:00
+time-end: 2026-10-21T00:06:00-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+working copy, node_modules and dist: files read 8054
+  holding gryzor: none
+  named log.js: none
+root log.js exists: false
+package.json scripts naming log.js or gryzor: 0
+tracked files: 1270 | named log.js: none
+index.html <script> tags: ["<script type=\"module\" src=\"/src/main.ts\">"]
+history: objects 2588 | paths named log.js: 0
+  gryzor in blob c9657b03bb12 build/evidence/audit/A-supply-extra.1.txt
+  gryzor in blob 81fcf8014872 build/evidence/audit/A2-telemetry.1.txt
+  gryzor in blob 8e5cd8e1a6a0 build/reviews/AUDIT-1.md
+  gryzor in blob 0046ac5ce9d8 build/reviews/AUDIT-2.md
+history: commits, trees, blobs and tags read: 2588 | holding gryzor: 4
+--- this check's source ---
+// Audit 3 scratch check, run from the repo root: template telemetry. Every file named log.js and every file or
+// history object holding "gryzor", in node_modules, dist, the tracked tree and every object of every ref.
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+
+let files = 0;
+const hits = [];
+const logjs = [];
+function walk(d) {
+  for (const e of fs.readdirSync(d, { withFileTypes: true })) {
+    const f = path.join(d, e.name);
+    if (e.isDirectory()) walk(f);
+    else if (e.isFile()) {
+      files++;
+      if (e.name.toLowerCase() === 'log.js') logjs.push(f.split(path.sep).join('/'));
+      if (fs.readFileSync(f).toString('latin1').toLowerCase().includes('gryzor')) hits.push(f.split(path.sep).join('/'));
+    }
+  }
+}
+for (const d of ['node_modules', 'dist']) walk(d);
+console.log('working copy, node_modules and dist: files read', files);
+console.log('  holding gryzor:', hits.length ? hits.join(', ') : 'none');
+console.log('  named log.js:', logjs.length ? logjs.join(', ') : 'none');
+console.log('root log.js exists:', fs.existsSync('log.js'));
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+console.log('package.json scripts naming log.js or gryzor:', Object.entries(pkg.scripts).filter(([, v]) => /log\.js|gryzor/i.test(v)).length);
+const tracked = execFileSync('git', ['ls-files', '-z'], { encoding: 'utf8', maxBuffer: 1e9 }).split('\0').filter(Boolean);
+console.log('tracked files:', tracked.length, '| named log.js:', tracked.filter((f) => /(^|\/)log\.js$/i.test(f)).join(', ') || 'none');
+const ix = fs.readFileSync('index.html', 'utf8');
+console.log('index.html <script> tags:', JSON.stringify(ix.match(/<script[^>]*>/g) || []));
+const g = (a, i) => execFileSync('git', a, { input: i, maxBuffer: 4e9 });
+const list = g(['rev-list', '--all', '--objects']).toString('utf8').split('\n').filter(Boolean);
+const tags = g(['for-each-ref', 'refs/tags', '--format=%(objectname)']).toString('utf8').split('\n').filter(Boolean);
+const shas = [...new Set([...list.map((l) => l.slice(0, 40)), ...tags])];
+const names = list.map((l) => l.slice(41)).filter(Boolean);
+console.log('history: objects', shas.length, '| paths named log.js:', names.filter((x) => /(^|\/)log\.js$/i.test(x)).length);
+const where = new Map(list.filter((l) => l.length > 41).map((l) => [l.slice(0, 40), l.slice(41)]));
+const buf = g(['cat-file', '--batch'], `${shas.join('\n')}\n`);
+let pos = 0;
+let n = 0;
+let gh = 0;
+while (pos < buf.length) {
+  const nl = buf.indexOf(10, pos);
+  const h = buf.subarray(pos, nl).toString('utf8').split(' ');
+  const size = Number(h[2]);
+  const body = buf.subarray(nl + 1, nl + 1 + size);
+  n++;
+  if (body.toString('latin1').toLowerCase().includes('gryzor')) { gh++; console.log('  gryzor in', h[1], h[0].slice(0, 12), where.get(h[0]) || ''); }
+  pos = nl + 1 + size + 1;
+}
+console.log('history: commits, trees, blobs and tags read:', n, '| holding gryzor:', gh);
+console.log(`--- this check's source ---\n${fs.readFileSync(new URL(import.meta.url), 'utf8')}`);
+
+--- end ---

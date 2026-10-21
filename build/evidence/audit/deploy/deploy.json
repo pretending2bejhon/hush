@@ -1,11 +1,11 @@
 {
   "mode": "dry-run",
   "steps": [
-    "dry-run of ddc6665fb788 as hush-dryrun-ddc6665f, main at ddc6665fb788",
-    "release clone at ddc6665fb788, identity pretending2bejhon",
+    "dry-run of 2055e5b22a46 as hush-dryrun-2055e5b2, main at 2055e5b22a46",
+    "release clone at 2055e5b22a46, identity pretending2bejhon",
     "npm ci and build in the clone",
     "checks: content green, protect green, X1-X10 recorded",
-    "gh-pages commit 2318a3685fa5 (first publication)",
+    "gh-pages commit f468ab318502 (first publication)",
     "check-public --history clean over main, the tag and gh-pages",
     "pushed main",
     "pushed tag",
@@ -22,11 +22,11 @@
     },
     "gate": {
       "ok": true,
-      "detail": "X1: green | npm run smoke exit 0 | X2: green | npm test exit 0 | X3: green | node <home>\\AppData\\Local\\Temp\\hush-release-SRIp5r\\release\\tools\\replay.mjs --all --jitter --seed 2174867148 exit 0 | X4: green | build/evidence/verify/perf-55831ccf49d300802334db24b1cd8f52c1f2b596.json | X5: green | npm run probe:console exit 0 | X6: green | npm run probe:flash exit 0 | X7: green | build/evidence/verify/av-55831ccf49d300802334db24b1cd8f52c1f2b596.json | X8: green | npm run test:calibration exit 0 | X9: green | node <home>\\AppData\\Local\\Temp\\hush-release-SRIp5r\\release\\tools\\check-public.mjs --history exit 0 | X10: green | npm run probe:supply exit 0 | ship-gate: GREEN (digest 81a1d6cc2560)"
+      "detail": "X1: green | npm run smoke exit 0 | X2: green | npm test exit 0 | X3: green | node <home>\\AppData\\Local\\Temp\\hush-release-zbDyNn\\release\\tools\\replay.mjs --all --jitter --seed 2854993495 --kick exit 0 | X4: green | build/evidence/verify/perf-d1d8c2906ee066cdbbda554bfefadcff3fa39b08.json | X5: green | npm run probe:console exit 0 | X6: green | npm run probe:flash exit 0 | X7: green | build/evidence/verify/av-d1d8c2906ee066cdbbda554bfefadcff3fa39b08.json | X8: green | npm run test:calibration exit 0 | X9: green | node <home>\\AppData\\Local\\Temp\\hush-release-zbDyNn\\release\\tools\\check-public.mjs --history exit 0 | X10: green | npm run probe:supply exit 0 | ship-gate: GREEN (digest aa2bbe57898b)"
     },
     "history": {
       "ok": true,
-      "detail": "check-public history (3 refs, 118 commits, 603 trees, 1395 blobs): clean (owner denylist, 4 names + 1 machine names)"
+      "detail": "check-public history (3 refs, 140 commits, 713 trees, 1734 blobs): clean (owner denylist, 4 names + 1 machine names)"
     }
   },
   "pushes": [
@@ -35,9 +35,9 @@
     "gh-pages"
   ],
   "target": {
-    "tag": "hush-dryrun-ddc6665f",
-    "commit": "ddc6665fb78877c861086e6c20b5dffb42895534",
-    "main": "ddc6665fb78877c861086e6c20b5dffb42895534",
+    "tag": "hush-dryrun-2055e5b2",
+    "commit": "2055e5b22a468f6050fae0faf4022a7c4f593074",
+    "main": "2055e5b22a468f6050fae0faf4022a7c4f593074",
     "ownTag": false
   },
   "result": "published"

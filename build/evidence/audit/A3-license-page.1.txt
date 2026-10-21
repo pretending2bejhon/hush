@@ -1,0 +1,92 @@
+HUSH-EVIDENCE v1
+id: A3-license-page
+phase: audit
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\414bfd0d-3b56-4ab2-94e4-aa07d6549ae1\scratchpad\license-page.mjs .@refs/remotes/origin/gh-pages
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:22:46-05:00
+time-end: 2026-10-20T23:22:46-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+LICENSE bytes 34523 sha256 0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0
+LICENSE first line: "GNU AFFERO GENERAL PUBLIC LICENSE" | section 13 heading: true | END OF TERMS: true
+AGPL_SHA256 in probe-supply equals LICENSE: true
+package.json license: AGPL-3.0-or-later | repository: https://github.com/pretending2bejhon/hush
+README names AGPL-3.0-or-later: true | README links the repo: false
+Handoff wants: {"title":"The Hush","link":["Source (AGPL-3.0)","https://github.com/pretending2bejhon/hush"],"notice":"Music engine: Strudel, AGPL-3.0-or-later","calibration":"Press any key, then tap along with the beat to set your timing.","accent":"#7fd6ff"}
+index.html: title "The Hush" equal: true
+index.html: footer items exactly the Handoff's, in order: true
+index.html: #calibration in the accent #7fd6ff: true | the body beside the footer: "<div id=\"game\"></div>"
+index.html: script tags ["<script type=\"module\" src=\"/src/main.ts\">"] | absolute URLs in src or href: ["https://github.com/pretending2bejhon/hush"] | hush-build meta: none
+dist/index.html: title "The Hush" equal: true
+dist/index.html: footer items exactly the Handoff's, in order: true
+dist/index.html: #calibration in the accent #7fd6ff: true | the body beside the footer: "<div id=\"game\"></div>"
+dist/index.html: script tags ["<script type=\"module\" crossorigin src=\"/hush/assets/index-BuxHFNVv.js\">"] | absolute URLs in src or href: ["https://github.com/pretending2bejhon/hush"] | hush-build meta: 2055e5b22a468f6050fae0faf4022a7c4f593074
+refs/remotes/origin/gh-pages:index.html: title "The Hush" equal: true
+refs/remotes/origin/gh-pages:index.html: footer items exactly the Handoff's, in order: false (found ["<a href=\"https://github.com/pretending2bejhon/hush\">Source (AGPL-3.0)</a>","<span>Music engine: Strudel, AGPL-3.0-or-later</span>","<output id=\"playtest\" hidden></output>"])
+refs/remotes/origin/gh-pages:index.html: #calibration in the accent #7fd6ff: false | the body beside the footer: "<div id=\"game\"></div>"
+refs/remotes/origin/gh-pages:index.html: script tags ["<script type=\"module\" crossorigin src=\"/hush/assets/index-Dqh8GbB8.js\">"] | absolute URLs in src or href: ["https://github.com/pretending2bejhon/hush"] | hush-build meta: c9ce7243c7c7c4fc7a81c695439d8a0d5cc9b98f
+--- this check's source ---
+// Audit 3 scratch check, run from the repo root: LICENSE, the licence ids, and the page text outside the canvas
+// against HUSH-SPEC section 18 (Handoff), in index.html, dist/index.html and each `<gitdir>@<rev>` given (a published
+// gh-pages index.html).
+import { execFileSync } from 'node:child_process';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+
+const b = fs.readFileSync('LICENSE');
+const t = b.toString('utf8');
+console.log('LICENSE bytes', b.length, 'sha256', crypto.createHash('sha256').update(b).digest('hex'));
+console.log('LICENSE first line:', JSON.stringify(t.split('\n')[0].trim()), '| section 13 heading:', t.includes('13. Remote Network Interaction; Use with the GNU General Public License.'), '| END OF TERMS:', t.includes('END OF TERMS AND CONDITIONS'));
+const sup = fs.readFileSync('tools/probe-supply.mjs', 'utf8');
+console.log('AGPL_SHA256 in probe-supply equals LICENSE:', (sup.match(/AGPL_SHA256 = '([0-9a-f]{64})'/) || [])[1] === crypto.createHash('sha256').update(b).digest('hex'));
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+console.log('package.json license:', pkg.license, '| repository:', pkg.repository && pkg.repository.url);
+const rd = fs.readFileSync('README.md', 'utf8');
+console.log('README names AGPL-3.0-or-later:', rd.includes('AGPL-3.0-or-later'), '| README links the repo:', rd.includes('https://github.com/pretending2bejhon/hush'));
+
+// The Handoff, as section 18 spells it.
+const spec = fs.readFileSync('build/HUSH-SPEC.md', 'utf8');
+const handoff = spec.slice(spec.indexOf('## 18. Handoff'));
+const want = {
+  title: /the page title: `([^`]+)`/.exec(handoff)[1],
+  link: /the link: `([^`]+)`, to `([^`]+)`/.exec(handoff).slice(1, 3),
+  notice: /the notice: `([^`]+)`/.exec(handoff)[1],
+  calibration: /while the calibration is up, `([^`]+)` in `<span id="calibration">`/.exec(handoff)[1],
+  accent: /in the accent (#[0-9a-fA-F]{6})/.exec(handoff)[1],
+};
+console.log('Handoff wants:', JSON.stringify(want));
+
+function judge(label, html) {
+  const title = (html.match(/<title>([^<]*)<\/title>/) || [])[1];
+  const body = (html.match(/<body>([\s\S]*)<\/body>/) || [])[1] || '';
+  const footer = (body.match(/<footer>([\s\S]*?)<\/footer>/) || [])[1] || '';
+  const items = footer.split('\n').map((l) => l.trim()).filter(Boolean);
+  const outside = body.replace(/<footer>[\s\S]*?<\/footer>/, '').replace(/<script[\s\S]*?<\/script>/g, '').trim();
+  const expect = [
+    `<span id="calibration">${want.calibration}</span>`,
+    `<a href="${want.link[1]}">${want.link[0]}</a>`,
+    `<span>${want.notice}</span>`,
+    '<output id="playtest" hidden></output>',
+  ];
+  const accent = new RegExp(`#calibration\\s*\\{\\s*color:\\s*${want.accent}\\s*;?\\s*\\}`, 'i').test(html);
+  const scripts = html.match(/<script[^>]*>/g) || [];
+  const externals = [...html.matchAll(/(?:src|href)="([^"]+)"/g)].map((m) => m[1]).filter((u) => /^(https?:)?\/\//.test(u));
+  console.log(`${label}: title ${JSON.stringify(title)} equal: ${title === want.title}`);
+  console.log(`${label}: footer items exactly the Handoff's, in order: ${JSON.stringify(items) === JSON.stringify(expect)}${JSON.stringify(items) === JSON.stringify(expect) ? '' : ` (found ${JSON.stringify(items)})`}`);
+  console.log(`${label}: #calibration in the accent ${want.accent}: ${accent} | the body beside the footer: ${JSON.stringify(outside)}`);
+  console.log(`${label}: script tags ${JSON.stringify(scripts)} | absolute URLs in src or href: ${JSON.stringify(externals)} | hush-build meta: ${(html.match(/<meta name="hush-build" content="([0-9a-f]+)"/) || [])[1] || 'none'}`);
+}
+judge('index.html', fs.readFileSync('index.html', 'utf8'));
+if (fs.existsSync('dist/index.html')) judge('dist/index.html', fs.readFileSync('dist/index.html', 'utf8'));
+for (const src of process.argv.slice(2)) {
+  const at = src.lastIndexOf('@');
+  const dir = src.slice(0, at);
+  const rev = src.slice(at + 1);
+  const html = execFileSync('git', ['-C', dir, 'show', `${rev}:index.html`], { encoding: 'utf8' });
+  judge(`${dir === '.' ? '' : 'remote '}${rev}:index.html`, html);
+}
+console.log(`--- this check's source ---\n${fs.readFileSync(new URL(import.meta.url), 'utf8')}`);
+
+--- end ---

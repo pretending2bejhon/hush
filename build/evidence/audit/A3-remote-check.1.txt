@@ -1,0 +1,63 @@
+HUSH-EVIDENCE v1
+id: A3-remote-check
+phase: audit
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\414bfd0d-3b56-4ab2-94e4-aa07d6549ae1\scratchpad\remote-check.mjs <home>\AppData\Local\Temp\hush-audit3-remote.git
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:41:44-05:00
+time-end: 2026-10-20T23:41:44-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+ref storage format: files | packed-refs present: false
+  refs/heads/main written 2026-10-21T04:40:56.431Z (+0 ms)
+  refs/tags/hush-dryrun-2055e5b2 written 2026-10-21T04:40:56.686Z (+255 ms)
+  refs/heads/gh-pages written 2026-10-21T04:40:57.038Z (+607 ms)
+push order by write time: main -> hush-dryrun-2055e5b2 -> gh-pages
+gh-pages f468ab318502 | parents: "" | author and committer: pretending2bejhon <135627942+pretending2bejhon@users.noreply.github.com> | pretending2bejhon <135627942+pretending2bejhon@users.noreply.github.com> | subject: "pages: hush-dryrun-2055e5b2 at 2055e5b22a46"
+main equals the candidate: 2055e5b22a468f6050fae0faf4022a7c4f593074 | tag points at: 2055e5b22a468f6050fae0faf4022a7c4f593074 | tag object type: tag
+  gh-pages .nojekyll 0 bytes mode 100644: not in dist
+  gh-pages THIRD-PARTY-NOTICES.txt 68558 bytes mode 100644: byte-identical to the local dist
+  gh-pages assets/index-BuxHFNVv.js 2101935 bytes mode 100644: byte-identical to the local dist
+  gh-pages index.html 1125 bytes mode 100644: byte-identical to the local dist
+gh-pages files: 4 | byte-identical to dist: 3 | dist files not on gh-pages: none | CNAME: false
+--- this check's source ---
+// Audit 3 scratch check, run from the repo root: the dry run's bare remote (the path given). Its ref storage and the
+// write time of each pushed ref (the push order), gh-pages' parents and identity, and every gh-pages blob against the
+// local build of the same commit in dist/ (git hash-object), plus what gh-pages holds beyond dist.
+import { execFileSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const bare = process.argv[2];
+const g = (a, cwd = bare) => execFileSync('git', a, { cwd, encoding: 'utf8', maxBuffer: 1e9 }).trim();
+console.log('ref storage format:', g(['rev-parse', '--show-ref-format']), '| packed-refs present:', fs.existsSync(path.join(bare, 'packed-refs')));
+const refs = g(['for-each-ref', '--format=%(refname)']).split('\n').filter(Boolean);
+const times = refs.map((r) => {
+  const f = path.join(bare, ...r.split('/'));
+  const s = fs.statSync(f);
+  return { r, ms: s.mtimeMs, iso: s.mtime.toISOString() };
+}).sort((a, b) => a.ms - b.ms);
+for (const t of times) console.log(`  ${t.r} written ${t.iso} (+${(t.ms - times[0].ms).toFixed(0)} ms)`);
+console.log('push order by write time:', times.map((t) => t.r.replace(/^refs\/(heads|tags)\//, '')).join(' -> '));
+const pages = g(['rev-parse', 'refs/heads/gh-pages']);
+console.log('gh-pages', pages.slice(0, 12), '| parents:', JSON.stringify(g(['log', '-1', '--format=%P', pages])), '| author and committer:', g(['log', '-1', '--format=%an <%ae> | %cn <%ce>', pages]), '| subject:', JSON.stringify(g(['log', '-1', '--format=%s', pages])));
+console.log('main equals the candidate:', g(['rev-parse', 'refs/heads/main']), '| tag points at:', g(['rev-parse', 'refs/tags/hush-dryrun-2055e5b2^{commit}']), '| tag object type:', g(['cat-file', '-t', 'refs/tags/hush-dryrun-2055e5b2']));
+const tree = g(['ls-tree', '-r', '-l', pages]).split('\n').filter(Boolean).map((l) => {
+  const [meta, file] = l.split('\t');
+  const [mode, type, sha, size] = meta.split(/\s+/);
+  return { mode, type, sha, size: Number(size), file };
+});
+const local = new Map();
+(function walk(d) { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const f = path.join(d, e.name); if (e.isDirectory()) walk(f); else local.set(path.relative('dist', f).split(path.sep).join('/'), f); } })('dist');
+let same = 0;
+for (const t of tree) {
+  const lf = local.get(t.file);
+  const ok = lf ? g(['hash-object', '--', lf], '.') === t.sha : null;
+  if (ok) same++;
+  console.log(`  gh-pages ${t.file} ${t.size} bytes mode ${t.mode}: ${lf ? (ok ? 'byte-identical to the local dist' : 'DIFFERS from the local dist') : 'not in dist'}`);
+}
+console.log('gh-pages files:', tree.length, '| byte-identical to dist:', same, '| dist files not on gh-pages:', [...local.keys()].filter((k) => !tree.some((t) => t.file === k)).join(', ') || 'none', '| CNAME:', tree.some((t) => t.file === 'CNAME'));
+console.log(`--- this check's source ---\n${fs.readFileSync(new URL(import.meta.url), 'utf8')}`);
+
+--- end ---

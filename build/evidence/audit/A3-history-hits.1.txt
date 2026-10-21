@@ -1,0 +1,54 @@
+HUSH-EVIDENCE v1
+id: A3-history-hits
+phase: audit
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\414bfd0d-3b56-4ab2-94e4-aa07d6549ae1\scratchpad\hit-check.mjs 8457f198 ccca0403 4cf2d157 12024baf 5419a9cd 9219d2bf 6a24aac4
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:09:37-05:00
+time-end: 2026-10-20T23:09:37-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+blob 8457f198: an email, sha256 a0d4602853a0c952..., in THIRD_PARTY_EMAIL_HASHES: true
+blob ccca0403: an email, sha256 6a6e0568bbcd7e8b..., in THIRD_PARTY_EMAIL_HASHES: true
+blob 4cf2d157: token-shaped text on line 4, 11 chars, followed by "["; inside a pattern source: true
+blob 4cf2d157: token-shaped text on line 4, 10 chars, followed by "|"; inside a pattern source: true
+blob 12024baf: token-shaped text on line 4, 11 chars, followed by "|"; inside a pattern source: true
+blob 12024baf: token-shaped text on line 4, 10 chars, followed by "/"; inside a pattern source: true
+blob 5419a9cd: token-shaped text on line 51, 11 chars, followed by "["; inside a pattern source: true
+blob 9219d2bf: token-shaped text on line 48, 11 chars, followed by "["; inside a pattern source: true
+blob 6a24aac4: token-shaped text on line 40, 11 chars, followed by "["; inside a pattern source: true
+--- this check's source ---
+// Audit 3 scratch check, run from the repo root: the history scan's hits explained without printing what they matched.
+// For each blob given, every email address in it is hashed (sha256 of its lowercase form) and looked up in
+// tools/public-patterns.mjs's THIRD_PARTY_EMAIL_HASHES; every token-shaped hit is shown as its line number and whether
+// that line is a regular-expression or grep-pattern source (a literal prefix followed by a character class).
+import { execFileSync } from 'node:child_process';
+import crypto from 'node:crypto';
+import fs from 'node:fs';
+
+const pp = fs.readFileSync('tools/public-patterns.mjs', 'utf8');
+const block = /THIRD_PARTY_EMAIL_HASHES = new Set\(\[([\s\S]*?)\]\)/.exec(pp)[1];
+const allowed = new Set(block.match(/[0-9a-f]{64}/g));
+const EMAIL = /[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}/g;
+const TOKEN = /ghp_[A-Za-z0-9]{20,}|github_pat_|gh[ousr]_[A-Za-z0-9]{20,}|npm_[A-Za-z0-9]{30,}|AKIA[0-9A-Z]{16}|-----BEGIN [A-Z ]*PRIVATE KEY|xox[abprs]-[A-Za-z0-9-]{10,}|sk-[A-Za-z0-9_-]{20,}|AIza[0-9A-Za-z_-]{35}|_authToken/g;
+for (const sha of process.argv.slice(2)) {
+  const text = execFileSync('git', ['cat-file', '-p', sha], { encoding: 'utf8', maxBuffer: 1e9 });
+  const lines = text.split('\n');
+  for (const m of text.match(EMAIL) || []) {
+    const h = crypto.createHash('sha256').update(m.toLowerCase()).digest('hex');
+    console.log(`blob ${sha}: an email, sha256 ${h.slice(0, 16)}..., in THIRD_PARTY_EMAIL_HASHES: ${allowed.has(h)}`);
+  }
+  lines.forEach((l, i) => {
+    TOKEN.lastIndex = 0;
+    let m;
+    while ((m = TOKEN.exec(l))) {
+      const after = l.slice(m.index + m[0].length, m.index + m[0].length + 1);
+      const isPattern = /^[[(|"\\]/.test(after) || /\/\\b$|\|$|"$/.test(l.slice(0, m.index)) || after === '' || /[|]/.test(l.slice(m.index - 1, m.index));
+      console.log(`blob ${sha}: token-shaped text on line ${i + 1}, ${m[0].length} chars, followed by ${JSON.stringify(after)}; inside a pattern source: ${isPattern}`);
+    }
+  });
+}
+console.log(`--- this check's source ---\n${fs.readFileSync(new URL(import.meta.url), 'utf8')}`);
+
+--- end ---

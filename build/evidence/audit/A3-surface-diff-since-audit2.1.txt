@@ -1,0 +1,22 @@
+HUSH-EVIDENCE v1
+id: A3-surface-diff-since-audit2
+phase: audit
+command: git diff --stat ddc6665fb78877c861086e6c20b5dffb42895534 HEAD -- tools/deploy.mjs tools/check-public.mjs tools/public-patterns.mjs tools/identity.mjs tools/evidence.mjs tools/notices.mjs tools/probe-supply.mjs tools/probe-lib.mjs tools/probe-play.mjs tools/probe-flash.mjs tools/flash-analyzer.mjs tools/ship-gate.mjs tests/controls/deploy.test.mjs tests/controls/control-copy.mjs index.html package.json package-lock.json .npmrc .gitignore LICENSE README.md vite.config.ts src/main.ts src/audio/engine.ts src/audio/track.ts src/input/keys.ts src/probe/api.ts src/fx/flash-limiter.ts music/area1.strudel
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-21T00:08:19-05:00
+time-end: 2026-10-21T00:08:19-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+ index.html            |   2 +
+ package.json          |   3 +-
+ src/input/keys.ts     |  15 +++++--
+ src/main.ts           |  24 +++++++++--
+ src/probe/api.ts      |  88 +++++++++++++++++++++++++++-------------
+ tools/probe-flash.mjs | 109 +++++++++++++++++++++++++++-----------------------
+ tools/probe-lib.mjs   |  19 ++++++---
+ tools/probe-play.mjs  |  93 +++++++++++++++++++++++++++++++++---------
+ tools/ship-gate.mjs   |  24 ++++++++---
+ 9 files changed, 262 insertions(+), 115 deletions(-)
+--- end ---

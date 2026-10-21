@@ -1,0 +1,63 @@
+HUSH-EVIDENCE v1
+id: A3-bundle-scan
+phase: audit
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\414bfd0d-3b56-4ab2-94e4-aa07d6549ae1\scratchpad\bundle-scan.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:23:04-05:00
+time-end: 2026-10-20T23:23:04-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+dist files: assets/index-BuxHFNVv.js (2101935 bytes), index.html (1125 bytes), THIRD-PARTY-NOTICES.txt (68558 bytes)
+index-BuxHFNVv.js chars 2098515
+  absolute origins named: 7 https://phaser.io http://www.w3.org https://dollchan.net https://raw.githubusercontent.com http://localhost https://shabda.ndre.gr http://github.com
+  new WebSocket: 0
+  EventSource(: 0
+  RTCPeerConnection: 0
+  serviceWorker.register: 0
+  sendBeacon: 0
+  requestMIDIAccess: 2
+  getUserMedia: 9
+  localStorage.setItem: 0
+  sessionStorage.setItem: 0
+  indexedDB.open: 0
+  document.cookie=: 0
+  SharedWorker: 2
+  WebTransport: 0
+  window.open(: 0
+  samples(: 0
+  loadModules: 0
+  evalScope: 3
+  import(: 2
+  fetch(: 8
+  new Worker: 1
+  importScripts: 8
+  import( at 1809496: "ble(t,`Trailing comma is not allowed in import()`):this.unexpected(t)}return this.finis"
+  import( at 1961693: "tExpression:function(e,t,r){return ke([`import(`,this.generateExpression(e.source,n.Ass"
+--- this check's source ---
+// Audit 3 scratch check, run from the repo root after a build: what the built bundle names. Every file in dist, the
+// absolute origins named as strings in each script, and the count of each network, storage and module-loading API.
+import fs from 'node:fs';
+import path from 'node:path';
+
+const files = [];
+(function walk(d) { for (const e of fs.readdirSync(d, { withFileTypes: true })) { const f = path.join(d, e.name); if (e.isDirectory()) walk(f); else files.push(f); } })('dist');
+console.log('dist files:', files.map((f) => `${path.relative('dist', f).split(path.sep).join('/')} (${fs.statSync(f).size} bytes)`).join(', '));
+for (const f of files.filter((x) => x.endsWith('.js'))) {
+  const t = fs.readFileSync(f, 'utf8');
+  const urls = [...new Set(t.match(/(https?|wss?):\/\/[A-Za-z0-9.-]+/g) || [])];
+  console.log(path.basename(f), 'chars', t.length);
+  console.log('  absolute origins named:', urls.length, urls.join(' '));
+  for (const k of ['new WebSocket', 'EventSource(', 'RTCPeerConnection', 'serviceWorker.register', 'sendBeacon', 'requestMIDIAccess', 'getUserMedia', 'localStorage.setItem', 'sessionStorage.setItem', 'indexedDB.open', 'document.cookie=', 'SharedWorker', 'WebTransport', 'window.open(']) {
+    console.log(`  ${k}: ${t.split(k).length - 1}`);
+  }
+  for (const k of ['samples(', 'loadModules', 'evalScope', 'import(', 'fetch(', 'new Worker', 'importScripts']) console.log(`  ${k}: ${t.split(k).length - 1}`);
+  // Each dynamic-import site with 40 characters on each side, so a parser string can be told from a call.
+  let i = -1;
+  let shown = 0;
+  while ((i = t.indexOf('import(', i + 1)) >= 0 && shown < 12) { console.log(`  import( at ${i}: ${JSON.stringify(t.slice(Math.max(0, i - 40), i + 47))}`); shown++; }
+}
+console.log(`--- this check's source ---\n${fs.readFileSync(new URL(import.meta.url), 'utf8')}`);
+
+--- end ---

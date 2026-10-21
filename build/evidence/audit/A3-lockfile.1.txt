@@ -1,0 +1,93 @@
+HUSH-EVIDENCE v1
+id: A3-lockfile
+phase: audit
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\414bfd0d-3b56-4ab2-94e4-aa07d6549ae1\scratchpad\lockfile.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:08:51-05:00
+time-end: 2026-10-20T23:08:51-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+package-lock.json tracked: true
+package-lock.json and package.json equal HEAD: true
+.npmrc tracked: true | settings: ignore-scripts=true, save-exact=true, engine-strict=true, fund=false
+lockfileVersion: 3 | lock name and version equal package.json: true
+  dep    @strudel/core@1.2.6 lock root 1.2.6 locked 1.2.6
+  dep    @strudel/web@1.3.0 lock root 1.3.0 locked 1.3.0
+  dep    phaser@4.2.1 lock root 4.2.1 locked 4.2.1
+  dep    superdough@1.3.0 lock root 1.3.0 locked 1.3.0
+  devdep @playwright/test@1.63.0 lock root 1.63.0 locked 1.63.0
+  devdep @types/node@24.19.0 lock root 24.19.0 locked 24.19.0
+  devdep eslint@10.11.0 lock root 10.11.0 locked 10.11.0
+  devdep typescript@6.0.3 lock root 6.0.3 locked 6.0.3
+  devdep typescript-eslint@8.70.1 lock root 8.70.1 locked 8.70.1
+  devdep vite@8.3.1 lock root 8.3.1 locked 8.3.1
+  devdep vitest@5.0.2 lock root 5.0.2 locked 5.0.2
+engines: {"node":"24.18.0"} | .nvmrc: 24.18.0 | node: v24.18.0
+package.json ranges that are not exact versions: 0
+direct deps whose lock root or locked version differs from package.json: 0
+locked packages: 227 | production: 76 | without sha512 integrity: 0 | resolved off registry.npmjs.org: 0
+lockfile hasInstallScript: node_modules/fsevents dev optional os=darwin
+installed package.json files with an install lifecycle script: node_modules/@eslint-community/eslint-utils/node_modules/eslint-visitor-keys (prepare) dev, node_modules/@humanfs/core (prepare) dev, node_modules/@humanfs/node (prepare) dev, node_modules/@humanfs/types (prepare) dev, node_modules/@humanwhocodes/module-importer (prepare) dev, node_modules/@humanwhocodes/retry (prepare) dev, node_modules/acorn (prepare) prod, node_modules/balanced-match (prepare) dev, node_modules/brace-expansion (prepare) dev, node_modules/hashery (prepare) dev, node_modules/hookified (prepare) dev, node_modules/lightningcss (prepare) dev, node_modules/minimatch (prepare) dev, node_modules/tinyexec (prepare) dev, node_modules/ts-api-utils (prepare) dev
+--- this check's source ---
+// Audit 3 scratch check, run from the repo root: exact pins, the committed lockfile, its sources and integrity,
+// and every install script, from the lockfile's flags and from the installed package.json files.
+import { execFileSync, spawnSync } from 'node:child_process';
+import fs from 'node:fs';
+import path from 'node:path';
+
+const git = (a) => execFileSync('git', a, { encoding: 'utf8' }).trim();
+const lock = JSON.parse(fs.readFileSync('package-lock.json', 'utf8'));
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'));
+console.log('package-lock.json tracked:', git(['ls-files', '--', 'package-lock.json']) === 'package-lock.json');
+console.log('package-lock.json and package.json equal HEAD:', spawnSync('git', ['diff', '--quiet', 'HEAD', '--', 'package-lock.json', 'package.json']).status === 0);
+console.log('.npmrc tracked:', git(['ls-files', '--', '.npmrc']) === '.npmrc', '| settings:', fs.readFileSync('.npmrc', 'utf8').trim().split(/\r?\n/).join(', '));
+console.log('lockfileVersion:', lock.lockfileVersion, '| lock name and version equal package.json:', lock.name === pkg.name && lock.version === pkg.version);
+const exact = /^[0-9]+\.[0-9]+\.[0-9]+$/;
+let loose = 0;
+let drift = 0;
+const root = lock.packages[''];
+for (const k of ['dependencies', 'devDependencies']) {
+  for (const [name, want] of Object.entries(pkg[k] || {})) {
+    if (!exact.test(want)) { loose++; console.log('NOT EXACT', k, name, want); }
+    const r = (root[k] || {})[name];
+    const inst = (lock.packages[`node_modules/${name}`] || {}).version;
+    if (r !== want || inst !== want) { drift++; console.log('DRIFT', name, want, r, inst); }
+    console.log(`  ${k === 'dependencies' ? 'dep   ' : 'devdep'} ${name}@${want} lock root ${r} locked ${inst}`);
+  }
+}
+for (const k of ['optionalDependencies', 'peerDependencies', 'bundleDependencies', 'bundledDependencies', 'overrides', 'resolutions']) {
+  if (pkg[k]) console.log('package.json also has', k, JSON.stringify(pkg[k]));
+}
+console.log('engines:', JSON.stringify(pkg.engines), '| .nvmrc:', fs.readFileSync('.nvmrc', 'utf8').trim(), '| node:', process.version);
+console.log('package.json ranges that are not exact versions:', loose);
+console.log('direct deps whose lock root or locked version differs from package.json:', drift);
+let n = 0;
+let prod = 0;
+let noInt = 0;
+let offReg = 0;
+const flagged = [];
+const scripted = [];
+for (const [key, p] of Object.entries(lock.packages)) {
+  if (!key) continue;
+  n++;
+  if (p.link) { console.log('LINK', key); continue; }
+  if (!p.dev) prod++;
+  if (!p.integrity || !/^sha512-/.test(p.integrity)) { noInt++; console.log('NO SHA-512 INTEGRITY', key, p.integrity); }
+  if (!/^https:\/\/registry\.npmjs\.org\//.test(p.resolved || '')) { offReg++; console.log('NOT REGISTRY', key, p.resolved); }
+  const tags = `${p.dev ? ' dev' : ' prod'}${p.optional || p.devOptional ? ' optional' : ''}${p.os ? ` os=${p.os.join('/')}` : ''}`;
+  if (p.hasInstallScript) flagged.push(`${key}${tags}`);
+  const manifest = path.join(key, 'package.json');
+  if (fs.existsSync(manifest)) {
+    const s = JSON.parse(fs.readFileSync(manifest, 'utf8')).scripts || {};
+    const life = ['preinstall', 'install', 'postinstall', 'prepare'].filter((x) => s[x]);
+    if (life.length) scripted.push(`${key} (${life.join(', ')})${tags}`);
+  }
+}
+console.log('locked packages:', n, '| production:', prod, '| without sha512 integrity:', noInt, '| resolved off registry.npmjs.org:', offReg);
+console.log('lockfile hasInstallScript:', flagged.length ? flagged.join(', ') : 'none');
+console.log('installed package.json files with an install lifecycle script:', scripted.length ? scripted.join(', ') : 'none');
+console.log(`--- this check's source ---\n${fs.readFileSync(new URL(import.meta.url), 'utf8')}`);
+
+--- end ---

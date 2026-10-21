@@ -1,0 +1,127 @@
+HUSH-EVIDENCE v1
+id: A3-visitor-page
+phase: audit
+command: node <home>\AppData\Local\Temp\claude\C--Users-<redacted>-code-hush\414bfd0d-3b56-4ab2-94e4-aa07d6549ae1\scratchpad\visitor-page.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:21:28-05:00
+time-end: 2026-10-20T23:22:16-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+title: "The Hush" | hush-build meta: 2055e5b22a468f6050fae0faf4022a7c4f593074
+body children: div#game footer | #game children: canvas | #game text: ""
+footer at boot: <span id=calibration> "Press any key, then tap along with the beat to set your timing." hidden=false visible=true color=rgb(127, 214, 255)
+footer at boot: <a href=https://github.com/pretending2bejhon/hush> "Source (AGPL-3.0)" hidden=false visible=true color=rgb(127, 214, 255)
+footer at boot: <span> "Music engine: Strudel, AGPL-3.0-or-later" hidden=false visible=true color=rgb(91, 102, 128)
+footer at boot: <output id=playtest> "" hidden=true visible=false color=rgb(91, 102, 128)
+footer visible text at boot: ["Press any key, then tap along with the beat to set your timing.","Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"]
+window.__hush: undefined | AudioContexts at boot: 0
+AudioContexts after Escape: 0
+AudioContexts after Space: 1 | transient user activation at each creation: [true]
+waiting 35 s, the calibration untouched
+footer after the untouched calibration: <span id=calibration> hidden=true visible=false
+footer after the untouched calibration: <a> hidden=false visible=true
+footer after the untouched calibration: <span> hidden=false visible=true
+footer after the untouched calibration: <output id=playtest> hidden=true visible=false
+footer visible text after the calibration: ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"]
+after 30 more presses: AudioContexts 1 | window.__hush: undefined | footer visible text: ["Source (AGPL-3.0)","Music engine: Strudel, AGPL-3.0-or-later"]
+calls: fetch 0 xhr 0 sendBeacon 0 window.open 0 requestMIDIAccess 0 getUserMedia 0 enumerateDevices 0 storage setItem 0 cookie writes 0 workers ["blob:"]
+requests: 3 ["/hush/","/hush/assets/index-BuxHFNVv.js","blob:<origin>/940773d7-7eec-4e69-9d6f-20dbaf8db6cc"]
+network violations: []
+storage: {"cookies":0,"cookie":"","localStorage":0,"sessionStorage":0,"indexedDB":[],"caches":0,"serviceWorkers":0,"opfs":0,"clean":true}
+console errors: 0 | page errors: 0 | failed requests: 0 | status >= 400: 0
+--- this check's source ---
+// Audit 3 scratch check, run from the repo root after a build: the built page as a visitor gets it, with no ?probe,
+// through probe-lib's own server and collectors in headless Chrome. Boot, read the page around the canvas, press
+// Escape, then Space, leave the calibration untouched until it hands over, then press 30 mapped keys; count every
+// AudioContext, every network-shaped call and every storage write; read the requests, the storage and the errors.
+import fs from 'node:fs';
+import path from 'node:path';
+import { pathToFileURL } from 'node:url';
+
+const lib = await import(pathToFileURL(path.resolve('tools/probe-lib.mjs')).href);
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const dist = lib.requireDist('dist');
+const server = await lib.serveDir(dist);
+const browser = await lib.launch({ channel: 'chrome' });
+const out = [];
+const say = (...a) => { const s = a.join(' '); out.push(s); console.log(s); };
+try {
+  const { context, page, log } = await lib.openPage(browser);
+  await context.addInitScript(() => {
+    const calls = { audioContexts: 0, activeAtCreation: [], fetch: 0, xhr: 0, beacon: 0, open: 0, midi: 0, media: 0, devices: 0, workers: [], storageWrites: 0, cookieWrites: 0 };
+    window.__audit = calls;
+    const AC = window.AudioContext;
+    window.AudioContext = class extends AC {
+      constructor(...a) { super(...a); calls.audioContexts++; calls.activeAtCreation.push(Boolean(navigator.userActivation && navigator.userActivation.isActive)); }
+    };
+    const wrap = (obj, key, field) => { const f = obj && obj[key]; if (typeof f !== 'function') return; obj[key] = function (...a) { calls[field]++; return f.apply(this, a); }; };
+    wrap(window, 'fetch', 'fetch');
+    wrap(XMLHttpRequest.prototype, 'open', 'xhr');
+    wrap(navigator, 'sendBeacon', 'beacon');
+    wrap(window, 'open', 'open');
+    wrap(navigator, 'requestMIDIAccess', 'midi');
+    if (navigator.mediaDevices) { wrap(navigator.mediaDevices, 'getUserMedia', 'media'); wrap(navigator.mediaDevices, 'enumerateDevices', 'devices'); }
+    const W = window.Worker;
+    window.Worker = class extends W { constructor(u, o) { calls.workers.push(String(u).slice(0, 5)); super(u, o); } };
+    const setItem = Storage.prototype.setItem;
+    Storage.prototype.setItem = function (...a) { calls.storageWrites++; return setItem.apply(this, a); };
+    const desc = Object.getOwnPropertyDescriptor(Document.prototype, 'cookie');
+    Object.defineProperty(Document.prototype, 'cookie', { configurable: true, get() { return desc.get.call(this); }, set(v) { calls.cookieWrites++; desc.set.call(this, v); } });
+  });
+  await page.goto(server.url, { waitUntil: 'load', timeout: 20000 });
+  await page.waitForSelector('#game canvas', { timeout: 20000 });
+  await sleep(2000);
+  const dom = () => page.evaluate(() => {
+    const vis = (el) => Boolean(el) && !el.hidden && getComputedStyle(el).display !== 'none' && el.getClientRects().length > 0;
+    const foot = document.querySelector('footer');
+    return {
+      title: document.title,
+      build: (document.querySelector('meta[name="hush-build"]') || {}).content || null,
+      body: [...document.body.children].map((e) => `${e.tagName.toLowerCase()}${e.id ? `#${e.id}` : ''}`).filter((t) => t !== 'script'),
+      game: [...document.querySelector('#game').children].map((e) => e.tagName.toLowerCase()),
+      gameText: document.querySelector('#game').innerText.trim(),
+      footer: [...foot.children].map((e) => ({ tag: e.tagName.toLowerCase(), id: e.id || null, href: e.getAttribute('href'), text: e.textContent, hidden: e.hidden, visible: vis(e), color: getComputedStyle(e).color })),
+      footerVisibleText: foot.innerText.split('\n').map((s) => s.trim()).filter(Boolean),
+      probeApi: typeof window.__hush,
+      calls: window.__audit,
+    };
+  });
+  const d0 = await dom();
+  say('title:', JSON.stringify(d0.title), '| hush-build meta:', d0.build);
+  say('body children:', d0.body.join(' '), '| #game children:', d0.game.join(' '), '| #game text:', JSON.stringify(d0.gameText));
+  for (const f of d0.footer) say(`footer at boot: <${f.tag}${f.id ? ` id=${f.id}` : ''}${f.href ? ` href=${f.href}` : ''}> ${JSON.stringify(f.text)} hidden=${f.hidden} visible=${f.visible} color=${f.color}`);
+  say('footer visible text at boot:', JSON.stringify(d0.footerVisibleText));
+  say('window.__hush:', d0.probeApi, '| AudioContexts at boot:', d0.calls.audioContexts);
+  await page.keyboard.press('Escape');
+  await sleep(1000);
+  say('AudioContexts after Escape:', (await dom()).calls.audioContexts);
+  await page.keyboard.press('Space');
+  await sleep(1000);
+  const d1 = await dom();
+  say('AudioContexts after Space:', d1.calls.audioContexts, '| transient user activation at each creation:', JSON.stringify(d1.calls.activeAtCreation));
+  say('waiting 35 s, the calibration untouched');
+  await sleep(35000);
+  const d2 = await dom();
+  for (const f of d2.footer) say(`footer after the untouched calibration: <${f.tag}${f.id ? ` id=${f.id}` : ''}> hidden=${f.hidden} visible=${f.visible}`);
+  say('footer visible text after the calibration:', JSON.stringify(d2.footerVisibleText));
+  const keys = ['ArrowRight', 'ArrowLeft', 'Space', 'KeyX', 'KeyZ', 'ArrowUp'];
+  for (let i = 0; i < 30; i++) { await page.keyboard.press(keys[i % keys.length]); await sleep(150); }
+  await sleep(2000);
+  const d3 = await dom();
+  say('after 30 more presses: AudioContexts', d3.calls.audioContexts, '| window.__hush:', d3.probeApi, '| footer visible text:', JSON.stringify(d3.footerVisibleText));
+  const c = d3.calls;
+  say('calls: fetch', c.fetch, 'xhr', c.xhr, 'sendBeacon', c.beacon, 'window.open', c.open, 'requestMIDIAccess', c.midi, 'getUserMedia', c.media, 'enumerateDevices', c.devices, 'storage setItem', c.storageWrites, 'cookie writes', c.cookieWrites, 'workers', JSON.stringify(c.workers));
+  const origin = new URL(server.url).origin;
+  say('requests:', log.requests.length, JSON.stringify(log.requests.map((u) => (u.startsWith(origin) ? u.slice(origin.length) : u.replace(/^blob:[^/]+\/\/[^/]+\//, 'blob:<origin>/')))));
+  say('network violations:', JSON.stringify(await lib.networkViolations(page, log, [origin])));
+  say('storage:', JSON.stringify(await lib.storageReport(page, context)));
+  say('console errors:', log.consoleErrors.length, '| page errors:', log.pageErrors.length, '| failed requests:', log.failed.length, '| status >= 400:', log.badStatus.length);
+} finally {
+  await browser.close();
+  await server.close();
+}
+console.log(`--- this check's source ---\n${fs.readFileSync(new URL(import.meta.url), 'utf8')}`);
+
+--- end ---

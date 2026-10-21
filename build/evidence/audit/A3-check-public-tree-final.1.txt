@@ -1,0 +1,17 @@
+HUSH-EVIDENCE v1
+id: A3-check-public-tree-final
+phase: audit
+command: npm run check:public
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-21T00:07:41-05:00
+time-end: 2026-10-21T00:07:42-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+
+> hush@0.0.0 check:public
+> node tools/check-public.mjs
+
+check-public tree (1322 files): clean (owner denylist, 4 names + 1 machine names)
+--- end ---

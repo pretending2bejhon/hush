@@ -1,0 +1,17 @@
+HUSH-EVIDENCE v1
+id: A3-remote-pages-commit
+phase: audit
+command: git -C <home>\AppData\Local\Temp\hush-audit3-remote.git cat-file -p refs/heads/gh-pages
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:41:43-05:00
+time-end: 2026-10-20T23:41:43-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+tree 2184edacdb869f90f2ac65599970259d54b2c0df
+author pretending2bejhon <135627942+pretending2bejhon@users.noreply.github.com> 1792557653 -0500
+committer pretending2bejhon <135627942+pretending2bejhon@users.noreply.github.com> 1792557653 -0500
+
+pages: hush-dryrun-2055e5b2 at 2055e5b22a46
+--- end ---

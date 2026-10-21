@@ -1,0 +1,17 @@
+HUSH-EVIDENCE v1
+id: A3-ls-remote
+phase: audit
+command: git ls-remote origin
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:06:04-05:00
+time-end: 2026-10-20T23:06:05-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 0
+--- output ---
+f2f032eaefef0d64f98225cc1226089f7654c5b9	HEAD
+a2994abb8e7150228e54cac13f74858687b1f14d	refs/heads/gh-pages
+f2f032eaefef0d64f98225cc1226089f7654c5b9	refs/heads/main
+967ae5597fa416b9eccd9b4a82a1887659610ea0	refs/tags/hush-v1-rc1
+c9ce7243c7c7c4fc7a81c695439d8a0d5cc9b98f	refs/tags/hush-v1-rc1^{}
+--- end ---

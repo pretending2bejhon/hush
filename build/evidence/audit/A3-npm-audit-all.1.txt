@@ -1,0 +1,36 @@
+HUSH-EVIDENCE v1
+id: A3-npm-audit-all
+phase: audit
+command: npm audit
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T23:09:00-05:00
+time-end: 2026-10-20T23:09:01-05:00
+head: 2055e5b22a468f6050fae0faf4022a7c4f593074
+exit: 1
+--- output ---
+# npm audit report
+
+source-map-js  1.0.0 - 1.2.1
+Severity: high
+source-map-js allows event-loop denial of service through indexed source-map section offsets - https://github.com/advisories/GHSA-68fv-2mgg-jv7q
+fix available via `npm audit fix`
+node_modules/source-map-js
+
+vite  8.3.0 - 8.3.2
+Severity: high
+launch-editor: escapeCmdArgs() omits % escaping on Windows - https://github.com/advisories/GHSA-698v-4r3x-3vcv
+launch-editor: Editor CLI flag misinterpretation causing arbitrary command execution for some editors - https://github.com/advisories/GHSA-r825-w8mm-5pxw
+launch-editor: `fs.existsSync()` existence check can be bypassed on Windows - https://github.com/advisories/GHSA-587h-7wmj-h5pm
+fix available via `npm audit fix --force`
+Will install vite@8.3.4, which is outside the stated dependency range
+node_modules/vite
+
+2 high severity vulnerabilities
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues, run:
+  npm audit fix --force
+--- end ---
