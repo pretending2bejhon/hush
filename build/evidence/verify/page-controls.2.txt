@@ -1,0 +1,54 @@
+HUSH-EVIDENCE v1
+id: page-controls
+phase: verify
+command: npx vitest run tests/controls/page-probes.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T21:30:31-05:00
+time-end: 2026-10-20T21:41:50-05:00
+head: d1d8c2906ee066cdbbda554bfefadcff3fa39b08
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/page-probes.test.mjs (37 tests | 1 failed) 677990ms
+   ❯ playthrough probe (X5, X10, D3, D8, D16) (30)
+     × fails ?domtext on its text check 15936ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/page-probes.test.mjs > playthrough probe (X5, X10, D3, D8, D16) > fails ?domtext on its text check
+AssertionError: expected 'play: chrome headless: room 01-toy-a …' to match /text: FAIL: after the hand-over: text…/
+
+- Expected:
+/text: FAIL: after the hand-over: text over the canvas: "planted"/
+
++ Received:
+"play: chrome headless: room 01-toy-a done
+play: chrome headless: room 02-toy-b done
+play: chrome headless: room 03-toy-c done
+play: chrome headless: room 04-toy-d done
+play: chrome headless: room 05-toy-e done
+play: chrome headless: ending seen, texts read 9897 ms into it
+play: chrome headless: text: FAIL: text over the canvas: \"planted\"; a page text before the ending card: [\"planted\"] 5 ms into the ending (want none in its first 6457 ms)
+play: chrome headless: FAIL (text)
+"
+
+ ❯ tests/controls/page-probes.test.mjs:130:21
+    128|     it(`fails ?${query} on its ${check} check`, () => {
+    129|       const r = tool('probe-play.mjs', ['--dist', dist, ...FIX, '--que…
+    130|       expect(r.out).toMatch(line);
+       |                     ^
+    131|       expect(r.code).toBe(1);
+    132|     }, T);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 36 passed (37)
+   Start at  21:30:32
+   Duration  678.52s (tests 100%)
+
+--- end ---

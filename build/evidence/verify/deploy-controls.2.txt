@@ -1,0 +1,68 @@
+HUSH-EVIDENCE v1
+id: deploy-controls
+phase: verify
+command: npx vitest run tests/controls/deploy.test.mjs
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T20:51:41-05:00
+time-end: 2026-10-20T21:28:30-05:00
+head: d1d8c2906ee066cdbbda554bfefadcff3fa39b08
+exit: 1
+--- output ---
+
+ RUN  v5.0.2 <repo>
+
+ ❯ tests/controls/deploy.test.mjs (8 tests | 3 failed) 2208334ms
+   ❯ deploy.mjs --dry-run (6)
+     × publishes main, the tag and gh-pages in order, records X1 to X10, and extends gh-pages without force 1030459ms
+     × stops an annotated tag whose message holds an email 518325ms
+     × never forces a diverged remote main 522151ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  tests/controls/deploy.test.mjs > deploy.mjs --dry-run > publishes main, the tag and gh-pages in order, records X1 to X10, and extends gh-pages without force
+Error: Test timed out in 600000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/controls/deploy.test.mjs:31:3
+     29|
+     30| describe('deploy.mjs --dry-run', () => {
+     31|   it('publishes main, the tag and gh-pages in order, records X1 to X10…
+       |   ^
+     32|     const { dir, bare } = makeControlCopy();
+     33|     fs.writeFileSync(path.join(dir, 'untracked-note.txt'), 'an untrack…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  tests/controls/deploy.test.mjs > deploy.mjs --dry-run > stops an annotated tag whose message holds an email
+Error: Test timed out in 300000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/controls/deploy.test.mjs:93:3
+     91|   }, T);
+     92|
+     93|   it('stops an annotated tag whose message holds an email', () => {
+       |   ^
+     94|     const { dir, bare } = makeControlCopy();
+     95|     git(dir, ['tag', '-a', 'hush-v1-rc9', '-m', `candidate, ask ${['so…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  tests/controls/deploy.test.mjs > deploy.mjs --dry-run > never forces a diverged remote main
+Error: Test timed out in 300000ms.
+If this is a long-running test, pass a timeout value as the last argument or configure it globally with "testTimeout".
+ ❯ tests/controls/deploy.test.mjs:103:3
+    101|   }, T);
+    102|
+    103|   it('never forces a diverged remote main', () => {
+       |   ^
+    104|     const { dir, bare } = makeControlCopy();
+    105|     const other = fs.mkdtempSync(path.join(os.tmpdir(), 'hush-other-')…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 5 passed (8)
+   Start at  20:51:42
+   Duration  2208.50s (tests 100%)
+
+--- end ---

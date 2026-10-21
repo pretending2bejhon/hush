@@ -83,6 +83,7 @@ END1: passes: true (evidence: build/evidence/END1.green.3.txt)
 - A scene that hands over inside its own update is stopped before Phaser's poststep, so a probe that logs at poststep never sees its last frame. Log that frame once from the prestep's record, with no Graphics, or the last attempt's end is never judged (producer, RUN-1 F1).
 - tests/tools runs in no acceptance and in neither standing nor npm test. An applier that re-solves witnesses or re-cuts rooms can turn a verifier's own test red unseen, as e9c9b46 did to scene-check. Run `npm run test:verifiers` after any such applier, before the review (producer, RUN-1 F1).
 - A reviewer dispatched in the foreground costs the producer about twice its wall time: the hook charges the Agent call's whole run and every one of the reviewer's own calls. R9's 2 h 48 min review took 5 h 40 min of the 6 h cap, and the first R9 dispatch ended in ALERT#3. Start each review in a fresh producer session, and record it in that session (producer, R9).
+- A headed probe's JSON record is written only by evidence.mjs's own flag, `node tools/evidence.mjs --json perf X4 verify -- npm run probe:perf -- --headed --json`. The probe's `--json` alone prints the document and writes no file, and two VERIFYs ran it that way first. The headed probes also want the screen awake: with the display dark (brightness 0) the window reads as covered, frames come a second apart, and X4 fails at about 14 fps (producer, VERIFY 2026-10-20).
 
 ## Rounds
 

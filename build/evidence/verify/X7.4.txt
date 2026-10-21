@@ -1,0 +1,693 @@
+HUSH-EVIDENCE v1
+id: X7
+phase: verify
+command: npm run probe:av -- --headed --json
+cwd: <repo>
+env: node v24.18.0 | win32 x64 | overrides: none | denylist: owner denylist
+time-start: 2026-10-20T22:31:29-05:00
+time-end: 2026-10-20T22:32:40-05:00
+head: d1d8c2906ee066cdbbda554bfefadcff3fa39b08
+exit: 0
+--- output ---
+
+> hush@0.0.0 probe:av
+> vite build && node tools/probe-av.mjs --headed --json
+
+vite v8.3.1 building client environment for production...
+transforming...
+✓ 47 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                    1.12 kB │ gzip:   0.71 kB
+dist/THIRD-PARTY-NOTICES.txt      68.55 kB │ gzip:  17.60 kB
+dist/assets/index-BuxHFNVv.js  2,101.93 kB │ gzip: 596.75 kB
+
+✓ built in 667ms
+cannot use window: not in browser?
+🌀 @strudel/core loaded 🌀
+av: 2162 voices scheduled for 2140 onsets, 0 errors, 0 dropped, 0 shifted; clock 0.111 ms p-p, 0 resyncs; 68.3 s
+av: silence peak 0.00e+0; windows rms 0.4187 0.4096 0.4105 0.4031 0.4095 0.3957 0.4022 0.3936 0.4005 0.3874
+av: solos rms 0.3763 0.0593 0.0147 0.0491 0.0087 0.0288 0.0066 0.0155 0.0166 0.0741; muted peaks 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0 0.0e+0
+av: mix speakers <- AnalyserNode and 6 other(s), 6 silent by construction; master gain 0.800000011920929; compressor -10 6 4 0.004999999888241291 0.11999999731779099; 10 of 10 gates in, 10 inputs
+av: starts 2322 voice start(s) of 4467 recorded: 2322 on their layer's onsets (+0.00 to +0.00 ms), 0 late-shifted, 0 unable to sound, 0 off; 1909 of 1909 onsets started
+av: PASS
+HUSH-JSON-BEGIN
+{
+  "kind": "av",
+  "head": "d1d8c2906ee066cdbbda554bfefadcff3fa39b08",
+  "digest": "aa2bbe57898bf9a1276731927a2c7a9722937ac6bd7df0a1ca1800b83c18f947",
+  "query": "",
+  "headed": true,
+  "track": "music/area1.strudel",
+  "contextRunning": true,
+  "state": "running",
+  "scheduledVoices": 2162,
+  "expectedVoices": 2140,
+  "voiceErrors": 0,
+  "lateShifted": 0,
+  "lateDropped": 0,
+  "masterSignalOk": true,
+  "masterSilenceOk": true,
+  "silence": {
+    "ok": true,
+    "peak": 0,
+    "samples": 125
+  },
+  "windows": [
+    {
+      "room": 2,
+      "layersBack": 1,
+      "ok": true,
+      "rms": 0.4186708568920734
+    },
+    {
+      "room": 3,
+      "layersBack": 2,
+      "ok": true,
+      "rms": 0.40957421877159084
+    },
+    {
+      "room": 4,
+      "layersBack": 3,
+      "ok": true,
+      "rms": 0.4104609968936882
+    },
+    {
+      "room": 5,
+      "layersBack": 4,
+      "ok": true,
+      "rms": 0.40305405149513
+    },
+    {
+      "room": 6,
+      "layersBack": 5,
+      "ok": true,
+      "rms": 0.40953053774475534
+    },
+    {
+      "room": 7,
+      "layersBack": 6,
+      "ok": true,
+      "rms": 0.39565333502849614
+    },
+    {
+      "room": 8,
+      "layersBack": 7,
+      "ok": true,
+      "rms": 0.4021872022329694
+    },
+    {
+      "room": 9,
+      "layersBack": 8,
+      "ok": true,
+      "rms": 0.39356097430120063
+    },
+    {
+      "room": 10,
+      "layersBack": 9,
+      "ok": true,
+      "rms": 0.40047270172508603
+    },
+    {
+      "room": 11,
+      "layersBack": 10,
+      "ok": true,
+      "rms": 0.38744540953614887
+    }
+  ],
+  "layers": [
+    {
+      "layer": 1,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.3762739758531675,
+      "peak": 0
+    },
+    {
+      "layer": 2,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.05927820116857514,
+      "peak": 0
+    },
+    {
+      "layer": 3,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.014652054184062027,
+      "peak": 0
+    },
+    {
+      "layer": 4,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.04908137946293662,
+      "peak": 0
+    },
+    {
+      "layer": 5,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.008703918392410546,
+      "peak": 0
+    },
+    {
+      "layer": 6,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.02883482063338938,
+      "peak": 0
+    },
+    {
+      "layer": 7,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.006644330207202379,
+      "peak": 0
+    },
+    {
+      "layer": 8,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.015527780006406772,
+      "peak": 0
+    },
+    {
+      "layer": 9,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.016616571666183588,
+      "peak": 0
+    },
+    {
+      "layer": 10,
+      "soloSignalOk": true,
+      "soloSilenceOk": true,
+      "rms": 0.07409551238555198,
+      "peak": 0
+    }
+  ],
+  "signalFloorRms": 0.002,
+  "silenceCeilingPeak": 0.0003,
+  "clockValid": true,
+  "clockJitterMs": 0.111,
+  "clockJitterBoundMs": 3,
+  "clockResyncs": 0,
+  "deaths": 0,
+  "durationSec": 68.3,
+  "segments": [
+    {
+      "room": 1,
+      "seconds": 3.45,
+      "witness": false
+    },
+    {
+      "room": 2,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 3,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 4,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 5,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 6,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 7,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 8,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 9,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 10,
+      "seconds": 3.45,
+      "witness": true
+    },
+    {
+      "room": 11,
+      "seconds": 30.75,
+      "witness": true
+    }
+  ],
+  "graph": {
+    "analyserAtSpeakers": true,
+    "others": [
+      {
+        "type": "GainNode",
+        "gain": 1,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      },
+      {
+        "type": "GainNode",
+        "gain": 0,
+        "silent": true
+      }
+    ],
+    "analyser": {
+      "type": "AnalyserNode",
+      "fftSize": 2048,
+      "smoothing": 0
+    },
+    "master": {
+      "type": "GainNode",
+      "gain": 0.800000011920929
+    },
+    "compressor": {
+      "type": "DynamicsCompressorNode",
+      "threshold": -10,
+      "knee": 6,
+      "ratio": 4,
+      "attack": 0.004999999888241291,
+      "release": 0.11999999731779099
+    },
+    "compressorInputs": 10,
+    "gatesIn": [
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true,
+      true
+    ]
+  },
+  "starts": {
+    "voices": 2322,
+    "matched": 2322,
+    "shifted": 0,
+    "silent": 0,
+    "onsets": 1909,
+    "covered": 1909,
+    "earliestMs": 0,
+    "latestMs": 0,
+    "off": 0,
+    "missing": 0,
+    "ungated": 0,
+    "tangled": 0,
+    "orphan": 0,
+    "unread": 0,
+    "runs": [
+      {
+        "room": 1,
+        "seconds": -0.25,
+        "voices": 0,
+        "onsets": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "started": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      },
+      {
+        "room": 1,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 2,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 3,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 4,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 5,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 6,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 7,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 8,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 9,
+        "seconds": 3.451,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 10,
+        "seconds": 3.449,
+        "voices": 128,
+        "onsets": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ],
+        "started": [
+          8,
+          2,
+          15,
+          15,
+          4,
+          30,
+          10,
+          6,
+          7,
+          2
+        ]
+      },
+      {
+        "room": 11,
+        "seconds": 30.55,
+        "voices": 1042,
+        "onsets": [
+          71,
+          17,
+          141,
+          142,
+          36,
+          283,
+          89,
+          53,
+          70,
+          17
+        ],
+        "started": [
+          71,
+          17,
+          141,
+          142,
+          36,
+          283,
+          89,
+          53,
+          70,
+          17
+        ]
+      }
+    ],
+    "firstOff": [],
+    "firstMissing": [],
+    "recorded": 4467
+  },
+  "problems": [],
+  "pass": true
+}
+HUSH-JSON-END
+--- end ---
