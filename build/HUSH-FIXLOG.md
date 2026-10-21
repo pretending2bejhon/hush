@@ -806,3 +806,28 @@ DISPOSITION: VERIFY-MINOR1 | tests/controls/deploy.test.mjs gives each case 300 
 DISPOSITION: VERIFY-MINOR2 | the ?domtext page control (tests/controls/page-probes.test.mjs:123) wants the read right after the hand-over to see a text the control page plants 200 ms after it boots (tests/fixtures/control-page/control.js:212); the hand-over now comes first, so the probe fails the page (FAIL (text)) on the ending's reads instead and the control's line misses, twice in a row, where the F1 amendment's run had seen it at the hand-over (build/evidence/F1-page-controls.amend.1.txt) | 2026-10-20T22:41:45-05:00 | carried, mechanical, design for the next cycle: the control page plants the text before the probe API reports ready, so the first read must see it, and the line stays | evidence: build/evidence/verify/page-controls.2.txt, build/evidence/verify/page-controls-domtext.1.txt
 
 The headed runs needed the screen awake. With the display dark, the first perf run read frames a second apart and failed (X4.4.txt). Next: AUDIT (re-entry row 12) in a fresh producer session, with R9's fourteen MINORs and these two carried.
+
+## Audit 3: HUSH-AUDIT: PASS, head 2055e5b, digest aa2bbe57
+
+Recorded 2026-10-21T00:12-05:00 by the producer (Opus standing in for Fable), in `52eccf3` (build/reviews/AUDIT-3.md, evidence build/evidence/audit/A3-* and deploy/), after VERIFY in `2055e5b`.
+- **The count.** Findings: 1 (0 BLOCKER, 0 MAJOR, 1 MINOR) and 5 NOTEs, against audit 2's 0 (0, 0, 0).
+- **What passed.** Every mandated probe:
+  - The history of every ref is public-safe, and GitHub holds exactly the refs scanned.
+  - The pins, the lockfile and `npm audit --omit=dev` are clean.
+  - The page reaches only its own origin and stores nothing, also as a visitor gets it with no ?probe, with one AudioContext created on the first non-Escape key.
+  - The flash probe passes.
+  - The licence, the link, the notice and the calibration line match section 18, and the identities hold.
+  - The dry run published main, the fixture tag and gh-pages in that order, with X1 to X10 all green, and refused a modified tracked file.
+  - All 8 deploy controls pass.
+- **Read by the producer before this record.** HEAD and the digest were unchanged after the audit. The 60 changed paths sat only under build/evidence/audit/. The record exits were 0, except the three the audit expects: the dirty refusal (1), the user-path grep with no match (1) and the full `npm audit` with its dev-only highs (1). deploy/ship-gate.json holds X1 to X10 green at digest aa2bbe57.
+- **The release tag.** `hush-v1-rc2` is annotated on `52eccf3`, with the repo's noreply identity as tagger. That commit holds only bookkeeping beside the audited candidate, so its digest is aa2bbe57, equal to the HUSH-SHIP-GATE line's. `node tools/ship-gate.mjs --rows V` is GREEN: R9 fresh, HUSH-BUILD.md fresh, AUDIT-3 fresh with the ship-gate line matching, and rc2's digest equal.
+- The mandated `--out` overwrote audit 2's two deploy records (deploy/deploy.json and deploy/ship-gate.json). Audit 2's versions stay in history at `c9ce724`.
+
+DISPOSITION: AUDIT3-MINOR1 (VERIFY-MINOR1) | the deploy controls' time limits leave almost no headroom: T = 300000 per case and T * 2 for the two-run case (tests/controls/deploy.test.mjs:16, :65); this run passed 8 of 8 with the tag-email case at 282 s of 300 and the publish case at 559 s of 600, where VERIFY's run timed out three cases with every assertion held; section 15 says each control file runs under ten minutes, and this one takes about 21 | 2026-10-21T00:13:08-05:00 | carried, mechanical, merged with VERIFY-MINOR1's design for the next cycle: each case's limit set from a measured dry run on this machine with margin (the auditor's example: 1,800,000 ms a case, twice that for the two-run case), and section 15's parenthetical corrected for this file | evidence: build/evidence/audit/A3-deploy-control-tag-email.1.txt, build/evidence/audit/A3-deploy-control-publish.1.txt
+DISPOSITION: AUDIT3-NOTE1 (AUDIT2-NOTE1) | the deploy reads its identity from git config only (deploy.mjs:68-78) | 2026-10-21T00:13:08-05:00 | no action; the pre-push scan refuses a foreign identity before any push
+DISPOSITION: AUDIT3-NOTE2 (AUDIT2-NOTE2, wider) | dev-only advisories: source-map-js 1.2.1, and now vite 8.3.1's three launch-editor advisories in the dev server, fixed in vite 8.3.4 | 2026-10-21T00:13:08-05:00 | no action in this cycle; nothing from either ships (`--omit=dev` finds 0, no dev-server script, no source map). The next product cycle bumps the exact vite pin and the lockfile by amendment, since the change re-rolls the digest
+DISPOSITION: AUDIT3-NOTE3 (AUDIT2-NOTE3) | mapped keys are prevented whatever the modifiers (keys.ts:29-30) | 2026-10-21T00:13:08-05:00 | no action without the owner's word; no answer was recorded after rc1's preview, so it is put to him again with rc2's
+DISPOSITION: AUDIT3-NOTE4 | the bundle names code paths it never runs (Strudel's MIDI, microphone, sample fetch and SharedWorker clock) | 2026-10-21T00:13:08-05:00 | no action; the visitor run counted zero calls, and R9-MINOR10 carries the probe-side gap
+DISPOSITION: AUDIT3-NOTE5 | the live site is still rc1's page, without the calibration line | 2026-10-21T00:13:08-05:00 | no action; rc2's deploy makes the amended page live, and X12's probe:live after its preview reads it
+
+R9-MINOR1 to R9-MINOR14 and VERIFY-MINOR2 stay carried with their designs into the next cycle, and VERIFY-MINOR1 goes on as AUDIT3-MINOR1. The next step is JHON-PREVIEW for rc2 (re-entry row 14): the last scan over every ref at the HEAD to be published, then the owner's `npm run deploy` (the repo is public and Pages is on since rc1, so only step 2 of the gate's commands applies).
